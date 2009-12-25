@@ -1,0 +1,170 @@
+#!/bin/bash
+# R
+#
+#{{IS_NOTE
+#	Purpose:
+#		
+#	Description:
+#		
+#	History:
+#		Fri Mar 28 12:30:02 TST 2008, Created by jumperchen
+#}}IS_NOTE
+#
+#Copyright (C) 2008 Potix Corporation. All Rights Reserved.
+#
+#{{IS_RIGHT
+#}}IS_RIGHT
+#
+stamp=$(date +%Y-%m-%d)
+target=$1
+
+setting=build.setting.local
+if [ ! -f $setting ] ; then
+	setting=build.setting
+	if [ ! -f $setting ] ; then
+		echo $setting must be specified
+		exit 1
+	fi
+fi
+ver=$(grep '^version=' $setting)
+ver=${ver#version=}
+	
+if [ "$pkgnm"  = "" ] ; then
+	pkgnm=calendar
+	prjnm=calendar
+fi
+
+if [ -f build.setting.local ] ; then
+	setting=build.setting.local
+else
+	setting=build.setting
+fi
+javadocdir=$(grep '^javadoc' $setting)
+javadocdir=${javadocdir#javadoc=}
+if [ "$javadocdir" = "" ] ; then
+	echo javadoc must be specified in $setting
+	exit 1
+fi
+javadocdir=${javadocdir/\~/$HOME}
+if [ ! -e $javadocdir/$prjnm ] ; then
+	echo "$javadocdir/$prjnm not available"
+	exit 1
+fi
+
+if [ "$target" == "" ] || [ "$target" == "daily" ] ; then
+	target=daily
+	binnm=zk-$pkgnm-bin-$stamp
+	srcnm=zk-$pkgnm-src-$stamp	
+	pronm=zk-$pkgnm-$stamp
+	demonm=zk-$pkgnm-demo-$stamp
+elif [ "$target" == "official" ] ; then
+	target=daily
+	binnm=zk-$pkgnm-bin-$ver
+	srcnm=zk-$pkgnm-src-$ver	
+	pronm=zk-$pkgnm-$ver
+	demonm=zk-$pkgnm-demo-$ver
+else
+	echo "Usage: release [ daily ]"
+	echo Default: daily
+	exit 1
+fi
+
+rm -rf /tmp/zk
+maindir="$(pwd)"
+
+chmod -R 755 $maindir
+echo "Release $binnm $srcnm $demonm"
+cd $maindir
+
+mkdir -p /tmp/zk/$demonm/demo/WebContent
+mkdir -p /tmp/zk/$demonm/demo/src
+mkdir -p /tmp/zk/$demonm/doc
+mkdir -p /tmp/zk/$binnm/dist/lib
+mkdir -p /tmp/zk/$binnm/dist/src
+mkdir -p /tmp/zk/$binnm/doc
+mkdir -p /tmp/zk/$binnm/javadoc
+mkdir -p /tmp/zk/$binnm/javadoc/$prjnm
+mkdir -p /tmp/zk/$srcnm/doc
+
+cp build* /tmp/zk/$srcnm
+cp -rp bin /tmp/zk/$srcnm
+cp -rp $prjnm /tmp/zk/$srcnm
+cp -f dist/lib/$prjnm.jar /tmp/zk/$binnm/dist/lib
+cp -rp doc/LICENSE /tmp/zk/$binnm/doc
+cp -rp doc/LICENSE /tmp/zk/$demonm/doc
+cp -rp doc/LICENSE /tmp/zk/$srcnm/doc
+
+
+#prepare source.jar
+cd /tmp/zk/$srcnm
+find -name .svn | xargs rm -rf
+cd $prjnm
+rm -rf codegen debug
+jar cfM $prjnm-sources.jar -C src org
+mv -f $prjnm-sources.jar /tmp/zk/$binnm/dist/src
+cd /tmp/zk/$srcnm
+find -name .svn | xargs rm -rf
+rm -rf codegen debug
+
+#prepare *-sources.jar
+echo Prepare '*-sources.jar'
+cd $prjnm
+jar cfM calendar-sources.jar -C src org
+mv -f calendar-sources.jar /tmp/zk/$binnm/dist/src
+
+#Prepare maven repository
+function mvnrepo {
+	mkdir -p $1
+	cp /tmp/zk/$binnm/dist/src/$1-sources.jar $1/$1-$ver-sources.jar
+	sed -e "s/{version}/$ver/" $maindir/$1/pom.xml > $1/pom.xml
+	cp $maindir/dist/lib/$1.jar $1/$1-$ver.jar
+	jar cfM $1-$ver-bundle.jar -C $1 .
+}
+mkdir -p maven
+mkdir -p /tmp/maven
+cd maven
+mvnrepo calendar
+mv *-bundle.jar /tmp/maven
+cd ..
+rm -rf maven
+		
+chmod -R 755 $javadocdir
+#prepare javadoc
+cd $javadocdir
+cp -rp $prjnm/* /tmp/zk/$binnm/javadoc/$prjnm
+
+#Copy and pack demo
+cd $maindir
+cp -rp demo/src/* /tmp/zk/$demonm/demo/src
+cp dist/lib/demo.war /tmp/zk/$demonm/demo
+
+cd /tmp/zk/$demonm/demo
+find -name .svn | xargs rm -rf
+cd /tmp/zk
+echo Output ${demonm}.zip
+zip -qr9 ${demonm}.zip $demonm
+rm -rf $demonm
+
+#pack bin
+
+cd /tmp/zk
+echo Output ${binnm}.zip
+zip -qr9 ${binnm}.zip $binnm
+
+cd /tmp/zk
+rm -rf $binnm
+
+#pack src
+cd /tmp/zk
+echo "Output ${pwd}${srcnm}.zip"
+zip -qr9 ${srcnm}.zip $srcnm
+rm -rf $srcnm
+
+#pack all
+cd /tmp/zk
+echo "Output ${pwd}${pronm}.zip"
+zip -qr9 ${pronm}.zip *
+rm -rf ${binnm}.zip
+rm -rf ${srcnm}.zip
+rm -rf ${demonm}.zip
+

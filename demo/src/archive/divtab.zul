@@ -1,0 +1,20 @@
+<div class="tabs">
+	<attribute name="onClick">
+	import org.zkoss.zk.ui.metainfo.*;
+	String command = self.getSpaceOwner().getDynamicProperty("command");
+	ZScript zscript = ZScript.parseContent(command);
+	zscript.setLanguage("Java");
+	page.interpret(
+			zscript.getLanguage(), zscript.getContent(page, self), self.getNamespace());
+	</attribute>
+	<div class="t1" />
+	<div class="t2">
+		<div class="t3" />
+	</div>
+	<div class="bd">
+		<div class="cm cnt">
+			<div class="top" />
+			<div class="text">${arg.text}</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,27 @@
+<div class="tabs arrows"
+	action="onmouseover: zk.addClass(this, 'arrow-over'); onmouseout:zk.rmClass(this, 'arrow-over')">
+	<attribute name="onClick">
+	import org.zkoss.zk.ui.metainfo.*;
+	String command = self.getSpaceOwner().getDynamicProperty("command");
+	ZScript zscript = ZScript.parseContent(command);
+	zscript.setLanguage("Java");
+	page.interpret(
+			zscript.getLanguage(), zscript.getContent(page, self), self.getNamespace());
+	</attribute>
+	<div class="t1" />
+	<div class="t2">
+		<div class="t3" />
+	</div>
+	<div class="bd">
+		<div class="cm cnt">
+			<div class="text"
+				style="position:relative; width:15px; height:15px;">
+				<div sclass="${arg.type}" />
+			</div>
+		</div>
+	</div>
+	<div class="b2">
+		<div class="b3" />
+	</div>
+	<div class="b1" />
+</div>

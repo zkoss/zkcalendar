@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Specification-Title: ZK Calendar Component
+Specification-Version: 1.0.0_50
+Specification-Vendor: Potix Corporation
+Implementation-Title: org.zkoss.calendar
+Implementation-URL: http://www.zkoss.org/calendar
+Implementation-Version: 1.0.0_50
+Implementation-Vendor: Potix Corporation

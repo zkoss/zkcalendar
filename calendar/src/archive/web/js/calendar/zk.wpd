@@ -1,0 +1,20 @@
+<!-- zk.wpd
+	Purpose:
+		
+	Description:
+		
+	History:
+		Thu Nov 10 9:32:58 TST 2009, Created by Jimmy
+
+Copyright (C) 2009 Potix Corporation. All Rights Reserved.
+-->
+<package name="calendar" language="xul/html" depends="zul">		
+	<script src="lang/msgcal.js"/>
+	<widget name="Calendars"/>
+	<widget name="CalendarsDefault"/>
+	<widget name="CalendarsMonth"/>
+	<widget name="DaylongEvent"/>
+	<widget name="DayEvent"/>
+	<widget name="DaylongOfMonthEvent"/>
+	<widget name="DayOfMonthEvent"/>	
+</package>

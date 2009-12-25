@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- lang-addon.xml
+	Purpose:
+		
+	Description:
+		
+	History:
+		Tue Mar 10 14:45:42     2009, Created by jumperchen
+
+Copyright (C) 2008 Potix Corporation. All Rights Reserved.
+-->
+<language-addon>
+	<!-- The name of this addon. It must be unique -->
+	<addon-name>calendar</addon-name>
+	<!-- Specifies what other addon this depends -->
+	<depends>zkmax</depends>
+	<language-name>xul/html</language-name>
+	
+	<version>
+		<version-class>org.zkoss.calendar.Version</version-class>
+		<version-uid>1.1.0-RC</version-uid>
+		<zk-version>5.0.0</zk-version><!-- or later -->
+	</version>
+	
+	<zscript language="Java">
+	import org.zkoss.calendar.event.*;
+	import org.zkoss.calendar.api.*;
+	import org.zkoss.calendar.impl.*;
+	import org.zkoss.calendar.*;
+	</zscript>
+	
+	<component>
+		<component-name>calendars</component-name>
+		<component-class>org.zkoss.calendar.Calendars</component-class>
+		<mold>
+			<mold-name>default</mold-name>
+			<widget-class>calendar.CalendarsDefault</widget-class>
+			<mold-uri>mold/calendarsDefault.js</mold-uri>
+			<css-uri>css/calendar.css.dsp</css-uri>
+		</mold>
+		<mold>
+			<mold-name>month</mold-name>
+			<widget-class>calendar.CalendarsMonth</widget-class>
+			<mold-uri>mold/calendarsMonth.js</mold-uri>
+			<css-uri>css/calendar.css.dsp</css-uri>
+		</mold>
+	</component>
+</language-addon>

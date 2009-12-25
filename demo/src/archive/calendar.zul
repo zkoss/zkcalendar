@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?component name="divtab" macro-uri="divtab.zul"?>
+<?component name="divarrow" macro-uri="divarrow.zul"?>
+<?component name="create" macro-uri="createEvent.zul" inline="true"?>
+<?component name="edit" macro-uri="editEvent.zul" inline="true"?>
+<zk>
+<style src="calendar.css"/>
+<zscript><![CDATA[//@IMPORT
+	import java.util.Calendar;
+	import java.text.SimpleDateFormat;
+]]></zscript>
+	<zscript><![CDATA[
+	List dateTime = new LinkedList();
+	
+	Calendar calendar = Calendar.getInstance();
+	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+	calendar.set(Calendar.HOUR_OF_DAY, 0);
+	calendar.set(Calendar.MINUTE, 0);
+	calendar.set(Calendar.SECOND, 0);
+	
+	for (int i = 0; i < 48; i++) {
+		dateTime.add(sdf.format(calendar.getTime()));
+		calendar.add(Calendar.MINUTE, 30);
+	}
+]]></zscript>
+<zscript><![CDATA[
+// prepare model data
+SimpleDateFormat dataSDF = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+Date today = new Date();
+int mod = today.getMonth() + 1;
+int year = today.getYear() + 1900;
+String date2 = mod > 9 ? year + "/" + mod + "" :  year + "/" + "0" + mod;
+String date1 = --mod > 9 ?  year + "/" + mod + "" :  year + "/" + "0" + mod;
+++mod;
+String date3 = ++mod > 9 ?  year + "/" + mod + "" :  year + "/" + "0" + mod; 
+String[][] evts = new String[][] {
+	// Red Events	
+	new String[]{date1 + "/28 15:00", date1 + "/30 16:30", "#A32929", "#D96666", "Red events: 1"},
+	new String[]{date1 + "/04 13:00", date1 + "/07 15:00", "#A32929", "#D96666", "Red events: 2"},	
+	new String[]{date2 + "/12 13:00", date2 + "/12 17:30", "#A32929", "#D96666", "Red events: 3"},	
+	new String[]{date2 + "/21 08:00", date2 + "/21 12:00", "#A32929", "#D96666", "Red events: 4"},	
+	new String[]{date2 + "/08 13:00", date2 + "/08 15:00", "#A32929", "#D96666", "Red events: 5"},	
+	// Blue Events
+	new String[]{date1 + "/29 03:00", date2 + "/02 06:00", "#3467CE", "#668CD9", "Blue events: 1"},	
+	new String[]{date2 + "/02 10:00", date2 + "/02 12:30", "#3467CE", "#668CD9", "Blue events: 2"},	
+	new String[]{date2 + "/17 14:00", date2 + "/18 16:00", "#3467CE", "#668CD9", "Blue events: 3"},	
+	new String[]{date2 + "/26 00:00", date2 + "/27 00:00", "#3467CE", "#668CD9", "Blue events: 4"},	
+	new String[]{date3 + "/01 14:30", date3 + "/01 17:30", "#3467CE", "#668CD9", "Blue events: 5"},
+	// Purple Events
+	new String[]{date1 + "/29 08:00", date2 + "/03 12:00", "#7A367A", "#B373B3", "Purple events: 1"},
+	new String[]{date2 + "/07 08:00", date2 + "/07 12:00", "#7A367A", "#B373B3", "Purple events: 2"},	
+	new String[]{date2 + "/13 11:00", date2 + "/13 14:30", "#7A367A", "#B373B3", "Purple events: 3"},	
+	new String[]{date2 + "/16 14:00", date2 + "/18 16:00", "#7A367A", "#B373B3", "Purple events: 4"},	
+	new String[]{date3 + "/02 12:00", date3 + "/02 17:00", "#7A367A", "#B373B3", "Purple events: 5"},
+	// Khaki Events
+	new String[]{date1 + "/03 00:00", date1 + "/04 00:00", "#88880E", "#BFBF4D", "Khaki events: 1"},
+	new String[]{date2 + "/04 00:00", date2 + "/07 00:00", "#88880E", "#BFBF4D", "Khaki events: 2"},
+	new String[]{date2 + "/13 05:00", date2 + "/13 07:00", "#88880E", "#BFBF4D", "Khaki events: 3"},
+	new String[]{date2 + "/24 19:30", date2 + "/24 20:00", "#88880E", "#BFBF4D", "Khaki events: 4"},
+	new String[]{date3 + "/03 00:00", date3 + "/04 00:00", "#88880E", "#BFBF4D", "Khaki events: 5"},
+	// Green Events
+	new String[]{date1 + "/28 10:00", date1 + "/28 12:30", "#0D7813", "#4CB052", "Green events: 1"},
+	new String[]{date2 + "/03 00:00", date2 + "/03 05:30", "#0D7813", "#4CB052", "Green events: 2"},
+	new String[]{date2 + "/05 20:30", date2 + "/06 00:00", "#0D7813", "#4CB052", "Green events: 3"},
+	new String[]{date2 + "/23 00:00", date2 + "/25 16:30", "#0D7813", "#4CB052", "Green events: 4"},
+	new String[]{date3 + "/01 08:30", date3 + "/01 19:30", "#0D7813", "#4CB052", "Green events: 5"}
+};
+
+// fill the events' data
+SimpleCalendarModel cm = new SimpleCalendarModel();
+
+for (int i = 0; i < evts.length; i++) {
+	SimpleCalendarEvent sce = new SimpleCalendarEvent();
+	sce.setBeginDate(dataSDF.parse(evts[i][0]));
+	sce.setEndDate(dataSDF.parse(evts[i][1]));
+	sce.setHeaderColor(evts[i][2]);
+	sce.setContentColor(evts[i][3]);
+	// ce.setTitle() if any, otherwise, the time stamp is assumed.
+	sce.setContent(evts[i][4]);
+	cm.add(sce);
+}
+]]></zscript>
+<borderlayout id="main">
+<center border="none">
+<calendars firstDayOfWeek="Sunday" timeZone="Taiwan=GMT+8,Sweden=GMT+1" model="${cm}" 
+	 mold="default" id="cal">
+	<attribute name="onEventCreate"><![CDATA[
+		CalendarsEvent evt = (CalendarsEvent) event;
+		int left = evt.getX();
+		int top = evt.getY();
+		
+		if (top + 245 > evt.getDesktopHeight())
+			top = evt.getDesktopHeight() - 245;
+		if (left + 410 > evt.getDesktopWidth())
+			left = evt.getDesktopWidth() - 410;
+		createEvent.setLeft(left + "px");
+		createEvent.setTop(top + "px");
+		
+		
+		boolean isAllday = (evt.getBeginDate().getTime() - evt.getEndDate().getTime()) % (24*60*60*1000) == 0;
+		createEvent.getFellow("ppbegin").setTimeZone(cal.getDefaultTimeZone());
+		createEvent.getFellow("ppbegin").setValue(evt.getBeginDate());
+		createEvent.getFellow("ppend").setTimeZone(cal.getDefaultTimeZone());
+		createEvent.getFellow("ppend").setValue(evt.getEndDate());
+		createEvent.getFellow("ppallDay").checked = isAllday;
+		createEvent.getFellow("pplocked").checked = false;
+		createEvent.getFellow("ppbt").visible = !isAllday;
+		createEvent.getFellow("ppet").visible = !isAllday;
+		
+		SimpleDateFormat create_sdf = new SimpleDateFormat("HH:mm");
+		create_sdf.setTimeZone(cal.getDefaultTimeZone());
+						
+		Calendar calendar = Calendar.getInstance(org.zkoss.util.Locales.getCurrent());
+		String[] times = create_sdf.format(evt.getBeginDate()).split(":");		
+		int hours = Integer.parseInt(times[0])*2;
+		int mins = Integer.parseInt(times[1]);
+		if (mins >= 30) hours++;
+		createEvent.getFellow("ppbt").setSelectedIndex(hours);
+		times = create_sdf.format(evt.getEndDate()).split(":");
+		hours = Integer.parseInt(times[0])*2;
+		mins = Integer.parseInt(times[1]);
+		if (mins >= 30) hours++;
+		createEvent.getFellow("ppet").setSelectedIndex(hours);
+		
+		createEvent.visible = true;
+		
+		createEvent.setAttribute("calendars", cal);
+		createEvent.setAttribute("calevent", evt);
+		evt.stopClearGhost();
+	]]></attribute>
+	<attribute name="onEventEdit"><![CDATA[
+	    CalendarsEvent evt = (CalendarsEvent) event;
+		int left = evt.getX();
+		int top = evt.getY();
+	    
+		if (top + 245 > evt.getDesktopHeight())
+			top = evt.getDesktopHeight() - 245;
+		if (left + 410 > evt.getDesktopWidth())
+			left = evt.getDesktopWidth() - 410;
+		editEvent.setLeft(left + "px");
+		editEvent.setTop(top + "px");
+
+		
+		CalendarEvent ce = evt.getCalendarEvent();
+		boolean isAllday = (ce.getBeginDate().getTime() - ce.getEndDate().getTime()) % (24*60*60*1000) == 0;
+		
+		editEvent.getFellow("ppbegin").setTimeZone(cal.getDefaultTimeZone());
+		editEvent.getFellow("ppbegin").setValue(ce.getBeginDate());
+		editEvent.getFellow("ppend").setTimeZone(cal.getDefaultTimeZone());
+		editEvent.getFellow("ppend").setValue(ce.getEndDate());
+		editEvent.getFellow("ppallDay").checked = isAllday;
+		editEvent.getFellow("pplocked").checked = ce.isLocked();
+		editEvent.getFellow("ppbt").visible = !isAllday;
+		editEvent.getFellow("ppet").visible = !isAllday;
+		editEvent.getFellow("ppcnt").value = ce.getContent();
+		
+		SimpleDateFormat edit_sdf = new SimpleDateFormat("HH:mm");
+						edit_sdf.setTimeZone(cal.getDefaultTimeZone());
+						
+		Calendar calendar = Calendar.getInstance(org.zkoss.util.Locales.getCurrent());
+		String[] times = edit_sdf.format(ce.getBeginDate()).split(":");
+		
+		int hours = Integer.parseInt(times[0])*2;
+		int mins = Integer.parseInt(times[1]);
+		if (mins >= 30) hours++;
+		editEvent.getFellow("ppbt").setSelectedIndex(hours);
+		times = edit_sdf.format(ce.getEndDate()).split(":");
+		hours = Integer.parseInt(times[0])*2;
+		mins = Integer.parseInt(times[1]);
+		if (mins >= 30) hours++;
+		editEvent.getFellow("ppet").setSelectedIndex(hours);
+		String colors = ce.getHeaderColor() + "," + ce.getContentColor();
+		int index = 0;
+		if ("#3467CE,#668CD9".equals(colors))
+			index = 1;
+		else if ("#0D7813,#4CB052".equals(colors))
+			index = 2;
+		else if ("#88880E,#BFBF4D".equals(colors))
+			index = 3;
+		else if ("#7A367A,#B373B3".equals(colors))
+			index = 4;
+		
+		switch(index) {
+		case 0: editEvent.getFellow("ppcolor").style = "color:#D96666;font-weight: bold;"; break;
+		case 1: editEvent.getFellow("ppcolor").style = "color:#668CD9;font-weight: bold;"; break;
+		case 2: editEvent.getFellow("ppcolor").style = "color:#4CB052;font-weight: bold;"; break;
+		case 3: editEvent.getFellow("ppcolor").style = "color:#BFBF4D;font-weight: bold;"; break;
+		case 4: editEvent.getFellow("ppcolor").style = "color:#B373B3;font-weight: bold;"; break;
+		}
+		editEvent.getFellow("ppcolor").setSelectedIndex(index);
+		editEvent.visible = true;
+		
+		// store for the edit marco component.
+		editEvent.setAttribute("ce", ce);
+		editEvent.setAttribute("calendars", cal);
+	]]></attribute>
+	<attribute name="onEventUpdate">
+	CalendarsEvent evt = (CalendarsEvent) event;
+	SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/d");
+	sdf1.setTimeZone(cal.getDefaultTimeZone());
+	StringBuffer sb = new StringBuffer("Update... from ");
+	sb.append(sdf1.format(evt.getCalendarEvent().getBeginDate()));
+	sb.append(" to ");
+	sb.append(sdf1.format(evt.getBeginDate()));
+	updateMsg.getFirstChild().getNextSibling().setValue(sb.toString());
+	
+	int left = evt.getX();
+		int top = evt.getY();
+		if (top + 100 > evt.getDesktopHeight())
+			top = evt.getDesktopHeight() - 100;
+		if (left + 330 > evt.getDesktopWidth())
+			left = evt.getDesktopWidth() - 330;
+	updateMsg.open(left, top);
+	timer.start();
+	org.zkoss.calendar.Calendars cal = (org.zkoss.calendar.Calendars)evt.getTarget();
+	SimpleCalendarModel m = (SimpleCalendarModel) cal.getModel();
+	SimpleCalendarEvent sce = (SimpleCalendarEvent) evt.getCalendarEvent();
+	sce.setBeginDate(evt.getBeginDate());
+	sce.setEndDate(evt.getEndDate());
+	m.update(sce);
+	</attribute>
+	<toolbar sclass="calendar-toolbar">
+		<div class="float-left">
+			<hbox>
+				<divarrow type="arrow-left" command='cal.previousPage();Events.postEvent("onCreate", label, null);syncModel();'/>
+				<divarrow type="arrow-right" command='cal.nextPage();Events.postEvent("onCreate", label, null);syncModel();'/>
+			<div>
+			<button mold="os" label="today" onClick='cal.setCurrentDate(java.util.Calendar.getInstance(cal.getDefaultTimeZone()).getTime());Events.postEvent("onCreate", label, null);syncModel();'/>
+			<button mold="os" label="Switch TimeZone">
+				<attribute name="onClick">
+					Map zone = cal.getTimeZones();
+					if(!zone.isEmpty()) {
+						Map.Entry me = (Map.Entry) zone.entrySet().iterator().next();
+						cal.removeTimeZone((TimeZone)me.getKey());
+						cal.addTimeZone((String)me.getValue(),(TimeZone)me.getKey());
+					}
+					syncModel();
+				</attribute>
+			</button>
+			<span id="FDOW" onCreate='self.visible = "month".equals(cal.getMold()) || cal.days == 7'>
+			First Day of Week:
+			<listbox mold="select" onSelect="cal.setFirstDayOfWeek(self.getSelectedItem().getLabel());syncModel();" onCreate="self.selectedIndex = 0">
+				<listitem forEach="Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday" label="${each}" />
+		    </listbox>
+		    </span>
+		    <separator orient="vertical"/>
+			<label id="label">
+				<attribute name="onCreate">
+					Date b = cal.getBeginDate();
+					Date e = cal.getEndDate();
+					java.text.SimpleDateFormat sdfV = new java.text.SimpleDateFormat("yyyy/MMM/dd", org.zkoss.util.Locales.getCurrent());
+					sdfV.setTimeZone(cal.getDefaultTimeZone());
+					self.setValue(sdfV.format(b) + " - " + sdfV.format(e));
+				</attribute>
+			</label>
+			<toolbarbutton label="Refresh" class="refresh" onClick='cal.invalidate();'/>
+			</div>
+			</hbox>
+		</div>
+		<div class="float-right">
+			<hbox>
+				<divtab command='cal.mold = "default";cal.days = 1;Events.postEvent("onCreate", label, null);FDOW.visible=false;syncModel();' text="Day"/>
+				<divtab command='cal.mold = "default";cal.days = 7;Events.postEvent("onCreate", label, null);FDOW.visible=true;syncModel();' text="Week"/>
+				<divtab command='cal.mold = "default";cal.days = 5;Events.postEvent("onCreate", label, null);FDOW.visible=false;syncModel();' text="5 Days"/>
+				<divtab command='cal.mold = "month";Events.postEvent("onCreate", label, null);FDOW.visible=true;syncModel();' text="Month"/>
+			</hbox>
+		</div>
+	</toolbar>
+</calendars>
+</center>
+<south open="false" size="300px" flex="true" title="Events Analysis" collapsible="true">
+<zscript><![CDATA[
+	//@DECLARATION
+	void syncModel() {
+		List list = cm.get(cal.getBeginDate(), cal.getEndDate(), null);
+		double red, blue, green, purple, khaki;
+		int size = list.size();
+		for (Iterator it = list.iterator(); it.hasNext();) {
+			String color = ((CalendarEvent)it.next()).getContentColor();
+			if ("#D96666".equals(color))
+				red += 1;
+			else if ("#668CD9".equals(color))
+				blue += 1;
+			else if ("#4CB052".equals(color))
+				green += 1;
+			else if ("#B373B3".equals(color))
+				purple += 1;
+			else
+				khaki += 1;
+		}
+		 PieModel model = new SimplePieModel();
+		 model.setValue("Red Events", new Double(size > 0 ? (red/size)*100 : 0));
+		 model.setValue("Blue Events", new Double(size > 0 ? (blue/size)*100 : 0));
+		 model.setValue("Green Events", new Double(size > 0 ? (green/size)*100: 0));
+		 model.setValue("Khaki Events", new Double(size > 0 ? (khaki/size)*100: 0));
+		 model.setValue("Purple Events", new Double(size > 0 ? (purple/size)*100 : 0));
+		  	mychart.setModel(model);
+	}
+]]></zscript>
+	<chart id="mychart" title="Current Events Chart" width="600" height="250"
+		type="pie" fgAlpha="128" onCreate="syncModel()"/>
+</south>
+</borderlayout>
+<create/>
+<edit/>
+
+<popup id="updateMsg" width="320px" action="onshow:anima.appear(#{self});">
+<image src="~./zk/img/progress2.gif"/>
+<label/>
+<timer id="timer" delay="1000" running="false">
+	<attribute name="onTimer">
+		updateMsg.close();
+	</attribute>
+</timer>
+</popup>
+</zk>
