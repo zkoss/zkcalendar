@@ -150,7 +150,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		}
 	},
 	
-	clearGhost: function () {		
+	clearGhost: function () {	
 		if (this.$n()) {
 			if (this._ghost[this.uuid])
 				this._ghost[this.uuid]();

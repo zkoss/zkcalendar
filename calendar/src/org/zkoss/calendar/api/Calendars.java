@@ -103,7 +103,7 @@ public interface Calendars extends org.zkoss.zul.impl.api.XulElement {
 	public List<CalendarEvent> getEvent(Date beginDate);
 
 	/**
-	 * @deprecated As of release 1.0.0_50
+	 * @deprecated As of release 2.0-RC
 	 * Returns the event renderer used for {@link CalendarEvent} to draw its
 	 * outline (i.e. HTML), like the DSP renderer of ZK component.
 	 * <p>
@@ -112,7 +112,7 @@ public interface Calendars extends org.zkoss.zul.impl.api.XulElement {
 	public EventRender getEventRender();
 
 	/**
-	 * @deprecated As of release 1.0.0_50
+	 * @deprecated As of release 2.0-RC
 	 * Sets the event renderer.
 	 */
 	public void setEventRender(EventRender render);

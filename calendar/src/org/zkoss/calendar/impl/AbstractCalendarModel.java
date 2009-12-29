@@ -39,7 +39,7 @@ abstract public class AbstractCalendarModel implements CalendarModel, Serializab
 	private transient List<CalendarDataListener> _listeners = new LinkedList<CalendarDataListener>();
 		
 	/** 
-	 * @deprecated As of release 1.0.0_50, replaced with {@link #fireEvent(int type, CalendarEvent e)}
+	 * @deprecated As of release 2.0-RC, replaced with {@link #fireEvent(int type, CalendarEvent e)}
 	 * Fires a {@link CalendarDataEvent} for all registered listener
 	 * (thru {@link #addCalendarDataListener}.
 	 *
@@ -57,7 +57,7 @@ abstract public class AbstractCalendarModel implements CalendarModel, Serializab
 		fireEvent(type, e, null);
 	}
 	/** 
-	 * @deprecated As of release 1.0.0_50, replaced with {@link #fireEvent(int type, CalendarEvent e, TimeZone timezone)}
+	 * @deprecated As of release 2.0-RC, replaced with {@link #fireEvent(int type, CalendarEvent e, TimeZone timezone)}
 	 * Fires a {@link CalendarDataEvent} for all registered listener
 	 * (thru {@link #addCalendarDataListener}.
 	 *

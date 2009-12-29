@@ -30,8 +30,8 @@ calendar.DayEvent = zk.$extends(zul.Widget, {
 			contentColor = ce.contentColor,
 			headerStyle = headerColor ? ' style="background:' + headerColor + '"' : '' ,
 			contentStyle = contentColor ? ' style="background:' + contentColor + '"' : '',
-			bd = this.parent.getLocalTime(ce.beginDate),//fixed for display
-			ed = this.parent.getLocalTime(ce.endDate),	
+			bd = ce.bd,
+			ed = ce.ed,	
 			title = ce.title ? ce.title: 
 					(ed.getTime() - bd.getTime() < 60*60*1000) ? 
 							(zk.fmt.Date.formatDate(bd,'HH:mm') + ' - ' + ce.content):
@@ -82,22 +82,20 @@ calendar.DayEvent = zk.$extends(zul.Widget, {
 			
 	_calculate: function() {
 		var parent = this.parent,
-			pbd = parent.getLocalTime(parent._beginDate),
 			ONE_DAY = parent.DAYTIME,
-			date = parent.getLocalTime(this.event.beginDate);	
+			date = new Date(this.event.bd.getTime());	
 	
 		date.setHours(0);
 		date.setMinutes(0);
 		date.setSeconds(0);
 		date.setMilliseconds(0);			
 	
-		this._preOffset = (date.getTime() - pbd) / ONE_DAY;
+		this._preOffset = (date.getTime() - parent._localBd.getTime()) / ONE_DAY;
 	},
 		
 	update: function() {
 		var node = jq(this.$n()),
 			ce = this.event,
-			parent = this.parent,
 			zcls = ce.zclass,
 			resizer = zcls + "-resizer",			
 			hd = jq(this.$n('hd')),
@@ -108,8 +106,8 @@ calendar.DayEvent = zk.$extends(zul.Widget, {
 			contentColor = ce.contentColor,
 			headerStyle = headerColor ? 'background:' + headerColor : '' ,
 			contentStyle = contentColor ? 'background:' + contentColor : '',
-			bd = parent.getLocalTime(ce.beginDate),
-			ed = parent.getLocalTime(ce.endDate),	
+			bd = ce.bd,
+			ed = ce.ed,	
 			title = ce.title ? ce.title: 
 					(ed.getTime() - bd.getTime() < 60*60*1000) ? 
 							(zk.fmt.Date.formatDate(bd,'HH:mm') + ' - ' + ce.content):

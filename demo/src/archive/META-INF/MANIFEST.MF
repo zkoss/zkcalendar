@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Specification-Title: ZK Calendars DEMO
-Specification-Version: 1.0.0
+Specification-Version: 2.0-RC
 Specification-Vendor: Potix Corporation
 Implementation-Title: org.zkoss.calendar.demo
 Implementation-URL: http://www.zkoss.org/
-Implementation-Version: 1.0.0
+Implementation-Version: 2.0-RC
 Implementation-Vendor: Potix Corporation

@@ -88,11 +88,11 @@ calendar.DaylongEvent = zk.$extends(zul.Widget, {
 		
 	_calculate: function() {
 		var parent = this.parent,
-			pbd = parent.getLocalTime(parent._beginDate),
-			ped = parent.getLocalTime(parent._endDate),
+			pbd = parent._localBd,
+			ped = parent._localEd,
 			ONE_DAY = parent.DAYTIME,
-			bd = parent.getLocalTime(this.event.beginDate),
-			ed = parent.getLocalTime(this.event.endDate);
+			bd = new Date(this.event.bd.getTime()),
+			ed = new Date(this.event.ed.getTime());
         
 		if (bd < pbd) 
 			bd = new Date(pbd.getTime());

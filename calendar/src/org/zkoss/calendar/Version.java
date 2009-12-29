@@ -24,5 +24,5 @@ package org.zkoss.calendar;
 public class Version {
 	/** Returns the version UID.
 	 */
-	public static final String UID = "1.1.0-RC";
+	public static final String UID = "2.0-RC";
 }

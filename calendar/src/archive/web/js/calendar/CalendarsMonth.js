@@ -196,12 +196,17 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			var events = this._events[i];
 			for (var k = events.length; k--;) {
 				var event = events[k],
-					dayEvent;							
-				event.beginDate = this.getLocalTime(new Date(zk.parseInt(event.beginDate)));
-				event.endDate = this.getLocalTime(new Date(zk.parseInt(event.endDate)));
+					dayEvent,
+					bd = this.getLocalTime(new Date(zk.parseInt(event.beginDate))),
+					ed = this.getLocalTime(new Date(zk.parseInt(event.endDate)));
+									
+				event.beginDate = bd;
+				event.endDate = ed;
 				event.isLocked = event.isLocked == 'true' ? true : false;				
 				
-				if (this._isExceedOneDay(event.beginDate,event.endDate)) 
+				if (bd > this._endDate || ed < this._beginDate) continue;
+				
+				if (this._isExceedOneDay(bd,ed)) 
 					dayEvent = new calendar.DaylongOfMonthEvent({event:event});	
 				else dayEvent = new calendar.DayOfMonthEvent({event:event});
 				
@@ -573,13 +578,13 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			
 			//remove before node
 			var list = this._eventWeekSet[this._weekDates.indexOf(node.startWeek)];								
-			list.splice(list.indexOf(node),1);
+			list.$remove(node);
 			var cloneNodes = childWidget.cloneNodes;
 			if (cloneNodes){
 				for(var n = cloneNodes.length; n--;){
 					var cloneNode = cloneNodes[n];
 					list = this._eventWeekSet[this._weekDates.indexOf(cloneNode.startWeek)];						
-					list.splice(list.indexOf(cloneNode),1);
+					list.$remove(cloneNode);
 					jq(cloneNode).remove();
 				}
 			}			
@@ -587,8 +592,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			if (event.endDate < this._beginDate ||  event.beginDate > this._endDate) {				
 				this.removeChild(childWidget);  
 				continue;
-			}
-			
+			}			
 			
 			if (this._isExceedOneDay(event.beginDate, event.endDate)) {
 				if (childWidget.className == 'calendar.DayOfMonthEvent') {//day to daylong	
@@ -625,13 +629,13 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				node = childWidget.$n();
 			
 			var list = this._eventWeekSet[this._weekDates.indexOf(node.startWeek)];								
-			list.splice(list.indexOf(node),1);
+			list.$remove(node);
 			var cloneNodes = childWidget.cloneNodes;	
 			if (cloneNodes) {
 				for (var n = cloneNodes.length; n--;) {
 					var cloneNode = cloneNodes[n];
 					list = this._eventWeekSet[this._weekDates.indexOf(cloneNode.startWeek)];						
-					list.splice(list.indexOf(cloneNode),1);
+					list.$remove(cloneNode);
 				}
 			}			
 			this.removeChild(childWidget);      

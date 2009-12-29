@@ -129,10 +129,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			
 			this._beginDate = new Date(this.bd);
 			this._endDate = new Date(this.ed);
+			this._localBd = this.getLocalTime(this._beginDate),
+			this._localEd = this.getLocalTime(this._endDate);
 			var hdChildren = this.$n('header').children,
 				timeRows = this.cntRows.cells;	
 			//reset time
-			if (!oldZones || !oldZones.$equals(this._zonesOffset)) return;
+			if (!oldZones || oldZones.$equals(this._zonesOffset)) return;
 			
 			for (var i = this.ts; i--;) {
 				var index = this.ts - i - 1,
@@ -164,7 +166,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	
 	_prepareData: function () {				
 		this._captionByTimeOfDay = this.captionByTimeOfDay ? jq.evalJSON(this.captionByTimeOfDay): null;			
-		
 		Date.prototype.getDOY = function() {//js day of year
 			var onejan = new Date(this.getFullYear(),0,1);			
 			return Math.floor((this - onejan) / 86400000);
@@ -252,7 +253,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				event.endDate = new Date(zk.parseInt(event.endDate));								
 				event.isLocked = event.isLocked == 'true' ? true: false;	
 				
-				if (this._isExceedOneDay(event.beginDate,event.endDate)) {
+				var bd = this.getLocalTime(event.beginDate),
+					ed = this.getLocalTime(event.endDate);
+				event.bd = bd;
+				event.ed = ed;
+					
+				if (bd > this._localEd || ed < this._localBd) continue;
+					
+				if (this._isExceedOneDay(bd,ed)) {
 					var dayEvent = new calendar.DaylongEvent({event:event});					
 					this._daylongEvents.push(dayEvent);	
 				} else {
@@ -327,7 +335,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			var dayEvent = this._dayEvents[i];
 			this._daySpace[dayEvent._preOffset].push(dayEvent);
 		}
-		
 		this.fixPosition();		
 	},
 	
@@ -399,7 +406,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		
 	_updateDateRange: function () {
 		this._beginDate = new Date(this.bd);
-		this._endDate = new Date(this.ed);
+		this._endDate = new Date(this.ed);		
+		this._localBd = this.getLocalTime(this._beginDate),
+		this._localEd = this.getLocalTime(this._endDate);
 			
 		this._captionByDate = this.captionByDate ? jq.evalJSON(this.captionByDate): null;
 		if(!this.$n())return;
@@ -453,11 +462,18 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			event.beginDate = new Date(zk.parseInt(event.beginDate));
 			event.endDate = new Date(zk.parseInt(event.endDate));
 			event.isLocked = event.isLocked == 'true' ? true : false;	
+			
+			var dayEvent,
+				bd = this.getLocalTime(event.beginDate),
+				ed = this.getLocalTime(event.endDate);
+				
+			event.bd = bd;
+			event.ed = ed;
+			
 			//over range
-			if (event.endDate < this._beginDate ||  event.beginDate > this._endDate)
-				continue;			
-			var dayEvent;
-			if (this._isExceedOneDay(event.beginDate,event.endDate)){
+			if (bd > this._localEd || ed < this._localBd) continue;			
+				
+			if (this._isExceedOneDay(bd,ed)){
 				dayEvent = new calendar.DaylongEvent({event:event});					
 				this._daylongEvents.push(dayEvent);	
 				addDaylong = true;
@@ -487,22 +503,28 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			event.beginDate = new Date(zk.parseInt(event.beginDate));
 			event.endDate = new Date(zk.parseInt(event.endDate));
 			event.isLocked = event.isLocked == 'true' ? true : false;
+			
+			var bd = this.getLocalTime(event.beginDate),
+				ed = this.getLocalTime(event.endDate);
+			event.bd = bd;
+			event.ed = ed;
+			
 			//over range
-			if (event.endDate < this._beginDate ||  event.beginDate > this._endDate) {
+			if (bd > this._localEd || ed < this._localBd) {
 				if (childWidget.className == 'calendar.DayEvent') {
-					this._dayEvents.splice(this._dayEvents.indexOf(childWidget),1);
+					this._dayEvents.$remove(childWidget);
 					modDay = true;
 				} else {
-					this._daylongEvents.splice(this._daylongEvents.indexOf(childWidget),1);	
+					this._daylongEvents.$remove(childWidget);	
 					modDaylong = true;
 				}
 				this.removeChild(childWidget);     
 				continue;
-			}
+			}			
 			
-			if (this._isExceedOneDay(event.beginDate,event.endDate)) {
+			if (this._isExceedOneDay(bd,ed)) {
 				if (childWidget.className == 'calendar.DayEvent'){//day to daylong
-					this._dayEvents.splice(this._dayEvents.indexOf(childWidget),1);		
+					this._dayEvents.$remove(childWidget);		
 					this.removeChild(childWidget); 					
 					
 					var daylongEvent = new calendar.DaylongEvent({event:event});
@@ -516,7 +538,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					modDaylong = true;
 				}					
 			} else if (childWidget.className == 'calendar.DaylongEvent') {//daylong to day
-					this._daylongEvents.splice(this._daylongEvents.indexOf(childWidget),1);		
+					this._daylongEvents.$remove(childWidget);		
 					this.removeChild(childWidget); 					
 				
 					var dayEvent = new calendar.DayEvent({event:event});
@@ -549,10 +571,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			var childWidget = zk.Widget.$(event.id);
 			
 			if (childWidget.className == 'calendar.DayEvent') {
-				this._dayEvents.splice(this._dayEvents.indexOf(childWidget),1);	
+				this._dayEvents.$remove(childWidget);
 				rmDay = true;
-			} else {
-				this._daylongEvents.splice(this._daylongEvents.indexOf(childWidget),1);	
+			} else {				
+				this._daylongEvents.$remove(childWidget);	
 				rmDaylong = true;
 			}
 			this.removeChild(childWidget);      
@@ -912,7 +934,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			var list = this._daySpace[i];
 			if(!list.length)continue;
 			var data = [];
-			for (var n = 0; n < 48; n++) 
+			for (var n = 48; n--;) 
 				data[n] = [];			
 			for (var k = list.length; k--;) {
 				var childWidget = list[k],
@@ -923,7 +945,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					
 				jq(target).append(ce);	
 				ce.style.visibility = "";
-				
 				var bd = this.fixTimeZoneFromServer(new Date(event.beginDate.getTime()), tzOffset), 
 					ed = this.fixTimeZoneFromServer(new Date(event.endDate.getTime()), tzOffset);
 				
@@ -973,8 +994,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				}
 			}
 			
-			// fix width
+			this.clearGhost();
 			
+			// fix width			
 			var childWidget = list[list.length - 1],
 				target = weekDay[childWidget._preOffset].firstChild;
 				
@@ -1102,7 +1124,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	},
 	
 	_ghostdrag: function (dg, ofs, evt) {
-		
 		var cnt = dg.node,
 			widget = dg.control,
 			targetWidget = zk.Widget.$(evt.domEvent),
@@ -1330,13 +1351,16 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
         var widget = dg.control,
 			cnt = dg.handle, 
 			row = widget.cntRows,
-			hgh = dg._zoffs.ph;
+			hgh = dg._zoffs.ph,
+			gostNode = dg.node;
         
         if (dg._zevt) {
+			gostNode.parent = jq(gostNode.parentNode);
             dg._zdata = {
                 rows: (dg._zevt.offsetTop - dg.node.offsetTop) / hgh,
                 cols: dg._zevt.parentNode.parentNode.cellIndex -
-                dg.node.parentNode.parentNode.cellIndex
+                dg.node.parentNode.parentNode.cellIndex,
+				ghostNode: gostNode
             };
             if (dg._zrz) {
                 dg._zdata.dur = (dg.node.offsetHeight - dg._zevt.offsetHeight) / hgh;
@@ -1345,13 +1369,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
                 else 
                     dg._zdata.dur = Math.ceil(dg._zdata.dur);
             }
-        }
-        else {
+        }  else {
             dg._zdata = {
                 rows: dg.node.offsetTop / hgh,
                 cols: dg.node.parentNode.parentNode.cellIndex - widget.ts,
                 dur: Math.ceil(dg.node.offsetHeight / hgh),
-				ghostNode: dg.node
+				ghostNode: gostNode
             };
         }
 	},
@@ -1360,6 +1383,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		var widget = dg.control;
 		if (dg && dg._zdata) {
 			clearInterval(widget.run);
+			//keep ghostNode not be disappear
+			var ghostNode = dg._zdata.ghostNode;
+			ghostNode.parent.append(jq(ghostNode));
+			
 			if (dg._zrz) {
 				if (dg._zdata.dur) {
 					var ce = dg._zevt,
@@ -1384,6 +1411,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 						delete widget._ghost[widget.uuid];
 					};
 				} else {
+					dg._zevt.style.visibility = "";
 					jq('#'+widget.uuid+'-dd').remove();
 				}
 				dg._zrz = false;
@@ -1414,13 +1442,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 						delete widget._ghost[widget.uuid];
 					};
 				} else {
+					dg._zevt.style.visibility = "";
 					jq('#'+widget.uuid+'-dd').remove();
 				}
 			} else {
-				//keep ghostNode not be disappear
-				var ghostNode = dg._zdata.ghostNode;				
-				ghostNode.parent.append(jq(ghostNode));				
-				
 				var cols = dg._zdata.cols,
 					rows = dg._zdata.rows,
 					dur = dg._zdata.dur + rows,
@@ -1446,12 +1471,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				};
 			}
 			// fix opera jumping
-			if (zk.opera) cnt.scrollTop = widget._scrollInfo[widget.uuid];
+			if (zk.opera) dg.handle.scrollTop = widget._scrollInfo[widget.uuid];
 			dg._zchanged = dg._zecnt = dg._zrzoffs = dg._zrs = dg._zdata = dg._zcells = dg._zoffs = dg._zevt = null;
 		}
 	},
 	
-	_resetPosition: function (faker, widget) {
+	_resetPosition: function (faker, widget) {		
 		faker.style.width = "100%";
 		faker.style.left = "0px";
 		jq(faker).addClass(widget.getZclass() + "-evt-ghost");

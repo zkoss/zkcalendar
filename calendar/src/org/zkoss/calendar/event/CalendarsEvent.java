@@ -123,7 +123,7 @@ public class CalendarsEvent extends Event {
 	public int getDesktopHeight() {
 		return _dthgh;
 	}
-	/**@since 1.0.0_50
+	/**@since 2.0-RC
 	 * do smart update, send an attribute to js 
 	 * @param target
 	 * @param isClear

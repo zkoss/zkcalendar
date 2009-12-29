@@ -19,7 +19,7 @@ function (out) {
 		zcls = this.getZclass(),
 		toolbar = this.firstChild,
 		bdTime = this._beginDate.getTime(),
-		current = new Date(this._currentDate.getTime()),
+		current = new Date(),
 		weekend = [-1, -1],
 		ONE_DAY = this.DAYTIME,
 		AWEEK = this.AWEEK;

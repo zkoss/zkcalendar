@@ -137,13 +137,17 @@
 						</button>
 						<button mold="os" label="Delete">
 							<attribute name="onClick">
-				if (Messagebox.show("Are you sure to delete the event!", "Question", Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION)
-					== Messagebox.OK) {
-					org.zkoss.calendar.Calendars cals = (org.zkoss.calendar.Calendars) editEvent.getAttribute("calendars");
-					SimpleCalendarEvent ce = (SimpleCalendarEvent) editEvent.getAttribute("ce");
-					((SimpleCalendarModel)cals.getModel()).remove(ce);
-					syncModel();
-				}
+				Messagebox.show("Are you sure to delete the event!", "Question", Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION,
+  					new EventListener() {
+     					public void onEvent(Event evt) {
+     						if(((Integer)evt.getData()).intValue() != Messagebox.OK)	return;				
+        					org.zkoss.calendar.Calendars cals = (org.zkoss.calendar.Calendars) editEvent.getAttribute("calendars");
+							SimpleCalendarEvent ce = (SimpleCalendarEvent) editEvent.getAttribute("ce");
+							((SimpleCalendarModel)cals.getModel()).remove(ce);
+							syncModel();         				
+      					}
+   					}
+				);
 				editEvent.visible = false;
 			</attribute>
 						</button>

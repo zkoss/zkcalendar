@@ -43,7 +43,7 @@ public class CalendarDataEvent {
 	private final CalendarEvent _e;
 	
 	/** Contructor.
-	 *@deprecated As of release 1.0.0_50, replaced with {@link #CalendarDataEvent(CalendarModel model, int type, CalendarEvent e, TimeZone timezone)}
+	 *@deprecated As of release 2.0-RC, replaced with {@link #CalendarDataEvent(CalendarModel model, int type, CalendarEvent e, TimeZone timezone)}
 	 * @param type one of {@link #CONTENTS_CHANGED},
 	 * {@link #INTERVAL_ADDED}, {@link #INTERVAL_REMOVED}.
 	 */
