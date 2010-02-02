@@ -537,8 +537,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			if (event.zoneEd < this.zoneBd ||  event.zoneBd > this.zoneEd) {				
 				this.removeChild(childWidget);  
 				continue;
-			}			
-			
+			}
 			if (this.isExceedOneDay_(event.zoneBd, event.zoneEd)) {
 				if (childWidget.className == 'calendar.DayOfMonthEvent') {//day to daylong	
 					this.removeChild(childWidget);	
@@ -621,7 +620,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				y = p[1] - offs[1],
 				cols = Math.floor(x/width),
 				rows = Math.floor(y/height),
-				bd = new Date(widget.zoneBd.getTime() + (7 * rows + cols) * widget.DAYTIME),
+				bd = new Date(widget._beginDate.getTime() + (7 * rows + cols) * widget.DAYTIME),
 				zinfo = [];
 			
 			for (var left = 0, n = td; n;
@@ -1096,22 +1095,23 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				var zcls = widget.getZclass(),
 					targetWidget = zk.Widget.$(dg._zevt),
 					event = targetWidget.event,
-					bd = new Date(widget._beginDate.getTime() + (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]) * (widget.DAYTIME)),
-					bd1 = new Date(event.beginDate.getTime()),
+					tzOffset = widget.tz,
+					bd = widget.fixTimeZoneFromServer(
+						new Date(widget._beginDate.getTime() + (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]) * (widget.DAYTIME)), tzOffset),
+					bd1 = widget.fixTimeZoneFromServer(new Date(event.beginDate.getTime()), tzOffset),
 					ddClass = zcls + '-evt-dd';
 
 				jq(targetWidget.$n()).removeClass(ddClass);
-						
 				var cloneNodes = targetWidget.cloneNodes;
 				if (cloneNodes) 
 					for (var n = cloneNodes.length; n--;) 
 						jq(cloneNodes[n]).removeClass(ddClass);
-					
+				
 				bd.setHours(bd1.getHours());
 				bd.setMinutes(bd1.getMinutes());
 				bd.setSeconds(bd1.getSeconds());
-				bd1.setMilliseconds(0);
 				bd.setMilliseconds(0);
+				bd1.setMilliseconds(0);				
 				var offs = bd.getTime() - bd1.getTime();
 
 				if (offs) {
@@ -1119,7 +1119,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					ce.style.visibility = "hidden";
 
 					var ed = new Date(event.endDate.getTime());
-					ed.setMilliseconds(0);
+					ed.setMilliseconds(0);					
 					
 					widget.fire("onEventUpdate", {
 						data: [
@@ -1144,8 +1144,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					r2 = r < r1 ? r : r1,
 					b = (dg._zoffs.s * r2 + c2) * widget.DAYTIME;
 
-				bd = new Date(widget._beginDate.getTime() + b);
-				var ed = new Date(bd.getTime() + dg._zpos1[2] * widget.DAYTIME);
+				var bd = new Date(widget._beginDate.getTime() + b),
+					ed = new Date(bd.getTime() + dg._zpos1[2] * widget.DAYTIME);
 
 				// clean
 				bd.setMilliseconds(0);

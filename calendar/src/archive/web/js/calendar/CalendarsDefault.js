@@ -856,14 +856,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	
 	_getTimeOffset: function (d, dur, dur2) {
 		var d1 = new Date(d.getTime()),
-			index = dur2 != null ? dur2 : this.getTimeIndex(d) + dur;
+			index = dur2 ? dur2 : this.getTimeIndex(d) + dur;
 
 		d1.setHours(Math.floor(index/2));
 		d1.setMinutes(index%2 ? 30: 0);
 		d1.setMilliseconds(0);
 		d.setMilliseconds(0);
 
-		return dur2 != null ? d1.getTime() - d.getTime() : d.getTime() - d1.getTime();
+		return dur2 ? d1.getTime() - d.getTime() : d.getTime() - d1.getTime();
 	},	
 	
 	fixPosition: function () {		

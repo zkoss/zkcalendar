@@ -65,9 +65,9 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	},	
 	
 	isExceedOneDay_: function(bd,ed) {  	
-		if (bd < this._beginDate || bd.getFullYear() != ed.getFullYear() ||
+		if (bd < this.zoneBd || bd.getFullYear() != ed.getFullYear() ||
 			(bd.getDOY() != ed.getDOY() && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
-			(ed.getTime() - bd.getTime() >= this.DAYTIME && ed.getTime() - this._beginDate.getTime() >= this.DAYTIME))
+			(ed.getTime() - bd.getTime() >= this.DAYTIME && ed.getTime() - this.zoneBd.getTime() >= this.DAYTIME))
 	 		return true;
 	},
 	

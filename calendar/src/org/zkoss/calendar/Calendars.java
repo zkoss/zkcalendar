@@ -327,7 +327,10 @@ public class Calendars extends XulElement implements
 			Calendar cal = Calendar.getInstance(getDefaultTimeZone());			
 			cal.set(Calendar.MINUTE, 0);
 			smartUpdate("captionByTimeOfDay", Util.encloseList(Util.packCaptionByTimeOfDay(cal, _tzones, Locales.getCurrent(), _dfmter)));
-		}		
+		}
+		
+		TimeZone tz = getDefaultTimeZone();
+		smartUpdate("tz", (tz.getRawOffset() + (tz.useDaylightTime() ? tz.getDSTSavings() : 0))/60000);
 		
 		smartUpdate("bd", getBeginDate().getTime());
 		smartUpdate("ed", getEndDate().getTime());	
