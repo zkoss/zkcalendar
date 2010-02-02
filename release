@@ -93,7 +93,12 @@ cp -f dist/lib/$prjnm.jar /tmp/zk/$binnm/dist/lib
 cp -rp doc/LICENSE /tmp/zk/$binnm/doc
 cp -rp doc/LICENSE /tmp/zk/$demonm/doc
 cp -rp doc/LICENSE /tmp/zk/$srcnm/doc
-
+cp zkdoc/COPYING /tmp/zk/$binnm/doc
+cp zkdoc/COPYING /tmp/zk/$srcnm/doc
+cp zkdoc/COPYING /tmp/zk/$demonm/doc
+cp zkdoc/release-note /tmp/zk/$binnm/doc
+cp zkdoc/release-note /tmp/zk/$srcnm/doc
+cp zkdoc/release-note /tmp/zk/$demonm/doc
 
 #prepare source.jar
 cd /tmp/zk/$srcnm

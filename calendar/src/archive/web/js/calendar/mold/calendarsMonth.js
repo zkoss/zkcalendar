@@ -47,7 +47,6 @@ function (out) {
 		month_date_off		= zcls + "-month-date-off",
 		month_date_cnt 		= month_date + "-cnt",
 		
-
 		week_weekend 		= zcls + "-week-weekend",
 		week_today  		= zcls + "-week-today",
 
@@ -56,8 +55,6 @@ function (out) {
 		day_of_month_body 	= zcls + "-day-of-month-body",
 		week_of_year		= zcls + "-week-of-year",
 		week_of_year_text	= zcls + "-week-of-year-text";
-	
-	
 	
 	out.push('<div', this.domAttrs_(), '>');	
 	if (toolbar) {
@@ -81,8 +78,8 @@ function (out) {
 	var bd = new Date(bdTime),
 		captionByDayOfWeek = this._captionByDayOfWeek;
 	for (var index = 0, k = 0; k < 7; ++k) {
-		var content = captionByDayOfWeek ? captionByDayOfWeek[k] : 
-			zk.fmt.Date.formatDate(bd,'EEE');		
+		var content = captionByDayOfWeek ? captionByDayOfWeek[k] :
+			zk.fmt.Date.formatDate(bd,'EEE');
 		
 		out.push('<th class="', day_of_week);
 
@@ -97,15 +94,15 @@ function (out) {
 	
 	// calculate how many weeks we should display
 	var weeks = this.weekOfMonth,
-		number = 100 /weeks,
+		number = 100 / weeks,
 		captionByWeekOfYear = this._captionByWeekOfYear;
 	if (this.woy) {//weekOfYear
 		bd.setTime(bdTime);
 		out.push('<div id="', uuid, '-woy" class="', week_of_year, '">');
 		for (var j = 0; j < weeks; j++) {
 			bd.setMilliseconds(0);
-			var content = captionByWeekOfYear ? captionByWeekOfYear[j] : 
-				bd.getWeek();					
+			var content = captionByWeekOfYear ? captionByWeekOfYear[j] :
+				bd.getWeek();
 			out.push('<div class="', month_week,
 					'" style="top:', (number * j),
 					'%; height:', number, '%;"><span class="',
@@ -154,7 +151,7 @@ function (out) {
 		
 		// the title of day of week
 		for (var i = 0; i < 7; i++) {
-			var content = captionByDateOfMonth? captionByDateOfMonth[j * 7 + i]: 
+			var content = captionByDateOfMonth? captionByDateOfMonth[j * 7 + i]:
 												bd.getDate();
 			out.push('<td class="', month_date);
 
@@ -162,7 +159,7 @@ function (out) {
 				out.push(' ', week_weekend);
 
 			if (current.getFullYear() == bd.getFullYear() &&
-					current.getDOY() == bd.getDOY())//today 
+					current.getDOY() == bd.getDOY())//today
 				out.push(' ', week_today);
 		
 
@@ -178,7 +175,7 @@ function (out) {
 		out.push('</tr></tbody></table></div>');
 	}
 	out.push('</div></div></div>',
-/***************************************************************************/			
+/***************************************************************************/
 			'</div></div>',
 			'<div class="',b2,'">',
 			'<div class="',b3,'"></div></div>',

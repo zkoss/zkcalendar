@@ -22,10 +22,11 @@ import java.util.*;
 import org.zkoss.json.JSONArray;
 import org.zkoss.calendar.api.*;
 import org.zkoss.calendar.event.*;
+import org.zkoss.calendar.impl.SimpleDateFormatter;
+import org.zkoss.calendar.impl.Util;
 import org.zkoss.lang.*;
 import org.zkoss.util.Locales;
 import org.zkoss.zk.au.out.AuSetAttribute;
-import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.event.*;
 import org.zkoss.zk.ui.sys.ContentRenderer;
@@ -55,8 +56,7 @@ import org.zkoss.zul.impl.XulElement;
 public class Calendars extends XulElement implements
 		org.zkoss.calendar.api.Calendars {
 	private static final long serialVersionUID = 20090310L;
-	private static final String ATTR_ON_INIT_POSTED =
-		"org.zkoss.calendar.Calendars.onInitLaterPosted";	
+	private static final String ATTR_ON_INIT_POSTED = "org.zkoss.calendar.Calendars.onInitLaterPosted";	
 	private int _firstDayOfWeek;
 	private Date _curDate;
 	private int _days = 7;
@@ -71,12 +71,15 @@ public class Calendars extends XulElement implements
 	private boolean _weekOfYear;
 	private List<CalendarEvent> _addEvtList, _mdyEvtList, _rmEvtList;
 	
- 	private static final String ATTR_ON_ADD_EVENT_RESPONSE =
-		"org.zkforge.timeplot.onAddEventResponse";
-	private static final String ATTR_ON_REMOVE_EVENT_RESPONSE =
-		"org.zkforge.timeplot.onRemoveEventResponse";
-	private static final String ATTR_ON_MODIFY_EVENT_RESPONSE =
-		"org.zkforge.timeplot.onModifyEventResponse";
+ 	private static final String ATTR_ON_ADD_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onAddEventResponse";
+	private static final String ATTR_ON_REMOVE_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onRemoveEventResponse";
+	private static final String ATTR_ON_MODIFY_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onModifyEventResponse";
+	
+	private static final Comparator<CalendarEvent> _defCompare = new Comparator<CalendarEvent>() {
+		public int compare(CalendarEvent arg0, CalendarEvent arg1) {
+			return arg0.getBeginDate().compareTo(arg1.getBeginDate());
+		}
+	};
 	
 	static {		
 		addClientEvent(Calendars.class, "onEventCreate", 0);
@@ -88,7 +91,11 @@ public class Calendars extends XulElement implements
 	
 	public Calendars() {
 		init();
-		setCurrentDate(Calendar.getInstance().getTime());
+		_curDate = Calendar.getInstance().getTime();
+		
+		//for test
+		_dfmter= new SimpleDateFormatter();
+		_weekOfYear = true;
 	}
 	
 	private void init() {
@@ -107,7 +114,7 @@ public class Calendars extends XulElement implements
 			if ("month".equals(getMold())) 
 				smartUpdate("woy", _weekOfYear);
 		}
-	}
+	}	
 	
 	/**
 	 * Returns whether enable to show the week number within the current year or not.
@@ -116,12 +123,7 @@ public class Calendars extends XulElement implements
 	public boolean isWeekOfYear() {
 		return _weekOfYear;
 	}
-	/** Returns whether it is readonly.
-	 * <p>Default: false.
-	 */
-	public boolean isReadonly() {
-		return _readonly;
-	}
+	
 	/** Sets whether it is readonly.
 	 */
 	public void setReadonly(boolean readonly) {
@@ -130,269 +132,14 @@ public class Calendars extends XulElement implements
 			smartUpdate("readonly", _readonly);
 		}
 	}
-	/**
-	 * Returns the current time zone of the calendar.
+	
+	/** Returns whether it is readonly.
+	 * <p>Default: false.
 	 */
-	public TimeZone getDefaultTimeZone() {
-		if (_tzones.isEmpty()) {
-			TimeZone t = TimeZone.getDefault();
-			_tzones.put(t, "");
-			return t;
-		}
-		return (TimeZone) _tzones.keySet().iterator().next();
-	}
-	public String getCalendarEventId(CalendarEvent ce) {
-		Object o = _ids.get(ce);
-		if (o == null) {
-			o = ((DesktopCtrl)getDesktop()).getNextUuid();
-			_ids.put(o, ce);
-			_ids.put(ce, o);
-		}
-		return (String) o;
+	public boolean isReadonly() {
+		return _readonly;
 	}
 	
-	public CalendarEvent getCalendarEventById(String id) {
-		return (CalendarEvent)_ids.get(id);
-	}
-	
-	public void onAddDayEventResponse() {
-		removeAttribute(ATTR_ON_ADD_EVENT_RESPONSE);
-		response("addEvent" + getUuid(), new AuSetAttribute(this,"addDayEvent",getJSONEventList(_addEvtList)));
-	}
-	
-	public void onRemoveDayEventResponse() {
-		removeAttribute(ATTR_ON_REMOVE_EVENT_RESPONSE);
-		response("removeEvent" + getUuid(), new AuSetAttribute(this,"removeDayEvent",getJSONEventList(_rmEvtList)));
-	}
-	
-	public void onModifyDayEventResponse() {
-		removeAttribute(ATTR_ON_MODIFY_EVENT_RESPONSE);
-		response("modifyEvent" + getUuid(), new AuSetAttribute(this,"modifyDayEvent",getJSONEventList(_mdyEvtList)));
-	}
-	
-	public void addDayEvent(CalendarEvent ce){
-		if (_addEvtList == null)
-			_addEvtList = new LinkedList<CalendarEvent>();
-		_addEvtList.add(ce);
-		if (getAttribute(ATTR_ON_ADD_EVENT_RESPONSE) == null) {
-			setAttribute(ATTR_ON_ADD_EVENT_RESPONSE, Boolean.TRUE);
-			Events.postEvent(-20000, "onAddDayEventResponse", this, null);
-		}
-	}
-	
-	public void modifyDayEvent(CalendarEvent ce) {
-		if (_mdyEvtList == null)
-			_mdyEvtList = new LinkedList<CalendarEvent>();
-		_mdyEvtList.add(ce);
-		if (getAttribute(ATTR_ON_MODIFY_EVENT_RESPONSE) == null) {
-			setAttribute(ATTR_ON_MODIFY_EVENT_RESPONSE, Boolean.TRUE);
-			Events.postEvent(-20000, "onModifyDayEventResponse", this, null);
-		}
-	}
-	
-	public void removeDayEvent(CalendarEvent ce){
-		if (_rmEvtList == null)
-			_rmEvtList = new LinkedList<CalendarEvent>();
-		_rmEvtList.add(ce);
-		if (getAttribute(ATTR_ON_REMOVE_EVENT_RESPONSE) == null) {
-			setAttribute(ATTR_ON_REMOVE_EVENT_RESPONSE, Boolean.TRUE);
-			Events.postEvent(-20000, "onRemoveDayEventResponse", this, null);
-		}
-	}
-	
-	/** Initializes _dataListener and register the listener to the model
-	 */
-	private void initDataListener() {
-		if (_dataListener == null)
-			_dataListener = new CalendarDataListener() {
-				public void onChange(CalendarDataEvent event) {
-					onCalendarDataChange(event);
-				}
-			};
-
-		_model.addCalendarDataListener(_dataListener);
-	}
-	
-	private void onCalendarDataChange(CalendarDataEvent event) {		
-		switch (event.getType()) {
-		case CalendarDataEvent.INTERVAL_ADDED:
-			addDayEvent(event.getCalendarEvent());			
-			break;
-		case CalendarDataEvent.INTERVAL_REMOVED:				
-			removeDayEvent(event.getCalendarEvent());			
-			break;
-		case CalendarDataEvent.CONTENTS_CHANGED:	
-			modifyDayEvent(event.getCalendarEvent());			
-		}
-	}	
-
-	/**
-	 * Returns the calendar model.
-	 */
-	public CalendarModel getModel() {
-		return _model;
-	}	
-	public void setMold(String mold) {
-		if (mold == null || mold.length() == 0)
-			mold = "default";
-		if (!Objects.equals(getMold(), mold)) {
-			super.setMold(mold);
-//			reSendDateRange();
-			reSendEventGroup();
-		}
-	}
-
-	/**
-	 * Sets the calendar model.
-	 */
-	public void setModel(CalendarModel model) {
-		if (model != null) {
-			if (_model != model) {
-				if (_model != null) {
-					_model.removeCalendarDataListener(_dataListener);
-				}
-				_model = model;
-				initDataListener();
-			}
-		} else if (_model != null) {
-			_model.removeCalendarDataListener(_dataListener);
-			_model = null;
-		}
-		reSendEventGroup();
-	}
-
-	/**
-	 * Adds the time zone to the calendar.
-	 * <p>
-	 * Note: the first added will be the default time zone of the calendar.
-	 * 
-	 * @param label
-	 *            the description of the time zone.
-	 * @param timezone
-	 *            a time zone. (Cannot duplicate)
-	 */
-	
-	public void addTimeZone(String label, TimeZone timezone) {
-		if (label == null) label = "";
-		_tzones.put(timezone, label);
-		smartUpdate("bd", getBeginDate().getTime());
-		smartUpdate("ed", getEndDate().getTime());	
-		reSendEventGroup();	
-	}
-
-	/**
-	 * Adds the time zone to the calendar.
-	 * <p>
-	 * Note: the first added will be the default time zone of the calendar.
-	 * 
-	 * @param label
-	 *            the description of the time zone.
-	 * @param timezone
-	 *            a id of time zone. (Cannot duplicate)
-	 * @see TimeZone#getTimeZone(String)
-	 * @see #addTimeZone(String, TimeZone)
-	 */
-	public void addTimeZone(String label, String timezone) {
-		addTimeZone(label, TimeZone.getTimeZone(timezone));
-	}
-
-	/**
-	 * Sets the time zone to the calendar, it is easily used for ZUL file. e.g.
-	 * 
-	 * <pre>
-	 * &lt;calendars timeZone=&quot;Taiwan=GMT+8, Sweden=GMT+1,&quot;&gt;
-	 * </pre>
-	 * 
-	 * @param timezone
-	 */
-	public void setTimeZone(String timezone) {
-		if (timezone == null)
-			throw new IllegalArgumentException("The timezone is null!");
-		String[] timezones = timezone.trim().split(",");
-		for (int i = 0; i < timezones.length; i++) {
-			String[] pair = timezones[i].split("=");
-			addTimeZone(pair[0].trim(), pair[1].trim());
-		}
-	}
-
-	/**
-	 * Removes the time zone from the calendar
-	 */
-	public boolean removeTimeZone(TimeZone timezone) {
-		if (_tzones.remove(timezone) != null) {
-			smartUpdate("bd", getBeginDate().getTime());
-			smartUpdate("ed", getEndDate().getTime());
-			reSendEventGroup();		
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Returns the unmodifiable map including all the timezone inside the
-	 * calendar.
-	 */
-	public Map<TimeZone, String> getTimeZones() {
-		return Collections.unmodifiableMap(_tzones);
-	}
-	
-	protected String getEventKey(CalendarEvent evt) {
-		Date begin = evt.getBeginDate();
-		Date end = evt.getEndDate();
-		if (begin == null)
-			throw new UiException("Begin date cannot be null: " + evt);
-		if (end == null)
-			throw new UiException("End date cannot be null: " + evt);
-		return getEventKey(begin);
-	}
-	
-	private String getEventKey(Date date) {
-		return _sdfKey.format(date);
-	}
-
-	/**
-	 * Returns the unmodifiable list including all the calendar events matching
-	 * from the specified date in the same date. e.g. "20090324" exclusive the
-	 * time of the date "23:30".
-	 * <p>
-	 * Note: never null.
-	 */
-	public List<CalendarEvent> getEvent(Date beginDate) {
-		String key = getEventKey(beginDate);
-		List<CalendarEvent> list =  _evts.get(key);
-		if (list != null)
-			Collections.sort(list, getDefaultBeginDateComparator());
-		else list = Collections.emptyList();
-		return Collections.unmodifiableList(list);
-	}	
-	private static final Comparator<CalendarEvent> getDefaultBeginDateComparator() {
-		return _defCompare;
-	}
-	private static final Comparator<CalendarEvent> _defCompare = new Comparator<CalendarEvent>() {
-		public int compare(CalendarEvent arg0, CalendarEvent arg1) {
-			return arg0.getBeginDate().compareTo(arg1.getBeginDate());
-		}
-	};
-
-	/**
-	 * @deprecated As of release 2.0-RC
-	 * Returns the event renderer used for {@link CalendarEvent} to draw its
-	 * outline (i.e. HTML), like the DSP renderer of ZK component.
-	 * <p>
-	 * Note: never null.
-	 */
-	public EventRender getEventRender() {
-		return null;
-	}
-
-	/**
-	 * @deprecated As of release 2.0-RC
-	 * Sets the event renderer.
-	 */
-	public void setEventRender(EventRender render) {
-		
-	}
-
 	/**
 	 * Sets the date formatter. In fact, there are five places in the calendar
 	 * must have different date display.
@@ -407,6 +154,7 @@ public class Calendars extends XulElement implements
 			reSendEventGroup();
 		}
 	}
+	
 	/**
 	 * 
 	 * Sets the date formatter by a class name.
@@ -420,6 +168,7 @@ public class Calendars extends XulElement implements
 		if (clsnm != null)
 			setDateFormatter((DateFormatter)Classes.newInstanceByThread(clsnm));
 	}
+	
 	/**
 	 * Returns the date formatter.
 	 * <p>
@@ -428,269 +177,7 @@ public class Calendars extends XulElement implements
 	public DateFormatter getDateFormatter() {
 		return _dfmter;
 	}	
-	
-	/**package*/ boolean inMonthMold() {
-		return "month".equals(getMold());
-	}
 
-	/**
-	 * Returns the beginning date, which is based on {@link #getCurrentDate()} in
-	 * the current view depended on which {@link #getMold()} is using.
-	 */
-	public Date getBeginDate() {
-		if (_curDate != null) {
-			TimeZone t = getDefaultTimeZone();
-			Calendar cal = Calendar.getInstance(t);
-			cal.setTimeZone(getDefaultTimeZone());
-			cal.setTime(_curDate);
-			boolean inMonth = inMonthMold();
-			if (inMonth)
-				cal.set(Calendar.DAY_OF_MONTH, 1);
-				
-			if (_days == 7 || inMonth) {
-				int index = cal.get(Calendar.DAY_OF_WEEK);
-				int offset = index - _firstDayOfWeek;
-				if (offset < 0) offset += 7;
-				cal.add(Calendar.DAY_OF_MONTH, -offset);
-			}
-			
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			return cal.getTime();
-		}
-		return null; 
-	}
-
-	/**
-	 * Returns the end date, which is based on {@link #getCurrentDate()} in the
-	 * current view depended on which {@link #getMold()} is using. 
-	 */
-	public Date getEndDate() {
-		Date beginDate = getBeginDate();
-		if (beginDate != null) {
-			Calendar cal = Calendar.getInstance(getDefaultTimeZone());
-
-			if (inMonthMold()) {
-				int weeks = getWeekOfMonth();
-				cal.setTime(_curDate);			
-				cal.set(Calendar.DAY_OF_MONTH, 1);
-				int offset = cal.get(Calendar.DAY_OF_WEEK) - _firstDayOfWeek;
-				if (offset < 0)
-					offset += 7;
-				
-				cal.add(Calendar.DAY_OF_MONTH, weeks * 7 - offset);
-				cal.set(Calendar.HOUR_OF_DAY, 0);
-				cal.set(Calendar.MINUTE, 0);
-				cal.set(Calendar.SECOND, 0);	
-			} else {
-				cal.setTime(beginDate);
-				cal.add(Calendar.DAY_OF_MONTH, _days);
-			}
-			cal.set(Calendar.MILLISECOND, 0);
-			return cal.getTime();
-		}
-		return null;
-	}
-
-	/**
-	 * Returns the number of the week of the month in the current date.
-	 */
-	public int getWeekOfMonth() {
-		Calendar cal = Calendar.getInstance(getDefaultTimeZone());
-		// calculate how many weeks we should display
-		cal.setTime(_curDate);
-		int maximun = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-		
-		if (cal.getFirstDayOfWeek() != _firstDayOfWeek) {			
-			cal.set(Calendar.DAY_OF_MONTH, 1);
-			int beginIndex = cal.get(Calendar.DAY_OF_WEEK);
-			int offset = beginIndex - _firstDayOfWeek;
-			if (offset < 0)
-				offset += 7;
-			
-			int week = 1;
-			int delta = maximun - (7 - offset);
-			week += delta/ 7;
-
-			// add one for the rest days
-			if (delta % 7 != 0) 
-				++week;
-			return week;
-		} else {
-			cal.set(Calendar.DAY_OF_MONTH, maximun);
-			return cal.get(Calendar.WEEK_OF_MONTH);
-		}
-	}
-
-	/**
-	 * Navigates the current date to the previous page, that is, when the {@link #getDays()}
-	 * is seven with default mold, the previous page means the previous week.
-	 * In the month mold, it means the previous month.
-	 */
-	public void previousPage() {
-		if (_curDate != null) {
-			Calendar cal = Calendar.getInstance(getDefaultTimeZone());
-			cal.setTime(_curDate);
-			if (inMonthMold())
-				cal.add(Calendar.MONTH, -1);
-			else
-				cal.add(Calendar.DAY_OF_MONTH, -_days);
-			setCurrentDate(cal.getTime());
-		}
-	}
-
-	/**
-	 * Navigates the current date to the next page, that is, when the {@link #getDays()}
-	 * is seven with default mold, the next page means the next week.
-	 * In the month mold, it means the next month.
-	 */	
-	public void nextPage() {
-		if (_curDate != null) {
-			Calendar cal = Calendar.getInstance(getDefaultTimeZone());
-			cal.setTime(_curDate);
-			if (inMonthMold())
-				cal.add(Calendar.MONTH, 1);
-			else
-				cal.add(Calendar.DAY_OF_MONTH, _days);
-			setCurrentDate(cal.getTime());
-		}
-	}
-
-	/**
-	 * Sets the current date.
-	 * <p> Default: today (depend on which timezone the system is using).
-	 */
-	public void setCurrentDate(Date curDate) {
-		if (curDate == null) throw new NullPointerException("Current Date cannot be null!");
-		if (!Objects.equals(curDate, _curDate)) {
-			_curDate = curDate;
-			reSendDateRange();
-			smartUpdate("cd", getCurrentDate().getTime());
-			reSendEventGroup();
-		}
-	}
-	private void reSendDateRange(){
-		Date beginDate = getBeginDate();
-		
-		smartUpdate("bd", beginDate.getTime());
-		smartUpdate("ed", getEndDate().getTime());	
-		if (inMonthMold())
-			smartUpdate("weekOfMonth", getWeekOfMonth());
-		
-		DateFormatter dfhandler = getDateFormatter();	
-		if(dfhandler != null){
-			final Locale locale = Locales.getCurrent();	
-			TimeZone timezone = getDefaultTimeZone();	
-			Calendar cal = Calendar.getInstance(timezone);
-			cal.setTime(beginDate);		
-			List<String> stringList = new LinkedList<String>();	
-			
-			if (inMonthMold()) {			
-				List<String> stringList2 = new LinkedList<String>();
-				
-				for (int k = 0; k < 7; ++k) {
-					String content = dfhandler.getCaptionByDayOfWeek(cal.getTime(), locale, timezone);
-					stringList.add(content);
-					cal.add(Calendar.DAY_OF_MONTH, 1);
-				}			
-				smartUpdate("captionByDayOfWeek", convertStrListTOJSArray(stringList));	
-				stringList.clear();
-				
-				int weeks = getWeekOfMonth();
-				if (isWeekOfYear()) {
-					cal.setTime(beginDate);
-					for (int j = 0; j < weeks; j++) {
-						cal.set(Calendar.MILLISECOND, 0);
-						String content = dfhandler.getCaptionByWeekOfYear(cal.getTime(), locale, timezone);
-						stringList.add(content);
-						cal.add(Calendar.DAY_OF_MONTH, 7);
-					}
-					smartUpdate("captionByWeekOfYear", convertStrListTOJSArray(stringList));
-					stringList.clear();
-				}		
-				
-				cal.setTime(beginDate);		
-				for (int j = 0; j < weeks; j++) {
-					for (int i = 0; i < 7; i++) {
-						cal.set(Calendar.MILLISECOND, 0);
-						Date d = cal.getTime();
-						String content = dfhandler.getCaptionByPopup(d, locale, timezone);
-						String content2 = dfhandler.getCaptionByDateOfMonth(d, locale, timezone);
-						stringList.add(content);
-						stringList2.add(content2);
-						cal.add(Calendar.DAY_OF_MONTH, 1);
-					}	
-				}			
-				smartUpdate("captionByPopup", convertStrListTOJSArray(stringList));
-				smartUpdate("captionByDateOfMonth", convertStrListTOJSArray(stringList2));
-			}else{				
-				for (int j = 0; j < getDays(); ++j) {
-					String content = dfhandler.getCaptionByDate(cal.getTime(), locale, timezone);
-					stringList.add(content);
-					cal.add(Calendar.DAY_OF_WEEK, 1);
-				}		
-				smartUpdate("captionByDate", convertStrListTOJSArray(stringList));		
-			}
-		}	
-	}
-	/**
-	 * Returns the current date.
-	 * <p> Default: today (depend on which timezone the calendar is using).
-	 */
-	public Date getCurrentDate() {
-		return _curDate;
-	}
-	public void onInitRender() {
-		removeAttribute(ATTR_ON_INIT_POSTED);
-		_evts.clear();
-		_ids.clear();
-		
-		final TimeZone tzone = getDefaultTimeZone();
-		
-		List<String> tmplist = new ArrayList<String>();		
-		for (TimeZone tz : _tzones.keySet()) {
-			tmplist.add("" + (tz.getRawOffset() + (tz.useDaylightTime() ? tz
-					.getDSTSavings() : 0)) / 60000);
-		}
-		smartUpdate("zonesOffset", convertStrListTOJSArray(tmplist));			
-		smartUpdate("zones", convertStrListTOJSArray(_tzones.values()));
-		// reset default timezone
-		_sdfKey.setTimeZone(tzone);
-		
-		if (_model != null) {
-			List<CalendarEvent> list = _model.get(getBeginDate(), getEndDate(), new RenderContext() {
-				public TimeZone getTimeZone() {
-					return tzone;
-				}});
-			if (list != null) {
-				for (CalendarEvent ce : list) {					
-					if (!ce.getBeginDate().before(ce.getEndDate()))
-						throw new IllegalArgumentException("Illegal date: from " + ce.getBeginDate() + " to " + ce.getEndDate());
-					String key;
-					if (ce.getBeginDate().before(getBeginDate()))
-						key = getEventKey(getBeginDate());
-					else
-						key = getEventKey(ce.getBeginDate());
-					
-					List<CalendarEvent> dayevt =  _evts.get(key);
-					if (dayevt == null) {
-						dayevt = new LinkedList<CalendarEvent>();
-						_evts.put(key, dayevt);
-					} 
-					dayevt.add(ce);
-				}
-			}
-		}		
-		smartUpdate("events", getJSONEventMap(_evts.values()));
-	}
-	private void reSendEventGroup() {
-		if (getAttribute(ATTR_ON_INIT_POSTED) == null) {
-			setAttribute(ATTR_ON_INIT_POSTED, Boolean.TRUE);
-			Events.postEvent(-10100, "onInitRender", this, null);
-		}
-	}
 	/**
 	 * Sets the days, that is, how many column should be displayed on the default mold.
 	 * <p> Default: 7. (i.e. one week), in month view, the attribute will be ignored.
@@ -706,7 +193,7 @@ public class Calendars extends XulElement implements
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the days.
 	 * <p>Default: 7
@@ -714,6 +201,7 @@ public class Calendars extends XulElement implements
 	public int getDays() {
 		return _days;
 	}
+
 	/**
 	 * Sets what the first day of the week is; e.g., <code>SUNDAY</code> in the
 	 * U.S., <code>MONDAY</code> in France.
@@ -772,16 +260,487 @@ public class Calendars extends XulElement implements
 	public int getFirstDayOfWeek() {
 		return _firstDayOfWeek;
 	}
+		
+	public void onAddDayEventResponse() {
+		removeAttribute(ATTR_ON_ADD_EVENT_RESPONSE);
+		response("addEvent" + getUuid(), new AuSetAttribute(this,"addDayEvent",Util.encloseEventList(this, _addEvtList)));
+	}
+	
+	public void onRemoveDayEventResponse() {
+		removeAttribute(ATTR_ON_REMOVE_EVENT_RESPONSE);
+		response("removeEvent" + getUuid(), new AuSetAttribute(this,"removeDayEvent",Util.encloseEventList(this, _rmEvtList)));
+	}
+	
+	public void onModifyDayEventResponse() {
+		removeAttribute(ATTR_ON_MODIFY_EVENT_RESPONSE);
+		response("modifyEvent" + getUuid(), new AuSetAttribute(this,"modifyDayEvent",Util.encloseEventList(this, _mdyEvtList)));
+	}
+	
+	public void addDayEvent(CalendarEvent ce){
+		if (ce == null) return;
+		if (_addEvtList == null)
+			_addEvtList = new LinkedList<CalendarEvent>();
+		_addEvtList.add(ce);
+		if (getAttribute(ATTR_ON_ADD_EVENT_RESPONSE) == null) {
+			setAttribute(ATTR_ON_ADD_EVENT_RESPONSE, Boolean.TRUE);
+			Events.postEvent(-20000, "onAddDayEventResponse", this, null);
+		}
+	}
+	
+	public void modifyDayEvent(CalendarEvent ce) {
+		if (ce == null) return;
+		if (_mdyEvtList == null)
+			_mdyEvtList = new LinkedList<CalendarEvent>();
+		_mdyEvtList.add(ce);
+		if (getAttribute(ATTR_ON_MODIFY_EVENT_RESPONSE) == null) {
+			setAttribute(ATTR_ON_MODIFY_EVENT_RESPONSE, Boolean.TRUE);
+			Events.postEvent(-20000, "onModifyDayEventResponse", this, null);
+		}
+	}
+	
+	public void removeDayEvent(CalendarEvent ce){
+		if (ce == null) return;
+		if (_rmEvtList == null)
+			_rmEvtList = new LinkedList<CalendarEvent>();
+		_rmEvtList.add(ce);
+		if (getAttribute(ATTR_ON_REMOVE_EVENT_RESPONSE) == null) {
+			setAttribute(ATTR_ON_REMOVE_EVENT_RESPONSE, Boolean.TRUE);
+			Events.postEvent(-20000, "onRemoveDayEventResponse", this, null);
+		}
+	}
+	
+	/**
+	 * Adds the time zone to the calendar.
+	 * <p>
+	 * Note: the first added will be the default time zone of the calendar.
+	 * 
+	 * @param label
+	 *            the description of the time zone.
+	 * @param timezone
+	 *            a time zone. (Cannot duplicate)
+	 */	
+	public void addTimeZone(String label, TimeZone timezone) {
+		if (label == null) label = "";
+		_tzones.put(timezone, label);
+		
+		if (!inMonthMold() && _dfmter != null){
+			Calendar cal = Calendar.getInstance(getDefaultTimeZone());			
+			cal.set(Calendar.MINUTE, 0);
+			smartUpdate("captionByTimeOfDay", Util.encloseList(Util.packCaptionByTimeOfDay(cal, _tzones, Locales.getCurrent(), _dfmter)));
+		}		
+		
+		smartUpdate("bd", getBeginDate().getTime());
+		smartUpdate("ed", getEndDate().getTime());	
+		reSendEventGroup();	
+	}
+
+	/**
+	 * Adds the time zone to the calendar.
+	 * <p>
+	 * Note: the first added will be the default time zone of the calendar.
+	 * 
+	 * @param label
+	 *            the description of the time zone.
+	 * @param timezone
+	 *            a id of time zone. (Cannot duplicate)
+	 * @see TimeZone#getTimeZone(String)
+	 * @see #addTimeZone(String, TimeZone)
+	 */
+	public void addTimeZone(String label, String timezone) {
+		addTimeZone(label, TimeZone.getTimeZone(timezone));
+	}
+
+	/**
+	 * Sets the time zone to the calendar, it is easily used for ZUL file. e.g.
+	 * 
+	 * <pre>
+	 * &lt;calendars timeZone=&quot;Taiwan=GMT+8, Sweden=GMT+1,&quot;&gt;
+	 * </pre>
+	 * 
+	 * @param timezone
+	 */
+	public void setTimeZone(String timezone) {
+		if (timezone == null)
+			throw new IllegalArgumentException("The timezone is null!");
+		
+		for (String timezoneString : timezone.trim().split(",")) {
+			String[] pair = timezoneString.split("=");
+			addTimeZone(pair[0].trim(), pair[1].trim());
+		}
+	}
+
+	/**
+	 * Removes the time zone from the calendar
+	 */
+	public boolean removeTimeZone(TimeZone timezone) {
+		if (_tzones.remove(timezone) != null) {
+			smartUpdate("bd", getBeginDate().getTime());
+			smartUpdate("ed", getEndDate().getTime());
+			reSendEventGroup();		
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the current time zone of the calendar.
+	 */
+	public TimeZone getDefaultTimeZone() {
+		if (_tzones.isEmpty()) {
+			TimeZone t = TimeZone.getDefault();
+			_tzones.put(t, "");
+			return t;
+		}
+		return (TimeZone) _tzones.keySet().iterator().next();
+	}
+
+	/**
+	 * Returns the unmodifiable map including all the timezone inside the
+	 * calendar.
+	 */
+	public Map<TimeZone, String> getTimeZones() {
+		return Collections.unmodifiableMap(_tzones);
+	}
+		
+	public String getCalendarEventId(CalendarEvent ce) {
+		Object o = _ids.get(ce);
+		if (o == null) {
+			o = ((DesktopCtrl)getDesktop()).getNextUuid();
+			_ids.put(o, ce);
+			_ids.put(ce, o);
+		}
+		return (String) o;
+	}	
+	
+	public CalendarEvent getCalendarEventById(String id) {
+		return (CalendarEvent)_ids.get(id);
+	}
+	
+	protected String getEventKey(CalendarEvent evt) {
+		Date begin = evt.getBeginDate();
+		Date end = evt.getEndDate();
+		if (begin == null)
+			throw new UiException("Begin date cannot be null: " + evt);
+		if (end == null)
+			throw new UiException("End date cannot be null: " + evt);
+		return getEventKey(begin);
+	}	
+	
+	private String getEventKey(Date date) {
+		return _sdfKey.format(date);
+	}
+
+	/**
+	 * Returns the unmodifiable list including all the calendar events matching
+	 * from the specified date in the same date. e.g. "20090324" exclusive the
+	 * time of the date "23:30".
+	 * <p>
+	 * Note: never null.
+	 */
+	public List<CalendarEvent> getEvent(Date beginDate) {
+		String key = getEventKey(beginDate);
+		List<CalendarEvent> list =  _evts.get(key);
+		if (list != null)
+			Collections.sort(list, getDefaultBeginDateComparator());
+		else list = Collections.emptyList();
+		return Collections.unmodifiableList(list);
+	}
+	
+	private static final Comparator<CalendarEvent> getDefaultBeginDateComparator() {
+		return _defCompare;
+	}
+	
+	/**
+	 * Navigates the current date to the previous page, that is, when the {@link #getDays()}
+	 * is seven with default mold, the previous page means the previous week.
+	 * In the month mold, it means the previous month.
+	 */
+	public void previousPage() {
+		movePage(-1);
+	}
+
+	/**
+	 * Navigates the current date to the next page, that is, when the {@link #getDays()}
+	 * is seven with default mold, the next page means the next week.
+	 * In the month mold, it means the next month.
+	 */	
+	public void nextPage() {		
+		movePage(1);		
+	}
+
+	private void movePage(int day) {
+		if (_curDate == null) return;
+		
+		Calendar cal = Calendar.getInstance(getDefaultTimeZone());
+		cal.setTime(_curDate);
+		if (inMonthMold())
+			cal.add(Calendar.MONTH, day);
+		else
+			cal.add(Calendar.DAY_OF_MONTH, day * _days);
+		setCurrentDate(cal.getTime());
+	}
+	
+	/**
+	 * Returns the beginning date, which is based on {@link #getCurrentDate()} in
+	 * the current view depended on which {@link #getMold()} is using.
+	 */
+	public Date getBeginDate() {
+		if (_curDate == null) return null; 
+
+		TimeZone t = getDefaultTimeZone();
+		Calendar cal = Calendar.getInstance(t);
+		cal.setTimeZone(t);
+		cal.setTime(_curDate);
+		boolean inMonth = inMonthMold();
+		if (inMonth)
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			
+		if (_days == 7 || inMonth) {
+			int index = cal.get(Calendar.DAY_OF_WEEK);
+			int offset = index - _firstDayOfWeek;
+			if (offset < 0) offset += 7;
+			cal.add(Calendar.DAY_OF_MONTH, -offset);
+		}
+		
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal.getTime();
+	}
+
+	/**
+	 * Returns the end date, which is based on {@link #getCurrentDate()} in the
+	 * current view depended on which {@link #getMold()} is using. 
+	 */
+	public Date getEndDate() {
+		Date beginDate = getBeginDate();
+		
+		if (beginDate == null) return null;
+		
+		Calendar cal = Calendar.getInstance(getDefaultTimeZone());
+
+		if (inMonthMold()) {
+			int weeks = getWeekOfMonth();
+			cal.setTime(_curDate);			
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			int offset = cal.get(Calendar.DAY_OF_WEEK) - _firstDayOfWeek;
+			if (offset < 0)
+				offset += 7;
+			
+			cal.add(Calendar.DAY_OF_MONTH, weeks * 7 - offset);				
+			
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);	
+		} else {
+			cal.setTime(beginDate);
+			cal.add(Calendar.DAY_OF_MONTH, _days);
+		}
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal.getTime();
+	}
+
+	/**
+	 * Sets the current date.
+	 * <p> Default: today (depend on which timezone the system is using).
+	 */
+	public void setCurrentDate(Date curDate) {
+		if (curDate == null) throw new NullPointerException("Current Date cannot be null!");
+		if (!Objects.equals(curDate, _curDate)) {
+			_curDate = curDate;
+			reSendDateRange();
+			smartUpdate("cd", getCurrentDate().getTime());
+			reSendEventGroup();
+		}
+	}
+
+	/**
+	 * Returns the current date.
+	 * <p> Default: today (depend on which timezone the calendar is using).
+	 */
+	public Date getCurrentDate() {
+		return _curDate;
+	}
+
+	private void reSendDateRange(){
+		Date beginDate = getBeginDate();
+		
+		smartUpdate("bd", beginDate.getTime());
+		smartUpdate("ed", getEndDate().getTime());	
+		if (inMonthMold())
+			smartUpdate("weekOfMonth", getWeekOfMonth());
+		
+		DateFormatter dfhandler = getDateFormatter();		
+		if(dfhandler == null) return;
+		
+		final Locale locale = Locales.getCurrent();	
+		TimeZone timezone = getDefaultTimeZone();	
+		Calendar cal = Calendar.getInstance(timezone);
+		cal.setTime(beginDate);
+		
+		if (inMonthMold()) {
+			List<List<String>> result = Util.packAllCaptionOfMonth(this, cal, locale, timezone, dfhandler);
+			smartUpdate("captionByDayOfWeek", Util.encloseList(result.get(0)));				
+			smartUpdate("captionByPopup", Util.encloseList(result.get(1)));
+			smartUpdate("captionByDateOfMonth", Util.encloseList(result.get(2)));
+
+			if (isWeekOfYear())
+				smartUpdate("captionByWeekOfYear", Util.encloseList(result.get(3)));
+		} else
+			smartUpdate("captionByDate", Util.encloseList(Util.packCaptionByDate(cal, getDays(), locale, timezone, dfhandler)));
+		
+	}
+
+	/**
+	 * Returns the number of the week of the month in the current date.
+	 */
+	public int getWeekOfMonth() {
+		Calendar cal = Calendar.getInstance(getDefaultTimeZone());
+		// calculate how many weeks we should display
+		cal.setTime(_curDate);
+		int maximun = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+		
+		if (cal.getFirstDayOfWeek() != _firstDayOfWeek) {
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			int beginIndex = cal.get(Calendar.DAY_OF_WEEK);
+			int offset = beginIndex - _firstDayOfWeek;
+			if (offset < 0)
+				offset += 7;
+			
+			int week = 1;
+			int delta = maximun - (7 - offset);
+			week += delta/ 7;
+
+			// add one for the rest days
+			if (delta % 7 != 0) 
+				++week;
+			return week;
+		} else {
+			cal.set(Calendar.DAY_OF_MONTH, maximun);
+			return cal.get(Calendar.WEEK_OF_MONTH);
+		}
+	}
+	
+	private void reSendEventGroup() {
+		if (getAttribute(ATTR_ON_INIT_POSTED) == null) {
+			setAttribute(ATTR_ON_INIT_POSTED, Boolean.TRUE);
+			Events.postEvent(-10100, "onInitRender", this, null);
+		}
+	}
+	
+	public void onInitRender() {
+		removeAttribute(ATTR_ON_INIT_POSTED);
+		_evts.clear();
+		_ids.clear();
+		
+		final TimeZone tzone = getDefaultTimeZone();
+		
+		smartUpdate("zonesOffset", Util.encloseList(Util.packZonesOffset(_tzones)));			
+		smartUpdate("zones", Util.encloseList(_tzones.values()));
+		// reset default timezone
+		_sdfKey.setTimeZone(tzone);
+		
+		if (_model != null) {
+			List<CalendarEvent> list = _model.get(getBeginDate(), getEndDate(),
+					new RenderContext() {
+						public TimeZone getTimeZone() {
+							return tzone;
+						}
+					});
+
+			if (list != null) {
+				for (CalendarEvent ce : list) {
+					if (!ce.getBeginDate().before(ce.getEndDate()))
+						throw new IllegalArgumentException("Illegal date: from " + ce.getBeginDate() + " to " + ce.getEndDate());
+					
+					String key = ce.getBeginDate().before(getBeginDate()) ?
+										getEventKey(getBeginDate()): 
+										getEventKey(ce.getBeginDate());
+				
+					
+					List<CalendarEvent> dayevt =  _evts.get(key);
+					if (dayevt == null) {
+						dayevt = new LinkedList<CalendarEvent>();
+						_evts.put(key, dayevt);
+					} 
+					dayevt.add(ce);
+				}
+			}
+		}		
+		smartUpdate("events", Util.encloseEventMap(this, _evts.values()));
+	}
 	
 	public Toolbar getToolbar() {
 		return (Toolbar)getFirstChild();
 	}
 
+	/**
+	 * Returns the calendar model.
+	 */
+	public CalendarModel getModel() {
+		return _model;
+	}	
+
+	/**
+	 * Sets the calendar model.
+	 */
+	public void setModel(CalendarModel model) {
+		if (model != null) {
+			if (_model != model) {
+				if (_model != null) {
+					_model.removeCalendarDataListener(_dataListener);
+				}
+				_model = model;
+				initDataListener();
+			}
+		} else if (_model != null) {
+			_model.removeCalendarDataListener(_dataListener);
+			_model = null;
+		}
+		reSendEventGroup();
+	}
+	
+	/** Initializes _dataListener and register the listener to the model
+	 */
+	private void initDataListener() {
+		if (_dataListener == null)
+			_dataListener = new CalendarDataListener() {
+				public void onChange(CalendarDataEvent event) {
+					switch (event.getType()) {
+					case CalendarDataEvent.INTERVAL_ADDED:
+						addDayEvent(event.getCalendarEvent());			
+						break;
+					case CalendarDataEvent.INTERVAL_REMOVED:				
+						removeDayEvent(event.getCalendarEvent());			
+						break;
+					case CalendarDataEvent.CONTENTS_CHANGED:	
+						modifyDayEvent(event.getCalendarEvent());			
+					}
+				}
+			};
+
+		_model.addCalendarDataListener(_dataListener);
+	}
+	
+	public void setMold(String mold) {
+		if (mold == null || mold.length() == 0)
+			mold = "default";
+		if (!Objects.equals(getMold(), mold)) {
+			super.setMold(mold);
+			reSendEventGroup();
+		}
+	}
+	
+	/**package*/ boolean inMonthMold() {
+		return "month".equals(getMold());
+	}
+
 	// super
 	public String getZclass() {
 		return _zclass == null ?  "z-calendars" : _zclass;
-	}	
-	
+	}
+
 	// -- Component --//	
 	public boolean insertBefore(Component newChild, Component refChild) {
 		if (newChild instanceof Toolbar) {
@@ -795,8 +754,8 @@ public class Calendars extends XulElement implements
 					+ newChild);
 		}
 		return super.insertBefore(newChild, refChild);
-	}
-	
+	}	
+
 	//Cloneable//
 	public Object clone() {
 		final Calendars clone = (Calendars)super.clone();
@@ -815,72 +774,37 @@ public class Calendars extends XulElement implements
 		s.defaultReadObject();
 		init();
 		if (_model != null) initDataListener();
-	}
+	}	
 	
 	public void service(org.zkoss.zk.au.AuRequest request, boolean everError) {
 		final String cmd = request.getCommand();
 		final JSONArray data = (JSONArray) request.getData().get("data");
-		
-		if (cmd.equals("onEventCreate")) {
-			final Calendars cmp = (Calendars)request.getComponent();
-			if (cmp == null)
-				throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, this);
+		boolean onEvtCreate = cmd.equals("onEventCreate");
 
-			if (data == null || data.size() != 6)
-				throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {
-						Objects.toString(data), this });
-			Events.postEvent(new CalendarsEvent("onEventCreate", cmp, null,
-					new Date(Long.parseLong(data.get(0).toString())), new Date(Long.parseLong(data.get(1).toString())),
-					Integer.parseInt(data.get(2).toString()), Integer.parseInt(data.get(3).toString()),
-					Integer.parseInt(data.get(4).toString()), Integer.parseInt(data.get(5).toString())));
-		}else if (cmd.equals("onEventEdit")) {
-			final Calendars cmp = (Calendars) request.getComponent();
-			if (cmp == null)
-				throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, this);
-			if (data == null || data.size() != 5)
-				throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {
-						Objects.toString(data), this });
-			CalendarEvent ce = cmp.getCalendarEventById(data.get(0).toString());			
-			if (ce != null)
-				Events.postEvent(new CalendarsEvent("onEventEdit", cmp, ce, null, null,
-					Integer.parseInt(data.get(1).toString()), Integer.parseInt(data.get(2).toString()), Integer
-							.parseInt(data.get(3).toString()), Integer.parseInt(data.get(4).toString())));
-		}else if (cmd.equals("onEventUpdate")) {
-			final Calendars cmp = (Calendars) request.getComponent();
-			if (cmp == null)
-				throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, this);
+		if (onEvtCreate || cmd.equals("onEventEdit") || cmd.equals("onEventUpdate")) {
 
-			if (data == null || data.size() != 7)
-				throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {
-						Objects.toString(data), this });
-			CalendarEvent ce = cmp.getCalendarEventById(data.get(0).toString());
-			if (ce != null)
-				Events.postEvent(new CalendarsEvent("onEventUpdate", cmp, ce, new Date(Long
-					.parseLong(data.get(1).toString())), new Date(Long.parseLong(data.get(2).toString())),
-					Integer.parseInt(data.get(3).toString()), Integer.parseInt(data.get(4).toString()), Integer
-							.parseInt(data.get(5).toString()), Integer.parseInt(data.get(6).toString())));
-		}else if (cmd.equals("onDayClick")) {
-			final Calendars cmp = (Calendars)request.getComponent();
-			if (cmp == null)
-				throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, this);
-			if (data == null || data.size() != 1)
-				throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {
-						Objects.toString(data), this });
+			int fieldNum = 6;
+
+			if (cmd.equals("onEventEdit")) fieldNum--;
+			if (cmd.equals("onEventUpdate")) fieldNum++;			
+			final Calendars cmp = Util.verifyEvent(this, request, data, fieldNum);
+
+			CalendarEvent ce = null;
+
+			if (!cmd.equals("onEventCreate"))
+				ce = cmp.getCalendarEventById(String.valueOf(data.get(0)));
+
+			if (onEvtCreate || ce != null)
+				Events.postEvent(Util.createCalendarsEvent(cmd, cmp, ce, data));
+
+		} else if (cmd.equals("onDayClick") || cmd.equals("onWeekClick")) {
 			
-			Events.postEvent(new Event("onDayClick", cmp, new Date(Long.parseLong(data.get(0).toString()))));
-		}else if (cmd.equals("onWeekClick")) {
-			final Calendars cmp = (Calendars)request.getComponent();
-			if (cmp == null)
-				throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, this);
-
-			if (data == null || data.size() != 1)
-				throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {
-						Objects.toString(data), this });
+			final Calendars cmp = Util.verifyEvent(this, request, data, 1);
+			Events.postEvent(new Event(cmd, cmp, new Date(Long.parseLong(String.valueOf(data.get(0))))));
 			
-			Events.postEvent(new Event("onWeekClick", cmp, new Date(Long.parseLong(data.get(0).toString()))));
-		}else super.service(request, everError);
-	}
-	
+		} else super.service(request, everError);
+	}	
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.zkoss.zul.impl.XulElement#renderProperties(org.zkoss.zk.ui.sys.ContentRenderer)
@@ -888,26 +812,18 @@ public class Calendars extends XulElement implements
 	protected void renderProperties(org.zkoss.zk.ui.sys.ContentRenderer renderer)
 			throws IOException {
 		super.renderProperties(renderer);		
-			
-		Object key = _tzones.keySet().iterator().next();
-		if(Strings.isEmpty(_tzones.get(key).toString()))
-			_tzones.remove(key);
-		
-		List<String> list = new ArrayList<String>();
-		for (TimeZone tz : _tzones.keySet()) 
-			list.add( "" + (tz.getRawOffset() + (tz.useDaylightTime() ? tz.getDSTSavings() : 0))/60000);				
 					
-		renderer.render("zonesOffset", convertStrListTOJSArray(list));
-		renderer.render("zones", convertStrListTOJSArray(_tzones.values()));
+		renderer.render("zonesOffset", Util.encloseList(Util.packZonesOffset(_tzones)));
+		renderer.render("zones", Util.encloseList(_tzones.values()));
 		
 		if (inMonthMold()) {
+			renderer.render("mon", true);
 			renderer.render("weekOfMonth", getWeekOfMonth());
 			
 			if (_weekOfYear) renderer.render("woy", true);
-			renderer.render("mon", true);
-			if (_dfmter != null) rendererMonthData(renderer);
+			if (_dfmter != null) rendererMonthData(_dfmter, renderer);
 		} else
-			if (_dfmter != null) rendererDayData(renderer);
+			if (_dfmter != null) rendererDayData(_dfmter ,renderer);
 		
 		
 		renderer.render("bd", getBeginDate().getTime());
@@ -918,164 +834,55 @@ public class Calendars extends XulElement implements
 			renderer.render("readonly", true);
 		
 		TimeZone tz = getDefaultTimeZone();
-		renderer.render("tz", (tz.getRawOffset() + (tz.useDaylightTime() ? tz.getDSTSavings() : 0))/60000);		
+		renderer.render("tz", (tz.getRawOffset() + (tz.useDaylightTime() ? tz.getDSTSavings() : 0))/60000);
 		
 		renderer.render("days", _days);
 		
-		renderer.render("events", getJSONEventMap(_evts.values()));
+		renderer.render("events", Util.encloseEventMap(this, _evts.values()));
 	}		
-	
-	private void rendererDayData(ContentRenderer renderer) throws IOException {		
-		
-		int days = getDays();
-		final Locale locale = Locales.getCurrent();	
-		TimeZone timezone = getDefaultTimeZone();	
-		Calendar cal = Calendar.getInstance(timezone);		
-		Date begin = getBeginDate();			
-		cal.setTime(begin);		
-		DateFormatter dfhandler = getDateFormatter();		
-		List<String> stringList = new LinkedList<String>();			
-		
-		
-		for (int j = 0; j < days; ++j) {
-			String content = dfhandler.getCaptionByDate(cal.getTime(), locale, timezone);
-			stringList.add(content);
-			cal.add(Calendar.DAY_OF_WEEK, 1);
-		}		
-		renderer.render("captionByDate", convertStrListTOJSArray(stringList));	
-		stringList.clear();		
-		
-		Map<TimeZone, String> zones = getTimeZones();
-		Calendar current = Calendar.getInstance(timezone);		
-		current.set(Calendar.MINUTE, 0);
-		
-		
-		for (TimeZone tz : zones.keySet()) {
-			for(int k = 0; k < 24; k++) {
-				current.set(Calendar.HOUR_OF_DAY, k);				
-				String content = dfhandler.getCaptionByTimeOfDay(current.getTime(), locale, tz);	
-				stringList.add(content);
-			}
-		}
-		renderer.render("captionByTimeOfDay", convertStrListTOJSArray(stringList));	
-	}
 
-	private void rendererMonthData(ContentRenderer renderer) throws IOException {
-		final Locale locale = Locales.getCurrent();	
-		TimeZone timezone = getDefaultTimeZone();		
+	private void rendererDayData(DateFormatter dfhandler, ContentRenderer renderer) throws IOException {
+		final Locale locale = Locales.getCurrent();
+		TimeZone timezone = getDefaultTimeZone();
 		Calendar cal = Calendar.getInstance(timezone);
-		Date begin = getBeginDate();
-		cal.setTime(begin);
-		DateFormatter dfhandler = getDateFormatter();
-		List<String> stringList = new LinkedList<String>();
-		List<String> stringList2 = new LinkedList<String>();
-		
-		for (int k = 0; k < 7; ++k) {
-			String content = dfhandler.getCaptionByDayOfWeek(cal.getTime(), locale, timezone);
-			stringList.add(content);
-			cal.add(Calendar.DAY_OF_MONTH, 1);
-		}			
-		renderer.render("captionByDayOfWeek", convertStrListTOJSArray(stringList));	
-		stringList.clear();
-		
-		int weeks = getWeekOfMonth();
-		if (isWeekOfYear()) {
-			cal.setTime(begin);
-			for (int j = 0; j < weeks; j++) {
-				cal.set(Calendar.MILLISECOND, 0);
-				String content = dfhandler.getCaptionByWeekOfYear(cal.getTime(), locale, timezone);
-				stringList.add(content);
-				cal.add(Calendar.DAY_OF_MONTH, 7);
-			}
-			renderer.render("captionByWeekOfYear", convertStrListTOJSArray(stringList));
-			stringList.clear();
-		}		
-		
-		cal.setTime(begin);		
-		for (int j = 0; j < weeks; j++) {
-			for (int i = 0; i < 7; i++) {
-				cal.set(Calendar.MILLISECOND, 0);
-				Date d = cal.getTime();
-				String content = dfhandler.getCaptionByPopup(d, locale, timezone);
-				String content2 = dfhandler.getCaptionByDateOfMonth(d, locale, timezone);
-				stringList.add(content);
-				stringList2.add(content2);
-				cal.add(Calendar.DAY_OF_MONTH, 1);
-			}	
-		}			
-		renderer.render("captionByPopup", convertStrListTOJSArray(stringList));
-		renderer.render("captionByDateOfMonth", convertStrListTOJSArray(stringList2));
+		cal.setTime(getBeginDate());
+
+		renderer.render("captionByDate", Util.encloseList(Util.packCaptionByDate(cal, getDays(), locale, timezone, dfhandler)));
+
+		cal.set(Calendar.MINUTE, 0);
+		renderer.render("captionByTimeOfDay", Util.encloseList(Util.packCaptionByTimeOfDay(cal, _tzones, locale, dfhandler)));
 	}
 
-	private String convertStrListTOJSArray(Collection<String> collection) {
-		final StringBuffer sb = new StringBuffer().append("[\"");
-		
-		for (String string : collection) 
-			sb.append(string).append("\",\"");		
-		sb.delete(sb.length() - 3, sb.length() - 1);
-		sb.append(']');
-		return sb.toString();
+	private void rendererMonthData(DateFormatter dfhandler, ContentRenderer renderer) throws IOException {
+		TimeZone timezone = getDefaultTimeZone();
+		Calendar cal = Calendar.getInstance(timezone);
+		cal.setTime(getBeginDate());
+
+		List<List<String>> result = Util.packAllCaptionOfMonth(this, cal, Locales.getCurrent(), timezone, dfhandler);
+		renderer.render("captionByDayOfWeek", Util.encloseList(result.get(0)));
+		renderer.render("captionByPopup", Util.encloseList(result.get(1)));
+		renderer.render("captionByDateOfMonth", Util.encloseList(result.get(2)));
+
+		if (isWeekOfYear())
+			renderer.render("captionByWeekOfYear", Util.encloseList(result.get(3)));
 	}
 	
-	private String getJSONEventMap(Collection<List<CalendarEvent>> collection) {
-		final StringBuffer sb = new StringBuffer().append('[');
-		
-		
-		for (List<CalendarEvent> list : collection) {
-			sb.append('[');			
-			for (CalendarEvent ce : list) {
-				String title = "";				
-				if (_dfmter != null) {
-					DateFormatter df = getDateFormatter();
-					Locale locale = Locales.getCurrent();
-					TimeZone timezone = getDefaultTimeZone();
-					Date begin = ce.getBeginDate();
-					Date end = ce.getEndDate();
-					if (end.getTime() - begin.getTime() < 60 * 60 * 1000) {
-						title = df.getCaptionByTimeOfDay(begin, locale, timezone)
-								+ " - " + ce.getContent();
-					} else
-						title = df.getCaptionByTimeOfDay(begin, locale, timezone)
-								+ " - " + df.getCaptionByTimeOfDay(end, locale, timezone);
-				}				
-				sb.append(new StringBuffer(ce.toString()).insert(1, "\"id\":\"" + 
-						getCalendarEventId(ce) + "\",\"title\":\"" + title + "\",").toString()).append(',');
-			}
-			sb.deleteCharAt(sb.length() - 1);
-			sb.append("],");
-		}
-		if(collection.size() != 0)
-			sb.deleteCharAt(sb.length() - 1);
-		sb.append(']');		
-		return sb.toString();
-	}
-	
-	private String getJSONEventList(Collection<CalendarEvent> collection) {
-		final StringBuffer sb = new StringBuffer().append('[');
-		
-		for (CalendarEvent ce : collection) {
-			String title = ce.getTitle();
-			if (_dfmter != null) {//create title by date formatter				
-				DateFormatter df = getDateFormatter();
-				Locale locale = Locales.getCurrent();
-				TimeZone timezone = getDefaultTimeZone();
-				Date begin = ce.getBeginDate();
-				Date end = ce.getEndDate();
-				if (end.getTime() - begin.getTime() < 60 * 60 * 1000) {
-					title = df.getCaptionByTimeOfDay(begin, locale,timezone)
-							+ " - " + ce.getContent();
-				} else
-					title = df.getCaptionByTimeOfDay(begin, locale,timezone)
-							+ " - "+ df.getCaptionByTimeOfDay(end, locale,timezone);				
-			}	
-			
-			sb.append(new StringBuffer(ce.toString()).insert(1, "\"id\":\"" + 
-					getCalendarEventId(ce) + "\",\"title\":\"" + title + "\",").toString()).append(',');	
-		}
-		sb.deleteCharAt(sb.length() - 1);
-		sb.append(']');		
-		collection.clear();
-		return sb.toString();
+	/**
+	 * @deprecated As of release 2.0-RC
+	 * Returns the event renderer used for {@link CalendarEvent} to draw its
+	 * outline (i.e. HTML), like the DSP renderer of ZK component.
+	 * <p>
+	 * Note: never null.
+	 */
+	public EventRender getEventRender() {
+		return null;
 	}
 
+	/**
+	 * @deprecated As of release 2.0-RC
+	 * Sets the event renderer.
+	 */
+	public void setEventRender(EventRender render) {
+		
+	}
  }

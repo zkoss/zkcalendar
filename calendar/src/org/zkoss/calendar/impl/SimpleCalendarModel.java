@@ -107,6 +107,7 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * Adds the calendar event to the list.
 	 */
 	public boolean add(CalendarEvent e) {
+		if (e == null) throw new NullPointerException("CalendarEvent cannot be null!");
 		boolean ret = _list.add(e);
  		fireEvent(CalendarDataEvent.INTERVAL_ADDED, e);
 		return ret;
@@ -116,6 +117,7 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * Update the calendar event to the list.
 	 */
 	public boolean update(CalendarEvent e) {
+		if (e == null) throw new NullPointerException("CalendarEvent cannot be null!");
 		fireEvent(CalendarDataEvent.CONTENTS_CHANGED, e);
 		boolean ret = _list.remove(e);
 		if(!ret) return ret;
@@ -142,8 +144,9 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	/**
 	 * Removes from the specified calendar event.
 	 */
-	public boolean remove(CalendarEvent o) {
-		int index = indexOf(o);
+	public boolean remove(CalendarEvent e) {
+		if (e == null) throw new NullPointerException("CalendarEvent cannot be null!");
+		int index = indexOf(e);
 		if (index >= 0) {
 			remove(index);
 		}
@@ -155,9 +158,8 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
      * The list will be empty after this call returns.
 	 */
 	public void clear() {
-		if (_list.isEmpty()) {
-			return;
-		}
+		if (_list.isEmpty()) return;
+		
 		_list.clear();
 		fireEvent(ListDataEvent.INTERVAL_REMOVED, null, TimeZone.getDefault());
 	}

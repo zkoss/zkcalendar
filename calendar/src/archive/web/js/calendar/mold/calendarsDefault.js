@@ -17,7 +17,7 @@ function (out) {
 	
 	
 	var uuid = this.uuid,
-		zcls = this.getZclass(),	
+		zcls = this.getZclass(),
 		toolbar = this.firstChild,
 		days = this._days,
 		bdTime = this._beginDate.getTime(),
@@ -74,7 +74,7 @@ function (out) {
 		hour_of_day 		= hour + "-of-day";
 	
 	
-	out.push('<div', this.domAttrs_(), '>');	
+	out.push('<div', this.domAttrs_(), '>');
 	if (toolbar) {
 		out.push('<div id="', uuid, '-tb" class="', header, '">');
 		toolbar.redraw(out);
@@ -102,7 +102,7 @@ function (out) {
 	
 /*************** zone area ******************/
 
-	for (var i = 0, j = this._zones.length - 1; i < j ; i++) 
+	for (var i = 0, j = this._zones.length - 1; i < j ; i++)
 		out.push('<th rowspan="3" class="', tzone,'">', this._zones[i], '</th>');
 	
 	out.push('<th rowspan="3" class="', tzone, ' ', tzone_end, '">', this._zones[this._zones.length - 1],
@@ -160,7 +160,7 @@ function (out) {
 			'<tr>');
 	
 /*************** zone bottom separator ******************/	
-	for (var i = 0; i < this._zones.length - 1; i++) 
+	for (var i = 0; i < this._zones.length - 1; i++)
 		out.push('<td class="', tzone, '"></td>');
 	
 	out.push('<td class="', tzone, ' ', tzone_end, '"></td>',	
@@ -175,7 +175,7 @@ function (out) {
 		out.push('<div class="', hour_sep, '"></div>');
 
 	// the end of hours separator
-	out.push('</div></div></td></tr>',	
+	out.push('</div></div></td></tr>',
 	
 /*************** column ******************/	
 			'<tr>');
@@ -186,13 +186,13 @@ function (out) {
 		out.push('<td class="', tzone);
 		if (!this._zones[i+1])
 			out.push(' ', tzone_end);
-		out.push('">');		
+		out.push('">');
 		
 		for (var k = 0; k < 24; k++) {
-			current.setHours(k);			
+			current.setHours(k);
 			out.push('<div class="', hour_of_day, '">',
-				this._captionByTimeOfDay ? 
-					this._captionByTimeOfDay[i * 24 + k] : 
+				this._captionByTimeOfDay ?
+					this._captionByTimeOfDay[i * 24 + k] :
 					zk.fmt.Date.formatDate(this.getTimeZoneTime(current,this._zonesOffset[i]),'HH:mm'),
 				'</div>');
 		}
@@ -206,7 +206,7 @@ function (out) {
 			out.push(' ', week_weekend);
 		if (weekend[2] == j)
 			out.push(' ', week_today);
-		out.push('"><div class="', week_day_cnt, '"></div></td>');		
+		out.push('"><div class="', week_day_cnt, '"></div></td>');	
 	}
 
 	// the end of the content of day
@@ -226,5 +226,5 @@ function (out) {
 			'<div class="',b1,'"></div>',
 			'<div id="',uuid,'-sdw" class="',zcls,'-fl">',
 			'<div class="',zcls,'-fr">',
-			'<div class="',zcls,'-fm"></div></div></div></div>');			
+			'<div class="',zcls,'-fm"></div></div></div></div>');
 }

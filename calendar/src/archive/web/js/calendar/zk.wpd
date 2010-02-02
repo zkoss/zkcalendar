@@ -13,6 +13,8 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 	<widget name="Calendars"/>
 	<widget name="CalendarsDefault"/>
 	<widget name="CalendarsMonth"/>
+	<widget name="Event"/>
+	<widget name="LongEvent"/>
 	<widget name="DaylongEvent"/>
 	<widget name="DayEvent"/>
 	<widget name="DaylongOfMonthEvent"/>

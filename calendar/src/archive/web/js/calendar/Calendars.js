@@ -13,7 +13,7 @@ This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
  */
 calendar.Calendars = zk.$extends(zul.Widget, {	
-	DAYTIME: 24*60*60*1000, 
+	DAYTIME: 24*60*60*1000,
 	ppTemplate: ['<div id="%1-pp" class="%2" style="position:absolute; top:0;left:0;"><div class="%2-t1"></div><div class="%2-t2"><div class="%2-t3"></div></div>',
 			  '<div class="%2-body"><div class="%2-inner">',
 			  '<div class="%2-header"><div id="%1-ppc" class="%2-close"></div><div id="%1-pphd" class="%2-header-cnt"></div></div>',
@@ -33,8 +33,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	
 	$define : {
 		cd: function(){
-			this._currentDate = new Date(this._cd);			
-			this._updateDateRange();			
+			this._currentDate = new Date(this._cd);
+			this._updateDateRange();
 		},
 		firstDayOfWeek: function(){
 			this._updateDateRange();
@@ -64,14 +64,14 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		return zcls ? zcls : "z-calendars";
 	},	
 	
-	_isExceedOneDay: function(bd,ed) {  	
+	isExceedOneDay_: function(bd,ed) {  	
 		if (bd < this._beginDate || bd.getFullYear() != ed.getFullYear() ||
 			(bd.getDOY() != ed.getDOY() && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
 			(ed.getTime() - bd.getTime() >= this.DAYTIME && ed.getTime() - this._beginDate.getTime() >= this.DAYTIME))
 	 		return true;
 	},
 	
-	_drawEvent: function(preOffset, className, tr, dayNode){
+	drawEvent_: function(preOffset, className, tr, dayNode){
 		var html = [],
 			s = '<td class="' + className + '">&nbsp;</td>';
 		for (var n = preOffset; n--;) 
@@ -82,7 +82,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		jq(tr[0].lastChild).append(dayNode);
 	},	
 	
-	_putInDaylongSpace: function(list,node){
+	putInDaylongSpace_: function(list, node) {
 		var bd = node.upperBoundBd,
 			ed = node.lowerBoundEd,
 			rowSpace,
@@ -109,6 +109,60 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		else list.push([node]);
 	},
 	
+	processEvtData_: function(event){
+		event.isLocked = event.isLocked == 'true' ? true: false;		
+		event.beginDate = new Date(zk.parseInt(event.beginDate));
+		event.endDate = new Date(zk.parseInt(event.endDate));				
+		
+		event.zoneBd = this.adjTime(event.beginDate);
+		event.zoneEd = this.adjTime(event.endDate);
+		
+		return event;
+	},
+	
+	updateDateOfBdAndEd_: function(){
+		this._beginDate = new Date(this.bd);
+		this._endDate = new Date(this.ed);		
+		this.zoneBd = this.adjTime(this._beginDate),
+		this.zoneEd = this.adjTime(this._endDate);
+	},
+	
+	addDayClickEvent_: function (element) {
+		var widget = this,
+			zcls = this.getZclass();
+		jq(element).bind('mouseover', function (evt) {
+			var target = evt.target;				
+			if (target.tagName == "SPAN")
+				jq(target).addClass(zcls + "-day-over");
+		});
+		
+		jq(element).bind('mouseout', function (evt) {
+			var target = evt.target;				
+			if (target.tagName == "SPAN")
+				jq(target).removeClass(zcls + "-day-over");
+		});
+
+		jq(element).bind('click', function (evt) {
+			var target = evt.target;				
+			if (target.tagName == "SPAN")
+				widget.fire("onDayClick",{data:[target.time]});
+			evt.stop();
+		});
+	},
+	
+	dateSorting_: function(x, y){		
+		if (x.zoneBd < y.zoneBd)
+			return 1;
+		else if (x.zoneBd == y.zoneBd) {
+			if (x.zoneEd < y.zoneEd)
+				return -1;
+			else if (x.zoneEd == y.zoneEd) 
+				return 0;
+			return 1				
+		}				
+		return -1;
+	},
+	
 	fixTimeZoneFromServer: function (date, tzOffset) {
 		return new Date(date.getTime() + (date.getTimezoneOffset() + tzOffset) * 60000);
 	},
@@ -117,11 +171,11 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		return new Date(date.getTime() + (tzOffset - this._zonesOffset[0])  * 60000);
 	},
 	
-	getLocalTime: function (date) {			
+	adjTime: function (date) {			
 		return new Date(date.getTime() + (date.getTimezoneOffset() + this._zonesOffset[0])  * 60000);
 	},
 	
-	_fixRope: function (infos, n, cols, rows, offs, dim, dur) {
+	fixRope_: function (infos, n, cols, rows, offs, dim, dur) {
 		if (!n || !offs || !dim) return;
 
 		n.style.top = jq.px(dim.hs[rows] * rows + offs.t);
@@ -143,7 +197,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			dur -= i;
 
 			if (dur && ++rows < dim.hs.length)
-				this._fixRope(infos, n.nextSibling, 0, rows, offs, dim, dur);
+				this.fixRope_(infos, n.nextSibling, 0, rows, offs, dim, dur);
 			else
 				for (var e = n.nextSibling; e; e = e.nextSibling)
 					e.style.cssText = "";
@@ -257,7 +311,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		 }
 		 if (!dg._zpos1 || dg._zpos1[2] != dur || dg._zpos1[0] != cols || dg._zpos1[1] != rows) {
 		 	dg._zpos1 = [cols, rows, dur];
-		 	widget._fixRope(dg._zinfo, dg._zrope.firstChild, cols, rows, dg._zoffs, dg._zdim, dur);
+		 	widget.fixRope_(dg._zinfo, dg._zrope.firstChild, cols, rows, dg._zoffs, dg._zdim, dur);
 		 }
 	}
 });
