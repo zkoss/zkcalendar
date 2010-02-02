@@ -30,7 +30,6 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			  '<div class="%2-body" id="%1-body"><div class="%2-inner"><dl id="%1-inner"><dt class="%2-header"></dt><dd class="%2-cnt"></dd></dl></div></div>',
 			  '<div class="%2-b2"><div class="%2-b3"></div></div><div class="%2-b1"/></div>'].join(''),	
 	
-	
 	$define : {
 		cd: function(){
 			this._currentDate = new Date(this._cd);
@@ -47,8 +46,9 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 
 
 	bind_ : function() {// after compose
-		this.$supers('bind_', arguments);
+		this.$supers('bind_', arguments);		
 		zWatch.listen({onSize: this, onShow: this});
+		this.blockTemplate = '<div id="'+this.uuid+'-tempblock"></div>';
 	},
 	
 	unbind_ : function() {
@@ -69,6 +69,25 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			(bd.getDOY() != ed.getDOY() && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
 			(ed.getTime() - bd.getTime() >= this.DAYTIME && ed.getTime() - this._beginDate.getTime() >= this.DAYTIME))
 	 		return true;
+	},
+	
+	createChildrenWidget_: function () {
+		this.cleanEvtAry_();		
+		
+		//append all event be widget children
+		for (var i = 0, j = this._events.length; i < j; i++) {
+			var events = this._events[i];
+			for (var k = events.length; k--;) {
+				var event = this.processEvtData_(events[k]),
+					bd = event.zoneBd,
+					ed = event.zoneEd,
+					dayEvent;				
+				
+				if (bd > this.zoneEd || ed < this.zoneBd) continue;				
+				
+				this.processChildrenWidget_(this.isExceedOneDay_(bd, ed), event);
+			}
+		}
 	},
 	
 	drawEvent_: function(preOffset, className, tr, dayNode){
@@ -150,13 +169,25 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		});
 	},
 	
-	dateSorting_: function(x, y){		
-		if (x.zoneBd < y.zoneBd)
+	dateSorting_: function(x, y){
+		var isDaylongMonX = zk.Widget.$(x).className == 'calendar.DaylongOfMonthEvent',
+			isDaylongMonY = zk.Widget.$(y).className == 'calendar.DaylongOfMonthEvent',
+			xBd = x.zoneBd,
+			xEd = x.zoneEd,
+			yBd = y.zoneBd,
+			yEd = y.zoneEd;			
+			
+		if (isDaylongMonX && !isDaylongMonY)
+			xBd = x.upperBoundBd;			
+		else if (!isDaylongMonX && isDaylongMonY)
+			yBd = y.upperBoundBd;			
+		
+		if (xBd < yBd)
 			return 1;
-		else if (x.zoneBd == y.zoneBd) {
-			if (x.zoneEd < y.zoneEd)
+		else if (xBd == yBd) {
+			if (xEd < yEd)
 				return -1;
-			else if (x.zoneEd == y.zoneEd) 
+			else if (xEd == yEd) 
 				return 0;
 			return 1				
 		}				
@@ -173,6 +204,10 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	
 	adjTime: function (date) {			
 		return new Date(date.getTime() + (date.getTimezoneOffset() + this._zonesOffset[0])  * 60000);
+	},
+	
+	reconvertTime: function (date) {			
+		return new Date(date.getTime() - (date.getTimezoneOffset() + this._zonesOffset[0])  * 60000);
 	},
 	
 	fixRope_: function (infos, n, cols, rows, offs, dim, dur) {

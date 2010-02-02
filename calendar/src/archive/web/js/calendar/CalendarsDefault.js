@@ -109,7 +109,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					this.removeChild(child);
 			}
 
-			this._createChildrenWidget();
+			this.createChildrenWidget_();
 			this._rePositionDaylong();
 			this._rePositionDay();
 		},
@@ -175,19 +175,22 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		this.$supers('bind_', arguments);
 
 		var widget = this,
-			cnt = this.$n("cnt");
+			cnt = this.$n("cnt"),
+			zcls = this.getZclass();
 		
 		//define all positions
 		//put the title
-		this.title = jq(this.$n("header")).children().find('.' + this.getZclass() + '-day-of-week-cnt');
+		this.title = jq(this.$n("header")).children().find('.' + zcls + '-day-of-week-cnt');
 		//put the daylong event
 		this.daylongRows = this.$n('daylong').firstChild.firstChild;
 		//put the daylong more space
 		this.daylongMoreRows = this.daylongRows.firstChild;
 		//put the day event
-		this.cntRows = zk.ie ? jq(cnt).contents().find("tr")[2]: jq(cnt).contents().find("tr")[1];
+		this.cntRows = jq(cnt).contents().find("tr")[zk.ie ? 2: 1];
+		
+		this.weekDay = jq(this.cntRows).children('.'+ zcls +'-week-day');	
 
-		this._createChildrenWidget();
+		this.createChildrenWidget_();
 		this._rePositionDaylong();
 		this._rePositionDay();
 		
@@ -220,33 +223,19 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		this.title =  this.daylongRows =  this.daylongMoreRows = this.cntRows =null
 		this.$supers('unbind_', arguments);
 	},
-						
-	_createChildrenWidget: function () {
+	
+	cleanEvtAry_: function () {
 		this._daylongEvents = [];
 		this._dayEvents = [];
-		
-		//append all event be widget children
-		for (var i = 0, j = this._events.length; i < j; i++) {
-			var events = this._events[i];
-			for (var k = events.length; k--;) {
-				var event = this.processEvtData_(events[k]),
-					bd = event.zoneBd,
-					ed = event.zoneEd;
-					
-				if (bd > this.zoneEd || ed < this.zoneBd) continue;
-					
-				if (this.isExceedOneDay_(bd,ed)) {
-					var dayEvent = new calendar.DaylongEvent({event:event});
-					this.appendChild(dayEvent);					
-					this._daylongEvents.push(dayEvent.$n());	
-				} else {
-					var dayEvent = new calendar.DayEvent({event:event});	
-					this.appendChild(dayEvent);			
-					this._dayEvents.push(dayEvent.$n());	
-				}
-				
-			}
-		}
+	},
+	
+	processChildrenWidget_: function (isExceedOneDay, event) {
+		var dayEvent = isExceedOneDay ?
+						new calendar.DaylongEvent({event:event}):
+						new calendar.DayEvent({event:event});
+								
+		this.appendChild(dayEvent);					
+		this[isExceedOneDay ? '_daylongEvents': '_dayEvents'].push(dayEvent.$n());				
 	},
 		
 	_resetDaylongPosition: function () {
@@ -282,7 +271,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					for (var n = childWgt._afterOffset; n--;) 
 						html += '<td class="' + zcls + '-daylong-evt">&nbsp;</td>';
 					tr.append(html);
-				}						
+				}
 			}
 		}
 	},	
@@ -306,7 +295,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		this._daylongEvents.sort(this.dateSorting_);
 		this._daylongSpace = [];		
 		
-		jq(document.body).append('<div id="'+this.uuid+'-tempblock"></div>');		
+		jq(document.body).append(this.blockTemplate);		
 		var temp = jq('#' + this.uuid + '-tempblock');
 		
 		// all daylong event
@@ -881,14 +870,16 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		var cnt = this.$n("cnt"),
 			row = this.cntRows,
 			perHgh = row.firstChild.firstChild.offsetHeight,
-			weekDay = jq(row).children('.'+ this.getZclass() +'-week-day');			
+			weekDay = this.weekDay;			
 		
 		for (var i =  this._daySpace.length; i--;) {
 			var list = this._daySpace[i];
-			if(!list.length)continue;
+			if (!list.length) continue;
+			
 			var data = [];
 			for (var n = 48; n--;) 
-				data[n] = [];			
+				data[n] = [];
+
 			for (var k = list.length; k--;) {
 				var ce = list[k],
 					childWidget = zk.Widget.$(ce),					
@@ -1404,7 +1395,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					dur = dg._zdata.dur + rows,
 					days = cols * widget.DAYTIME,
 					tzOffset = widget.tz,
-					bd = new Date(widget.zoneBd.getTime() + days),
+					bd = new Date(widget._beginDate.getTime() + days),
 					bd1 = widget.fixTimeZoneFromServer(bd, tzOffset),
 					ofs = widget._getTimeOffset(bd1, false, rows),
 					ofs1 = widget._getTimeOffset(bd1, false, dur);				
