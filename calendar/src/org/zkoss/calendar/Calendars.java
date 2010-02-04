@@ -331,7 +331,6 @@ public class Calendars extends XulElement implements
 		
 		TimeZone tz = getDefaultTimeZone();
 		smartUpdate("tz", (tz.getRawOffset() + (tz.useDaylightTime() ? tz.getDSTSavings() : 0))/60000);
-		
 		smartUpdate("bd", getBeginDate().getTime());
 		smartUpdate("ed", getEndDate().getTime());	
 		reSendEventGroup();	
@@ -815,6 +814,8 @@ public class Calendars extends XulElement implements
 	protected void renderProperties(org.zkoss.zk.ui.sys.ContentRenderer renderer)
 			throws IOException {
 		super.renderProperties(renderer);		
+		TimeZone tz = getDefaultTimeZone();
+		renderer.render("tz", (tz.getRawOffset() + (tz.useDaylightTime() ? tz.getDSTSavings() : 0))/60000);
 					
 		renderer.render("zonesOffset", Util.encloseList(Util.packZonesOffset(_tzones)));
 		renderer.render("zones", Util.encloseList(_tzones.values()));
@@ -835,9 +836,6 @@ public class Calendars extends XulElement implements
 		
 		if (_readonly)
 			renderer.render("readonly", true);
-		
-		TimeZone tz = getDefaultTimeZone();
-		renderer.render("tz", (tz.getRawOffset() + (tz.useDaylightTime() ? tz.getDSTSavings() : 0))/60000);
 		
 		renderer.render("days", _days);
 		

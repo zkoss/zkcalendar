@@ -29,47 +29,49 @@ calendar.Event = zk.$extends(zk.Widget, {
 	},
 	
 	defineClassName_: function() {
-		var zcls = this.getZclass();
-		// round corner
-		this.t1 = zcls + "-t1";
-		this.t2 = zcls + "-t2";
-		this.t3 = zcls + "-t3";
-		this.b1 = zcls + "-b1";
-		this.b2 = zcls + "-b2";
-		this.b3 = zcls + "-b3";
-		// CSS ClassName
-		this.body = zcls + "-body";
-		this.inner = zcls + "-inner";
-		this.content = zcls + "-cnt";
-		this.text = zcls + "-text";
-		
-		var ce = this.event,
+		var zcls = this.getZclass(),
+			ce = this.event,
 			headerColor = ce.headerColor,
 			contentColor = ce.contentColor;
-		this.headerStyle = headerColor ? ' style="background:' + headerColor + '"': '' ;
-		this.contentStyle = contentColor ? ' style="background:' + contentColor + '"': '' ;
 		
+		this.params = {			
+			// round corner
+			t1: zcls + "-t1",
+			t2: zcls + "-t2",
+			t3: zcls + "-t3",
+			b1: zcls + "-b1",
+			b2: zcls + "-b2",
+			b3: zcls + "-b3",
+			// CSS ClassName
+			body: zcls + "-body",
+			inner: zcls + "-inner",
+			content: zcls + "-cnt",
+			text: zcls + "-text",
+			headerStyle: headerColor ? ' style="background:' + headerColor + '"': '',
+			contentStyle: contentColor ? ' style="background:' + contentColor + '"': ''			
+		};
 		this.uuid = ce.id;
 	},
 	
 	defineCss_: function() {	
 		var ce = this.event,
 			headerColor = ce.headerColor,
-			contentColor = ce.contentColor;
-			
-		this.headerStyle = headerColor ? 'background:' + headerColor: '';
-		this.contentStyle = contentColor ? 'background:' + contentColor: '';
+			contentColor = ce.contentColor,
+			p = this.params;
+		p.headerStyle = headerColor ? 'background:' + headerColor: '';
+		p.contentStyle = contentColor ? 'background:' + contentColor: '';
 	},
 	
 	updateHeaderStyle_: function(headerStyle) {
 		var node = jq(this.$n()),
-			body = jq(this.$n('body'));
-		node.children('.' + this.t1).attr('style', headerStyle);
-		node.children('.' + this.t2).attr('style', headerStyle);
-		node.children('.' + this.b1).attr('style', headerStyle);
-		node.children('.' + this.b2).attr('style', headerStyle);
+			body = jq(this.$n('body')),
+			p = this.params;
+		node.children('.' + p.t1).attr('style', headerStyle);
+		node.children('.' + p.t2).attr('style', headerStyle);
+		node.children('.' + p.b1).attr('style', headerStyle);
+		node.children('.' + p.b2).attr('style', headerStyle);
 		body.attr('style',headerStyle);
-		body.children('.' + this.inner).attr('style', this.getInnerStyle_());
+		body.children('.' + p.inner).attr('style', this.getInnerStyle_());
 	},
 		
 	getZclass: function() {
@@ -78,7 +80,7 @@ calendar.Event = zk.$extends(zk.Widget, {
 	},
 	
 	getInnerStyle_: function() {
-		return this.headerStyle;
+		return this.params.headerStyle;
 	},
 	
 	calculate_: function() {

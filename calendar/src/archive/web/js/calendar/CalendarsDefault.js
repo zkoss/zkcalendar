@@ -24,7 +24,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		'16:00', '16:30', '17:00', '17:30',	'18:00', '18:30', '19:00', '19:30',
 		'20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30',
 		'00:00'
-	],	
+	],
 	_dayEvents: [],
 	_daylongEvents: [],
 	_daylongSpace: [],
@@ -187,8 +187,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		//put the day event
 		this.cntRows = jq(cnt).contents().find("tr")[zk.ie ? 2: 1];
 		
-		this.weekDay = jq(this.cntRows).children('.'+ zcls +'-week-day');	
-
+		this.weekDay = jq(this.cntRows).children('.'+ zcls +'-week-day');
+		
+		this.perHeight = this.cntRows.firstChild.firstChild.offsetHeight / 2;
+		
 		this.createChildrenWidget_();
 		this._rePositionDaylong();
 		this._rePositionDay();
@@ -244,7 +246,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		daylongRows.children().not(':last-child').remove();
 		
 		// append all rows		
-		for (var i = this._daylongSpace.length; i--;) {			
+		for (var i = this._daylongSpace.length; i--;) {
 			daylongRows.prepend('<tr></tr>');
 			var rowSpace = this._daylongSpace[i],
 				tr = jq(daylongRows[0].firstChild);	
@@ -273,6 +275,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				}
 			}
 		}
+		jq('#' + this.uuid + '-hdarrow').removeClass(this.getZclass() + '-week-header-arrow-close');
 	},	
 	
 	_rePositionDay: function () {	
@@ -545,12 +548,11 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				cells = row.cells,
 				width = row.cells[0].offsetWidth,
 				offs = zk(cnt).revisedOffset(),
-				ph = row.firstChild.firstChild.offsetHeight/2;
+				ph = widget.perHeight;
 				x = p[0],
 				y = p[1],
 				cIndex = cells.length - ts,
-				rows = Math.floor((y + cnt.scrollTop - offs[1]) /
-						(row.firstChild.firstChild.offsetHeight/2));
+				rows = Math.floor((y + cnt.scrollTop - offs[1]) / ph);
 
 			for (; cIndex--;)
 				if (cnt._lefts[cIndex] <= x)
@@ -590,15 +592,21 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 			var days = cIndex * widget.DAYTIME,
 				bd = new Date(widget._beginDate.getTime() + days),
-				tzOffset = widget.tz,
-				bd1 = widget.fixTimeZoneFromServer(bd, tzOffset),
+				bd1 = new Date(widget.zoneBd.getTime() + days),
 				ofs = widget._getTimeOffset(bd1, false, rows),
-				ofs1 = widget._getTimeOffset(bd1, false, rows+2);
+				ofs1 = widget._getTimeOffset(bd1, false, rows+2);				
 			// clean
 			bd.setMilliseconds(0);
 
 			widget.fire("onEventCreate", {
-   				 data: [bd.getTime() + ofs, bd.getTime() + ofs1, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});
+   				 data: [
+				 	bd.getTime() + ofs, 
+					bd.getTime() + ofs1, 
+					p[0], 
+					p[1], 
+				 	jq.innerWidth(), 
+				 	jq.innerHeight()
+				 ]});
 
 			widget._ghost[widget.uuid] = function () {
 				jq('#'+widget.uuid+'-dd').remove();
@@ -663,7 +671,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		evt.stop();
 	},
 		
-	onArrowClick: function (evt) {		
+	onArrowClick: function (evt) {
 		var a = evt.currentTarget,
 			$a = jq(a),
 			widget = zk.Widget.$(a),
@@ -676,7 +684,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			
 		widget.clearGhost();
 		
-		isClose ? $a.removeClass(cls): $a.addClass(cls);		
+		isClose ? $a.removeClass(cls): $a.addClass(cls);
 				
 		if (len < 2) return; // nothing to do
 
@@ -722,6 +730,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		// recalculate
 		widget.beforeSize(widget.$n());
 		widget.onSize(widget.$n());
+		
 		evt.stop();
 	},
 	
@@ -780,10 +789,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		//filling data
 		var evts = widget._evtsData[ci],
 			oneDay = widget.DAYTIME,
-			tzOffset = widget.tz,
-			bd = widget.fixTimeZoneFromServer(new Date(widget._beginDate.getTime()), tzOffset),
-			ed = new Date(bd.getTime() + oneDay);	
-		
+			bd = widget.zoneBd,
+			ed = new Date(bd.getTime() + oneDay);
+			
 		for (var i = evts.length; i--;) {				
 			var tr = table.insertRow(0),
 				cr = tr.insertCell(0),
@@ -795,8 +803,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				cc = event.contentColor,
 				zcls = event.zclass;				
 				
-			ce._bd = ce._bd || widget.fixTimeZoneFromServer(new Date(event.beginDate.getTime()), tzOffset);
-			ce._ed = ce._ed || widget.fixTimeZoneFromServer(new Date(event.endDate.getTime()), tzOffset);
+			ce._bd = ce._bd || event.zoneBd;
+			ce._ed = ce._ed || event.zoneEd;
 			cl.className = "z-calpp-evt-l";
 			if (bd.getTime() + (oneDay * ci) - ce._bd.getTime() >= 1000) {
 				var info = [
@@ -868,8 +876,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	fixPosition: function () {		
 		var cnt = this.$n("cnt"),
 			row = this.cntRows,
-			perHgh = row.firstChild.firstChild.offsetHeight,
-			weekDay = this.weekDay;			
+			perHgh = this.perHeight * 2,
+			weekDay = this.weekDay;		
 		
 		for (var i =  this._daySpace.length; i--;) {
 			var list = this._daySpace[i];
@@ -882,14 +890,13 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			for (var k = list.length; k--;) {
 				var ce = list[k],
 					childWidget = zk.Widget.$(ce),					
-					event = childWidget.event,
 					target= weekDay[ce._preOffset].firstChild,
-					tzOffset = this._zonesOffset[0];
+					event = childWidget.event,
+					bd = new Date(event.zoneBd.getTime()), 
+					ed = new Date(event.zoneEd.getTime());
 					
 				jq(target).append(ce);	
-				ce.style.visibility = "";
-				var bd = this.fixTimeZoneFromServer(new Date(event.beginDate.getTime()), tzOffset), 
-					ed = this.fixTimeZoneFromServer(new Date(event.endDate.getTime()), tzOffset);
+				ce.style.visibility = "";				
 				
 				ce._bd = bd;
 				ce._ed = ed;
@@ -1074,7 +1081,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			ts = widget.ts,
 			row = widget.cntRows,
 			cells = row.cells,
-			ph = row.firstChild.firstChild.offsetHeight/2;
+			ph = widget.perHeight;
 
 		dg._zcells = cells;
 		dg._zoffs = zk(cnt).revisedOffset();
@@ -1332,8 +1339,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 						event = zk.Widget.$(ce).event,
 						bd = new Date(event.beginDate.getTime()),
 						ed = new Date(event.endDate.getTime()),
-						ofs = widget._getTimeOffset(widget.fixTimeZoneFromServer(
-								ed, widget.tz), dg._zdata.dur);
+						ofs = widget._getTimeOffset(new Date(event.zoneEd.getTime()), dg._zdata.dur);
 
 					widget.fire("onEventUpdate", {
 						data: [
@@ -1363,8 +1369,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 						event = zk.Widget.$(ce).event,
 						bd = new Date(event.beginDate.getTime()),
 						ed = new Date(event.endDate.getTime()),
-						ofs = widget._getTimeOffset(widget.fixTimeZoneFromServer(
-								bd, widget.tz), -rows) + days;
+						ofs = widget._getTimeOffset(new Date(event.zoneBd.getTime()), -rows) + days;
 
 					widget.fire("onEventUpdate", {
 						data: [
@@ -1389,12 +1394,11 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					rows = dg._zdata.rows,
 					dur = dg._zdata.dur + rows,
 					days = cols * widget.DAYTIME,
-					tzOffset = widget.tz,
 					bd = new Date(widget._beginDate.getTime() + days),
-					bd1 = widget.fixTimeZoneFromServer(bd, tzOffset),
+					bd1 = new Date(widget.zoneBd.getTime() + days),
 					ofs = widget._getTimeOffset(bd1, false, rows),
-					ofs1 = widget._getTimeOffset(bd1, false, dur);				
-				
+					ofs1 = widget._getTimeOffset(bd1, false, dur);
+
 				widget.fire("onEventCreate",{
 						data: [
 							bd.getTime() + ofs,
@@ -1490,10 +1494,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				
 			dg.node = jq('#' + widget.uuid + '-dd')[0];
 
-			var tzOffset = widget._zonesOffset[0],
-				bd = widget.fixTimeZoneFromServer(new Date(event.beginDate.getTime()), tzOffset),
-				ed = widget.fixTimeZoneFromServer(new Date(event.endDate.getTime()), tzOffset);
-
+			var bd = new Date(event.zoneBd.getTime()),
+				ed = new Date(event.zoneEd.getTime());
+				
 			if (ed.getHours() == 0 && ed.getMinutes() == 0 && ed.getSeconds() == 0)
 				ed = new Date(ed.getTime() - 1000);
 			
@@ -1536,12 +1539,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			var ce;
 			if (dg._zevt) {
 				var zcls = widget.getZclass(),
-					tzOffset = widget._zonesOffset[0],
 					event = zk.Widget.$(dg._zevt).event,
-					bd = widget.fixTimeZoneFromServer(
-						new Date(widget._beginDate.getTime() + (dg._zpos1[0] * (widget.DAYTIME))), tzOffset),
-					bd1 = widget.fixTimeZoneFromServer(new Date(event.beginDate.getTime()), tzOffset);
-
+					bd = new Date(widget.zoneBd.getTime() + dg._zpos1[0] * widget.DAYTIME),
+					bd1 = new Date(event.zoneBd.getTime());
+					
 				jq(dg._zevt).removeClass(zcls + '-evt-dd');
 
 				bd.setHours(bd1.getHours());

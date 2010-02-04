@@ -19,33 +19,34 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 		this.defineClassName_();
 		
 		var ce = this.event,
-			id = ce.id,			
-			headerStyle = this.headerStyle,
-			contentStyle = this.contentStyle,
-			resizer = this.resizer;
+			id = ce.id,
+			p = this.params,	
+			headerStyle = p.headerStyle,
+			contentStyle = p.contentStyle,
+			resizer = p.resizer;
 			
-		this._resizerCnt = '<div class="' + resizer + '">' +
+		p._resizerCnt = '<div class="' + resizer + '">' +
 							'<div class="' + resizer + '-icon"></div></div>';
 		
 		out.push('<div', this.domAttrs_(), '>',
-				'<div class="', this.t1, '"', headerStyle, '></div>',
-				'<div class="', this.t2, '"', headerStyle, '>',
-				'<div class="', this.t3, '"></div></div>',
-				'<div id="', id, '-body" class="', this.body, '"', headerStyle, '>',
-				'<div class="', this.inner, '"', headerStyle, '>',
+				'<div class="', p.t1, '"', headerStyle, '></div>',
+				'<div class="', p.t2, '"', headerStyle, '>',
+				'<div class="', p.t3, '"></div></div>',
+				'<div id="', id, '-body" class="', p.body, '"', headerStyle, '>',
+				'<div class="', p.inner, '"', headerStyle, '>',
 				'<dl id="', id, '-inner"', contentStyle, '>',
-				'<dt id="', id, '-hd" class="', this.header, '"', headerStyle, '>', this.getEvtTitle(ce), '</dt>',
-				'<dd id="', id, '-cnt" class="', this.content, '"', contentStyle, '>',
-				'<div class="', this.text, '">', ce.content, '</div></dd>');		
+				'<dt id="', id, '-hd" class="', p.header, '"', headerStyle, '>', this.getEvtTitle(ce), '</dt>',
+				'<dd id="', id, '-cnt" class="', p.content, '"', contentStyle, '>',
+				'<div class="', p.text, '">', ce.content, '</div></dd>');		
 		// resizer
 		if (!ce.isLocked)
-			out.push(this._resizerCnt);
+			out.push(p._resizerCnt);
 			
 		out.push('</dl>',
 			'</div></div>',
-			'<div class="', this.b2, '"', headerStyle, '>',
-			'<div class="', this.b3, '"></div></div>',
-			'<div class="', this.b1, '"', headerStyle, '></div></div>');
+			'<div class="', p.b2, '"', headerStyle, '>',
+			'<div class="', p.b3, '"></div></div>',
+			'<div class="', p.b1, '"', headerStyle, '></div></div>');
 	},
 	
 	getEvtTitle: function(ce) {
@@ -61,14 +62,15 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 		this.defineCss_();
 		
 		var ce = this.event,
-			contentStyle = this.contentStyle,
+			p = this.params,
+			contentStyle = p.contentStyle,
 			cnt = jq(this.$n('cnt'));
 
-		this.updateHeaderStyle_(this.headerStyle);
+		this.updateHeaderStyle_(p.headerStyle);
 		
 		jq(this.$n('inner')).attr('style', contentStyle);
 		cnt.attr('style', contentStyle);		
-		cnt.children('.' + this.text).html(ce.content);
+		cnt.children('.' + p.text).html(ce.content);
 		
 		jq(this.$n('hd')).html(this.getEvtTitle(ce));
 		
@@ -80,11 +82,12 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 	_createResizer: function() {
 		var inner = this.$n('inner'),
 			target = inner.lastChild,
-			hasResizer = target.className == this.resizer;
+			p = this.params,
+			hasResizer = target.className == p.resizer;
 		
 		if (!this.event.isLocked){
 			if(!hasResizer)
-				jq(inner).append(this._resizerCnt);				
+				jq(inner).append(p._resizerCnt);				
 		} else if (hasResizer)
 			jq(target).remove();
 	},
@@ -92,11 +95,12 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 	defineClassName_: function() {
 		this.$super('defineClassName_', arguments);
 		// CSS ClassName
-		var zcls = this.getZclass();
+		var zcls = this.getZclass(),
+			p = this.params;
 		
-		this.header = zcls + "-header",
-		this.resizer = zcls + "-resizer",
-		this.resizer_icon = this.resizer + "-icon";			
+		p.header = zcls + "-header",
+		p.resizer = zcls + "-resizer",
+		p.resizer_icon = p.resizer + "-icon";			
 	},
 	
 	updateHeaderStyle_: function(headerStyle) {

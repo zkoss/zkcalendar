@@ -199,11 +199,11 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	},
 	
 	getTimeZoneTime: function (date, tzOffset) {
-		return new Date(date.getTime() + (tzOffset - this._zonesOffset[0])  * 60000);
+		return new Date(date.getTime() + (tzOffset - this.tz)  * 60000);
 	},
 	
-	adjTime: function (date) {			
-		return new Date(date.getTime() + (date.getTimezoneOffset() + this._zonesOffset[0])  * 60000);
+	adjTime: function (date) {
+		return this.fixTimeZoneFromServer(date, this.tz);
 	},
 	
 	reconvertTime: function (date) {			

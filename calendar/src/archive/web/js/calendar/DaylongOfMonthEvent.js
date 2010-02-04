@@ -20,11 +20,11 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 	},	
 	
 	getCornerStyle_: function() {
-		return this.contentStyle;
+		return this.params.contentStyle;
 	},
 	
 	getInnerStyle_: function() {
-		return this.innerStyle;
+		return this.params.innerStyle;
 	},
 		
 	domClass_: function (no) {
@@ -87,13 +87,14 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 		var node = this.$n(),
 			cnt = jq(this.$n('cnt')),
 			startWeekIndex = weekDates.indexOf(node.startWeek) + 1,
-			hasLeftArrow = cnt.children('.' + this.left_arrow_icon).length,
-			left_arrow = this.left_arrow,
-			left_arrowCnt = this.left_arrowCnt;				
+			p = this.params,
+			hasLeftArrow = cnt.children('.' + p.left_arrow_icon).length,
+			left_arrow = p.left_arrow,
+			left_arrowCnt = p.left_arrowCnt;				
 		
 		//add right arrow if over next week	
-		cnt.addClass(this.right_arrow);
-		jq(cnt[0].lastChild).before(this.right_arrowCnt);		
+		cnt.addClass(p.right_arrow);
+		jq(cnt[0].lastChild).before(p.right_arrowCnt);		
 		
 		//clone node 
 		for(var i = 0, j = cloneCount; i < j; i++){
@@ -121,6 +122,7 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 		var cloneNode = this.cloneNodes[cloneCount - 1],
 			cloneCnt = jq(cloneNode.cnt),
 			lowerBoundEd = this.$n().lowerBoundEd,
+			p = this.params,
 			isAfter = this.event.zoneEd > this.parent.zoneEd;
 					
 		cloneNode.lowerBoundEd = lowerBoundEd;
@@ -129,8 +131,8 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 		cloneNode._days = 7 - cloneNode._afterOffset;
 		
 		if (!isAfter) {
-			cloneCnt.removeClass(this.right_arrow);
-			cloneCnt.children('.' + this.right_arrow_icon).remove();
+			cloneCnt.removeClass(p.right_arrow);
+			cloneCnt.children('.' + p.right_arrow_icon).remove();
 		}
 	},
 	
@@ -139,7 +141,7 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 		
 		var contentColor = this.event.contentColor;
 		
-		this.innerStyle = contentColor ? ' style="background:' + contentColor + 
+		this.params.innerStyle = contentColor ? ' style="background:' + contentColor + 
 		 			';border-left-color:' + contentColor + 
 					';border-right-color:' + contentColor + '"': '';
 	},
@@ -149,15 +151,15 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 		
 		var contentColor = this.event.contentColor;
 		
-		this.innerStyle = contentColor ? 'background:' + contentColor + 
+		this.params.innerStyle = contentColor ? 'background:' + contentColor + 
 		 			';border-left-color:' + contentColor + 
 					';border-right-color:' + contentColor: '';
 	},
 	
 	updateContentStyle_: function(contentStyle) {
-		var node = jq(this.$n());
-	
-		jq(node.children('.' + this.t2)[0].firstChild).attr('style',contentStyle);	
-		jq(node.children('.' + this.b2)[0].firstChild).attr('style',contentStyle);	
+		var node = jq(this.$n()),
+			p = this.params;
+		jq(node.children('.' + p.t2)[0].firstChild).attr('style',contentStyle);	
+		jq(node.children('.' + p.b2)[0].firstChild).attr('style',contentStyle);	
 	}
 });
