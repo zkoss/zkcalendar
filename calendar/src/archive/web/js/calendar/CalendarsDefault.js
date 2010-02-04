@@ -30,7 +30,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	_daylongSpace: [],
 	_daySpace: [],	
 	
-	$define : {		
+	$define : {
 		days: function(){
 			if (!this.$n()) return;
 
@@ -173,7 +173,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	
 	bind_: function () {// after compose
 		this.$supers('bind_', arguments);
-
 		var widget = this,
 			cnt = this.$n("cnt"),
 			zcls = this.getZclass();
@@ -1307,11 +1306,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				ghostNode: gostNode
             };
             if (dg._zrz) {
-                dg._zdata.dur = (dg.node.offsetHeight - dg._zevt.offsetHeight) / hgh;
-                if (dg._zdata.dur < 0) 
-                    dg._zdata.dur = Math.floor(dg._zdata.dur);
-                else 
-                    dg._zdata.dur = Math.ceil(dg._zdata.dur);
+				dg._zdata.dur = Math.floor((dg.node.offsetHeight - dg._zevt.offsetHeight) / hgh);
             }
         }  else {
             dg._zdata = {
