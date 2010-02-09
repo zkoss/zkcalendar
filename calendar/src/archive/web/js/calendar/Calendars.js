@@ -141,7 +141,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	
 	updateDateOfBdAndEd_: function(){
 		this._beginDate = new Date(this.bd);
-		this._endDate = new Date(this.ed);		
+		this._endDate = new Date(this.ed);
 		this.zoneBd = this.adjTime(this._beginDate),
 		this.zoneEd = this.adjTime(this._endDate);
 	},
@@ -207,7 +207,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	},
 	
 	reconvertTime: function (date) {			
-		return new Date(date.getTime() - (date.getTimezoneOffset() + this._zonesOffset[0])  * 60000);
+		return new Date(date.getTime() - (date.getTimezoneOffset() + this.tz)  * 60000);
 	},
 	
 	fixRope_: function (infos, n, cols, rows, offs, dim, dur) {

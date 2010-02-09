@@ -105,9 +105,10 @@ calendar.Event = zk.$extends(zk.Widget, {
 		if (this.processCloneNode_)
 			this.processCloneNode_(node);
 		
-		node._preOffset = this._getOffset({start: time.zoneBd, end: node.upperBoundBd});		
-		if (this._isDayEvent()) return;		
-			
+		node._preOffset = this._getOffset({start: time.zoneBd, end: node.upperBoundBd});
+		
+		if (this._isDayEvent()) return;
+		
 		node._afterOffset = this.cloneCount ? 0:
 								this._getOffset({start: node.lowerBoundEd, end: time.zoneEd});
 		
@@ -150,7 +151,7 @@ calendar.Event = zk.$extends(zk.Widget, {
 				
 		while(!isFind){			
 			pos = bd < result.zoneBd ? Math.floor(pos * 0.5):
-										Math.floor(pos * 1.5);
+										pos == 1 ? 2: Math.floor(pos * 1.5);
 			if(pos >= len)
 				return weekDates[len - 1];
 										

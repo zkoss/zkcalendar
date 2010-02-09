@@ -18,6 +18,7 @@ package org.zkoss.calendar;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 
 import org.zkoss.json.JSONArray;
 import org.zkoss.calendar.api.*;
@@ -69,6 +70,7 @@ public class Calendars extends XulElement implements
 	private SimpleDateFormat _sdfKey = new SimpleDateFormat("yyyy/MM/dd");
 	private boolean _readonly;
 	private boolean _weekOfYear;
+	private boolean _hasEmptyZone= false;
 	private List<CalendarEvent> _addEvtList, _mdyEvtList, _rmEvtList;
 	
  	private static final String ATTR_ON_ADD_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onAddEventResponse";
@@ -309,6 +311,15 @@ public class Calendars extends XulElement implements
 		}
 	}
 	
+	private void cleanEmptyZone(){
+		Map<TimeZone, String> tzones = new HashMap<TimeZone, String>(_tzones);		
+		for (Entry<TimeZone, String> es : tzones.entrySet()) {
+			if(es.getValue().equals(""))
+				_tzones.remove(es.getKey());
+		}
+		_hasEmptyZone = false;
+	}	
+	
 	/**
 	 * Adds the time zone to the calendar.
 	 * <p>
@@ -322,18 +333,19 @@ public class Calendars extends XulElement implements
 	public void addTimeZone(String label, TimeZone timezone) {
 		if (label == null) label = "";
 		_tzones.put(timezone, label);
-		
+		if(_hasEmptyZone)
+			cleanEmptyZone();
 		if (!inMonthMold() && _dfmter != null){
 			Calendar cal = Calendar.getInstance(getDefaultTimeZone());			
 			cal.set(Calendar.MINUTE, 0);
 			smartUpdate("captionByTimeOfDay", Util.encloseList(Util.packCaptionByTimeOfDay(cal, _tzones, Locales.getCurrent(), _dfmter)));
 		}
 		
-		TimeZone tz = getDefaultTimeZone();
-		smartUpdate("tz", (tz.getRawOffset() + (tz.useDaylightTime() ? tz.getDSTSavings() : 0))/60000);
+		TimeZone tz = getDefaultTimeZone();		
+		smartUpdate("tz", (tz.getRawOffset() + (tz.inDaylightTime(Calendar.getInstance(tz).getTime()) ? tz.getDSTSavings() : 0))/60000);
 		smartUpdate("bd", getBeginDate().getTime());
-		smartUpdate("ed", getEndDate().getTime());	
-		reSendEventGroup();	
+		smartUpdate("ed", getEndDate().getTime());
+		reSendEventGroup();
 	}
 
 	/**
@@ -378,9 +390,9 @@ public class Calendars extends XulElement implements
 		if (_tzones.remove(timezone) != null) {
 			smartUpdate("bd", getBeginDate().getTime());
 			smartUpdate("ed", getEndDate().getTime());
-			reSendEventGroup();		
+			reSendEventGroup();
 			return true;
-		}
+		}		
 		return false;
 	}
 
@@ -389,6 +401,7 @@ public class Calendars extends XulElement implements
 	 */
 	public TimeZone getDefaultTimeZone() {
 		if (_tzones.isEmpty()) {
+			_hasEmptyZone = true;
 			TimeZone t = TimeZone.getDefault();
 			_tzones.put(t, "");
 			return t;
@@ -490,6 +503,7 @@ public class Calendars extends XulElement implements
 		if (_curDate == null) return null; 
 
 		TimeZone t = getDefaultTimeZone();
+
 		Calendar cal = Calendar.getInstance(t);
 		cal.setTimeZone(t);
 		cal.setTime(_curDate);
@@ -503,11 +517,11 @@ public class Calendars extends XulElement implements
 			if (offset < 0) offset += 7;
 			cal.add(Calendar.DAY_OF_MONTH, -offset);
 		}
-		
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
+		
 		return cal.getTime();
 	}
 
@@ -636,7 +650,7 @@ public class Calendars extends XulElement implements
 		_evts.clear();
 		_ids.clear();
 		
-		final TimeZone tzone = getDefaultTimeZone();
+		final TimeZone tzone = getDefaultTimeZone();		
 		
 		smartUpdate("zonesOffset", Util.encloseList(Util.packZonesOffset(_tzones)));			
 		smartUpdate("zones", Util.encloseList(_tzones.values()));
@@ -815,7 +829,7 @@ public class Calendars extends XulElement implements
 			throws IOException {
 		super.renderProperties(renderer);		
 		TimeZone tz = getDefaultTimeZone();
-		renderer.render("tz", (tz.getRawOffset() + (tz.useDaylightTime() ? tz.getDSTSavings() : 0))/60000);
+		renderer.render("tz", (tz.getRawOffset() + (tz.inDaylightTime(Calendar.getInstance(tz).getTime()) ? tz.getDSTSavings() : 0))/60000);
 					
 		renderer.render("zonesOffset", Util.encloseList(Util.packZonesOffset(_tzones)));
 		renderer.render("zones", Util.encloseList(_tzones.values()));

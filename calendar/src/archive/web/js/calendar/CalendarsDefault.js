@@ -147,6 +147,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				}
 				else zoneText.html(this._zones[index]);
 
+				//fist column is not need to redraw
 				if (index == 0) continue;
 
 				var current = new Date(),

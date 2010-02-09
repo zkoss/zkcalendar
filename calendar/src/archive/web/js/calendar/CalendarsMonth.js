@@ -48,7 +48,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			
 			//reset evt data			
 			this._evtsData = this._createEvtsData(false);
-			this.onShow();		
+			this.onShow();
 		},
 		zones: function () {			
 			this._zones = jq.evalJSON(this._zones);
@@ -547,7 +547,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			}
 			this._putInMapList(dayEvent);
         }
-		this._rePositionDay();		
+		this._rePositionDay();
 		this.onShow();
     },
     
