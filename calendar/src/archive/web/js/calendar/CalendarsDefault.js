@@ -366,16 +366,18 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		this._captionByDate = this.captionByDate ? jq.evalJSON(this.captionByDate): null;
 		if(!this.$n())return;
 		
+		var zcls = this.getZclass();
+		this.weekDay = jq(this.cntRows).children('.'+ zcls +'-week-day');
+		
 		var hd = jq(this.$n("header")),
 			cnt = jq(this.$n("cnt")),
 			titles = this.title,
-			ts = this.ts,				
 			ed = new Date(this._endDate.getTime()),
 			current = new Date(),
-			week_day = this.getZclass() + "-week-day",
-			week_today = this.getZclass() + "-week-today",		
-			week_weekend = this.getZclass() + "-week-weekend",
-			weekDay = this.cntRows.cells;
+			week_day = zcls + "-week-day",
+			week_today = zcls + "-week-today",		
+			week_weekend = zcls + "-week-weekend",
+			weekDay = this.weekDay;
 		
 		//remove today and weekend class
 		hd.children().find('.' + week_weekend).removeClass(week_weekend);
@@ -392,13 +394,13 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			title.time = ed.getTime();
 			if (ed.getDay() == 0 || ed.getDay() == 6) {//SUNDAY or SATURDAY
 				jq(title.parentNode).addClass(week_weekend);
-				jq(weekDay[i + ts]).addClass(week_weekend);
+				jq(weekDay[i]).addClass(week_weekend);
 			}
 		
 			if (current.getFullYear() == ed.getFullYear() &&
 					current.getDOY() == ed.getDOY()) {// today
 				jq(title.parentNode).addClass(week_today);
-				jq(weekDay[i + ts]).addClass(week_today);
+				jq(weekDay[i]).addClass(week_today);
 			}
 		}
 	},
