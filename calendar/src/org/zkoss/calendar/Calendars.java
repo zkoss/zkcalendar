@@ -94,10 +94,6 @@ public class Calendars extends XulElement implements
 	public Calendars() {
 		init();
 		_curDate = Calendar.getInstance().getTime();
-		
-		//for test
-		_dfmter= new SimpleDateFormatter();
-		_weekOfYear = true;
 	}
 	
 	private void init() {
