@@ -41,7 +41,7 @@ import org.zkoss.zul.impl.XulElement;
  * to show one day or a week (days equal to seven) on the calendar at the same time.
  * In the month mold, seven days is always assumed.
  * 
- * <p> The Calendars component doesn't allow any child component, and now it can
+ * <p> The Calendars component allows only one single toolbar as its child component, and now it can
  * only manipulate the calendar event by a model named {@link CalendarModel}. And there
  * are three events, <code>onEventCreate</code>, <code>onEventEdit</code>, and 
  * <code>onEventUpdate</code> that can be listened to operate the calendar event
