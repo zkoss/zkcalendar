@@ -237,7 +237,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 						new calendar.DayEvent({event:event});
 								
 		this.appendChild(dayEvent);					
-		this[isExceedOneDay ? '_daylongEvents': '_dayEvents'].push(dayEvent.$n());				
+		this[isExceedOneDay ? '_daylongEvents': '_dayEvents'].push(dayEvent.$n());
 	},
 		
 	_resetDaylongPosition: function () {
@@ -279,7 +279,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		jq('#' + this.uuid + '-hdarrow').removeClass(this.getZclass() + '-week-header-arrow-close');
 	},	
 	
-	_rePositionDay: function () {	
+	_rePositionDay: function () {
 		this._dayEvents.sort(this.dateSorting_);	
 		this._daySpace = [];
 			
@@ -404,134 +404,19 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			}
 		}
 	},
-				
-	setAddDayEvent: function (eventArray) {	 	
-        eventArray = jq.evalJSON(eventArray);      
-		if (!eventArray.length) return; 
-		
-		this.clearGhost();
-		
-		var addDay,
-			addDaylong;		
-		
-        for (var event; (event = eventArray.shift());) {
-        	event = this.processEvtData_(event);
-        	var bd = event.zoneBd,
-				ed = event.zoneEd;
-			
-			//over range
-			if (bd > this.zoneEd || ed < this.zoneBd) continue;			
-				
-			if (this.isExceedOneDay_(bd,ed)){
-				dayEvent = new calendar.DaylongEvent({event:event});
-				this.appendChild(dayEvent);						
-				this._daylongEvents.push(dayEvent.$n());	
-				addDaylong = true;
-			} else {
-				dayEvent = new calendar.DayEvent({event:event});
-				this.appendChild(dayEvent);	
-				this._dayEvents.push(dayEvent.$n());	
-				addDay = true;
-			}           
-					
-        }
-		if (addDay)			
+	
+	reAlignEvents_: function (hasAdd) {
+		if (hasAdd.day)			
 			this._rePositionDay();
 		
-		if (addDaylong)
+		if (hasAdd.daylong)
 			this._rePositionDaylong();
     },
     
-    setModifyDayEvent: function (eventArray) {      
-        eventArray = jq.evalJSON(eventArray);      
-        if (!eventArray.length) return;   
-		     
-		var modDay,
-			modDaylong;	
-			 
-        for (var event; (event = eventArray.shift());) {
-			var childWidget = zk.Widget.$(event.id);
-			
-			event = this.processEvtData_(event);
-        	var bd = event.zoneBd,
-				ed = event.zoneEd;
-			
-			//over range
-			if (bd > this.zoneEd || ed < this.zoneBd) {
-				if (childWidget.className == 'calendar.DayEvent') {
-					this._dayEvents.$remove(childWidget);
-					modDay = true;
-				} else {
-					this._daylongEvents.$remove(childWidget);	
-					modDaylong = true;
-				}
-				this.removeChild(childWidget);     
-				continue;
-			}			
-			
-			if (this.isExceedOneDay_(bd,ed)) {
-				if (childWidget.className == 'calendar.DayEvent'){//day to daylong
-					this._dayEvents.$remove(childWidget);		
-					this.removeChild(childWidget); 					
-					
-					var daylongEvent = new calendar.DaylongEvent({event:event});
-					this.appendChild(daylongEvent);
-					this._daylongEvents.push(daylongEvent.$n());	
-					modDay = true;
-					modDaylong = true;
-				} else {//daylong update				
-					childWidget.event = event;	
-					childWidget.update();
-					modDaylong = true;
-				}					
-			} else if (childWidget.className == 'calendar.DaylongEvent') {//daylong to day
-					this._daylongEvents.$remove(childWidget);		
-					this.removeChild(childWidget); 					
-				
-					var dayEvent = new calendar.DayEvent({event:event});
-					this.appendChild(dayEvent);	
-					this._dayEvents.push(dayEvent.$n());	
-					modDay = true;
-					modDaylong = true;
-			} else {//day update
-				childWidget.event = event;	
-				childWidget.update();
-				modDay = true;
-			}     	
-        }
-		
-		if (modDay)		
-			this._rePositionDay();		
-		
-		if (modDaylong)
-			this._rePositionDaylong();		
-    },
-    
-    setRemoveDayEvent: function (eventArray) {       
-        eventArray = jq.evalJSON(eventArray);      
-        if (!eventArray.length) return;
-		
-		var rmDay,
-			rmDaylong;	
-			
-        for (var event; (event = eventArray.shift());) {
-			var childWidget = zk.Widget.$(event.id);
-			
-			if (childWidget.className == 'calendar.DayEvent') {
-				this._dayEvents.$remove(childWidget);
-				rmDay = true;
-			} else {				
-				this._daylongEvents.$remove(childWidget);	
-				rmDaylong = true;
-			}
-			this.removeChild(childWidget);      
-		}
-		
-		if(rmDay)			
-			this._rePositionDay();			
-		
-		if (rmDaylong)			
-			this._rePositionDaylong();		
+	removeNodeInArray_: function (childWidget, hasAdd) {
+		var isDayEvent = childWidget.className == 'calendar.DayEvent';
+		this[isDayEvent ? '_dayEvents': '_daylongEvents'].$remove(childWidget.$n());
+		hasAdd[isDayEvent ? 'day': 'daylong'] = true;
     },
 	
 	onClick: function (cnt, evt) {
@@ -885,7 +770,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		for (var i =  this._daySpace.length; i--;) {
 			var list = this._daySpace[i];
 			if (!list.length) continue;
-			
 			var data = [];
 			for (var n = 48; n--;) 
 				data[n] = [];
@@ -897,7 +781,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					event = childWidget.event,
 					bd = new Date(event.zoneBd.getTime()), 
 					ed = new Date(event.zoneEd.getTime());
-					
 				jq(target).append(ce);	
 				ce.style.visibility = "";				
 				
@@ -1606,5 +1489,3 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	}
 	
 });
-
-

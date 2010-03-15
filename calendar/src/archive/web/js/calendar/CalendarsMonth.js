@@ -196,12 +196,13 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	},
 	
 	_putInMapList: function (dayEvent) {
-		var list = this._eventWeekSet[this._weekDates.indexOf(dayEvent.$n().startWeek)];				
+		var node = dayEvent.$n(),
+			list = this._eventWeekSet[this._weekDates.indexOf(node.startWeek)];				
 		if (!list) {
 			list = [];
-			this._eventWeekSet[this._weekDates.indexOf(dayEvent.$n().startWeek)] = list;
+			this._eventWeekSet[this._weekDates.indexOf(node.startWeek)] = list;
 		}				
-		list.push(dayEvent.$n());
+		list.push(node);
 		//add cut node
 		var cloneNodes = dayEvent.cloneNodes;	
 		if (!cloneNodes) return;
@@ -471,108 +472,23 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}	
 	},
 	
-	setAddDayEvent: function (eventArray) {	 	
-        eventArray = jq.evalJSON(eventArray);      
-		if (!eventArray.length) return; 
-		
-		this.clearGhost();		
-		
-        for (var event; (event = eventArray.shift());) {
-			event = this.processEvtData_(event);
-			//over range
-			if (event.zoneEd < this.zoneBd ||  event.zoneBd > this.zoneEd)
-				continue;			
-			
-			var dayEvent;
-			if (this.isExceedOneDay_(event.zoneBd,event.zoneEd)) 
-					dayEvent = new calendar.DaylongOfMonthEvent({event:event});	
-			else dayEvent = new calendar.DayOfMonthEvent({event:event});
-				
-			this.appendChild(dayEvent);			
-			this._putInMapList(dayEvent);
-        }
-			
+	reAlignEvents_: function (hasAdd) {
 		this._rePositionDay();		
 		this.onShow();
     },
-    
-    setModifyDayEvent: function (eventArray) {      
-        eventArray = jq.evalJSON(eventArray);      
-        if (!eventArray.length) return;   
-			 
-        for (var event; (event = eventArray.shift());) {
-			event = this.processEvtData_(event);
-			
-			var childWidget = zk.Widget.$(event.id),
-				node = childWidget.$n(),
-				dayEvent;
-			
-			//remove before node
-			var list = this._eventWeekSet[this._weekDates.indexOf(node.startWeek)];								
-			list.$remove(node);
-			var cloneNodes = childWidget.cloneNodes;
-			if (cloneNodes){
-				for(var n = cloneNodes.length; n--;){
-					var cloneNode = cloneNodes[n];
-					list = this._eventWeekSet[this._weekDates.indexOf(cloneNode.startWeek)];						
-					list.$remove(cloneNode);
-					jq(cloneNode).remove();
-				}
-			}			
-			//over range
-			if (event.zoneEd < this.zoneBd ||  event.zoneBd > this.zoneEd) {				
-				this.removeChild(childWidget);  
-				continue;
-			}
-			if (this.isExceedOneDay_(event.zoneBd, event.zoneEd)) {
-				if (childWidget.className == 'calendar.DayOfMonthEvent') {//day to daylong	
-					this.removeChild(childWidget);	
-					dayEvent = new calendar.DaylongOfMonthEvent({event: event});
-					this.appendChild(dayEvent);
-				} else {//daylong update						
-					childWidget.event = event;
-					childWidget.update();
-					dayEvent = childWidget;
-				}				
-			} else {
-				if (childWidget.className == 'calendar.DaylongOfMonthEvent') {//daylong to day
-					this.removeChild(childWidget);					
-					dayEvent = new calendar.DayOfMonthEvent({event: event});
-					this.appendChild(dayEvent);					
-				} else {//day update
-					childWidget.event = event;
-					childWidget.update();
-					dayEvent = childWidget;				
-				}
-			}
-			this._putInMapList(dayEvent);
-        }
-		this._rePositionDay();
-		this.onShow();
-    },
-    
-    setRemoveDayEvent: function (eventArray) {       
-        eventArray = jq.evalJSON(eventArray);      
-        if (!eventArray.length) return;
-			
-        for (var event; (event = eventArray.shift());) {
-			var childWidget = zk.Widget.$(event.id),
-				node = childWidget.$n();
-			
-			var list = this._eventWeekSet[this._weekDates.indexOf(node.startWeek)];								
-			list.$remove(node);
-			var cloneNodes = childWidget.cloneNodes;	
-			if (cloneNodes) {
-				for (var n = cloneNodes.length; n--;) {
-					var cloneNode = cloneNodes[n];
-					list = this._eventWeekSet[this._weekDates.indexOf(cloneNode.startWeek)];						
-					list.$remove(cloneNode);
-				}
-			}			
-			this.removeChild(childWidget);      
-		}				
-		this._rePositionDay();
-		this.onShow();
+        
+    removeNodeInArray_: function (childWidget, hasAdd) {
+		var node = childWidget.$n(),
+			weekIndex = this._weekDates.indexOf(node.startWeek);
+		this._eventWeekSet[weekIndex].$remove(node);
+		
+		var cloneNodes = childWidget.cloneNodes;
+		if (!cloneNodes) return;
+		weekIndex++;
+		for (var n = cloneNodes.length; n--;) {
+			var cloneNode = cloneNodes[n];
+			this._eventWeekSet[weekIndex + n].$remove(cloneNode);
+		}
     },
 			
 	getIndex: function (ele) {
