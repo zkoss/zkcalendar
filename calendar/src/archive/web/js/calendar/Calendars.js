@@ -217,7 +217,6 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 									childWidget.className == 'calendar.DayEvent',
 				isChangeEvent = isExceedOneDay ? (isDayEvent ? true : false):
 													(isDayEvent ? false: true);
-			zk.log(isChangeEvent);
 			if (isChangeEvent) {
 				if (!inMon)
 					this[isDayEvent ? '_dayEvents': '_daylongEvents'].$remove(childWidget.$n());
