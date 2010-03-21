@@ -41,11 +41,11 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					className = child.className;		
 				if (className == 'calendar.DayOfMonthEvent' || className == 'calendar.DaylongOfMonthEvent')
 					this.removeChild(child);		
-			}			
-			
+			}
+
 			this.createChildrenWidget_();			
 			this._rePositionDay();
-			
+
 			//reset evt data			
 			this._evtsData = this._createEvtsData(false);
 			this.onShow();
@@ -63,9 +63,9 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}
 	},
 
-	_prepareDrawData : function () {		
-		this.AWEEK = this.DAYTIME * 7;
-		 
+	prepareData_ : function () {
+		this.$supers('prepareData_', arguments);
+		this.AWEEK = this.DAYTIME * 7;		 
 		Date.prototype.getWeek = function() {
 			var onejan = new Date(this.getFullYear(),0,1);
 			return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
@@ -95,6 +95,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		var children = this.allDayTitle,
 			captionByPopup = this._captionByPopup,
 			ed = new Date(this.zoneEd.getTime()),
+			edOffset = ed.getTimezoneOffset(),
 			rdata = [];
 
 
@@ -105,6 +106,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		//add time attr for click event
 		for (var i = this.weekOfMonth * 7; i--;) {
 			ed.setTime(ed.getTime() - this.DAYTIME);
+			this.adjDST_(ed, edOffset);
 			children[i].time = ed.getTime();
 			if(captionByPopup)
 				children[i].text = captionByPopup[i];
@@ -180,6 +182,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	_createWeekSet: function (ed) {
 		var weekDates = [],
 			bd = new Date(this.zoneBd.getTime()),
+			bdOffset = bd.getTimezoneOffset(),
 			ed = this.zoneEd,
 			cur,
 			previous;
@@ -188,6 +191,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		while (bd < ed) {
 			previous = new Date(bd.getTime());
 			bd.setTime(bd.getTime() + this.AWEEK);
+			this.adjDST_(bd, bdOffset);
 			cur = new Date(bd.getTime());
 			weekDates.push({zoneBd: previous, zoneEd: cur});
 		}

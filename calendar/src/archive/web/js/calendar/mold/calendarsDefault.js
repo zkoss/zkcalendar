@@ -13,18 +13,18 @@ This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 function (out) {
-	this._prepareData();
+	this.prepareData_();
 	
 	
 	var uuid = this.uuid,
 		zcls = this.getZclass(),
 		toolbar = this.firstChild,
 		days = this._days,
-		bdTime = this._beginDate.getTime(),
-		begin = new Date(bdTime),
+		bdTime = this.zoneBd.getTime(),
+		begin = new Date(bdTime),		
 		current = new Date(),
 		weekend = [-1, -1, -1],
-		ONE_DAY = this.DAYTIME;	
+		ONE_DAY = this.DAYTIME;
 	
 	// round corner
 	var t1 = zcls + "-t1",
@@ -109,7 +109,9 @@ function (out) {
 			'<div id="', uuid, '-hdarrow" class="', week_header_arrow, '"></div></th>');
 
 /*************** date title ******************/	
-	var captionByDate = this._captionByDate;
+	var captionByDate = this._captionByDate,
+		bdOffset = begin.getTimezoneOffset();
+
 	// day-of-week
 	for (var index = 0 , j = 0; j < days; ++j) {
 		var content = captionByDate ? captionByDate[j] : 
@@ -131,6 +133,7 @@ function (out) {
 
 		out.push('"><span class="', day_of_week_cnt, '">', content, '</span></div></th>');
 		begin.setTime(begin.getTime() + ONE_DAY);
+		this.adjDST_(begin, bdOffset);
 	}
 	out.push('<th class="',day_of_week_end,'">&nbsp;</th></tr>',
 

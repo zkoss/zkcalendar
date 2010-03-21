@@ -101,7 +101,7 @@ calendar.Event = zk.$extends(zk.Widget, {
 		
 		this._createBoundTime(node, bd, ed);		
 		
-		//aftOffset could be calculated using bound time after processing clone node
+		//_afterOffset could be calculated using bound time after processing clone node
 		if (this.processCloneNode_)
 			this.processCloneNode_(node);
 		
@@ -135,7 +135,13 @@ calendar.Event = zk.$extends(zk.Widget, {
 	},
 	
 	_getOffset: function(time) {
-		return (time.end.getTime() - time.start.getTime()) / this.DAYTIME;	
+		var utcH = time.start.getUTCHours(),
+			adjTime = 0;
+		
+		if (utcH != time.end.getUTCHours())
+			adjTime = utcH != 0 ? -3600000: 3600000;
+		
+		return (time.end.getTime() - time.start.getTime() + adjTime) / this.DAYTIME;	
 	},
 	
 	_getStartWeek_: function(weekDates) {		
@@ -162,16 +168,13 @@ calendar.Event = zk.$extends(zk.Widget, {
 		return result;
 	},
 		
-	_setBoundDate: function(date,ONE_DAY) {
+	_setBoundDate: function(date, ONE_DAY) {
 		var result = new Date(date.getTime());
 		if (date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds() != 0){
 			if (ONE_DAY) 
 				result.setTime(date.getTime() + ONE_DAY);
 			
-			result.setHours(0);
-			result.setMinutes(0);
-			result.setSeconds(0);
-			result.setMilliseconds(0);
+			result.setHours(0,0,0,0);
 		}
 		return result;
 	}

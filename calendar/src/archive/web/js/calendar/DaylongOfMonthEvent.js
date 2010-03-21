@@ -37,9 +37,9 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 			ONE_DAY = this.DAYTIME;;			
 			
 		if (this.cloneCount)
-			return (node.startWeek.zoneEd.getTime() - node.upperBoundBd.getTime()) / ONE_DAY;
+			return 7 - node._preOffset;
 
-		return (node.lowerBoundEd.getTime() - node.upperBoundBd.getTime()) / ONE_DAY;
+		return 7 - node._preOffset - node._afterOffset;
 	},
 	
 	processCloneNode_: function(node) {
@@ -127,7 +127,13 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 					
 		cloneNode.lowerBoundEd = lowerBoundEd;
 		
-		cloneNode._afterOffset = (cloneNode.startWeek.zoneEd.getTime() - lowerBoundEd.getTime()) / this.DAYTIME;
+		
+		var utcH = lowerBoundEd.getUTCHours(),
+			adjTime = 0;	
+		if (utcH != cloneNode.startWeek.zoneEd.getUTCHours())
+			adjTime = utcH != 0 ? -3600000: 3600000;
+		
+		cloneNode._afterOffset = (cloneNode.startWeek.zoneEd.getTime() - lowerBoundEd.getTime() + adjTime) / this.DAYTIME;
 		cloneNode._days = 7 - cloneNode._afterOffset;
 		
 		if (!isAfter) {

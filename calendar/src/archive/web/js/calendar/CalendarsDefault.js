@@ -164,12 +164,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		}
 	},
 	
-	_prepareData: function () {
+	prepareData_: function () {
+		this.$supers('prepareData_', arguments);
 		this._captionByTimeOfDay = this.captionByTimeOfDay ? jq.evalJSON(this.captionByTimeOfDay): null;
-		Date.prototype.getDOY = function() {//js day of year
-			var onejan = new Date(this.getFullYear(),0,1);
-			return Math.floor((this - onejan) / 86400000);
-		}
 	},
 	
 	bind_: function () {// after compose
@@ -372,7 +369,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		var hd = jq(this.$n("header")),
 			cnt = jq(this.$n("cnt")),
 			titles = this.title,
-			ed = new Date(this._endDate.getTime()),
+			ed = new Date(this.zoneEd.getTime()),
+			edOffset = ed.getTimezoneOffset(),
 			current = new Date(),
 			week_day = zcls + "-week-day",
 			week_today = zcls + "-week-today",		
@@ -387,6 +385,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		
 		for (var i = this._days; i--;) {
 			ed.setTime(ed.getTime() - this.DAYTIME);
+			this.adjDST_(ed, edOffset);
+
 			var title = titles[i],
 				content = this._captionByDate ? this._captionByDate[i] : 
 								zk.fmt.Date.formatDate(ed,'EEE MM/d');	

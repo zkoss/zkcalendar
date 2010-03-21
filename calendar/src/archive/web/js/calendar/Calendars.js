@@ -46,7 +46,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 
 
 	bind_ : function() {// after compose
-		this.$supers('bind_', arguments);		
+		this.$supers('bind_', arguments);
 		zWatch.listen({onSize: this, onShow: this});
 		this.blockTemplate = '<div id="'+this.uuid+'-tempblock"></div>';
 	},
@@ -63,6 +63,14 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		var zcls = this._zclass;
 		return zcls ? zcls : "z-calendars";
 	},	
+	
+	prepareData_ : function () {
+		Date.prototype.getDOY = function() {
+			var onejan = new Date(this.getFullYear(),0,1),
+				adjTime = this.getUTCHours() == 0 ? 0: 3600000;				
+			return Math.ceil((this - onejan + adjTime) / 86400000);
+		}
+	},
 	
 	isExceedOneDay_: function(bd,ed) {  	
 		if (bd < this.zoneBd || bd.getFullYear() != ed.getFullYear() ||
@@ -289,6 +297,11 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	
 	reconvertTime: function (date) {			
 		return new Date(date.getTime() - (date.getTimezoneOffset() + this.tz)  * 60000);
+	},
+	
+	adjDST_: function (date, offset) {
+		if (date.getHours() == 0) return;
+		date.setHours(date.getHours() + (date.getTimezoneOffset() - offset)/60);
 	},
 	
 	fixRope_: function (infos, n, cols, rows, offs, dim, dur) {

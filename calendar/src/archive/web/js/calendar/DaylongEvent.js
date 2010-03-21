@@ -19,7 +19,7 @@ calendar.DaylongEvent = zk.$extends(calendar.LongEvent, {
 	},
 	
 	getDays: function() {
-		var node = this.$n();		
-		return (node.lowerBoundEd.getTime() - node.upperBoundBd.getTime()) / this.DAYTIME;
+		var node = this.$n();
+		return this.parent._days - node._preOffset - node._afterOffset;
 	}
 });

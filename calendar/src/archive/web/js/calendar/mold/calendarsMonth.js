@@ -13,12 +13,12 @@ This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 function (out) {
-	this._prepareDrawData();
+	this.prepareData_();
 	
 	var uuid = this.uuid,
 		zcls = this.getZclass(),
 		toolbar = this.firstChild,
-		bdTime = this._beginDate.getTime(),
+		bdTime = this.zoneBd.getTime(),
 		current = new Date(),
 		weekend = [-1, -1],
 		ONE_DAY = this.DAYTIME,
@@ -76,6 +76,7 @@ function (out) {
 
 	// day-of-week
 	var bd = new Date(bdTime),
+		bdOffset = bd.getTimezoneOffset(),
 		captionByDayOfWeek = this._captionByDayOfWeek;
 	for (var index = 0, k = 0; k < 7; ++k) {
 		var content = captionByDayOfWeek ? captionByDayOfWeek[k] :
@@ -89,6 +90,7 @@ function (out) {
 		}
 		out.push('">', content, '</th>');
 		bd.setTime(bd.getTime() + ONE_DAY);
+		this.adjDST_(bd, bdOffset);
 	}
 	out.push('</tr></tbody></table>');
 	
@@ -108,6 +110,7 @@ function (out) {
 					'%; height:', number, '%;"><span class="',
 					week_of_year_text, '">', content, '</span></div>');
 			bd.setTime(bd.getTime() + AWEEK);
+			this.adjDST_(bd, bdOffset);
 		}
 		out.push('</div>');
 	}
@@ -128,26 +131,25 @@ function (out) {
 				'<table class="', day_of_month_bg,
 				'" cellpadding="0" cellspacing="0"><tbody><tr>');
 
+		var tempBd = new Date(bd.getTime());
 		for (var i = 0; i < 7; i++) {
 			out.push('<td class="');
 
 			if (weekend[0] == i || weekend[1] == i)
 				out.push(' ', week_weekend);
 		
-			if (current.getFullYear() == bd.getFullYear() &&
-					current.getDOY() == bd.getDOY())
+			if (current.getFullYear() == tempBd.getFullYear() &&
+					current.getDOY() == tempBd.getDOY())
 				out.push(' ', week_today);
 
 			out.push('">&nbsp;</td>');
-			bd.setTime(bd.getTime() + ONE_DAY);
+			tempBd.setTime(tempBd.getTime() + ONE_DAY);
+			this.adjDST_(tempBd, bdOffset);
 		}
 
 		out.push('</tr></tbody></table>',
 				'<table class="', day_of_month_body, '" cellpadding="0" cellspacing="0">',
 				'<tbody><tr>');
-
-		// reset date
-		bd.setTime(bd.getTime() - AWEEK);
 		
 		// the title of day of week
 		for (var i = 0; i < 7; i++) {
@@ -171,6 +173,7 @@ function (out) {
 			out.push('"><span class="', month_date_cnt, '">', content, '</span></td>');
 
 			bd.setTime(bd.getTime() + ONE_DAY);
+			this.adjDST_(bd, bdOffset);
 		}
 		out.push('</tr></tbody></table></div>');
 	}
