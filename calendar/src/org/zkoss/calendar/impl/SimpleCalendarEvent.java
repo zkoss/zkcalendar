@@ -17,8 +17,6 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.calendar.impl;
 
 import java.util.Date;
-
-import org.zkoss.json.JSONObject;
 import org.zkoss.calendar.api.CalendarEvent;
 
 /**
@@ -85,18 +83,5 @@ public class SimpleCalendarEvent implements CalendarEvent {
 	}
 	public void setLocked(boolean locked) {
 		_locked = locked;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public String toString() {
-		JSONObject json = new JSONObject();
-		json.put("headerColor",_headerColor);
-		json.put("contentColor",_contentColor);
-		json.put("content",_content);
-		json.put("beginDate",String.valueOf(_beginDate.getTime()));
-		json.put("endDate",String.valueOf(_endDate.getTime()));
-		json.put("isLocked",String.valueOf(_locked));
-		json.put("zclass",getZclass());
-		return json.toString();
 	}
 }

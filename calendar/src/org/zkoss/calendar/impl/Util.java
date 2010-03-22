@@ -20,6 +20,7 @@ import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.api.*;
 import org.zkoss.calendar.event.CalendarsEvent;
 import org.zkoss.json.JSONArray;
+import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Objects;
 import org.zkoss.util.Locales;
 import org.zkoss.zk.au.AuRequest;
@@ -145,12 +146,8 @@ public class Util {
 		
 	public static String encloseEventList(Calendars calendars, Collection<CalendarEvent> collection) {
 		final StringBuffer sb = new StringBuffer().append('[');
-		DateFormatter df = calendars.getDateFormatter();
-		Locale locale = Locales.getCurrent();
-		TimeZone timezone = calendars.getDefaultTimeZone();
 		for (CalendarEvent ce : collection) {
-			sb.append(new StringBuffer(ce.toString()).insert(1, "\"id\":\"" + 
-					calendars.getCalendarEventId(ce) + "\",\"title\":\"" + createEventTitle(df, locale, timezone, ce) + "\",").toString()).append(',');	
+			appendEventByJSON(sb, calendars, ce);
 		}		
 		int len = sb.length();
 		collection.clear();
@@ -168,15 +165,11 @@ public class Util {
 		
 	public static String encloseEventMap(Calendars calendars, Collection<List<CalendarEvent>> collection) {
 		final StringBuffer sb = new StringBuffer().append('[');
-		DateFormatter df = calendars.getDateFormatter();
-		Locale locale = Locales.getCurrent();
-		TimeZone timezone = calendars.getDefaultTimeZone();
 		int len;
 		for (List<CalendarEvent> list : collection) {
 			sb.append('[');
-			for (CalendarEvent ce : list) {
-				sb.append(new StringBuffer(ce.toString()).insert(1, "\"id\":\"" + 
-						calendars.getCalendarEventId(ce) + "\",\"title\":\"" + Util.createEventTitle(df, locale, timezone, ce) + "\",").toString()).append(',');
+			for (CalendarEvent ce : list) {				
+				appendEventByJSON(sb, calendars, ce);
 			}
 
 			len = sb.length();
@@ -188,6 +181,26 @@ public class Util {
 		if(collection.size() != 0)
 			return sb.replace(len  - 1, len, "]").toString();
 		return sb.append(']').toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void appendEventByJSON(StringBuffer sb, Calendars calendars, CalendarEvent ce) {
+		DateFormatter df = calendars.getDateFormatter();
+		Locale locale = Locales.getCurrent();
+		TimeZone timezone = calendars.getDefaultTimeZone();
+		
+		JSONObject json = new JSONObject();
+		json.put("id", calendars.getCalendarEventId(ce));
+		json.put("title", Util.createEventTitle(df, locale, timezone, ce));
+		json.put("headerColor", ce.getHeaderColor());
+		json.put("contentColor", ce.getContentColor());
+		json.put("content", ce.getContent());
+		json.put("beginDate", String.valueOf(ce.getBeginDate().getTime()));
+		json.put("endDate", String.valueOf(ce.getEndDate().getTime()));
+		json.put("isLocked", String.valueOf(ce.isLocked()));
+		json.put("zclass", ce.getZclass());
+		
+		sb.append(json.toString()).append(",");		
 	}
 		
 }
