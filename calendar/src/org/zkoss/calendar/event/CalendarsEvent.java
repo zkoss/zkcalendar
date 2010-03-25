@@ -19,9 +19,12 @@ package org.zkoss.calendar.event;
 
 import java.util.Date;
 
+import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.api.CalendarEvent;
-import org.zkoss.zk.ui.AbstractComponent;
-import org.zkoss.zk.ui.Component;
+import org.zkoss.json.JSONArray;
+import org.zkoss.zk.au.AuRequest;
+import org.zkoss.zk.mesg.MZk;
+import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.WebAppCtrl;
 
@@ -37,6 +40,12 @@ import org.zkoss.zk.ui.sys.WebAppCtrl;
 public class CalendarsEvent extends Event {
 	private static final long serialVersionUID = 20090331L;
 
+	public static final String ON_EVENT_CREATE = "onEventCreate";
+	public static final String ON_EVENT_EDIT = "onEventEdit";
+	public static final String ON_EVENT_UPDATE = "onEventUpdate";
+	public static final String ON_DAY_CLICK = "onDayClick";
+	public static final String ON_WEEK_CLICK = "onWeekClick";
+	
 	private Date _beginDate;
 
 	private Date _endDate;
@@ -58,6 +67,77 @@ public class CalendarsEvent extends Event {
 		clear(target,true);
 	}
 
+	/** Creates an instance of {@link Event} based on the specified request.
+	 */
+	public static CalendarsEvent getCreateEvent(AuRequest request) {
+		final JSONArray data = (JSONArray) request.getData().get("data");
+		final Calendars cmp = verifyEvent(request, data, 6);
+		
+		Date eventBegin = new Date(getLong(data.get(0)));
+		Date eventEnd = new Date(getLong(data.get(1)));
+		
+		return new CalendarsEvent(ON_EVENT_CREATE, cmp, null,
+				eventBegin, eventEnd,
+				getInt(data.get(2)), getInt(data.get(3)),
+				getInt(data.get(4)),getInt(data.get(5)));
+	}
+	
+	public static CalendarsEvent getEditEvent(AuRequest request) {
+		final JSONArray data = (JSONArray) request.getData().get("data");
+		final Calendars cmp = verifyEvent(request, data, 5);
+		
+		CalendarEvent ce = cmp.getCalendarEventById(String.valueOf(data.get(0)));
+		
+		if (ce == null) return null;
+		
+		return new CalendarsEvent(ON_EVENT_EDIT, cmp, ce, null, null,
+				getInt(data.get(1)), getInt(data.get(2)),
+				getInt(data.get(3)), getInt(data.get(4)));
+	}	
+	
+	public static CalendarsEvent getUpdateEvent(AuRequest request) {
+		final JSONArray data = (JSONArray) request.getData().get("data");
+		final Calendars cmp = verifyEvent(request, data, 7);
+		
+		CalendarEvent ce = cmp.getCalendarEventById(String.valueOf(data.get(0)));
+		
+		if (ce == null) return null;
+		
+		Date eventBegin = new Date(getLong(data.get(1)));
+		Date eventEnd = new Date(getLong(data.get(2)));
+		
+		return new CalendarsEvent(ON_EVENT_UPDATE, cmp, ce, 
+				eventBegin, eventEnd,
+				getInt(data.get(3)), getInt(data.get(4)),
+				getInt(data.get(5)),getInt(data.get(6)));
+	}
+	
+	public static Event getClickEvent(AuRequest request, String cmd) {
+		final JSONArray data = (JSONArray) request.getData().get("data");
+		final Calendars cmp = verifyEvent(request, data, 1);		
+		
+		return new Event(cmd, cmp, new Date(getLong(data.get(0))));
+	}
+	
+	private static int getInt(Object obj){
+		return Integer.parseInt(String.valueOf(obj));
+	}
+	
+	private static long getLong(Object obj){
+		return Long.parseLong(String.valueOf(obj));
+	}
+	
+	private static Calendars verifyEvent(AuRequest request, JSONArray data, int size) {
+		final Calendars cmp = (Calendars)request.getComponent();
+		if (cmp == null)
+			throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, request);
+
+		if (data == null || data.size() != size)
+			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, 
+					new Object[] {data, request});
+		return cmp;
+	}
+	
 	/**
 	 * Stops to clear the dragging ghost command from server to client.
 	 * <p>Note: If the method is invoked, application developer has to invoke

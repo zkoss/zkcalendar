@@ -84,11 +84,11 @@ public class Calendars extends XulElement implements
 	};
 	
 	static {		
-		addClientEvent(Calendars.class, "onEventCreate", 0);
-		addClientEvent(Calendars.class, "onEventEdit", 0);
-		addClientEvent(Calendars.class, "onEventUpdate", 0);
-		addClientEvent(Calendars.class, "onDayClick", CE_REPEAT_IGNORE);
-		addClientEvent(Calendars.class, "onWeekClick", CE_REPEAT_IGNORE);
+		addClientEvent(Calendars.class, CalendarsEvent.ON_EVENT_CREATE, 0);
+		addClientEvent(Calendars.class, CalendarsEvent.ON_EVENT_EDIT, 0);
+		addClientEvent(Calendars.class, CalendarsEvent.ON_EVENT_UPDATE, 0);
+		addClientEvent(Calendars.class, CalendarsEvent.ON_DAY_CLICK, CE_REPEAT_IGNORE);
+		addClientEvent(Calendars.class, CalendarsEvent.ON_WEEK_CLICK, CE_REPEAT_IGNORE);
 	}	
 	
 	public Calendars() {
@@ -652,7 +652,6 @@ public class Calendars extends XulElement implements
 		smartUpdate("zones", Util.encloseList(_tzones.values()));
 		// reset default timezone
 		_sdfKey.setTimeZone(tzone);
-		
 		if (_model != null) {
 			List<CalendarEvent> list = _model.get(getBeginDate(), getEndDate(),
 					new RenderContext() {
@@ -679,7 +678,7 @@ public class Calendars extends XulElement implements
 					dayevt.add(ce);
 				}
 			}
-		}		
+		}
 		smartUpdate("events", Util.encloseEventMap(this, _evts.values()));
 	}
 	
@@ -790,31 +789,17 @@ public class Calendars extends XulElement implements
 	
 	public void service(org.zkoss.zk.au.AuRequest request, boolean everError) {
 		final String cmd = request.getCommand();
-		final JSONArray data = (JSONArray) request.getData().get("data");
-		boolean onEvtCreate = cmd.equals("onEventCreate");
-
-		if (onEvtCreate || cmd.equals("onEventEdit") || cmd.equals("onEventUpdate")) {
-
-			int fieldNum = 6;
-
-			if (cmd.equals("onEventEdit")) fieldNum--;
-			if (cmd.equals("onEventUpdate")) fieldNum++;			
-			final Calendars cmp = Util.verifyEvent(this, request, data, fieldNum);
-
-			CalendarEvent ce = null;
-
-			if (!cmd.equals("onEventCreate"))
-				ce = cmp.getCalendarEventById(String.valueOf(data.get(0)));
-
-			if (onEvtCreate || ce != null)
-				Events.postEvent(Util.createCalendarsEvent(cmd, cmp, ce, data));
-
-		} else if (cmd.equals("onDayClick") || cmd.equals("onWeekClick")) {
-			
-			final Calendars cmp = Util.verifyEvent(this, request, data, 1);
-			Events.postEvent(new Event(cmd, cmp, new Date(Long.parseLong(String.valueOf(data.get(0))))));
-			
-		} else super.service(request, everError);
+		
+		if (cmd.equals(CalendarsEvent.ON_EVENT_CREATE))
+			Events.postEvent(CalendarsEvent.getCreateEvent(request));
+		else if (cmd.equals(CalendarsEvent.ON_EVENT_EDIT))
+			Events.postEvent(CalendarsEvent.getEditEvent(request));
+		else if (cmd.equals(CalendarsEvent.ON_EVENT_UPDATE))
+			Events.postEvent(CalendarsEvent.getUpdateEvent(request));
+		else if (cmd.equals(CalendarsEvent.ON_DAY_CLICK) || 
+				cmd.equals(CalendarsEvent.ON_WEEK_CLICK))
+			Events.postEvent(CalendarsEvent.getClickEvent(request, cmd));
+		else super.service(request, everError);
 	}	
 
 	/*
@@ -838,7 +823,6 @@ public class Calendars extends XulElement implements
 			if (_dfmter != null) rendererMonthData(_dfmter, renderer);
 		} else
 			if (_dfmter != null) rendererDayData(_dfmter ,renderer);
-		
 		
 		renderer.render("bd", getBeginDate().getTime());
 		renderer.render("ed", getEndDate().getTime());

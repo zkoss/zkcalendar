@@ -109,41 +109,6 @@ public class Util {
 		return result;
 	}
 		
-	public static Calendars verifyEvent(Calendars calendars, AuRequest request, JSONArray data, int size) {
-		final Calendars cmp = (Calendars)request.getComponent();
-		if (cmp == null)
-			throw new UiException(MZk.ILLEGAL_REQUEST_COMPONENT_REQUIRED, calendars);
-
-		if (data == null || data.size() != size)
-			throw new UiException(MZk.ILLEGAL_REQUEST_WRONG_DATA, new Object[] {
-					Objects.toString(data), calendars });
-		return cmp;
-	}
-	
-	public static CalendarsEvent createCalendarsEvent(String evtName, Calendars cmp, CalendarEvent ce, JSONArray data) {	
-		
-//		onEventCreate	012345
-//		onEventEdit		xx1234
-//		onEventUpdate	123456
-		Date beginDate = null, endDate = null;
-		
-		int i = 0;
-		if (evtName.equals("onEventEdit")) i++;
-		else {
-			if (evtName.equals("onEventUpdate")) i++;
-			beginDate = new Date(Long.parseLong(String.valueOf(data.get(i++))));
-			endDate = new Date(Long.parseLong(String.valueOf(data.get(i++))));
-		}
-		
-		int x = Integer.parseInt(String.valueOf(data.get(i++)));
-		int y = Integer.parseInt(String.valueOf(data.get(i++)));
-		int dtwd = Integer.parseInt(String.valueOf(data.get(i)));
-		int dthgh = Integer.parseInt(String.valueOf(data.get(i)));
-		
-		return new CalendarsEvent(evtName, cmp, ce, beginDate, endDate, x, y, dtwd, dthgh);
-	}
-
-		
 	public static String encloseEventList(Calendars calendars, Collection<CalendarEvent> collection) {
 		final StringBuffer sb = new StringBuffer().append('[');
 		for (CalendarEvent ce : collection) {
