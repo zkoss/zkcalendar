@@ -48,7 +48,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 			//reset evt data			
 			this._evtsData = this._createEvtsData(false);
-			this.onShow();
+			// recalculate
+			this.onSize();
 		},
 		zones: function () {			
 			this._zones = jq.evalJSON(this._zones);
@@ -64,12 +65,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	},
 
 	prepareData_ : function () {
-		this.$supers('prepareData_', arguments);
 		this.AWEEK = this.DAYTIME * 7;		 
-		Date.prototype.getWeek = function() {
-			var onejan = new Date(this.getFullYear(),0,1);
-			return Math.ceil((((this - onejan) / 86400000) + onejan.getDay()+1)/7);
-		} 		
 	},
 
 	bind_ : function () {// after compose
@@ -94,10 +90,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 		var children = this.allDayTitle,
 			captionByPopup = this._captionByPopup,
-			ed = new Date(this.zoneEd.getTime()),
-			edOffset = ed.getTimezoneOffset(),
+			ed = new Date(this.zoneEd),
 			rdata = [];
-
 
 		this._createWeekSet();
 		this.createChildrenWidget_();
@@ -105,9 +99,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 		//add time attr for click event
 		for (var i = this.weekOfMonth * 7; i--;) {
-			ed.setTime(ed.getTime() - this.DAYTIME);
-			this.adjDST_(ed, edOffset);
-			children[i].time = ed.getTime();
+			ed.setDate(ed.getDate() - 1);
+			children[i].time = this.fixTimeZoneFromClient(ed);
 			if(captionByPopup)
 				children[i].text = captionByPopup[i];
 		}
@@ -117,7 +110,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				children = this.woyCnt;
 
 			for (var i = this.weekOfMonth; i--;)
-				children[i].time = this._weekDates[i].zoneBd.getTime();
+				children[i].time = this.fixTimeZoneFromClient(this._weekDates[i].zoneBd);
 
 			woy.bind('click', function (evt) {
 				var target = evt.target;				
@@ -181,18 +174,16 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	
 	_createWeekSet: function (ed) {
 		var weekDates = [],
-			bd = new Date(this.zoneBd.getTime()),
-			bdOffset = bd.getTimezoneOffset(),
+			bd = new Date(this.zoneBd),
 			ed = this.zoneEd,
 			cur,
 			previous;
 		
 		//calculate all begin and end of week
 		while (bd < ed) {
-			previous = new Date(bd.getTime());
-			bd.setTime(bd.getTime() + this.AWEEK);
-			this.adjDST_(bd, bdOffset);
-			cur = new Date(bd.getTime());
+			previous = new Date(bd);
+			bd.setDate(bd.getDate() + 7);
+			cur = new Date(bd);
 			weekDates.push({zoneBd: previous, zoneEd: cur});
 		}
 		
@@ -388,8 +379,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			month_date_off = zcls + '-month-date-off',	
 			week_today = zcls + "-week-today",				
 			week_weekend = zcls + "-week-weekend",					
-			bd = new Date(this.zoneBd.getTime()),
-			ed = new Date(this.zoneEd.getTime()),
+			bd = new Date(this.zoneBd),
+			ed = new Date(this.zoneEd),
 			current = new Date(),
 			curMonth = this._currentDate.getMonth(),
 			cur,
@@ -401,7 +392,9 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		//reset rows height 	
 		if (this.woy) 			
 			woyChildren = this.woyCnt;		
-		ed = new Date(this.zoneEd.getTime());
+		ed = new Date(this.zoneEd);
+		ed.setDate(ed.getDate() - 7);
+		var woy = zk.parseInt(this.woy);
 		for (var i = weeks; i--;) {
 			var div = jq(cntRows[i]),
 				top = number * i;
@@ -409,15 +402,20 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			div.css('top',top + '%');
 			div.height(number + '%');
 			
-			if (this.woy) {
-				ed.setTime(ed.getTime() - this.AWEEK);
+			if (this.woy) {				
+				var year = ed.getFullYear(),
+					weekSpan = woyChildren[i],
+					pNode = jq(weekSpan.parentNode);				
+				
+				weekSpan.time = this.fixTimeZoneFromClient(this._weekDates[i].zoneBd);
+				jq(weekSpan).html(captionByWeekOfYear ? captionByWeekOfYear[i]: woy);				
+				
+				ed.setDate(ed.getDate() - 7);
 				ed.setMilliseconds(0);
-				var weekSpan = woyChildren[i],
-					pNode = jq(weekSpan.parentNode),
-					content = captionByWeekOfYear ? captionByWeekOfYear[i]: 
-											ed.getWeek();
-				weekSpan.time = this._weekDates[i].zoneBd.getTime();
-				jq(weekSpan).html(content);				
+				
+				if (year != ed.getFullYear())
+					woy = 1;
+				else woy--;	
 				
 				pNode.css('top',top + '%');
 				pNode.height(number + '%');							
@@ -431,9 +429,9 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		$cnt.children().find('.' + week_today).removeClass(week_today);
 				
 		// reset week title
-		ed = new Date(this.zoneEd.getTime());
+		ed = new Date(this.zoneEd);
 		for (var i = 7; i--;) {
-			ed.setTime(ed.getTime() - this.DAYTIME);			
+			ed.setDate(ed.getDate() - 1);			
 			var th = jq(hdChildren[i]),
 				content = captionByDayOfWeek ? captionByDayOfWeek[i] : 
 												zk.fmt.Date.formatDate(ed,'EEE');			
@@ -443,16 +441,16 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}
 		
 		//reset each day
-		ed = new Date(this.zoneEd.getTime());			
+		ed = new Date(this.zoneEd);			
 		for (var i = this.weekOfMonth * 7; i--;) {
-			ed.setTime(ed.getTime() - this.DAYTIME);
+			ed.setDate(ed.getDate() - 1);
 			var span = cntChildren[i],
 				td =  jq(span.parentNode),
 				content = captionByDateOfMonth? captionByDateOfMonth[i]: ed.getDate(),
-				bgTD
+				bgTD,
 				rowIndex = zk.parseInt(i/7);
 			
-			span.time = ed.getTime();
+			span.time = this.fixTimeZoneFromClient(ed);
 			if (captionByPopup)
 				span.text = captionByPopup[i];
 			if (ed.getDay() == 0 || ed.getDay() == 6) { //SUNDAY or SATURDAY	
@@ -461,8 +459,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				bgTD.addClass(week_weekend);
 			}
 
-			if (current.getFullYear() == ed.getFullYear() &&
-				current.getDOY() == ed.getDOY()) {//today 
+			if (this.isTheSameDay_(current, ed)) {//today 
 				td.addClass(week_today);
 				bgTD = jq(cntBg[rowIndex].rows[0].cells[td[0].cellIndex]);
 				bgTD.addClass(week_today);
@@ -478,7 +475,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	
 	reAlignEvents_: function (hasAdd) {
 		this._rePositionDay();		
-		this.onShow();
+		// recalculate
+		this.onSize();
     },
         
     removeNodeInArray_: function (childWidget, hasAdd) {
@@ -528,8 +526,10 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				y = p[1] - offs[1],
 				cols = Math.floor(x/width),
 				rows = Math.floor(y/height),
-				bd = new Date(widget._beginDate.getTime() + (7 * rows + cols) * widget.DAYTIME),
+				bd = new Date(widget.zoneBd),
 				zinfo = [];
+				
+			bd.setDate(bd.getDate() + (7 * rows + cols));
 			
 			for (var left = 0, n = td; n;
 					left += n.offsetWidth, n = n.nextSibling)
@@ -549,11 +549,19 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			widget.fixRope_(zinfo, jq('#'+widget.uuid+"-rope")[0].firstChild,
 				cols, rows, zoffs, {w: width, h: hs[rows], hs: hs}, 1);
 
-			// clean
-			bd.setMilliseconds(0);
+			var ed = new Date(bd);
+			ed.setDate(ed.getDate() + 1);
 				
 			widget.fire("onEventCreate", {
-   				 data: [bd.getTime(), bd.getTime() + widget.DAYTIME, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});
+   				 data: [
+				 	widget.fixTimeZoneFromClient(bd), 
+					widget.fixTimeZoneFromClient(ed), 
+					p[0], 
+					p[1], 
+					jq.innerWidth(), 
+					jq.innerHeight()
+				]
+			});
 
 			widget._ghost[widget.uuid] = function () {
 				jq('#'+widget.uuid+"-rope").remove();
@@ -630,7 +638,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			evts = widget._evtsData[widget.getIndex(row)][ci],
 			oneDay = widget.DAYTIME,
 			bd = targetDate,
-			ed = new Date(bd.getTime() + oneDay);
+			ed = new Date(bd);
+		ed.setDate(ed.getDate() + 1);
 		for (var i = evts.length; i--;) {
 			var tr = table.insertRow(0),
 				cr = tr.insertCell(0),
@@ -645,7 +654,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			ce._bd = ce._bd || event.zoneBd;
 			ce._ed = ce._ed || event.zoneEd;
 			cl.className = "z-calpp-month-evt-l";
-			if (bd.getTime() - ce._bd.getTime() >= 1000) {
+			if (bd - ce._bd >= 1000) {
 				var info = [
 						ce.id + "-fl",
 						zcls,
@@ -668,7 +677,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			cm.appendChild(faker);
 			cr.className = "z-calpp-month-evt-r";
 
-			if (ce._ed.getTime() - ed.getTime() >= 1000) {
+			if (ce._ed - ed >= 1000) {
 				var d = new Date(ce._ed.getTime() - 1000),
 					info = [
 						ce.id + "-fr",
@@ -874,22 +883,16 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			jq(document.body.firstChild).before(jq(faker));
 			dg.node = jq('#' + widget.uuid + '-dd')[0];
 			
-			var bd = new Date(event.zoneBd.getTime()), 
-				ed = new Date(event.zoneEd.getTime());
+			var bd = new Date(event.zoneBd), 
+				ed = new Date(event.zoneEd);
 			
 			if (ed.getHours() == 0 && ed.getMinutes() == 0 && ed.getSeconds() == 0) 
 				ed = new Date(ed.getTime() - 1000);
 			
-			bd.setHours(0);
-			bd.setMinutes(0);
-			bd.setSeconds(0);
-			bd.setMilliseconds(0);
-			ed.setHours(23);
-			ed.setMinutes(59);
-			ed.setSeconds(59);
-			ed.setMilliseconds(0);			
+			bd.setHours(0,0,0,0);
+			ed.setHours(23,59,59,0);		
 			
-			dg._zdur = Math.ceil((ed.getTime() - bd.getTime()) / widget.DAYTIME);
+			dg._zdur = Math.ceil((ed - bd) / widget.DAYTIME);
 			dg._zevt = ce;
 		}
 			
@@ -1002,8 +1005,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				var zcls = widget.getZclass(),
 					targetWidget = zk.Widget.$(dg._zevt),
 					event = targetWidget.event,
-					bd = new Date(widget.zoneBd.getTime() + (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]) * widget.DAYTIME),
-					bd1 = new Date(event.zoneBd.getTime()),
+					bd = new Date(widget.zoneBd),
+					ebd = new Date(event.zoneBd),
 					ddClass = zcls + '-evt-dd';
 
 				jq(targetWidget.$n()).removeClass(ddClass);
@@ -1012,25 +1015,25 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					for (var n = cloneNodes.length; n--;) 
 						jq(cloneNodes[n]).removeClass(ddClass);
 				
-				bd.setHours(bd1.getHours());
-				bd.setMinutes(bd1.getMinutes());
-				bd.setSeconds(bd1.getSeconds());
-				bd.setMilliseconds(0);
-				bd1.setMilliseconds(0);				
-				var offs = bd.getTime() - bd1.getTime();
+				bd.setDate(bd.getDate() + (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]));
+				ebd.setDate(1);
+				ebd.setMonth(bd.getMonth());
+				ebd.setDate(bd.getDate());
 
-				if (offs) {
+				if (!widget.isTheSameDay_(ebd, event.zoneBd)) {
 					ce = dg._zevt;
 					ce.style.visibility = "hidden";
 
-					var ed = new Date(event.endDate.getTime());
-					ed.setMilliseconds(0);					
+					var ed = new Date(event.zoneEd);
+					ed.setDate(1);
+					ed.setMonth(bd.getMonth());
+					ed.setDate(bd.getDate() + widget.getPeriod(event.zoneBd, event.zoneEd));				
 					
 					widget.fire("onEventUpdate", {
 						data: [
 							dg._zevt.id,
-							event.beginDate.getTime() + offs,
-							ed.getTime() + offs,
+							widget.fixTimeZoneFromClient(ebd),
+							widget.fixTimeZoneFromClient(ed),
 							evt.pageX,
 							evt.pageY,
 							jq.innerWidth(),
@@ -1047,18 +1050,18 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					r1 = dg._zpos1[1],
 					c2 = c < c1 ? c : c1,
 					r2 = r < r1 ? r : r1,
-					b = (dg._zoffs.s * r2 + c2) * widget.DAYTIME;
+					offs = dg._zoffs.s * r2 + c2,
+					bd = new Date(widget.zoneBd);
 
-				var bd = new Date(widget._beginDate.getTime() + b),
-					ed = new Date(bd.getTime() + dg._zpos1[2] * widget.DAYTIME);
+				bd.setDate(bd.getDate() + offs);
+				
+				var ed = new Date(bd);
+				ed.setDate(ed.getDate() + dg._zpos1[2]);
 
-				// clean
-				bd.setMilliseconds(0);
-				ed.setMilliseconds(0);
 				widget.fire("onEventCreate", {
 					data: [
-						bd.getTime(),
-						ed.getTime(),
+						widget.fixTimeZoneFromClient(bd),
+						widget.fixTimeZoneFromClient(ed),
 						evt.pageX,
 						evt.pageY,
 						jq.innerWidth(),

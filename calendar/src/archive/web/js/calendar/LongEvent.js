@@ -83,14 +83,14 @@ calendar.LongEvent = zk.$extends(calendar.Event, {
 			ped = parent.zoneEd;		
 		
 		if (bd < pbd) 
-			bd = new Date(pbd.getTime());
+			bd = new Date(pbd);
 			
 		if (ed > ped) 
-			ed = new Date(ped.getTime());	
+			ed = new Date(ped);	
 		
 		//end equals calendar begin
-		if ((ed.getFullYear() == pbd.getFullYear()) && (ed.getDOY() == pbd.getDOY()))
-			ed = new Date(pbd.getTime() + this.DAYTIME);
+		if (ed.getHours() == 0 && ed.getMinutes() == 0 && parent.isTheSameDay_(ed, pbd))
+			ed.setDate(ed.getDate() + 1);
 			
 		return {bd: bd, ed: ed};
 	},

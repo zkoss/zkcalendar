@@ -71,7 +71,8 @@ public class Calendars extends XulElement implements
 	private boolean _readonly;
 	private boolean _weekOfYear;
 	private boolean _hasEmptyZone= false;
-	private List<CalendarEvent> _addEvtList, _mdyEvtList, _rmEvtList;
+	private boolean _escapeXML = false;
+	private List<CalendarEvent> _addEvtList, _mdyEvtList, _rmEvtList;	
 	
  	private static final String ATTR_ON_ADD_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onAddEventResponse";
 	private static final String ATTR_ON_REMOVE_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onRemoveEventResponse";
@@ -109,8 +110,13 @@ public class Calendars extends XulElement implements
 	public void setWeekOfYear(boolean weekOfYear) {
 		if (_weekOfYear != weekOfYear) {
 			_weekOfYear = weekOfYear;
-			if ("month".equals(getMold())) 
-				smartUpdate("woy", _weekOfYear);
+			if (!"month".equals(getMold())) return;
+			
+			TimeZone timezone = getDefaultTimeZone();
+			Calendar cal = Calendar.getInstance(timezone);
+			cal.setTime(getBeginDate());
+			
+			smartUpdate("woy", String.valueOf(cal.get(Calendar.WEEK_OF_YEAR)));
 		}
 	}	
 	
@@ -148,7 +154,7 @@ public class Calendars extends XulElement implements
 		if (_dfmter != dfmater) {
 			_dfmter = dfmater;
 			reSendDateRange();
-			smartUpdate("cd", getCurrentDate().getTime());
+			smartUpdate("cd", Util.getDSTTime(this, getCurrentDate()));
 			reSendEventGroup();
 		}
 	}
@@ -338,9 +344,9 @@ public class Calendars extends XulElement implements
 		}
 		
 		TimeZone tz = getDefaultTimeZone();		
-		smartUpdate("tz", (tz.getRawOffset() + (tz.inDaylightTime(Calendar.getInstance(tz).getTime()) ? tz.getDSTSavings() : 0))/60000);
-		smartUpdate("bd", getBeginDate().getTime());
-		smartUpdate("ed", getEndDate().getTime());
+		smartUpdate("tz", (tz.getRawOffset())/60000);
+		smartUpdate("bd", Util.getDSTTime(this,getBeginDate()));
+		smartUpdate("ed", Util.getDSTTime(this,getEndDate()));
 		reSendEventGroup();
 	}
 
@@ -384,8 +390,8 @@ public class Calendars extends XulElement implements
 	 */
 	public boolean removeTimeZone(TimeZone timezone) {
 		if (_tzones.remove(timezone) != null) {
-			smartUpdate("bd", getBeginDate().getTime());
-			smartUpdate("ed", getEndDate().getTime());
+			smartUpdate("bd", Util.getDSTTime(this,getBeginDate()));
+			smartUpdate("ed", Util.getDSTTime(this,getEndDate()));
 			reSendEventGroup();
 			return true;
 		}		
@@ -501,7 +507,6 @@ public class Calendars extends XulElement implements
 		TimeZone t = getDefaultTimeZone();
 
 		Calendar cal = Calendar.getInstance(t);
-		cal.setTimeZone(t);
 		cal.setTime(_curDate);
 		boolean inMonth = inMonthMold();
 		if (inMonth)
@@ -562,7 +567,7 @@ public class Calendars extends XulElement implements
 		if (!Objects.equals(curDate, _curDate)) {
 			_curDate = curDate;
 			reSendDateRange();
-			smartUpdate("cd", getCurrentDate().getTime());
+			smartUpdate("cd", Util.getDSTTime(this,getCurrentDate()));
 			reSendEventGroup();
 		}
 	}
@@ -577,11 +582,20 @@ public class Calendars extends XulElement implements
 
 	private void reSendDateRange(){
 		Date beginDate = getBeginDate();
+		Date endDate = getEndDate();
 		
-		smartUpdate("bd", beginDate.getTime());
-		smartUpdate("ed", getEndDate().getTime());	
-		if (inMonthMold())
+		smartUpdate("bd", Util.getDSTTime(this, beginDate));
+		smartUpdate("ed", Util.getDSTTime(this, endDate));	
+		if (inMonthMold()){
 			smartUpdate("weekOfMonth", getWeekOfMonth());
+			if (isWeekOfYear() && _dfmter == null) {
+				TimeZone timezone = getDefaultTimeZone();
+				Calendar cal = Calendar.getInstance(timezone);
+				cal.setTime(endDate);
+				
+				smartUpdate("woy", String.valueOf(cal.get(Calendar.WEEK_OF_YEAR)));
+			}
+		}
 		
 		DateFormatter dfhandler = getDateFormatter();		
 		if(dfhandler == null) return;
@@ -668,7 +682,6 @@ public class Calendars extends XulElement implements
 					String key = ce.getBeginDate().before(getBeginDate()) ?
 										getEventKey(getBeginDate()): 
 										getEventKey(ce.getBeginDate());
-				
 					
 					List<CalendarEvent> dayevt =  _evts.get(key);
 					if (dayevt == null) {
@@ -747,6 +760,21 @@ public class Calendars extends XulElement implements
 		return "month".equals(getMold());
 	}
 
+	/**
+	 * Sets whether the event content escape XML
+	 * @param escapeXML
+	 */
+	public void setEscapeXML(boolean escapeXML) {
+		this._escapeXML = escapeXML;
+	}
+	/**
+	 * Return whether the event content escape XML
+	 * @return boolean
+	 */
+	public boolean isEscapeXML() {
+		return _escapeXML;
+	}
+	
 	// super
 	public String getZclass() {
 		return _zclass == null ?  "z-calendars" : _zclass;
@@ -810,7 +838,7 @@ public class Calendars extends XulElement implements
 			throws IOException {
 		super.renderProperties(renderer);		
 		TimeZone tz = getDefaultTimeZone();
-		renderer.render("tz", (tz.getRawOffset() + (tz.inDaylightTime(Calendar.getInstance(tz).getTime()) ? tz.getDSTSavings() : 0))/60000);
+		renderer.render("tz", (tz.getRawOffset())/60000);
 					
 		renderer.render("zonesOffset", Util.encloseList(Util.packZonesOffset(_tzones)));
 		renderer.render("zones", Util.encloseList(_tzones.values()));
@@ -819,14 +847,20 @@ public class Calendars extends XulElement implements
 			renderer.render("mon", true);
 			renderer.render("weekOfMonth", getWeekOfMonth());
 			
-			if (_weekOfYear) renderer.render("woy", true);
+			if (_weekOfYear) {
+				TimeZone timezone = getDefaultTimeZone();
+				Calendar cal = Calendar.getInstance(timezone);
+				cal.setTime(getBeginDate());
+				
+				renderer.render("woy", String.valueOf(cal.get(Calendar.WEEK_OF_YEAR)));
+			}
 			if (_dfmter != null) rendererMonthData(_dfmter, renderer);
 		} else
 			if (_dfmter != null) rendererDayData(_dfmter ,renderer);
 		
-		renderer.render("bd", getBeginDate().getTime());
-		renderer.render("ed", getEndDate().getTime());
-		renderer.render("cd", getCurrentDate().getTime());
+		renderer.render("bd", Util.getDSTTime(this,getBeginDate()));
+		renderer.render("ed", Util.getDSTTime(this,getEndDate()));
+		renderer.render("cd", Util.getDSTTime(this,getCurrentDate()));
 		
 		if (_readonly)
 			renderer.render("readonly", true);

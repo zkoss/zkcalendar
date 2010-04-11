@@ -29,6 +29,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	ddTemplate: ['<div id="%1" class="%2" style="left:0px;width:100%;" ><div class="%2-t1"></div><div class="%2-t2"><div class="%2-t3"></div></div>',
 			  '<div class="%2-body" id="%1-body"><div class="%2-inner"><dl id="%1-inner"><dt class="%2-header"></dt><dd class="%2-cnt"></dd></dl></div></div>',
 			  '<div class="%2-b2"><div class="%2-b3"></div></div><div class="%2-b1"/></div>'].join(''),	
+	blockTemplate: '<div id="'+this.uuid+'-tempblock"></div>',
 	
 	$define : {
 		cd: function(){
@@ -45,10 +46,9 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	},
 
 
-	bind_ : function() {// after compose
+	bind_ : function() {
 		this.$supers('bind_', arguments);
 		zWatch.listen({onSize: this, onShow: this});
-		this.blockTemplate = '<div id="'+this.uuid+'-tempblock"></div>';
 	},
 	
 	unbind_ : function() {
@@ -63,20 +63,27 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		var zcls = this._zclass;
 		return zcls ? zcls : "z-calendars";
 	},	
-	
-	prepareData_ : function () {
-		Date.prototype.getDOY = function() {
-			var onejan = new Date(this.getFullYear(),0,1),
-				adjTime = this.getUTCHours() == 0 ? 0: 3600000;				
-			return Math.ceil((this - onejan + adjTime) / 86400000);
-		}
+		
+	isExceedOneDay_: function(bd,ed) {		
+		if (bd < this.zoneBd || bd.getFullYear() != ed.getFullYear() ||
+			(!this.isTheSameDay_(bd, ed) && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
+			(this.getPeriod(ed, bd) >= 1 && this.getPeriod(ed, this.zoneBd) >= 1))
+	 		return true;
 	},
 	
-	isExceedOneDay_: function(bd,ed) {  	
-		if (bd < this.zoneBd || bd.getFullYear() != ed.getFullYear() ||
-			(bd.getDOY() != ed.getDOY() && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
-			(ed.getTime() - bd.getTime() >= this.DAYTIME && ed.getTime() - this.zoneBd.getTime() >= this.DAYTIME))
-	 		return true;
+	isTheSameDay_: function(date1, date2) {
+		return (date1.getFullYear() == date2.getFullYear() && 
+				date1.getMonth() == date2.getMonth() && 
+				date1.getDate() == date2.getDate());
+	},
+	
+	getPeriod: function(date1, date2) {
+		//adjust for begin and end are not the same in DST time
+		var tzOffset1 = date1.getTimezoneOffset(),
+			tzOffset2 = date2.getTimezoneOffset(),
+			offset = (tzOffset1 != tzOffset2) ? ((tzOffset1 - tzOffset2) * 60000): 0;
+		
+		return Math.abs(date1 - date2 - offset) / this.DAYTIME;	
 	},
 	
 	createChildrenWidget_: function () {
@@ -183,7 +190,6 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			event = this.processEvtData_(event);
 			var bd = event.zoneBd,
 				ed = event.zoneEd;
-				
 			//over range
 			if (bd > this.zoneEd || ed < this.zoneBd) continue;
 			
@@ -295,13 +301,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		return this.fixTimeZoneFromServer(date, this.tz);
 	},
 	
-	reconvertTime: function (date) {			
-		return new Date(date.getTime() - (date.getTimezoneOffset() + this.tz)  * 60000);
-	},
-	
-	adjDST_: function (date, offset) {
-		if (date.getHours() == 0) return;
-		date.setHours(date.getHours() + (date.getTimezoneOffset() - offset)/60);
+	fixTimeZoneFromClient: function (date) {
+		return date.getTime() - (date.getTimezoneOffset() + this.tz) * 60000;
 	},
 	
 	fixRope_: function (infos, n, cols, rows, offs, dim, dur) {

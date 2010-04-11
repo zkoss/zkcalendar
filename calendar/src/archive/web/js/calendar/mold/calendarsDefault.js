@@ -23,8 +23,7 @@ function (out) {
 		bdTime = this.zoneBd.getTime(),
 		begin = new Date(bdTime),		
 		current = new Date(),
-		weekend = [-1, -1, -1],
-		ONE_DAY = this.DAYTIME;
+		weekend = [-1, -1, -1];
 	
 	// round corner
 	var t1 = zcls + "-t1",
@@ -93,12 +92,10 @@ function (out) {
 			'<div class="', week_header, '">',
 			'<table class="', week_header, '-cnt" cellpadding="0" cellspacing="0">',
 			'<tbody>',
-
 	
 /*************** day's header ******************/	
 	// day's header
 			'<tr id="', uuid, '-header" class="', day_header, '">');
-
 	
 /*************** zone area ******************/
 
@@ -109,8 +106,7 @@ function (out) {
 			'<div id="', uuid, '-hdarrow" class="', week_header_arrow, '"></div></th>');
 
 /*************** date title ******************/	
-	var captionByDate = this._captionByDate,
-		bdOffset = begin.getTimezoneOffset();
+	var captionByDate = this._captionByDate;
 
 	// day-of-week
 	for (var index = 0 , j = 0; j < days; ++j) {
@@ -125,15 +121,13 @@ function (out) {
 			out.push(' ', week_weekend);
 		}
 		
-		if (weekend[2] == -1 && current.getFullYear() == begin.getFullYear() &&
-				current.getDOY() == begin.getDOY()) {// today
+		if (weekend[2] == -1 && this.isTheSameDay_(current, begin)) {// today
 			weekend[2] = j;
 			out.push(' ', week_today);
 		}
 
 		out.push('"><span class="', day_of_week_cnt, '">', content, '</span></div></th>');
-		begin.setTime(begin.getTime() + ONE_DAY);
-		this.adjDST_(begin, bdOffset);
+		begin.setDate(begin.getDate() + 1);
 	}
 	out.push('<th class="',day_of_week_end,'">&nbsp;</th></tr>',
 

@@ -21,6 +21,7 @@ import java.util.Date;
 
 import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.api.CalendarEvent;
+import org.zkoss.calendar.impl.Util;
 import org.zkoss.json.JSONArray;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
@@ -73,8 +74,8 @@ public class CalendarsEvent extends Event {
 		final JSONArray data = (JSONArray) request.getData().get("data");
 		final Calendars cmp = verifyEvent(request, data, 6);
 		
-		Date eventBegin = new Date(getLong(data.get(0)));
-		Date eventEnd = new Date(getLong(data.get(1)));
+		Date eventBegin = Util.fixDSTTime(cmp, new Date(getLong(data.get(0))));
+		Date eventEnd = Util.fixDSTTime(cmp, new Date(getLong(data.get(1))));
 		
 		return new CalendarsEvent(ON_EVENT_CREATE, cmp, null,
 				eventBegin, eventEnd,
@@ -103,9 +104,9 @@ public class CalendarsEvent extends Event {
 		
 		if (ce == null) return null;
 		
-		Date eventBegin = new Date(getLong(data.get(1)));
-		Date eventEnd = new Date(getLong(data.get(2)));
-		
+		Date eventBegin = Util.fixDSTTime(cmp, new Date(getLong(data.get(1))));
+		Date eventEnd = Util.fixDSTTime(cmp, new Date(getLong(data.get(2))));
+
 		return new CalendarsEvent(ON_EVENT_UPDATE, cmp, ce, 
 				eventBegin, eventEnd,
 				getInt(data.get(3)), getInt(data.get(4)),
@@ -116,7 +117,7 @@ public class CalendarsEvent extends Event {
 		final JSONArray data = (JSONArray) request.getData().get("data");
 		final Calendars cmp = verifyEvent(request, data, 1);		
 		
-		return new Event(cmd, cmp, new Date(getLong(data.get(0))));
+		return new Event(cmd, cmp, Util.fixDSTTime(cmp, new Date(getLong(data.get(0)))));
 	}
 	
 	private static int getInt(Object obj){

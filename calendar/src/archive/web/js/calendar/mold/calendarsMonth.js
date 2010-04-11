@@ -20,9 +20,7 @@ function (out) {
 		toolbar = this.firstChild,
 		bdTime = this.zoneBd.getTime(),
 		current = new Date(),
-		weekend = [-1, -1],
-		ONE_DAY = this.DAYTIME,
-		AWEEK = this.AWEEK;
+		weekend = [-1, -1];
 	
 	// round corner
 	var t1 = zcls + "-t1",
@@ -76,7 +74,6 @@ function (out) {
 
 	// day-of-week
 	var bd = new Date(bdTime),
-		bdOffset = bd.getTimezoneOffset(),
 		captionByDayOfWeek = this._captionByDayOfWeek;
 	for (var index = 0, k = 0; k < 7; ++k) {
 		var content = captionByDayOfWeek ? captionByDayOfWeek[k] :
@@ -89,8 +86,7 @@ function (out) {
 			out.push(' ', week_weekend);
 		}
 		out.push('">', content, '</th>');
-		bd.setTime(bd.getTime() + ONE_DAY);
-		this.adjDST_(bd, bdOffset);
+		bd.setDate(bd.getDate() + 1);
 	}
 	out.push('</tr></tbody></table>');
 	
@@ -99,18 +95,21 @@ function (out) {
 		number = 100 / weeks,
 		captionByWeekOfYear = this._captionByWeekOfYear;
 	if (this.woy) {//weekOfYear
+		var woy = zk.parseInt(this.woy);
 		bd.setTime(bdTime);
 		out.push('<div id="', uuid, '-woy" class="', week_of_year, '">');
 		for (var j = 0; j < weeks; j++) {
 			bd.setMilliseconds(0);
-			var content = captionByWeekOfYear ? captionByWeekOfYear[j] :
-				bd.getWeek();
+			var content = captionByWeekOfYear ? captionByWeekOfYear[j] : woy,
+				year = bd.getFullYear();
 			out.push('<div class="', month_week,
 					'" style="top:', (number * j),
 					'%; height:', number, '%;"><span class="',
 					week_of_year_text, '">', content, '</span></div>');
-			bd.setTime(bd.getTime() + AWEEK);
-			this.adjDST_(bd, bdOffset);
+			bd.setDate(bd.getDate() + 7);
+			if (year != bd.getFullYear())
+				woy = 1;
+			else woy++;
 		}
 		out.push('</div>');
 	}
@@ -131,20 +130,18 @@ function (out) {
 				'<table class="', day_of_month_bg,
 				'" cellpadding="0" cellspacing="0"><tbody><tr>');
 
-		var tempBd = new Date(bd.getTime());
+		var tempBd = new Date(bd);
 		for (var i = 0; i < 7; i++) {
 			out.push('<td class="');
 
 			if (weekend[0] == i || weekend[1] == i)
 				out.push(' ', week_weekend);
 		
-			if (current.getFullYear() == tempBd.getFullYear() &&
-					current.getDOY() == tempBd.getDOY())
+			if (this.isTheSameDay_(current, tempBd))
 				out.push(' ', week_today);
 
 			out.push('">&nbsp;</td>');
-			tempBd.setTime(tempBd.getTime() + ONE_DAY);
-			this.adjDST_(tempBd, bdOffset);
+			tempBd.setDate(tempBd.getDate() + 1);
 		}
 
 		out.push('</tr></tbody></table>',
@@ -160,8 +157,7 @@ function (out) {
 			if (weekend[0] == i || weekend[1] == i)
 				out.push(' ', week_weekend);
 
-			if (current.getFullYear() == bd.getFullYear() &&
-					current.getDOY() == bd.getDOY())//today
+			if (this.isTheSameDay_(current, bd))//today
 				out.push(' ', week_today);
 		
 
@@ -172,8 +168,7 @@ function (out) {
 				content = zk.fmt.Date.formatDate(bd,'MMM d');
 			out.push('"><span class="', month_date_cnt, '">', content, '</span></td>');
 
-			bd.setTime(bd.getTime() + ONE_DAY);
-			this.adjDST_(bd, bdOffset);
+			bd.setDate(bd.getDate() + 1);
 		}
 		out.push('</tr></tbody></table></div>');
 	}

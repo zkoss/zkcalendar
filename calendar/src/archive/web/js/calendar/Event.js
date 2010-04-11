@@ -124,7 +124,7 @@ calendar.Event = zk.$extends(zk.Widget, {
 		}
 		node.upperBoundBd = this._setBoundDate(bd);
 		if (this._isDayEvent()) return;
-		node.lowerBoundEd = this._setBoundDate(ed, this.DAYTIME);
+		node.lowerBoundEd = this._setBoundDate(ed, true);
 	},
 	
 	_isDayEvent: function() {
@@ -135,13 +135,7 @@ calendar.Event = zk.$extends(zk.Widget, {
 	},
 	
 	_getOffset: function(time) {
-		var utcH = time.start.getUTCHours(),
-			adjTime = 0;
-		
-		if (utcH != time.end.getUTCHours())
-			adjTime = utcH != 0 ? -3600000: 3600000;
-		
-		return (time.end.getTime() - time.start.getTime() + adjTime) / this.DAYTIME;	
+		return this.parent.getPeriod(time.end, time.start);
 	},
 	
 	_getStartWeek_: function(weekDates) {		
@@ -153,7 +147,7 @@ calendar.Event = zk.$extends(zk.Widget, {
 		var	len = weekDates.length
 			pos = Math.floor(len * 0.5),
 			result = weekDates[pos],
-			isFind = (result.zoneBd <= bd && bd <= result.zoneEd);
+			isFind = (result.zoneBd <= bd && bd < result.zoneEd);
 				
 		while(!isFind){			
 			pos = bd < result.zoneBd ? Math.floor(pos * 0.5):
@@ -162,18 +156,17 @@ calendar.Event = zk.$extends(zk.Widget, {
 				return weekDates[len - 1];
 										
 			result = weekDates[pos];
-			isFind = (result.zoneBd <= bd && bd <= result.zoneEd);
+			isFind = (result.zoneBd <= bd && bd < result.zoneEd);
 		}
 		
 		return result;
 	},
 		
-	_setBoundDate: function(date, ONE_DAY) {
-		var result = new Date(date.getTime());
+	_setBoundDate: function(date, isAddOneDay) {
+		var result = new Date(date);
 		if (date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds() != 0){
-			if (ONE_DAY) 
-				result.setTime(date.getTime() + ONE_DAY);
-			
+			if (isAddOneDay) 
+				result.setDate(date.getDate() + 1);
 			result.setHours(0,0,0,0);
 		}
 		return result;

@@ -23,6 +23,7 @@ import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
 import org.zkoss.lang.Objects;
 import org.zkoss.util.Locales;
+import org.zkoss.xml.XMLs;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.UiException;
@@ -34,12 +35,14 @@ import org.zkoss.zk.ui.UiException;
  */
 public class Util {
 
+	private static final int ONE_HOUR = 60 * 60 * 1000;
+	
 	public static String createEventTitle(DateFormatter df, Locale locale, TimeZone timezone, CalendarEvent ce) {
 		if (df == null) return ce.getTitle();
 
 		Date begin = ce.getBeginDate();
 		Date end = ce.getEndDate();
-		if (end.getTime() - begin.getTime() < 60 * 60 * 1000) {
+		if (end.getTime() - begin.getTime() < ONE_HOUR) {
 			return df.getCaptionByTimeOfDay(begin, locale, timezone) + " - "
 					+ ce.getContent();
 		} else
@@ -105,7 +108,7 @@ public class Util {
 	public static List<String> packZonesOffset(Map<TimeZone, String> _tzones) {
 		List<String> result = new ArrayList<String>();		
 		for (TimeZone tz : _tzones.keySet())
-			result.add("" + (tz.getRawOffset() + (tz.useDaylightTime() ? tz.getDSTSavings() : 0)) / 60000);	
+			result.add("" + (tz.getRawOffset()) / 60000);	
 		return result;
 	}
 		
@@ -159,13 +162,46 @@ public class Util {
 		json.put("title", Util.createEventTitle(df, locale, timezone, ce));
 		json.put("headerColor", ce.getHeaderColor());
 		json.put("contentColor", ce.getContentColor());
-		json.put("content", ce.getContent());
-		json.put("beginDate", String.valueOf(ce.getBeginDate().getTime()));
-		json.put("endDate", String.valueOf(ce.getEndDate().getTime()));
+		json.put("content", calendars.isEscapeXML() ? escapeXML(ce.getContent()): ce.getContent());
+		json.put("beginDate", String.valueOf(getDSTTime(calendars, ce.getBeginDate())));
+		json.put("endDate", String.valueOf(getDSTTime(calendars ,ce.getEndDate())));
 		json.put("isLocked", String.valueOf(ce.isLocked()));
 		json.put("zclass", ce.getZclass());
 		
 		sb.append(json.toString()).append(",");		
+	}
+	
+	/** 
+	 * This method is missing in {@link XMLs}, unfortunatelly. 
+	 * @param sb String Buffer where to write to.
+	 * @param s String to escape.
+	 * 
+	 * @return {@code sb} parameter.
+	 * 
+	 * @see XMLs#escapeXML(char)
+	 */
+	public static String escapeXML( String s) {		
+		StringBuffer sb = new StringBuffer();		
+		if (s == null) return "";
+		
+		for (int j = 0, len = s.length(); j < len; ++j) {
+			final char cc = s.charAt(j);
+			final String esc = XMLs.escapeXML(cc);
+			if (esc != null) sb.append(esc);
+			else sb.append(cc);
+		}
+		
+		return sb.toString();
+	}
+	
+	public static long getDSTTime(Calendars calendars, Date date) {		
+		TimeZone tz = calendars.getDefaultTimeZone();
+		return date.getTime() + (tz.inDaylightTime(date) ? tz.getDSTSavings(): 0);
+	}
+	
+	public static Date fixDSTTime(Calendars calendars, Date date) {		
+		TimeZone tz = calendars.getDefaultTimeZone();
+		return new Date(date.getTime() - (tz.inDaylightTime(date) ? tz.getDSTSavings(): 0));
 	}
 		
 }

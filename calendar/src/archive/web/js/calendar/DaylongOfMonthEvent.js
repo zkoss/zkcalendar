@@ -33,8 +33,7 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 	},
 	
 	getDays: function() {
-		var node = this.$n(),
-			ONE_DAY = this.DAYTIME;;			
+		var node = this.$n();			
 			
 		if (this.cloneCount)
 			return 7 - node._preOffset;
@@ -50,7 +49,7 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 			cloneCount;
 		//calculate over next week
 		if (ed > startWeek.zoneEd)
-			cloneCount = Math.ceil((ed.getTime() - startWeek.zoneEd.getTime()) / parent.AWEEK);		
+			cloneCount = Math.ceil((ed - startWeek.zoneEd) / parent.AWEEK);		
 		
 		this._processCloneNode(weekDates, cloneCount);
 		
@@ -126,14 +125,7 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 			isAfter = this.event.zoneEd > this.parent.zoneEd;
 					
 		cloneNode.lowerBoundEd = lowerBoundEd;
-		
-		
-		var utcH = lowerBoundEd.getUTCHours(),
-			adjTime = 0;	
-		if (utcH != cloneNode.startWeek.zoneEd.getUTCHours())
-			adjTime = utcH != 0 ? -3600000: 3600000;
-		
-		cloneNode._afterOffset = (cloneNode.startWeek.zoneEd.getTime() - lowerBoundEd.getTime() + adjTime) / this.DAYTIME;
+		cloneNode._afterOffset = this.parent.getPeriod(cloneNode.startWeek.zoneEd, lowerBoundEd);
 		cloneNode._days = 7 - cloneNode._afterOffset;
 		
 		if (!isAfter) {
