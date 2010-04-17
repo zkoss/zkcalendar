@@ -94,18 +94,7 @@ for (int i = 0; i < evts.length; i++) {
 		if (left + 410 > evt.getDesktopWidth())
 			left = evt.getDesktopWidth() - 410;
 		createEvent.setLeft(left + "px");
-		createEvent.setTop(top + "px");
-		
-		
-		boolean isAllday = (evt.getBeginDate().getTime() - evt.getEndDate().getTime()) % (24*60*60*1000) == 0;
-		createEvent.getFellow("ppbegin").setTimeZone(cal.getDefaultTimeZone());
-		createEvent.getFellow("ppbegin").setValue(evt.getBeginDate());
-		createEvent.getFellow("ppend").setTimeZone(cal.getDefaultTimeZone());
-		createEvent.getFellow("ppend").setValue(evt.getEndDate());
-		createEvent.getFellow("ppallDay").checked = isAllday;
-		createEvent.getFellow("pplocked").checked = false;
-		createEvent.getFellow("ppbt").visible = !isAllday;
-		createEvent.getFellow("ppet").visible = !isAllday;
+		createEvent.setTop(top + "px");		
 		
 		SimpleDateFormat create_sdf = new SimpleDateFormat("HH:mm");
 		create_sdf.setTimeZone(cal.getDefaultTimeZone());
@@ -114,13 +103,25 @@ for (int i = 0; i < evts.length; i++) {
 		String[] times = create_sdf.format(evt.getBeginDate()).split(":");		
 		int hours = Integer.parseInt(times[0])*2;
 		int mins = Integer.parseInt(times[1]);
+		int bdTimeSum = hours + mins;
 		if (mins >= 30) hours++;
 		createEvent.getFellow("ppbt").setSelectedIndex(hours);
 		times = create_sdf.format(evt.getEndDate()).split(":");
 		hours = Integer.parseInt(times[0])*2;
 		mins = Integer.parseInt(times[1]);
+		int edTimeSum = hours + mins;
 		if (mins >= 30) hours++;
 		createEvent.getFellow("ppet").setSelectedIndex(hours);
+		
+		boolean isAllday = (bdTimeSum + edTimeSum) == 0;
+		createEvent.getFellow("ppbegin").setTimeZone(cal.getDefaultTimeZone());
+		createEvent.getFellow("ppbegin").setValue(evt.getBeginDate());
+		createEvent.getFellow("ppend").setTimeZone(cal.getDefaultTimeZone());
+		createEvent.getFellow("ppend").setValue(evt.getEndDate());
+		createEvent.getFellow("ppallDay").checked = isAllday;
+		createEvent.getFellow("pplocked").checked = false;
+		createEvent.getFellow("ppbt").visible = !isAllday;
+		createEvent.getFellow("ppet").visible = !isAllday;
 		
 		createEvent.visible = true;
 		
@@ -141,8 +142,27 @@ for (int i = 0; i < evts.length; i++) {
 		editEvent.setTop(top + "px");
 
 		
-		CalendarEvent ce = evt.getCalendarEvent();
-		boolean isAllday = (ce.getBeginDate().getTime() - ce.getEndDate().getTime()) % (24*60*60*1000) == 0;
+		CalendarEvent ce = evt.getCalendarEvent();		
+		
+		SimpleDateFormat edit_sdf = new SimpleDateFormat("HH:mm");
+						edit_sdf.setTimeZone(cal.getDefaultTimeZone());
+						
+		Calendar calendar = Calendar.getInstance(org.zkoss.util.Locales.getCurrent());
+		String[] times = edit_sdf.format(ce.getBeginDate()).split(":");
+		
+		int hours = Integer.parseInt(times[0])*2;
+		int mins = Integer.parseInt(times[1]);
+		int bdTimeSum = hours + mins;
+		if (mins >= 30) hours++;
+		editEvent.getFellow("ppbt").setSelectedIndex(hours);
+		times = edit_sdf.format(ce.getEndDate()).split(":");
+		hours = Integer.parseInt(times[0])*2;
+		mins = Integer.parseInt(times[1]);
+		int edTimeSum = hours + mins;
+		if (mins >= 30) hours++;
+		editEvent.getFellow("ppet").setSelectedIndex(hours);
+		
+		boolean isAllday = (bdTimeSum + edTimeSum) == 0;
 		
 		editEvent.getFellow("ppbegin").setTimeZone(cal.getDefaultTimeZone());
 		editEvent.getFellow("ppbegin").setValue(ce.getBeginDate());
@@ -154,21 +174,6 @@ for (int i = 0; i < evts.length; i++) {
 		editEvent.getFellow("ppet").visible = !isAllday;
 		editEvent.getFellow("ppcnt").value = ce.getContent();
 		
-		SimpleDateFormat edit_sdf = new SimpleDateFormat("HH:mm");
-						edit_sdf.setTimeZone(cal.getDefaultTimeZone());
-						
-		Calendar calendar = Calendar.getInstance(org.zkoss.util.Locales.getCurrent());
-		String[] times = edit_sdf.format(ce.getBeginDate()).split(":");
-		
-		int hours = Integer.parseInt(times[0])*2;
-		int mins = Integer.parseInt(times[1]);
-		if (mins >= 30) hours++;
-		editEvent.getFellow("ppbt").setSelectedIndex(hours);
-		times = edit_sdf.format(ce.getEndDate()).split(":");
-		hours = Integer.parseInt(times[0])*2;
-		mins = Integer.parseInt(times[1]);
-		if (mins >= 30) hours++;
-		editEvent.getFellow("ppet").setSelectedIndex(hours);
 		String colors = ce.getHeaderColor() + "," + ce.getContentColor();
 		int index = 0;
 		if ("#3467CE,#668CD9".equals(colors))

@@ -13,8 +13,6 @@ This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
  */
 calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {		
-	_ghost: {},
-	_drag: {},
 	
 	$define : {		
 		readonly: function () {
@@ -263,11 +261,13 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		
 		var sortFunc = this.dateSorting_,
 			daySpace = this._daySpace,
-			eventWeekSet = this._eventWeekSet;
+			eventWeekSet = this._eventWeekSet,
+			uuid = this.uuid;
 			
-		jq(document.body).append(this.blockTemplate);		
-		var temp = jq('#' + this.uuid + '-tempblock');
-		
+		jq(document.body).append(this.blockTemplate.replace(new RegExp("%1", "g"), function (match, index) {
+			return uuid;
+		}));
+		var temp = jq('#' + uuid + '-tempblock');
 		// all day event
 		for (var i = eventWeekSet.length; i--;) {
 			var list = eventWeekSet[i],
@@ -808,15 +808,13 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 		widget.clearGhost();
 		var n = evt.domTarget,
-			targetWidget = zk.Widget.$(n),
-			className = targetWidget.className;
+			targetWidget = zk.Widget.$(n);
 			
 		if (n.tagName == 'SPAN')
 			if (jq(n).hasClass(zcls + "-month-date-cnt"))
 				return true;
-
 		if (n.nodeType == 1 && jq(n).hasClass(cls) && !jq(n).hasClass(ncls) || 
-			((className == 'calendar.DaylongOfMonthEvent'|| className == 'calendar.DayOfMonthEvent')&& 
+			(targetWidget.$instanceof(calendar.Event)&& 
 				(!n.parentNode || targetWidget.event.isLocked )))
 				return true;
 
@@ -1004,22 +1002,21 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			if (dg._zevt) {
 				var zcls = widget.getZclass(),
 					targetWidget = zk.Widget.$(dg._zevt),
-					event = targetWidget.event,
+					event = targetWidget.$n(),
 					bd = new Date(widget.zoneBd),
 					ebd = new Date(event.zoneBd),
 					ddClass = zcls + '-evt-dd';
+
+				bd.setDate(bd.getDate() + (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]));
+				ebd.setDate(1);
+				ebd.setMonth(bd.getMonth());
+				ebd.setDate(bd.getDate());
 
 				jq(targetWidget.$n()).removeClass(ddClass);
 				var cloneNodes = targetWidget.cloneNodes;
 				if (cloneNodes) 
 					for (var n = cloneNodes.length; n--;) 
 						jq(cloneNodes[n]).removeClass(ddClass);
-				
-				bd.setDate(bd.getDate() + (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]));
-				ebd.setDate(1);
-				ebd.setMonth(bd.getMonth());
-				ebd.setDate(bd.getDate());
-
 				if (!widget.isTheSameDay_(ebd, event.zoneBd)) {
 					ce = dg._zevt;
 					ce.style.visibility = "hidden";
@@ -1027,7 +1024,9 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					var ed = new Date(event.zoneEd);
 					ed.setDate(1);
 					ed.setMonth(bd.getMonth());
-					ed.setDate(bd.getDate() + widget.getPeriod(event.zoneBd, event.zoneEd));				
+					ed.setDate(bd.getDate() + event._days - 
+						((ed.getHours() + ed.getMinutes() + 
+							ed.getSeconds() + ed.getMilliseconds() == 0) ? 0:1));	
 					
 					widget.fire("onEventUpdate", {
 						data: [
@@ -1038,7 +1037,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 							evt.pageY,
 							jq.innerWidth(),
 							jq.innerHeight()
-							]
+						]
 					});
 				}
 				jq('#' + widget.uuid + '-rope').remove();

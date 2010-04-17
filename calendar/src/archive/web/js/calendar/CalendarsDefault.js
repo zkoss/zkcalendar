@@ -13,9 +13,6 @@ This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
  */
 calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
-	_scrollInfo: {},
-	_drag: {},
-	_ghost: {},
 	_dateTime: [
 		'00:00', '00:30', '01:00', '01:30', '02:00', '02:30', '03:00', '03:30',
 		'04:00', '04:30', '05:00', '05:30', '06:00', '06:30', '07:00', '07:30',
@@ -25,10 +22,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		'20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30',
 		'00:00'
 	],
-	_dayEvents: [],
-	_daylongEvents: [],
-	_daylongSpace: [],
-	_daySpace: [],	
 	
 	$define : {
 		days: function(){
@@ -65,8 +58,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				}
 			}
 			if (zk.ie) {
-				jq(document.body).append(this.blockTemplate);
-				var temp = jq('#' + this.uuid + '-tempblock'),
+				var uuid = this.uuid;
+				
+				jq(document.body).append(this.blockTemplate.replace(new RegExp("%1", "g"), function (match, index) {
+					return uuid;
+				}));
+				var temp = jq('#' + uuid + '-tempblock'),
 					hdTable = header.offsetParent, 
 					parent = hdTable.parentNode
 					cnt = this.$n('cnt'), 
@@ -168,6 +165,15 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				}
 			}
 		}
+	},
+	
+	$init: function () {
+		this.$supers('$init', arguments);		
+		this._scrollInfo = {};
+		this._dayEvents = [];
+		this._daylongEvents = [];
+		this._daylongSpace = [];
+		this._daySpace = [];	
 	},
 	
 	prepareData_: function () {
@@ -300,8 +306,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		this._daylongEvents.sort(this.dateSorting_);
 		this._daylongSpace = [];		
 		
-		jq(document.body).append(this.blockTemplate);		
-		var temp = jq('#' + this.uuid + '-tempblock');
+		
+		
+		var uuid = this.uuid;
+			
+		jq(document.body).append(this.blockTemplate.replace(new RegExp("%1", "g"), function (match, index) {
+			return uuid;
+		}));
+		var temp = jq('#' + uuid + '-tempblock');
 		
 		// all daylong event
 		for (var i = this._daylongEvents.length; i--;) {
@@ -951,7 +963,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	},
 		
 	onShow: _zkf
-},{	
+},{
 /********************** day drag ********************************************/
 	
 	_ignoredrag: function (dg, p, evt) {
@@ -1371,10 +1383,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		widget.clearGhost();
 
 		var n = evt.domTarget,
-			targetWidget = zk.Widget.$(n);	
-		
+			targetWidget = zk.Widget.$(n);
 		if (n.nodeType == 1 && jq(n).hasClass(cls) && !jq(n).hasClass(ncls) || 
-			(targetWidget.className == 'calendar.DaylongEvent'  && 
+			(targetWidget.$instanceof(calendar.Event)  && 
 				(!n.parentNode || targetWidget.event.isLocked )))
 			return true;
 		return false;
@@ -1482,8 +1493,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					var ed = new Date(event.zoneEd);
 					ed.setDate(1);
 					ed.setMonth(bd.getMonth());
-					ed.setDate(bd.getDate() + widget.getPeriod(event.zoneBd, event.zoneEd));
-					
+					ed.setDate(bd.getDate() + event._days - 1);
+
 					widget.fire("onEventUpdate", {
 						data: [
 							dg._zevt.id,

@@ -29,7 +29,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	ddTemplate: ['<div id="%1" class="%2" style="left:0px;width:100%;" ><div class="%2-t1"></div><div class="%2-t2"><div class="%2-t3"></div></div>',
 			  '<div class="%2-body" id="%1-body"><div class="%2-inner"><dl id="%1-inner"><dt class="%2-header"></dt><dd class="%2-cnt"></dd></dl></div></div>',
 			  '<div class="%2-b2"><div class="%2-b3"></div></div><div class="%2-b1"/></div>'].join(''),	
-	blockTemplate: '<div id="'+this.uuid+'-tempblock"></div>',
+	blockTemplate: '<div id="%1-tempblock"></div>',
 	
 	$define : {
 		cd: function(){
@@ -45,6 +45,11 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		}
 	},
 
+	$init: function () {
+		this.$supers('$init', arguments);		
+		this._drag = {};
+		this._ghost = {};	
+	},
 
 	bind_ : function() {
 		this.$supers('bind_', arguments);
@@ -365,7 +370,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			return n;
 	}
 
-},{	
+},{
 	_drawdrag: function (dg, p, evt) {
 		var node = dg.node;
 		if (node.id.endsWith('-dd')) {

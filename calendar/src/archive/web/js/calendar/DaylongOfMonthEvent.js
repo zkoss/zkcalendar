@@ -17,7 +17,7 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 	$init: function () {
 		this.$supers('$init', arguments);
 		this.cloneNodes = [];
-	},	
+	},
 	
 	getCornerStyle_: function() {
 		return this.params.contentStyle;

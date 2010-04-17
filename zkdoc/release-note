@@ -1,4 +1,23 @@
 	--------
+calendar 2.0.1
+* Features:
+	Issue 5:  calendar.css.dsp browser caching
+* Bugs:
+  Issue 1:  ZKCalendar try resize under boundary
+  Issue 9:  Events attached at the bottom of the page
+  Issue 11:  Events do not appear in the month view
+  Issue 13:  Unresponsive script warning
+  Issue 20:  Start of DST hangs Calendar Demo
+  Issue 21:  Changing event to all-day causes script error
+  Issue 22:  Clearing All-Day property from event causes week-view rendering issues
+  Issue 23:  Deleting any event in week-view causes script error  
+  Issue 25:  Server timezone of UTC makes DST Issue worse
+  Issue 27:  Drag event that end date is 00:00 will update the wrong end date on Month mold
+  
+  
+* Upgrade Notes:
+
+	--------
 calendar 2.0
 * Features:
 * Bugs:

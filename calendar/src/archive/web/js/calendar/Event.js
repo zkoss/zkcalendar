@@ -164,7 +164,7 @@ calendar.Event = zk.$extends(zk.Widget, {
 		
 	_setBoundDate: function(date, isAddOneDay) {
 		var result = new Date(date);
-		if (date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds() != 0){
+		if (date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds() != 0) {
 			if (isAddOneDay) 
 				result.setDate(date.getDate() + 1);
 			result.setHours(0,0,0,0);
