@@ -13,6 +13,7 @@ calendar 2.0.1
   Issue 23:  Deleting any event in week-view causes script error  
   Issue 25:  Server timezone of UTC makes DST Issue worse
   Issue 27:  Drag event that end date is 00:00 will update the wrong end date on Month mold
+  Issue 19:  Initialization problem for more than one calendars in a tabbox  
   
   
 * Upgrade Notes:
