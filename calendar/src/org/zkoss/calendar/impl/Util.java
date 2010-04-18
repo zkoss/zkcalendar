@@ -14,19 +14,15 @@ it will be useful, but WITHOUT ANY WARRANTY.
  */
 package org.zkoss.calendar.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 
 import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.api.*;
-import org.zkoss.calendar.event.CalendarsEvent;
-import org.zkoss.json.JSONArray;
 import org.zkoss.json.JSONObject;
-import org.zkoss.lang.Objects;
 import org.zkoss.util.Locales;
 import org.zkoss.xml.XMLs;
-import org.zkoss.zk.au.AuRequest;
-import org.zkoss.zk.mesg.MZk;
-import org.zkoss.zk.ui.UiException;
 
 /**
  * @author Jimmy
@@ -36,6 +32,7 @@ import org.zkoss.zk.ui.UiException;
 public class Util {
 
 	private static final int ONE_HOUR = 60 * 60 * 1000;
+	private static final SimpleDateFormat _sdfKey = new SimpleDateFormat("yyyy/MM/dd");
 	
 	public static String createEventTitle(DateFormatter df, Locale locale, TimeZone timezone, CalendarEvent ce) {
 		if (df == null) return ce.getTitle();
@@ -114,8 +111,13 @@ public class Util {
 		
 	public static String encloseEventList(Calendars calendars, Collection<CalendarEvent> collection) {
 		final StringBuffer sb = new StringBuffer().append('[');
-		for (CalendarEvent ce : collection) {
-			appendEventByJSON(sb, calendars, ce);
+		Date beginDate = calendars.getBeginDate();
+		_sdfKey.setTimeZone(calendars.getDefaultTimeZone());
+		for (CalendarEvent ce : collection) {			
+			String key = ce.getBeginDate().before(beginDate) ?
+					getEventKey(beginDate): 
+					getEventKey(ce.getBeginDate());
+			appendEventByJSON(sb, calendars, key, ce);
 		}		
 		int len = sb.length();
 		collection.clear();
@@ -131,13 +133,14 @@ public class Util {
 		return sb.replace(len - 2, len, "]").toString();
 	}
 		
-	public static String encloseEventMap(Calendars calendars, Collection<List<CalendarEvent>> collection) {
+	public static String encloseEventMap(Calendars calendars, Map<String, List<CalendarEvent>>  map) {
 		final StringBuffer sb = new StringBuffer().append('[');
 		int len;
-		for (List<CalendarEvent> list : collection) {
+		for (Entry<String, List<CalendarEvent>> entry : map.entrySet()) {
 			sb.append('[');
-			for (CalendarEvent ce : list) {				
-				appendEventByJSON(sb, calendars, ce);
+			String key = entry.getKey();
+			for (CalendarEvent ce : entry.getValue()) {				
+				appendEventByJSON(sb, calendars, key, ce);
 			}
 
 			len = sb.length();
@@ -146,29 +149,30 @@ public class Util {
 
 		len = sb.length();
 
-		if(collection.size() != 0)
+		if(map.size() != 0)
 			return sb.replace(len  - 1, len, "]").toString();
 		return sb.append(']').toString();
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void appendEventByJSON(StringBuffer sb, Calendars calendars, CalendarEvent ce) {
+	private static void appendEventByJSON(StringBuffer sb, Calendars calendars, String key, CalendarEvent ce) {
 		DateFormatter df = calendars.getDateFormatter();
 		Locale locale = Locales.getCurrent();
 		TimeZone timezone = calendars.getDefaultTimeZone();
 		
 		JSONObject json = new JSONObject();
 		json.put("id", calendars.getCalendarEventId(ce));
+		json.put("key", key);
 		json.put("title", Util.createEventTitle(df, locale, timezone, ce));
 		json.put("headerColor", ce.getHeaderColor());
 		json.put("contentColor", ce.getContentColor());
 		json.put("content", calendars.isEscapeXML() ? escapeXML(ce.getContent()): ce.getContent());
-		json.put("beginDate", String.valueOf(getDSTTime(calendars, ce.getBeginDate())));
-		json.put("endDate", String.valueOf(getDSTTime(calendars ,ce.getEndDate())));
+		json.put("beginDate", String.valueOf(getDSTTime(timezone, ce.getBeginDate())));
+		json.put("endDate", String.valueOf(getDSTTime(timezone ,ce.getEndDate())));
 		json.put("isLocked", String.valueOf(ce.isLocked()));
 		json.put("zclass", ce.getZclass());
 		
-		sb.append(json.toString()).append(",");		
+		sb.append(json.toString()).append(",");
 	}
 	
 	/** 
@@ -194,14 +198,16 @@ public class Util {
 		return sb.toString();
 	}
 	
-	public static long getDSTTime(Calendars calendars, Date date) {		
-		TimeZone tz = calendars.getDefaultTimeZone();
+	public static long getDSTTime(TimeZone tz, Date date) {		
 		return date.getTime() + (tz.inDaylightTime(date) ? tz.getDSTSavings(): 0);
 	}
 	
-	public static Date fixDSTTime(Calendars calendars, Date date) {		
-		TimeZone tz = calendars.getDefaultTimeZone();
+	public static Date fixDSTTime(TimeZone tz, Date date) {		
 		return new Date(date.getTime() - (tz.inDaylightTime(date) ? tz.getDSTSavings(): 0));
+	}
+	
+	private static String getEventKey(Date date) {
+		return _sdfKey.format(date);
 	}
 		
 }

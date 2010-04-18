@@ -10,6 +10,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 -->
 <package name="calendar" language="xul/html" depends="zul.db">
 	<script src="lang/msgcal.js"/>
+	<script src="calUtil.js"/>
 	<widget name="Calendars"/>
 	<widget name="CalendarsDefault"/>
 	<widget name="CalendarsMonth"/>

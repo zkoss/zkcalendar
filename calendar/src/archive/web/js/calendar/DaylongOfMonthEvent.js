@@ -49,7 +49,7 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 			cloneCount;
 		//calculate over next week
 		if (ed > startWeek.zoneEd)
-			cloneCount = Math.ceil((ed - startWeek.zoneEd) / parent.AWEEK);		
+			cloneCount = Math.ceil((ed - startWeek.zoneEd) / calUtil.AWEEK);
 		
 		this._processCloneNode(weekDates, cloneCount);
 		

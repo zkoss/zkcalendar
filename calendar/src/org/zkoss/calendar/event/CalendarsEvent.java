@@ -18,6 +18,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.calendar.event;
 
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.api.CalendarEvent;
@@ -73,9 +74,9 @@ public class CalendarsEvent extends Event {
 	public static CalendarsEvent getCreateEvent(AuRequest request) {
 		final JSONArray data = (JSONArray) request.getData().get("data");
 		final Calendars cmp = verifyEvent(request, data, 6);
-		
-		Date eventBegin = Util.fixDSTTime(cmp, new Date(getLong(data.get(0))));
-		Date eventEnd = Util.fixDSTTime(cmp, new Date(getLong(data.get(1))));
+		TimeZone tz = cmp.getDefaultTimeZone();
+		Date eventBegin = Util.fixDSTTime(tz, new Date(getLong(data.get(0))));
+		Date eventEnd = Util.fixDSTTime(tz, new Date(getLong(data.get(1))));
 		
 		return new CalendarsEvent(ON_EVENT_CREATE, cmp, null,
 				eventBegin, eventEnd,
@@ -103,9 +104,9 @@ public class CalendarsEvent extends Event {
 		CalendarEvent ce = cmp.getCalendarEventById(String.valueOf(data.get(0)));
 		
 		if (ce == null) return null;
-		
-		Date eventBegin = Util.fixDSTTime(cmp, new Date(getLong(data.get(1))));
-		Date eventEnd = Util.fixDSTTime(cmp, new Date(getLong(data.get(2))));
+		TimeZone tz = cmp.getDefaultTimeZone();
+		Date eventBegin = Util.fixDSTTime(tz, new Date(getLong(data.get(1))));
+		Date eventEnd = Util.fixDSTTime(tz, new Date(getLong(data.get(2))));
 
 		return new CalendarsEvent(ON_EVENT_UPDATE, cmp, ce, 
 				eventBegin, eventEnd,
@@ -117,7 +118,7 @@ public class CalendarsEvent extends Event {
 		final JSONArray data = (JSONArray) request.getData().get("data");
 		final Calendars cmp = verifyEvent(request, data, 1);		
 		
-		return new Event(cmd, cmp, Util.fixDSTTime(cmp, new Date(getLong(data.get(0)))));
+		return new Event(cmd, cmp, Util.fixDSTTime(cmp.getDefaultTimeZone(), new Date(getLong(data.get(0)))));
 	}
 	
 	private static int getInt(Object obj){

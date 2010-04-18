@@ -12,9 +12,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
-function (out) {
-	this.prepareData_();
-	
+function (out) {	
 	var uuid = this.uuid,
 		zcls = this.getZclass(),
 		toolbar = this.firstChild,
@@ -137,7 +135,7 @@ function (out) {
 			if (weekend[0] == i || weekend[1] == i)
 				out.push(' ', week_weekend);
 		
-			if (this.isTheSameDay_(current, tempBd))
+			if (calUtil.isTheSameDay(current, tempBd))
 				out.push(' ', week_today);
 
 			out.push('">&nbsp;</td>');
@@ -157,7 +155,7 @@ function (out) {
 			if (weekend[0] == i || weekend[1] == i)
 				out.push(' ', week_weekend);
 
-			if (this.isTheSameDay_(current, bd))//today
+			if (calUtil.isTheSameDay(current, bd))//today
 				out.push(' ', week_today);
 		
 

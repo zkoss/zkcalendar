@@ -13,8 +13,6 @@ This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
  */
 calendar.Event = zk.$extends(zk.Widget, {
-	DAYTIME: 24*60*60*1000,
-	
 	bind_ : function() {
 		this.$supers('bind_', arguments);
 		this.calculate_();
@@ -91,8 +89,8 @@ calendar.Event = zk.$extends(zk.Widget, {
 			ed = event.zoneEd,
 			inMon = parent.mon;
 		
-		if(inMon)
-			node.startWeek = this._getStartWeek_(parent._weekDates);
+		if (inMon)
+			node.startWeek = event.startWeek;
 		
 		var time = inMon ? node.startWeek: parent;		
 
@@ -105,14 +103,14 @@ calendar.Event = zk.$extends(zk.Widget, {
 		if (this.processCloneNode_)
 			this.processCloneNode_(node);
 		
-		node._preOffset = this._getOffset({start: time.zoneBd, end: node.upperBoundBd});
+		node._preOffset = event._preOffset;
 		
 		if (this._isDayEvent()) return;
 		
 		node._afterOffset = this.cloneCount ? 0:
 								this._getOffset({start: node.lowerBoundEd, end: time.zoneEd});
 		
-		node._days = this.getDays();
+		node._days = event._days = this.getDays();
 	},
 
 	_createBoundTime: function(node, bd, ed) {
@@ -136,30 +134,6 @@ calendar.Event = zk.$extends(zk.Widget, {
 	
 	_getOffset: function(time) {
 		return this.parent.getPeriod(time.end, time.start);
-	},
-	
-	_getStartWeek_: function(weekDates) {		
-		var bd = this.event.zoneBd;
-		
-		if (bd < this.parent.zoneBd)
-			return weekDates[0];			
-			
-		var	len = weekDates.length
-			pos = Math.floor(len * 0.5),
-			result = weekDates[pos],
-			isFind = (result.zoneBd <= bd && bd < result.zoneEd);
-				
-		while(!isFind){			
-			pos = bd < result.zoneBd ? Math.floor(pos * 0.5):
-										pos == 1 ? 2: Math.floor(pos * 1.5);
-			if(pos >= len)
-				return weekDates[len - 1];
-										
-			result = weekDates[pos];
-			isFind = (result.zoneBd <= bd && bd < result.zoneEd);
-		}
-		
-		return result;
 	},
 		
 	_setBoundDate: function(date, isAddOneDay) {

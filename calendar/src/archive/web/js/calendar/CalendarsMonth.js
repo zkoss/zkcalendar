@@ -16,19 +16,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	
 	$define : {		
 		readonly: function () {
-			if (!this.$n()) return;
-			var widget = this,
-				cnt = this.$n("cnt");
-			if (this._readonly) {
-				// a trick for dragdrop.js
-				cnt._skipped = false;
-				jq(cnt).unbind('click');			
-		
-				this._drag[cnt.id] = null;
-				
-				jq(this.$n()).unbind('click', this.clearGhost);				
-				
-			}else this._editMode();
+			if (!this.$n()) return;			
+			this._editMode(!this._readonly);
 		},
 		events: function () {
 			this._events = jq.evalJSON(this._events);
@@ -62,8 +51,12 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}
 	},
 
-	prepareData_ : function () {
-		this.AWEEK = this.DAYTIME * 7;		 
+	$init: function () {
+		this.$supers('$init', arguments);
+		var zcls = this.getZclass(),
+			p = this.params;
+		p._fakerMoreCls = zcls + "-evt-faker-more";
+		p._fakerNoMoreCls = zcls + "-evt-faker-nomore";
 	},
 
 	bind_ : function () {// after compose
@@ -121,7 +114,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		this._evtsData = this._createEvtsData(true);
 		
 		if (!this._readonly) 
-			this._editMode();		
+			this._editMode(true);		
 	},
 	
 	unbind_ : function () {
@@ -158,6 +151,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	},
 	
 	cleanEvtAry_: function () {
+		this._eventKey = {};
 		this._eventWeekSet = [];
 	},
 	
@@ -285,13 +279,12 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		temp.remove();
 	},
 		
-	_editMode: function () {
+	_editMode: function (enable) {
 		var	widget = this,
 			cnt = this.$n('cnt'),
-			calMon = this.$class,
-			cal = calendar.Calendars;
+			cls = this.$class;
 
-		jq(cnt).bind('click',  function (evt) {
+		jq(cnt)[enable ? 'bind': 'unbind']('click',  function (evt) {
 			if (!zk.dragging && !zk.processing) {
 				widget.clearGhost();
 				widget.onClick(cnt, evt);
@@ -300,17 +293,17 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		});
 		
 		// a trick for dragdrop.js
-		cnt._skipped = true;
-		this._drag[cnt.id] = new zk.Draggable(this, cnt, {
+		cnt._skipped = enable;
+		this._drag[cnt.id] = enable ? new zk.Draggable(this, cnt, {
 			starteffect: widget.closeFloats,
-			endeffect: calMon._enddrag,
-			ghosting: calMon._ghostdrag,
-			endghosting: calMon._endghostDrag,
-			change: cal._changedrag,
-			draw: cal._drawdrag,
-			ignoredrag: calMon._ignoredrag
-		});
-		jq(this.$n()).bind('click', this.proxy(this.clearGhost));
+			endeffect: cls._enddrag,
+			ghosting: cls._ghostdrag,
+			endghosting: cls._endghostdrag,
+			change: cls._changedrag,
+			draw: cls._drawdrag,
+			ignoredrag: cls._ignoredrag
+		}): null;
+		jq(this.$n())[enable ? 'bind': 'unbind']('click', this.proxy(this.clearGhost));
 	},
 		
 	_updateDateRange: function () {
@@ -459,7 +452,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				bgTD.addClass(week_weekend);
 			}
 
-			if (this.isTheSameDay_(current, ed)) {//today 
+			if (calUtil.isTheSameDay(current, ed)) {//today 
 				td.addClass(week_today);
 				bgTD = jq(cntBg[rowIndex].rows[0].cells[td[0].cellIndex]);
 				bgTD.addClass(week_today);
@@ -472,6 +465,55 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			jq(span).html(content);									
 		}	
 	},
+	
+	getDragDataObj_: function () {
+		return {
+			getRope: function (widget, cnt, hs) {
+				var zcls = widget.getZclass(),
+					html = [widget.ropeTemplate.replace(new RegExp("%([1-2])", "g"), function (match, index) {
+								return index < 2 ? widget.uuid : zcls;
+							})],
+					rope = widget.ddRopeTemplate.replace(new RegExp("%1", "g"), function (match, index) {
+								return zcls;
+							});
+		
+				for (var n = cnt.firstChild; n; n = n.nextSibling) {
+					html.push(rope);
+					hs.push(n.offsetHeight);
+				}
+				html.push('</div>');
+				return html.join('');
+		    },
+			getRow: function (cnt) {
+				return cnt.firstChild.firstChild.rows[0].firstChild;
+		    },
+			getCols: function (p, dg) {
+				return  Math.floor((p[0] - dg._zoffs.l) / dg._zdim.w);			
+		    },
+			getRows: function (p, dg) {
+				return Math.floor((p[1] - dg._zoffs.t)/dg._zdim.h);
+		    },
+			getDur: function (dg) {
+				return (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]);
+		    },
+			getNewDate: function (widget, dg) {
+				var c = dg._zpos[0],
+					r = dg._zpos[1],
+					c1 = dg._zpos1[0],
+					r1 = dg._zpos1[1],
+					c2 = c < c1 ? c : c1,
+					r2 = r < r1 ? r : r1,
+					offs = dg._zoffs.s * r2 + c2,
+					bd = new Date(widget.zoneBd);
+
+				bd.setDate(bd.getDate() + offs);
+				
+				var ed = new Date(bd);
+				ed.setDate(ed.getDate() + dg._zpos1[2]);
+				return {bd:bd, ed:ed};
+		    }
+		};
+    },
 	
 	reAlignEvents_: function (hasAdd) {
 		this._rePositionDay();		
@@ -636,7 +678,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		//filling data
 		var cmp = widget.$n(),
 			evts = widget._evtsData[widget.getIndex(row)][ci],
-			oneDay = widget.DAYTIME,
+			oneDay = calUtil.DAYTIME,
 			bd = targetDate,
 			ed = new Date(bd);
 		ed.setDate(ed.getDate() + 1);
@@ -797,282 +839,4 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	},
 	
 	onShow: _zkf
-},{
-	_ignoredrag: function (dg, p, evt) {
-		if (zk.processing) return true;
-		var cnt = dg.node,
-			widget = dg.control,
-			zcls = widget.getZclass(),
-			cls = zcls + "-evt-faker-more",
-			ncls = zcls + "-evt-faker-nomore";
-
-		widget.clearGhost();
-		var n = evt.domTarget,
-			targetWidget = zk.Widget.$(n);
-			
-		if (n.tagName == 'SPAN')
-			if (jq(n).hasClass(zcls + "-month-date-cnt"))
-				return true;
-		if (n.nodeType == 1 && jq(n).hasClass(cls) && !jq(n).hasClass(ncls) || 
-			(targetWidget.$instanceof(calendar.Event)&& 
-				(!n.parentNode || targetWidget.event.isLocked )))
-				return true;
-
-		return false;
-	},
-	
-	_ghostdrag: function (dg, ofs, evt) {		
-		var cnt = dg.node,
-			widget = dg.control,
-			targetWidget = zk.Widget.$(evt.domEvent),
-			className = targetWidget.className,			
-			ce = (className == 'calendar.DaylongOfMonthEvent'|| 
-					className == 'calendar.DayOfMonthEvent')? targetWidget.$n(): null,
-			zcls = widget.getZclass(),
-			html = '<div id="' + widget.uuid + '-rope" class="' + zcls + '-month-dd">',
-			rope = '<div class="' + zcls + '-dd-rope"></div>',
-			hs = [];
-
-		for (var n = cnt.firstChild; n; n = n.nextSibling) {
-			html += rope;
-			hs.push(n.offsetHeight);
-		}
-
-		html += '</div>';
-
-		jq(document.body).prepend(html);
-
-		var td = cnt.firstChild.firstChild.rows[0].firstChild,
-			width = td.offsetWidth,
-			p = [evt.pageX,evt.pageY];
-
-		dg._zinfo = [];
-		for (var left = 0, n = td; n; left += n.offsetWidth, n = n.nextSibling)
-			dg._zinfo.push({l: left, w: n.offsetWidth});
-
-		dg._zoffs = zk(cnt).revisedOffset();
-		dg._zoffs = {
-			l: dg._zoffs[0],
-			t: dg._zoffs[1],
-			w: dg.handle.offsetWidth,
-			h: dg.handle.offsetHeight,
-			s: dg._zinfo.length
-		};
-
-		if (ce) {
-			var faker = ce.cloneNode(true), 
-				event = targetWidget.event;
-			faker.id = widget.uuid + '-dd';
-			jq(faker).addClass(zcls + '-evt-faker-dd');
-			
-			var h = ce.offsetHeight;
-			faker.style.width = jq.px(width);
-			faker.style.height = jq.px(h);
-			faker.style.left = jq.px(p[0] - (width / 2));
-			faker.style.top = jq.px(p[1] + h);
-			
-			jq(targetWidget.$n()).addClass(zcls + '-evt-dd');
-			
-			var cloneNodes = targetWidget.cloneNodes;
-			if (cloneNodes) 
-				for (var n = cloneNodes.length; n--;) 
-					jq(cloneNodes[n]).addClass(zcls + '-evt-dd');
-			
-			jq(document.body.firstChild).before(jq(faker));
-			dg.node = jq('#' + widget.uuid + '-dd')[0];
-			
-			var bd = new Date(event.zoneBd), 
-				ed = new Date(event.zoneEd);
-			
-			if (ed.getHours() == 0 && ed.getMinutes() == 0 && ed.getSeconds() == 0) 
-				ed = new Date(ed.getTime() - 1000);
-			
-			bd.setHours(0,0,0,0);
-			ed.setHours(23,59,59,0);		
-			
-			dg._zdur = Math.ceil((ed - bd) / widget.DAYTIME);
-			dg._zevt = ce;
-		}
-			
-		dg._zdim = {w: width, h: hs[0], hs: hs};
-		dg._zrope = jq('#' + widget.uuid + '-rope')[0];
-
-		var x = p[0] - dg._zoffs.l,
-			y = p[1] - dg._zoffs.t,
-			cols = Math.floor(x/dg._zdim.w),
-			rows = Math.floor(y/dg._zdim.h);
-
-		dg._zpos = [cols, rows];
-
-		// fix rope
-		widget.fixRope_(dg._zinfo, dg._zrope.firstChild, cols, rows, dg._zoffs, dg._zdim, dg._zdur);
-		return dg.node;	
-	},
-	
-	_drawdrag: function (dg, p, evt) {
-		if (dg.node.id.endsWith('-dd')) {
-			var w = dg.node.offsetWidth,
-				h = dg.node.offsetHeight,
-				x = evt.pageX - (w/2),
-				y = evt.pageY - h,
-				x1 = dg._zoffs.l,
-				y1 = dg._zoffs.t,
-				w1 = dg._zoffs.w,
-				h1 = dg._zoffs.h;
-			if (x < x1)
-				x = x1;
-			else if (x + w > x1 + w1)
-				x = x1 + w1 - w;
-
-			if (y < y1)
-				y = y1;
-			else if (y + h > y1 + h1)
-				y = y1 + h1 - h;
-			dg.node.style.left = jq.px(x);
-			dg.node.style.top = jq.px(y);
-		}
-	},
-	
-	_changedrag: function (dg, p, evt) {		
-		var widget = dg.control,
-			x = p[0]
-			y = p[1],
-			x1 = dg._zoffs.l,
-			y1 = dg._zoffs.t,
-			w1 = dg._zoffs.w,
-			h1 = dg._zoffs.h;
-		if (x < x1)
-			x = x1;
-		else if (x > x1 + w1)
-			x = x1 + w1;
-
-		if (y < y1)
-			y = y1;
-		else if (y > y1 + h1)
-			y = y1 + h1;
-
-		x -= x1;
-		y -= y1;
-
-	 	var cols = Math.floor(x/dg._zdim.w),
-			rows = Math.floor(y/dg._zdim.h),
-			dur = dg._zdur,
-			size = dg._zrope.childNodes.length;
-
-		if (rows == size)
-			--rows
-		if (cols == dg._zoffs.s)
-			cols = dg._zoffs.s - 1;
-
-		if (!dg._zevt) {
-		 	var c = dg._zpos[0],
-				r = dg._zpos[1],
-				b = dg._zoffs.s * r + c,
-				e = dg._zoffs.s * rows + cols;
-
-			dur = (b < e ? e - b: b - e) + 1;
-			cols = b < e ? c : cols;
-			rows = b < e ? r : rows;
-
-		 } else {
-		 	var total = dg._zoffs.s * size,
-				count = dg._zoffs.s * rows + cols + dur;
-
-			if (total < count)
-				dur = total - (dg._zoffs.s * rows + cols);
-		 }
-		 if (!dg._zpos1 || dg._zpos1[2] != dur || dg._zpos1[0] != cols || dg._zpos1[1] != rows) {
-		 	dg._zpos1 = [cols, rows, dur];
-		 	widget.fixRope_(dg._zinfo, dg._zrope.firstChild, cols, rows, dg._zoffs, dg._zdim, dur);
-		 }
-	},
-	
-	_endghostDrag: function (dg, origin) {
-		// target is Calendar's event
-		dg.node = dg.handle;
-	},
-	
-	_enddrag: function (dg, evt) {
-		var widget = dg.control,
-			cnt = dg.node,
-			dg = widget._drag[cnt.id];
-			
-		if (dg) {
-			var ce;
-			if (dg._zevt) {
-				var zcls = widget.getZclass(),
-					targetWidget = zk.Widget.$(dg._zevt),
-					event = targetWidget.$n(),
-					bd = new Date(widget.zoneBd),
-					ebd = new Date(event.zoneBd),
-					ddClass = zcls + '-evt-dd';
-
-				bd.setDate(bd.getDate() + (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]));
-				ebd.setDate(1);
-				ebd.setMonth(bd.getMonth());
-				ebd.setDate(bd.getDate());
-
-				jq(targetWidget.$n()).removeClass(ddClass);
-				var cloneNodes = targetWidget.cloneNodes;
-				if (cloneNodes) 
-					for (var n = cloneNodes.length; n--;) 
-						jq(cloneNodes[n]).removeClass(ddClass);
-				if (!widget.isTheSameDay_(ebd, event.zoneBd)) {
-					ce = dg._zevt;
-					ce.style.visibility = "hidden";
-
-					var ed = new Date(event.zoneEd);
-					ed.setDate(1);
-					ed.setMonth(bd.getMonth());
-					ed.setDate(bd.getDate() + event._days - 
-						(this.isZeroTime_(ed) ? 0:1));	
-					
-					widget.fire("onEventUpdate", {
-						data: [
-							dg._zevt.id,
-							widget.fixTimeZoneFromClient(ebd),
-							widget.fixTimeZoneFromClient(ed),
-							evt.pageX,
-							evt.pageY,
-							jq.innerWidth(),
-							jq.innerHeight()
-						]
-					});
-				}
-				jq('#' + widget.uuid + '-rope').remove();
-				jq('#' + widget.uuid + '-dd').remove();
-			} else {
-				var c = dg._zpos[0],
-					r = dg._zpos[1],
-					c1 = dg._zpos1[0],
-					r1 = dg._zpos1[1],
-					c2 = c < c1 ? c : c1,
-					r2 = r < r1 ? r : r1,
-					offs = dg._zoffs.s * r2 + c2,
-					bd = new Date(widget.zoneBd);
-
-				bd.setDate(bd.getDate() + offs);
-				
-				var ed = new Date(bd);
-				ed.setDate(ed.getDate() + dg._zpos1[2]);
-
-				widget.fire("onEventCreate", {
-					data: [
-						widget.fixTimeZoneFromClient(bd),
-						widget.fixTimeZoneFromClient(ed),
-						evt.pageX,
-						evt.pageY,
-						jq.innerWidth(),
-						jq.innerHeight()
-					]
-				});
-			}
-
-			widget._ghost[widget.uuid] = function () {
-				jq('#' + widget.uuid + '-rope').remove();
-				delete widget._ghost[widget.uuid];
-			};
-			dg._zinfo = dg._zpos1 = dg._zpos = dg._zrope = dg._zdim = dg._zdur = dg._zevt = null;
-		}
-	}
 });

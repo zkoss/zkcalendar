@@ -20,10 +20,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 
-import org.zkoss.json.JSONArray;
 import org.zkoss.calendar.api.*;
 import org.zkoss.calendar.event.*;
-import org.zkoss.calendar.impl.SimpleDateFormatter;
 import org.zkoss.calendar.impl.Util;
 import org.zkoss.lang.*;
 import org.zkoss.util.Locales;
@@ -154,7 +152,7 @@ public class Calendars extends XulElement implements
 		if (_dfmter != dfmater) {
 			_dfmter = dfmater;
 			reSendDateRange();
-			smartUpdate("cd", Util.getDSTTime(this, getCurrentDate()));
+			smartUpdate("cd", Util.getDSTTime(this.getDefaultTimeZone(), getCurrentDate()));
 			reSendEventGroup();
 		}
 	}
@@ -343,10 +341,10 @@ public class Calendars extends XulElement implements
 			smartUpdate("captionByTimeOfDay", Util.encloseList(Util.packCaptionByTimeOfDay(cal, _tzones, Locales.getCurrent(), _dfmter)));
 		}
 		
-		TimeZone tz = getDefaultTimeZone();		
+		TimeZone tz = getDefaultTimeZone();
 		smartUpdate("tz", (tz.getRawOffset())/60000);
-		smartUpdate("bd", Util.getDSTTime(this,getBeginDate()));
-		smartUpdate("ed", Util.getDSTTime(this,getEndDate()));
+		smartUpdate("bd", Util.getDSTTime(tz,getBeginDate()));
+		smartUpdate("ed", Util.getDSTTime(tz,getEndDate()));
 		reSendEventGroup();
 	}
 
@@ -390,8 +388,9 @@ public class Calendars extends XulElement implements
 	 */
 	public boolean removeTimeZone(TimeZone timezone) {
 		if (_tzones.remove(timezone) != null) {
-			smartUpdate("bd", Util.getDSTTime(this,getBeginDate()));
-			smartUpdate("ed", Util.getDSTTime(this,getEndDate()));
+			TimeZone tz = getDefaultTimeZone();
+			smartUpdate("bd", Util.getDSTTime(tz,getBeginDate()));
+			smartUpdate("ed", Util.getDSTTime(tz,getEndDate()));
 			reSendEventGroup();
 			return true;
 		}		
@@ -567,7 +566,7 @@ public class Calendars extends XulElement implements
 		if (!Objects.equals(curDate, _curDate)) {
 			_curDate = curDate;
 			reSendDateRange();
-			smartUpdate("cd", Util.getDSTTime(this,getCurrentDate()));
+			smartUpdate("cd", Util.getDSTTime(this.getDefaultTimeZone(),getCurrentDate()));
 			reSendEventGroup();
 		}
 	}
@@ -583,13 +582,12 @@ public class Calendars extends XulElement implements
 	private void reSendDateRange(){
 		Date beginDate = getBeginDate();
 		Date endDate = getEndDate();
-		
-		smartUpdate("bd", Util.getDSTTime(this, beginDate));
-		smartUpdate("ed", Util.getDSTTime(this, endDate));	
+		TimeZone timezone = getDefaultTimeZone();
+		smartUpdate("bd", Util.getDSTTime(timezone, beginDate));
+		smartUpdate("ed", Util.getDSTTime(timezone, endDate));	
 		if (inMonthMold()){
 			smartUpdate("weekOfMonth", getWeekOfMonth());
-			if (isWeekOfYear() && _dfmter == null) {
-				TimeZone timezone = getDefaultTimeZone();
+			if (isWeekOfYear() && _dfmter == null) {				
 				Calendar cal = Calendar.getInstance(timezone);
 				cal.setTime(endDate);
 				
@@ -601,7 +599,6 @@ public class Calendars extends XulElement implements
 		if(dfhandler == null) return;
 		
 		final Locale locale = Locales.getCurrent();	
-		TimeZone timezone = getDefaultTimeZone();	
 		Calendar cal = Calendar.getInstance(timezone);
 		cal.setTime(beginDate);
 		
@@ -667,20 +664,21 @@ public class Calendars extends XulElement implements
 		// reset default timezone
 		_sdfKey.setTimeZone(tzone);
 		if (_model != null) {
-			List<CalendarEvent> list = _model.get(getBeginDate(), getEndDate(),
+			Date beginDate = getBeginDate();
+			List<CalendarEvent> list = _model.get(beginDate, getEndDate(),
 					new RenderContext() {
 						public TimeZone getTimeZone() {
 							return tzone;
 						}
 					});
 
-			if (list != null) {
+			if (list != null) {				
 				for (CalendarEvent ce : list) {
 					if (!ce.getBeginDate().before(ce.getEndDate()))
 						throw new IllegalArgumentException("Illegal date: from " + ce.getBeginDate() + " to " + ce.getEndDate());
 					
-					String key = ce.getBeginDate().before(getBeginDate()) ?
-										getEventKey(getBeginDate()): 
+					String key = ce.getBeginDate().before(beginDate) ?
+										getEventKey(beginDate): 
 										getEventKey(ce.getBeginDate());
 					
 					List<CalendarEvent> dayevt =  _evts.get(key);
@@ -692,7 +690,7 @@ public class Calendars extends XulElement implements
 				}
 			}
 		}
-		smartUpdate("events", Util.encloseEventMap(this, _evts.values()));
+		smartUpdate("events", Util.encloseEventMap(this, _evts));
 	}
 	
 	public Toolbar getToolbar() {
@@ -765,7 +763,11 @@ public class Calendars extends XulElement implements
 	 * @param escapeXML
 	 */
 	public void setEscapeXML(boolean escapeXML) {
-		this._escapeXML = escapeXML;
+		if (!Objects.equals(_escapeXML, escapeXML)) {
+			this._escapeXML = escapeXML;
+			smartUpdate("escapeXML", escapeXML);
+			reSendEventGroup();
+		}
 	}
 	/**
 	 * Return whether the event content escape XML
@@ -858,16 +860,16 @@ public class Calendars extends XulElement implements
 		} else
 			if (_dfmter != null) rendererDayData(_dfmter ,renderer);
 		
-		renderer.render("bd", Util.getDSTTime(this,getBeginDate()));
-		renderer.render("ed", Util.getDSTTime(this,getEndDate()));
-		renderer.render("cd", Util.getDSTTime(this,getCurrentDate()));
+		renderer.render("bd", Util.getDSTTime(tz,getBeginDate()));
+		renderer.render("ed", Util.getDSTTime(tz,getEndDate()));
+		renderer.render("cd", Util.getDSTTime(tz,getCurrentDate()));
 		
 		if (_readonly)
 			renderer.render("readonly", true);
 		
 		renderer.render("days", _days);
-		
-		renderer.render("events", Util.encloseEventMap(this, _evts.values()));
+		smartUpdate("escapeXML", _escapeXML);
+		renderer.render("events", Util.encloseEventMap(this, _evts));
 	}		
 
 	private void rendererDayData(DateFormatter dfhandler, ContentRenderer renderer) throws IOException {

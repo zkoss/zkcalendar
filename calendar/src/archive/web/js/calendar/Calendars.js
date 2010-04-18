@@ -13,7 +13,6 @@ This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
  */
 calendar.Calendars = zk.$extends(zul.Widget, {	
-	DAYTIME: 24*60*60*1000,
 	ppTemplate: ['<div id="%1-pp" class="%2" style="position:absolute; top:0;left:0;"><div class="%2-t1"></div><div class="%2-t2"><div class="%2-t3"></div></div>',
 			  '<div class="%2-body"><div class="%2-inner">',
 			  '<div class="%2-header"><div id="%1-ppc" class="%2-close"></div><div id="%1-pphd" class="%2-header-cnt"></div></div>',
@@ -26,29 +25,47 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			  '<div class="%2-cnt %3-arrow" %6><div class="%3-arrow-icon" %7></div><div class="%2-text">%4</div></div>',
 			  '</div></div>',
 			  '<div class="%2-b2" %5><div class="%2-b3" %9></div></div><div class="%2-b1" %5></div></div>'].join(''),
-	ddTemplate: ['<div id="%1" class="%2" style="left:0px;width:100%;" ><div class="%2-t1"></div><div class="%2-t2"><div class="%2-t3"></div></div>',
-			  '<div class="%2-body" id="%1-body"><div class="%2-inner"><dl id="%1-inner"><dt class="%2-header"></dt><dd class="%2-cnt"></dd></dl></div></div>',
-			  '<div class="%2-b2"><div class="%2-b3"></div></div><div class="%2-b1"/></div>'].join(''),	
 	blockTemplate: '<div id="%1-tempblock"></div>',
+	ropeTemplate: '<div id="%1-rope" class="%2-month-dd">',
+	ddRopeTemplate: '<div class="%1-dd-rope"></div>',
 	
 	$define : {
+		readonly: function () {
+			if (!this.$n()) return;
+			var widget = this,
+				cnt = this.$n("cnt");
+			if (this._readonly) {
+				// a trick for dragdrop.js
+				cnt._skipped = false;
+				jq(cnt).unbind('click');
+		
+				this._drag[cnt.id] = null;
+				
+				jq(this.$n()).unbind('click', this.clearGhost);		
+				
+			}else this._editMode();
+		},
+		
 		cd: function(){
 			this._currentDate = new Date(this._cd);
-			this._updateDateRange();
+			this._updateDateRange();			
 		},
 		firstDayOfWeek: function(){
 			this._updateDateRange();
-		},
+	},
 		cleardd: function(){
 			if(this._cleardd)
 				this.clearGhost();
-		}
+		},
+		escapeXML: null		
 	},
 
 	$init: function () {
 		this.$supers('$init', arguments);		
 		this._drag = {};
-		this._ghost = {};	
+		this._ghost = {};
+		this._eventKey = {};
+		this.params = {};
 	},
 
 	bind_ : function() {
@@ -61,6 +78,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		// just in case
 		this.closeFloats();
 		zWatch.unlisten({onSize: this, onShow: this});
+		this._drag = this._ghost = this._eventKey = this.params = null;
 		this.$supers('unbind_', arguments);
 	},
 	
@@ -69,22 +87,11 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		return zcls ? zcls : "z-calendars";
 	},	
 
-	isZeroTime_: function(date) {
-		return (date.getHours() + date.getMinutes() + 
-			date.getSeconds() + date.getMilliseconds() == 0);
-	},
-
 	isExceedOneDay_: function(bd,ed) {		
 		if (bd < this.zoneBd || bd.getFullYear() != ed.getFullYear() ||
-			(!this.isTheSameDay_(bd, ed) && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
+			(!calUtil.isTheSameDay(bd, ed) && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
 			(this.getPeriod(ed, bd) >= 1 && this.getPeriod(ed, this.zoneBd) >= 1))
 	 		return true;
-	},
-	
-	isTheSameDay_: function(date1, date2) {
-		return (date1.getFullYear() == date2.getFullYear() && 
-				date1.getMonth() == date2.getMonth() && 
-				date1.getDate() == date2.getDate());
 	},
 	
 	getPeriod: function(date1, date2) {
@@ -93,7 +100,38 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			tzOffset2 = date2.getTimezoneOffset(),
 			offset = (tzOffset1 != tzOffset2) ? ((tzOffset1 - tzOffset2) * 60000): 0;
 		
-		return Math.abs(date1 - date2 - offset) / this.DAYTIME;	
+		return Math.abs(date1 - date2 - offset) / calUtil.DAYTIME;	
+	},
+	
+	processEvtData_: function(event){
+		event.isLocked = event.isLocked == 'true' ? true: false;		
+		event.beginDate = new Date(zk.parseInt(event.beginDate));
+		event.endDate = new Date(zk.parseInt(event.endDate));				
+		
+		event.zoneBd = this.adjTime(event.beginDate);
+		event.zoneEd = this.adjTime(event.endDate);
+		
+		var key = event.key,
+			period = this._eventKey[key],
+			inMon = this.mon;
+		
+		if (!period) {			
+			var keyDate = zk.fmt.Date.parseDate(key);
+			keyDate.setHours(0,0,0,0);
+			keyDate = this.getPeriod(keyDate, this.zoneBd);
+			
+			period = {day:inMon ? keyDate % 7: keyDate};
+			
+			if (inMon)
+				period.week = Math.floor(keyDate/7);
+			
+			this._eventKey[key] = period;
+		}
+		event._preOffset = period.day;
+		if (inMon)
+			event.startWeek = this._weekDates[period.week];
+		
+		return event;
 	},
 	
 	createChildrenWidget_: function () {
@@ -105,7 +143,6 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 				var event = this.processEvtData_(events[k]),
 					bd = event.zoneBd,
 					ed = event.zoneEd;
-				
 				if (bd > this.zoneEd || ed < this.zoneBd) continue;				
 				
 				this.processChildrenWidget_(this.isExceedOneDay_(bd, ed), event);
@@ -123,7 +160,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		tr.append(html.join(''));			
 		jq(tr[0].lastChild).append(dayNode);
 	},	
-	
+		
 	putInDaylongSpace_: function(list, node) {
 		var bd = node.upperBoundBd,
 			ed = node.lowerBoundEd,
@@ -149,18 +186,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		if (findSpace)			
 			rowSpace.push(node);		
 		else list.push([node]);
-	},
-	
-	processEvtData_: function(event){
-		event.isLocked = event.isLocked == 'true' ? true: false;		
-		event.beginDate = new Date(zk.parseInt(event.beginDate));
-		event.endDate = new Date(zk.parseInt(event.endDate));				
-		
-		event.zoneBd = this.adjTime(event.beginDate);
-		event.zoneEd = this.adjTime(event.endDate);
-		
-		return event;
-	},
+	},	
 	
 	updateDateOfBdAndEd_: function(){
 		this._beginDate = new Date(this.bd);
@@ -376,6 +402,94 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	}
 
 },{
+	_ignoredrag: function (dg, p, evt) {
+		if (zk.processing) return true;
+		var cnt = dg.node,
+			widget = dg.control,
+			p = widget.params;
+
+		widget.clearGhost();
+		var n = evt.domTarget,
+			targetWidget = zk.Widget.$(n);			
+		if (widget.mon && n.tagName == 'SPAN' && 
+			jq(n).hasClass(widget.getZclass() + "-month-date-cnt"))
+				return true;
+		if (n.nodeType == 1 && jq(n).hasClass(p._fakerMoreCls) && !jq(n).hasClass(p._fakerNoMoreCls) || 
+			(targetWidget.$instanceof(calendar.Event)&& 
+				(!n.parentNode || targetWidget.event.isLocked )))
+				return true;
+		return false;
+	},
+
+	_ghostdrag: function (dg, ofs, evt) {		
+		var cnt = dg.node,
+			widget = dg.control,
+			uuid = widget.uuid,
+			zcls = widget.getZclass(),
+			inMon = widget.mon,
+			dataObj = widget.getDragDataObj_(),
+			targetWidget = zk.Widget.$(evt.domEvent),
+			ce = targetWidget.$instanceof(calendar.Event)? targetWidget.$n(): null,
+			hs = [];
+
+		jq(document.body).prepend(dataObj.getRope(widget, cnt, hs));
+
+		var row = dataObj.getRow(cnt),
+			width = row.offsetWidth,
+			p = [evt.pageX,evt.pageY];
+		dg._zinfo = [];
+		for (var left = 0, n = row; n; left += n.offsetWidth, n = n.nextSibling)
+			dg._zinfo.push({l: left, w: n.offsetWidth});
+
+		dg._zoffs = zk(inMon? cnt: dg.handle).revisedOffset();
+		dg._zoffs = {
+			l: dg._zoffs[0],
+			t: dg._zoffs[1],
+			w: dg.handle.offsetWidth,
+			h: dg.handle.offsetHeight,
+			s: dg._zinfo.length
+		};
+
+		if (ce) {
+			var faker = ce.cloneNode(true),
+				h = ce.offsetHeight;
+			faker.id = uuid + '-dd';
+			jq(faker).addClass(zcls + '-evt-faker-dd');
+			
+			faker.style.width = jq.px(width);
+			faker.style.height = jq.px(h);
+			faker.style.left = jq.px(p[0] - (width/2));
+			faker.style.top = jq.px(p[1] + h);
+			
+			jq(ce).addClass(zcls + '-evt-dd');
+			
+			if (inMon) {
+				var cloneNodes = targetWidget.cloneNodes;
+				if (cloneNodes)
+					for (var n = cloneNodes.length; n--;)
+						jq(cloneNodes[n]).addClass(zcls + '-evt-dd');
+			}
+			
+			jq(document.body.firstChild).before(jq(faker));
+			dg.node = jq('#' + uuid + '-dd')[0];
+			
+			dg._zdur = calUtil.getDur(ce);
+			dg._zevt = ce;
+		}
+			
+		dg._zdim = {w: width, h: hs[0], hs: hs};
+		dg._zrope = jq('#' + widget.uuid + '-rope')[0];
+
+		var cols = dataObj.getCols(p, dg),
+			rows = dataObj.getRows(p, dg);
+
+		dg._zpos = [cols, rows];
+
+		// fix rope
+		widget.fixRope_(dg._zinfo, dg._zrope.firstChild, cols, rows, dg._zoffs, dg._zdim, dg._zdur);
+		return dg.node;	
+	},
+	
 	_drawdrag: function (dg, p, evt) {
 		var node = dg.node;
 		if (node.id.endsWith('-dd')) {
@@ -453,5 +567,86 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		 	dg._zpos1 = [cols, rows, dur];
 		 	widget.fixRope_(dg._zinfo, dg._zrope.firstChild, cols, rows, dg._zoffs, dg._zdim, dur);
 		 }
+	},
+	
+	_endghostdrag: function (dg, origin) {
+		// target is Calendar's event
+		dg.node = dg.handle;
+	},
+	
+	_enddrag: function (dg, evt) {
+		var widget = dg.control,
+			cnt = dg.node,
+			dg = widget._drag[cnt.id];
+		if (dg) {
+			var ce,
+				dataObj = widget.getDragDataObj_();
+			if (dg._zevt) {
+				var zcls = widget.getZclass(),
+					targetWidget = zk.Widget.$(dg._zevt),
+					event = targetWidget.event,
+					bd = new Date(widget.zoneBd),
+					ebd = new Date(event.zoneBd),
+					ddClass = zcls + '-evt-dd',
+					inMon = widget.mon;
+
+				bd.setDate(bd.getDate() + dataObj.getDur(dg));
+				ebd.setDate(1);
+				ebd.setMonth(bd.getMonth());
+				ebd.setDate(bd.getDate());
+
+				jq(targetWidget.$n()).removeClass(ddClass);
+				
+				if (inMon) {
+					var cloneNodes = targetWidget.cloneNodes;
+					if (cloneNodes)
+						for (var n = cloneNodes.length; n--;) 
+							jq(cloneNodes[n]).removeClass(ddClass);					
+				}
+				
+				if (!calUtil.isTheSameDay(ebd, event.zoneBd)) {
+					ce = dg._zevt;
+					ce.style.visibility = "hidden";
+
+					var ed = new Date(event.zoneEd);
+					ed.setDate(1);
+					ed.setMonth(bd.getMonth());
+					ed.setDate(bd.getDate() + calUtil.getDur(event) - (calUtil.isZeroTime(ed) ? 0:1));	
+					
+					widget.fire("onEventUpdate", {
+						data: [
+							dg._zevt.id,
+							widget.fixTimeZoneFromClient(ebd),
+							widget.fixTimeZoneFromClient(ed),
+							evt.pageX,
+							evt.pageY,
+							jq.innerWidth(),
+							jq.innerHeight()
+						]
+					});
+				}
+				jq('#' + widget.uuid + '-rope').remove();
+				jq('#' + widget.uuid + '-dd').remove();
+			} else {
+				var newData = dataObj.getNewDate(widget, dg);
+
+				widget.fire("onEventCreate", {
+					data: [
+						widget.fixTimeZoneFromClient(newData.bd),
+						widget.fixTimeZoneFromClient(newData.ed),
+						evt.pageX,
+						evt.pageY,
+						jq.innerWidth(),
+						jq.innerHeight()
+					]
+				});
+			}
+
+			widget._ghost[widget.uuid] = function () {
+				jq('#' + widget.uuid + '-rope').remove();
+				delete widget._ghost[widget.uuid];
+			};
+			dg._zinfo = dg._zpos1 = dg._zpos = dg._zrope = dg._zdim = dg._zdur = dg._zevt = null;
+		}
 	}
 });
