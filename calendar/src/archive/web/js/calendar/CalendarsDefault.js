@@ -426,45 +426,47 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	},
 		
 	getDragDataObj_: function () {
-		return {
-			getRope: function (widget, cnt, hs) {
-				var zcls = widget.getZclass(),
-					html = [widget.ropeTemplate.replace(new RegExp("%([1-2])", "g"), function (match, index) {
-								return index < 2 ? widget.uuid : zcls;
-							})];
-		
-				html.push(widget.ddRopeTemplate.replace(new RegExp("%1", "g"), function (match, index) {
-					return zcls;
-				}));
-				html.push('</div>');
-				hs.push(cnt.firstChild.offsetHeight);
-				return html.join('');
-		    },
+		if (!this._dragDataObj)
+			this._dragDataObj = {
+				getRope: function (widget, cnt, hs) {
+					var zcls = widget.getZclass(),
+						html = [widget.ropeTemplate.replace(new RegExp("%([1-2])", "g"), function (match, index) {
+									return index < 2 ? widget.uuid : zcls;
+								})];
 			
-			getRow: function (cnt) {
-				return cnt.firstChild.firstChild.lastChild.firstChild;
-		    },
-			getCols: function (p, dg) {
-				return Math.floor((p[0] - dg._zoffs.l)/dg._zdim.w);
-		    },
-			getRows: function () {
-				return 0;
-		    },
-			getDur: function (dg) {				
-				return dg._zpos1[0];
-		    },
-			getNewDate: function (widget, dg) {
-				var c = dg._zpos[0],
-					c1 = dg._zpos1[0],
-					offs = c < c1 ? c : c1,
-					bd = new Date(widget.zoneBd)
-					ed = new Date(widget.zoneBd);
+					html.push(widget.ddRopeTemplate.replace(new RegExp("%1", "g"), function (match, index) {
+						return zcls;
+					}));
+					html.push('</div>');
+					hs.push(cnt.firstChild.offsetHeight);
+					return html.join('');
+			    },
 				
-				bd.setDate(bd.getDate() + offs);
-				ed.setDate(bd.getDate() + dg._zpos1[2]);
-				return {bd:bd, ed:ed};
-		    }
-		};
+				getRow: function (cnt) {
+					return cnt.firstChild.firstChild.lastChild.firstChild;
+			    },
+				getCols: function (p, dg) {
+					return Math.floor((p[0] - dg._zoffs.l)/dg._zdim.w);
+			    },
+				getRows: function () {
+					return 0;
+			    },
+				getDur: function (dg) {				
+					return dg._zpos1[0];
+			    },
+				getNewDate: function (widget, dg) {
+					var c = dg._zpos[0],
+						c1 = dg._zpos1[0],
+						offs = c < c1 ? c : c1,
+						bd = new Date(widget.zoneBd)
+						ed = new Date(widget.zoneBd);
+					
+					bd.setDate(bd.getDate() + offs);
+					ed.setDate(bd.getDate() + dg._zpos1[2]);
+					return {bd:bd, ed:ed};
+			    }
+			};
+		return this._dragDataObj;
     },
 	
 	reAlignEvents_: function (hasAdd) {

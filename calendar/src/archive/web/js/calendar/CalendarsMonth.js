@@ -467,52 +467,54 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	},
 	
 	getDragDataObj_: function () {
-		return {
-			getRope: function (widget, cnt, hs) {
-				var zcls = widget.getZclass(),
-					html = [widget.ropeTemplate.replace(new RegExp("%([1-2])", "g"), function (match, index) {
-								return index < 2 ? widget.uuid : zcls;
-							})],
-					rope = widget.ddRopeTemplate.replace(new RegExp("%1", "g"), function (match, index) {
-								return zcls;
-							});
-		
-				for (var n = cnt.firstChild; n; n = n.nextSibling) {
-					html.push(rope);
-					hs.push(n.offsetHeight);
-				}
-				html.push('</div>');
-				return html.join('');
-		    },
-			getRow: function (cnt) {
-				return cnt.firstChild.firstChild.rows[0].firstChild;
-		    },
-			getCols: function (p, dg) {
-				return  Math.floor((p[0] - dg._zoffs.l) / dg._zdim.w);			
-		    },
-			getRows: function (p, dg) {
-				return Math.floor((p[1] - dg._zoffs.t)/dg._zdim.h);
-		    },
-			getDur: function (dg) {
-				return (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]);
-		    },
-			getNewDate: function (widget, dg) {
-				var c = dg._zpos[0],
-					r = dg._zpos[1],
-					c1 = dg._zpos1[0],
-					r1 = dg._zpos1[1],
-					c2 = c < c1 ? c : c1,
-					r2 = r < r1 ? r : r1,
-					offs = dg._zoffs.s * r2 + c2,
-					bd = new Date(widget.zoneBd);
-
-				bd.setDate(bd.getDate() + offs);
-				
-				var ed = new Date(bd);
-				ed.setDate(ed.getDate() + dg._zpos1[2]);
-				return {bd:bd, ed:ed};
-		    }
-		};
+		if (!this._dragDataObj)
+			this._dragDataObj = {
+				getRope: function (widget, cnt, hs) {
+					var zcls = widget.getZclass(),
+						html = [widget.ropeTemplate.replace(new RegExp("%([1-2])", "g"), function (match, index) {
+									return index < 2 ? widget.uuid : zcls;
+								})],
+						rope = widget.ddRopeTemplate.replace(new RegExp("%1", "g"), function (match, index) {
+									return zcls;
+								});
+			
+					for (var n = cnt.firstChild; n; n = n.nextSibling) {
+						html.push(rope);
+						hs.push(n.offsetHeight);
+					}
+					html.push('</div>');
+					return html.join('');
+			    },
+				getRow: function (cnt) {
+					return cnt.firstChild.firstChild.rows[0].firstChild;
+			    },
+				getCols: function (p, dg) {
+					return  Math.floor((p[0] - dg._zoffs.l) / dg._zdim.w);			
+			    },
+				getRows: function (p, dg) {
+					return Math.floor((p[1] - dg._zoffs.t)/dg._zdim.h);
+			    },
+				getDur: function (dg) {
+					return (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]);
+			    },
+				getNewDate: function (widget, dg) {
+					var c = dg._zpos[0],
+						r = dg._zpos[1],
+						c1 = dg._zpos1[0],
+						r1 = dg._zpos1[1],
+						c2 = c < c1 ? c : c1,
+						r2 = r < r1 ? r : r1,
+						offs = dg._zoffs.s * r2 + c2,
+						bd = new Date(widget.zoneBd);
+	
+					bd.setDate(bd.getDate() + offs);
+					
+					var ed = new Date(bd);
+					ed.setDate(ed.getDate() + dg._zpos1[2]);
+					return {bd:bd, ed:ed};
+			    }
+			};
+		return this._dragDataObj;
     },
 	
 	reAlignEvents_: function (hasAdd) {

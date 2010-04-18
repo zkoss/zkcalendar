@@ -473,7 +473,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			jq(document.body.firstChild).before(jq(faker));
 			dg.node = jq('#' + uuid + '-dd')[0];
 			
-			dg._zdur = calUtil.getDur(ce);
+			dg._zdur = calUtil.getDur(targetWidget.event);
 			dg._zevt = ce;
 		}
 			
@@ -589,8 +589,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 					ebd = new Date(event.zoneBd),
 					ddClass = zcls + '-evt-dd',
 					inMon = widget.mon;
-
 				bd.setDate(bd.getDate() + dataObj.getDur(dg));
+				ebd.setFullYear(bd.getFullYear());
 				ebd.setDate(1);
 				ebd.setMonth(bd.getMonth());
 				ebd.setDate(bd.getDate());
@@ -609,6 +609,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 					ce.style.visibility = "hidden";
 
 					var ed = new Date(event.zoneEd);
+					ed.setFullYear(bd.getFullYear());
 					ed.setDate(1);
 					ed.setMonth(bd.getMonth());
 					ed.setDate(bd.getDate() + calUtil.getDur(event) - (calUtil.isZeroTime(ed) ? 0:1));	
