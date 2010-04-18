@@ -68,7 +68,12 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		var zcls = this._zclass;
 		return zcls ? zcls : "z-calendars";
 	},	
-		
+
+	isZeroTime_: function(date) {
+		return (date.getHours() + date.getMinutes() + 
+			date.getSeconds() + date.getMilliseconds() == 0);
+	},
+
 	isExceedOneDay_: function(bd,ed) {		
 		if (bd < this.zoneBd || bd.getFullYear() != ed.getFullYear() ||
 			(!this.isTheSameDay_(bd, ed) && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
@@ -160,7 +165,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	updateDateOfBdAndEd_: function(){
 		this._beginDate = new Date(this.bd);
 		this._endDate = new Date(this.ed);
-		this.zoneBd = this.adjTime(this._beginDate),
+		this.zoneBd = this.adjTime(this._beginDate);
 		this.zoneEd = this.adjTime(this._endDate);
 	},
 	

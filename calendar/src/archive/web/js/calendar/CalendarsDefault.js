@@ -1493,7 +1493,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					var ed = new Date(event.zoneEd);
 					ed.setDate(1);
 					ed.setMonth(bd.getMonth());
-					ed.setDate(bd.getDate() + event._days - 1);
+					ed.setDate(bd.getDate() + event._days - (widget.isZeroTime_(ed) ? 0:1));
 
 					widget.fire("onEventUpdate", {
 						data: [

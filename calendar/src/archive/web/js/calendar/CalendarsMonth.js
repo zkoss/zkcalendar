@@ -1025,8 +1025,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					ed.setDate(1);
 					ed.setMonth(bd.getMonth());
 					ed.setDate(bd.getDate() + event._days - 
-						((ed.getHours() + ed.getMinutes() + 
-							ed.getSeconds() + ed.getMilliseconds() == 0) ? 0:1));	
+						(this.isZeroTime_(ed) ? 0:1));	
 					
 					widget.fire("onEventUpdate", {
 						data: [
