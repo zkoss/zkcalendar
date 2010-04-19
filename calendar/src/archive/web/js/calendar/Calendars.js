@@ -31,28 +31,16 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	
 	$define : {
 		readonly: function () {
-			if (!this.$n()) return;
-			var widget = this,
-				cnt = this.$n("cnt");
-			if (this._readonly) {
-				// a trick for dragdrop.js
-				cnt._skipped = false;
-				jq(cnt).unbind('click');
-		
-				this._drag[cnt.id] = null;
-				
-				jq(this.$n()).unbind('click', this.clearGhost);		
-				
-			}else this._editMode();
-		},
-		
+			if (!this.$n()) return;			
+			this.editMode(!this._readonly);
+		},		
 		cd: function(){
 			this._currentDate = new Date(this._cd);
 			this._updateDateRange();			
 		},
 		firstDayOfWeek: function(){
 			this._updateDateRange();
-	},
+		},
 		cleardd: function(){
 			if(this._cleardd)
 				this.clearGhost();
@@ -193,6 +181,56 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		this._endDate = new Date(this.ed);
 		this.zoneBd = this.adjTime(this._beginDate);
 		this.zoneEd = this.adjTime(this._endDate);
+	},
+	
+	editMode: function (enable) {
+		var	widget = this,
+			cnt = this.$n('cnt'),
+			cls = this.$class;
+		// a trick for dragdrop.js
+		cnt._skipped = enable;
+		jq(cnt)[enable ? 'bind': 'unbind']('click',  function (evt) {
+			if (!zk.dragging && !zk.processing) {
+				widget.clearGhost();
+				widget.onClick(cnt, evt);
+			} else
+				evt.stop();
+		});
+		
+		this._drag[cnt.id] = enable ? new zk.Draggable(this, cnt, {
+			starteffect: widget.closeFloats,
+			endeffect: cls._enddrag,
+			ghosting: cls._ghostdrag,
+			endghosting: cls._endghostdrag,
+			change: cls._changedrag,
+			draw: cls._drawdrag,
+			ignoredrag: cls._ignoredrag
+		}): null;
+		jq(this.$n())[enable ? 'bind': 'unbind']('click', this.proxy(this.clearGhost));
+		
+		if (this.mon) return;
+		
+		var daylong = this.$n("daylong"),
+			cal = calendar.Calendars;
+		jq(daylong)[enable ? 'bind': 'unbind']('click', function(evt) {
+			if (!zk.dragging && !zk.processing) {
+				widget.clearGhost();
+				widget.onDaylongClick(daylong, evt);
+			} else
+				evt.stop();
+		});
+
+		// daylong drag
+		daylong._skipped = enable;
+		this._drag[daylong.id] = enable ? new zk.Draggable(this,daylong, {
+			starteffect: widget.closeFloats,
+			endeffect: cal._enddrag,
+			ghosting: cal._ghostdrag,
+			endghosting: cal._endghostdrag,
+			change: cal._changedrag,
+			draw: cal._drawdrag,
+			ignoredrag: cal._ignoredrag
+		}): null;		
 	},
 	
 	addDayClickEvent_: function (element) {

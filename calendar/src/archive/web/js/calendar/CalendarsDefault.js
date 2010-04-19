@@ -81,26 +81,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			this.title = jq(this.$n("header")).children().find('.' + this.getZclass() + '-day-of-week-cnt');
 			this._updateDateRange();
 		},
-		readonly: function () {
-			if (!this.$n()) return;
-			var widget = this,
-				cnt = this.$n("cnt");
-			if (this._readonly) {
-				// a trick for dragdrop.js
-				cnt._skipped = false;
-				jq(cnt).unbind('click');
-
-				this._drag[cnt.id] = null;
-
-				jq(this.$n()).unbind('click', this.clearGhost);
-				var daylong = this.$n("daylong");
-				jq(daylong).unbind('click');
-
-				// a trick for dragdrop.js
-				daylong._skipped = false;
-				this._drag[daylong.id] = null;
-			} else this._editMode();
-		},
 		events: function () {
 			this._events = jq.evalJSON(this._events);
 			if (!this.$n()) return;
@@ -185,7 +165,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		p._fakerNoMoreCls = zcls + "-daylong-faker-nomore";
 	},
 	
-	bind_: function () {// after compose
+	bind_: function () {
 		this.$supers('bind_', arguments);
 		var widget = this,
 			cnt = this.$n("cnt"),
@@ -231,29 +211,16 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		});
 		
 		if (!this._readonly)
-			this._editMode();
+			this.editMode(true);
 	},
 	
 	unbind_ : function () {			
-		this.title =  this.daylongRows =  this.daylongMoreRows = this.cntRows = null;
+		this.title =  this.daylongRows =  this.daylongMoreRows = this.cntRows = 
+		this._scrollInfo = this._dayEvents = this._daylongEvents = 
+		this._daylongSpace = this._daySpace = null;
 		this.$supers('unbind_', arguments);
 	},
 	
-	cleanEvtAry_: function () {
-		this._eventKey = {};
-		this._daylongEvents = [];
-		this._dayEvents = [];
-	},
-	
-	processChildrenWidget_: function (isExceedOneDay, event) {
-		var dayEvent = isExceedOneDay ?
-						new calendar.DaylongEvent({event:event}):
-						new calendar.DayEvent({event:event});
-								
-		this.appendChild(dayEvent);					
-		this[isExceedOneDay ? '_daylongEvents': '_dayEvents'].push(dayEvent.$n());
-	},
-		
 	_resetDaylongPosition: function () {
 		var daylongRows = jq(this.daylongRows),
 			zcls = this.getZclass();		
@@ -331,55 +298,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		this._resetDaylongPosition();
 		temp.remove();
 	},
-	
-	_editMode: function () {
-		var widget = this,
-			cnt = this.$n("cnt");
-		// a trick for dragdrop.js
-		cnt._skipped = true;
-		jq(cnt).bind('click', function(evt) {
-			if (!zk.dragging && !zk.processing) {
-				widget.clearGhost();
-				widget.onClick(cnt, evt);
-			} else
-				evt.stop() ;
-		});			
 			
-		// day drag
-		var caldef = this.$class,
-			cal = calendar.Calendars;
-		this._drag[cnt.id] = new zk.Draggable(this, cnt, {
-			starteffect: widget.closeFloats,
-			endeffect: caldef._enddrag,
-			ghosting: caldef._ghostdrag,
-			endghosting: caldef._endghostdrag,
-			draw: caldef._drawdrag,
-			ignoredrag: caldef._ignoredrag
-		});
-
-		var daylong = this.$n("daylong");
-		jq(daylong).bind('click', function(evt) {
-			if (!zk.dragging && !zk.processing) {
-				widget.clearGhost();
-				widget.onDaylongClick(daylong, evt);
-			} else
-				evt.stop();
-		});
-
-		// daylong drag
-		daylong._skipped = true;
-		this._drag[daylong.id] = new zk.Draggable(this,daylong, {
-			starteffect: widget.closeFloats,
-			endeffect: cal._enddrag,
-			ghosting: cal._ghostdrag,
-			endghosting: cal._endghostdrag,
-			change: cal._changedrag,
-			draw: cal._drawdrag,
-			ignoredrag: cal._ignoredrag
-		});
-		jq(this.$n()).bind('click', this.proxy(this.clearGhost));
-	},
-		
 	_updateDateRange: function () {
 		this.updateDateOfBdAndEd_();
 			
@@ -424,7 +343,22 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			}
 		}
 	},
-		
+
+	cleanEvtAry_: function () {
+		this._eventKey = {};
+		this._daylongEvents = [];
+		this._dayEvents = [];
+	},
+
+	processChildrenWidget_: function (isExceedOneDay, event) {
+		var dayEvent = isExceedOneDay ?
+						new calendar.DaylongEvent({event:event}):
+						new calendar.DayEvent({event:event});
+								
+		this.appendChild(dayEvent);					
+		this[isExceedOneDay ? '_daylongEvents': '_dayEvents'].push(dayEvent.$n());
+	},
+
 	getDragDataObj_: function () {
 		if (!this._dragDataObj)
 			this._dragDataObj = {
@@ -468,7 +402,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			};
 		return this._dragDataObj;
     },
-	
+
 	reAlignEvents_: function (hasAdd) {
 		if (hasAdd.day)			
 			this._rePositionDay();
@@ -480,13 +414,13 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		this.beforeSize();
 		this.onSize();
     },
-    
+
 	removeNodeInArray_: function (childWidget, hasAdd) {
 		var isDayEvent = childWidget.className == 'calendar.DayEvent';
 		this[isDayEvent ? '_dayEvents': '_daylongEvents'].$remove(childWidget.$n());
 		hasAdd[isDayEvent ? 'day': 'daylong'] = true;
     },
-	
+
 	onClick: function (cnt, evt) {
 		var widget = zk.Widget.$(cnt),
 			p = [evt.pageX,evt.pageY];
@@ -1014,8 +948,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		
 	onShow: _zkf
 },{
-/********************** day drag ********************************************/
-	
 	_ignoredrag: function (dg, p, evt) {
 		var cnt = dg.node,
 			widget = dg.control;

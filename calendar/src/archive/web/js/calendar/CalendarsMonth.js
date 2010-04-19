@@ -14,11 +14,21 @@ it will be useful, but WITHOUT ANY WARRANTY.
  */
 calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {		
 	
-	$define : {		
-		readonly: function () {
-			if (!this.$n()) return;			
-			this._editMode(!this._readonly);
-		},
+	weekRowTemplate: ['<div class="%1-month-week"><table cellspacing="0" cellpadding="0" class="%1-day-of-month-bg"><tbody><tr>',
+					'<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>',
+					'</tr></tbody></table><table cellspacing="0" cellpadding="0" class="%1-day-of-month-body"><tbody><tr>',
+					'<td class="%1-month-date"><span class="%1-month-date-cnt"></span></td>',
+					'<td class="%1-month-date"><span class="%1-month-date-cnt"></span></td>',
+					'<td class="%1-month-date"><span class="%1-month-date-cnt"></span></td>',
+					'<td class="%1-month-date"><span class="%1-month-date-cnt"></span></td>',
+					'<td class="%1-month-date"><span class="%1-month-date-cnt"></span></td>',
+					'<td class="%1-month-date"><span class="%1-month-date-cnt"></span></td>',
+					'<td class="%1-month-date"><span class="%1-month-date-cnt"></span></td>',
+					'</tr></tbody></table></div>'].join(''),
+					
+	woyRowTemplate: '<div class="%1-month-week"><span class="%1-week-of-year-text"></span></div>',
+	
+	$define : {
 		events: function () {
 			this._events = jq.evalJSON(this._events);
 			if (!this.$n()) return;
@@ -38,7 +48,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			// recalculate
 			this.onSize();
 		},
-		zones: function () {			
+		zones: function () {
 			this._zones = jq.evalJSON(this._zones);
 			this._zonesOffset = jq.evalJSON(this.zonesOffset);
 			this.ts = this._zones.length;
@@ -53,6 +63,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 	$init: function () {
 		this.$supers('$init', arguments);
+		this._weekDates = [];
 		var zcls = this.getZclass(),
 			p = this.params;
 		p._fakerMoreCls = zcls + "-evt-faker-more";
@@ -76,8 +87,6 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		//put day event
 		this.weekRows = jq(cnt).contents().find('.' + zcls + '-day-of-month-body');
 		this.weekRowsBg = jq(cnt).contents().find('.' + zcls + '-day-of-month-bg');
-		
-		this._weekDates = [];
 
 		var children = this.allDayTitle,
 			captionByPopup = this._captionByPopup,
@@ -114,7 +123,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		this._evtsData = this._createEvtsData(true);
 		
 		if (!this._readonly) 
-			this._editMode(true);		
+			this.editMode(true);		
 	},
 	
 	unbind_ : function () {
@@ -149,21 +158,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}
 		return rdata;
 	},
-	
-	cleanEvtAry_: function () {
-		this._eventKey = {};
-		this._eventWeekSet = [];
-	},
-	
-	processChildrenWidget_: function (isExceedOneDay, event) {
-		var dayEvent = isExceedOneDay ?
-						new calendar.DaylongOfMonthEvent({event:event}):
-						new calendar.DayOfMonthEvent({event:event});
 		
-		this.appendChild(dayEvent);
-		this._putInMapList(dayEvent);			
-	},
-	
 	_createWeekSet: function (ed) {
 		var weekDates = [],
 			bd = new Date(this.zoneBd),
@@ -279,33 +274,6 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		temp.remove();
 	},
 		
-	_editMode: function (enable) {
-		var	widget = this,
-			cnt = this.$n('cnt'),
-			cls = this.$class;
-
-		jq(cnt)[enable ? 'bind': 'unbind']('click',  function (evt) {
-			if (!zk.dragging && !zk.processing) {
-				widget.clearGhost();
-				widget.onClick(cnt, evt);
-			} else
-				evt.stop();
-		});
-		
-		// a trick for dragdrop.js
-		cnt._skipped = enable;
-		this._drag[cnt.id] = enable ? new zk.Draggable(this, cnt, {
-			starteffect: widget.closeFloats,
-			endeffect: cls._enddrag,
-			ghosting: cls._ghostdrag,
-			endghosting: cls._endghostdrag,
-			change: cls._changedrag,
-			draw: cls._drawdrag,
-			ignoredrag: cls._ignoredrag
-		}): null;
-		jq(this.$n())[enable ? 'bind': 'unbind']('click', this.proxy(this.clearGhost));
-	},
-		
 	_updateDateRange: function () {
 		this.updateDateOfBdAndEd_();
 		this._captionByDayOfWeek = this.captionByDayOfWeek ? jq.evalJSON(this.captionByDayOfWeek) : null;
@@ -326,27 +294,29 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			offset = weeks - cntRows.length;
 			
 		if (offset > 0) {
-			var cntRowHtml = [],
-				woyRowHtml = '<div class="' + zcls + '-month-week"><span class="' + zcls + '-week-of-year-text"></span></div>';			
-			
-			cntRowHtml.push('<div class="' + zcls + '-month-week"><table cellspacing="0" cellpadding="0" class="' + zcls + '-day-of-month-bg"><tbody><tr>');
-			
-			for (var i =7; i--;)
-				cntRowHtml.push('<td>&nbsp;</td>');
-			cntRowHtml.push('</tr></tbody></table><table cellspacing="0" cellpadding="0" class="' + zcls + '-day-of-month-body"><tbody><tr>');
-			for (var i =7; i--;)
-				cntRowHtml.push('<td class="' + zcls + '-month-date"><span class="' + zcls + '-month-date-cnt"></span></td>');			
-			cntRowHtml.push('</tr></tbody></table></div>');			
-			
-			
+			var cntRow = [],
+				woyRow = [],
+				cntRowHtml = this.weekRowTemplate.replace(new RegExp("%1", "g"), function (match, index) {
+								return zcls;
+							}),
+				woyRowHtml = this.woyRowTemplate.replace(new RegExp("%1", "g"), function (match, index) {
+								return zcls;
+							});			
+						
 			for (var i = offset; i--;) {
-				$cnt.append(cntRowHtml.join(''));
+				cntRow.push(cntRowHtml);
 				if (this.woy)
-					jq(woy).append(woyRowHtml);
-					
-				this.addDayClickEvent_(cnt.lastChild.lastChild.rows[0]);		
-			}						
-		} else {				
+					woyRow.push(woyRowHtml);
+			}
+			
+			$cnt.append(cntRow.join(''));
+			if (this.woy)
+				jq(woy).append(woyRow.join(''));	
+			var tables = jq('.' + zcls + '-day-of-month-body'),
+				length = tables.length;
+			for (var i = tables.length; i-- > length - offset;)
+				this.addDayClickEvent_(tables[i].rows[0]);
+		} else {
 			for (var i = -offset; i--;) {
 				jq(cnt.lastChild).remove();
 				if (this.woy) 
@@ -464,6 +434,20 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				content = zk.fmt.Date.formatDate(ed,'MMM d');		
 			jq(span).html(content);									
 		}	
+	},
+	
+	cleanEvtAry_: function () {
+		this._eventKey = {};
+		this._eventWeekSet = [];
+	},
+	
+	processChildrenWidget_: function (isExceedOneDay, event) {
+		var dayEvent = isExceedOneDay ?
+						new calendar.DaylongOfMonthEvent({event:event}):
+						new calendar.DayOfMonthEvent({event:event});
+		
+		this.appendChild(dayEvent);
+		this._putInMapList(dayEvent);			
 	},
 	
 	getDragDataObj_: function () {
