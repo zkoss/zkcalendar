@@ -184,11 +184,11 @@ Copyright (C) 2006 Potix Corporation. All Rights Reserved.
 		<theme-uri>/a.css</theme-uri>
 		<theme-uri>/b**.css</theme-uri>
 	</desktop-config>
-	-->
+	
 	<desktop-config>
 	  <theme-provider-class>org.zkoss.zkdemo.userguide.FontSizeThemeProvider</theme-provider-class>
 	</desktop-config>
-
+	-->
 	<!-- Uncomment the following if you want to redirect to particular
 		page when ZK Client receives an error code.
 	<client-config>
@@ -341,11 +341,12 @@ Copyright (C) 2006 Potix Corporation. All Rights Reserved.
 		</listener-class>
 	</listener>
 	 -->	
-	<!-- ZK Demo properties loader -->
+	<!-- ZK Demo properties loader
 	<listener>
 		<description>ZK Demo properties loader</description>
 		<listener-class>
 			org.zkoss.zkdemo.userguide.DemoWebAppInit
 		</listener-class>
 	</listener>
+	 -->
 </zk>
