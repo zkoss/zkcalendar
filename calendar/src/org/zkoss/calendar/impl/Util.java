@@ -198,11 +198,11 @@ public class Util {
 		return sb.toString();
 	}
 	
-	public static long getDSTTime(TimeZone tz, Date date) {		
+	public static long getDSTTime(TimeZone tz, Date date) {
 		return date.getTime() + (tz.inDaylightTime(date) ? tz.getDSTSavings(): 0);
 	}
 	
-	public static Date fixDSTTime(TimeZone tz, Date date) {		
+	public static Date fixDSTTime(TimeZone tz, Date date) {
 		return new Date(date.getTime() - (tz.inDaylightTime(date) ? tz.getDSTSavings(): 0));
 	}
 	

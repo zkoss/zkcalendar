@@ -185,19 +185,20 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	
 	editMode: function (enable) {
 		var	widget = this,
-			cnt = this.$n('cnt'),
+			inMon = this.mon,
+			daylong = inMon ? this.$n('cnt'): this.$n("daylong"),
 			cls = this.$class;
 		// a trick for dragdrop.js
-		cnt._skipped = enable;
-		jq(cnt)[enable ? 'bind': 'unbind']('click',  function (evt) {
+		daylong._skipped = enable;
+		jq(daylong)[enable ? 'bind': 'unbind']('click',  function (evt) {
 			if (!zk.dragging && !zk.processing) {
 				widget.clearGhost();
-				widget.onClick(cnt, evt);
+				widget[inMon ? 'onClick': 'onDaylongClick'](daylong, evt);
 			} else
 				evt.stop();
 		});
 		
-		this._drag[cnt.id] = enable ? new zk.Draggable(this, cnt, {
+		this._drag[daylong.id] = enable ? new zk.Draggable(this, daylong, {
 			starteffect: widget.closeFloats,
 			endeffect: cls._enddrag,
 			ghosting: cls._ghostdrag,
@@ -208,28 +209,27 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		}): null;
 		jq(this.$n())[enable ? 'bind': 'unbind']('click', this.proxy(this.clearGhost));
 		
-		if (this.mon) return;
+		if (inMon) return;
 		
-		var daylong = this.$n("daylong"),
-			cal = calendar.Calendars;
-		jq(daylong)[enable ? 'bind': 'unbind']('click', function(evt) {
+		var cnt = this.$n("cnt");
+		jq(cnt)[enable ? 'bind': 'unbind']('click', function(evt) {
 			if (!zk.dragging && !zk.processing) {
 				widget.clearGhost();
-				widget.onDaylongClick(daylong, evt);
+				widget.onClick(cnt, evt);
 			} else
 				evt.stop();
 		});
 
 		// daylong drag
-		daylong._skipped = enable;
-		this._drag[daylong.id] = enable ? new zk.Draggable(this,daylong, {
+		cnt._skipped = enable;
+		this._drag[cnt.id] = enable ? new zk.Draggable(this,cnt, {
 			starteffect: widget.closeFloats,
-			endeffect: cal._enddrag,
-			ghosting: cal._ghostdrag,
-			endghosting: cal._endghostdrag,
-			change: cal._changedrag,
-			draw: cal._drawdrag,
-			ignoredrag: cal._ignoredrag
+			endeffect: cls._endDaydrag,
+			ghosting: cls._ghostDaydrag,
+			endghosting: cls._endghostDaydrag,
+			change: cls._changeDaydrag,
+			draw: cls._drawDaydrag,
+			ignoredrag: cls._ignoreDaydrag
 		}): null;		
 	},
 	

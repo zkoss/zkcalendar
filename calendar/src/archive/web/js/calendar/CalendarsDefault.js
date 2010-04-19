@@ -510,7 +510,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	},
 	
 	onDaylongClick: function (daylong, evt) {
-		
 		var widget = zk.Widget.$(daylong),
 			ce = zk.Widget.$(evt.target).event;
 			
@@ -948,7 +947,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		
 	onShow: _zkf
 },{
-	_ignoredrag: function (dg, p, evt) {
+	_ignoreDaydrag: function (dg, p, evt) {
 		var cnt = dg.node,
 			widget = dg.control;
 		
@@ -969,7 +968,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		return false;
 	},
 	
-	_ghostdrag: function (dg, ofs, evt) {
+	_ghostDaydrag: function (dg, ofs, evt) {
 		var cnt = dg.node,
 			widget = dg.control,
 			targetWidget = zk.Widget.$(evt.domEvent),
@@ -1069,7 +1068,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		return dg.node;	
 	},
 
-	_drawdrag: function (dg, p, evt) {
+	_drawDaydrag: function (dg, p, evt) {
 		var widget = dg.control,
 			h = dg.node.offsetHeight,
 			x = evt.pageX,
@@ -1193,7 +1192,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		}
 	},
 
-	_endghostdrag: function (dg, origin){
+	_endghostDaydrag: function (dg, origin){
         var widget = dg.control,
 			cnt = dg.handle, 
 			row = widget.cntRows,
@@ -1221,7 +1220,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
         }
 	},
 
-	_enddrag: function (dg, evt) {
+	_endDaydrag: function (dg, evt) {
 		var widget = dg.control;
 		if (dg && dg._zdata) {
 			clearInterval(widget.run);
@@ -1271,19 +1270,17 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 						dur = (ed.getHours() - bd.getHours()) * 2 + 
 								(ed.getMinutes() - bd.getMinutes())/30;
 
-
 					bd.setDate(bd.getDate() - cols);
-					bd.setMinutes(bd.getMinutes() - rows * 30 );					
+					bd.setMinutes(bd.getMinutes() - rows * 30 );				
 					ed.setDate(ed.getDate() - cols);
 					ed.setMinutes(ed.getMinutes() - rows * 30 );
-					
 					
 					var bdOffset = bd.getTimezoneOffset(),
 						edOffset2 = ed.getTimezoneOffset();
 					
 					if (edOffset != edOffset2 || ed.getHours()== bd.getHours()) {
 						ed = new Date(bd);
-						ed.setUTCMinutes(ed.getUTCMinutes() + dur * 30);				
+						ed.setUTCMinutes(ed.getUTCMinutes() + dur * 30);			
 					}
 					
 					if (bd.getDate() != ed.getDate()) {
@@ -1320,9 +1317,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				bd.setDate(bd.getDate() + cols);
 				bd.setMinutes(bd.getMinutes() + rows * 30 );
 				
-				var ed = new Date(bd);				
-				ed.setMinutes(ed.getMinutes() + dg._zdata.dur * 30 );					
-
+				var ed = new Date(bd);
+				ed.setMinutes(ed.getMinutes() + dg._zdata.dur * 30 );
 				widget.fire("onEventCreate",{
 						data: [
 							widget.fixTimeZoneFromClient(bd),
