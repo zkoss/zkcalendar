@@ -26,8 +26,6 @@ import org.zkoss.xml.XMLs;
 
 /**
  * @author Jimmy
- * 
- *         2010
  */
 public class Util {
 

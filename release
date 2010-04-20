@@ -53,10 +53,10 @@ fi
 
 if [ "$target" == "" ] || [ "$target" == "daily" ] ; then
 	target=daily
-	binnm=zk-$pkgnm-bin-$stamp
-	srcnm=zk-$pkgnm-src-$stamp	
-	pronm=zk-$pkgnm-$stamp
-	demonm=zk-$pkgnm-demo-$stamp
+	binnm=zk-$pkgnm-bin-$ver-$stamp
+	srcnm=zk-$pkgnm-src-$ver-$stamp	
+	pronm=zk-$pkgnm-$ver-$stamp
+	demonm=zk-$pkgnm-demo-$ver-$stamp
 elif [ "$target" == "official" ] ; then
 	target=daily
 	binnm=zk-$pkgnm-bin-$ver
