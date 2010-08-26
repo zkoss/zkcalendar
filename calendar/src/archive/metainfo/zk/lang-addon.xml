@@ -23,6 +23,8 @@ Copyright (C) 2008 Potix Corporation. All Rights Reserved.
 		<zk-version>5.0.0</zk-version><!-- or later -->
 	</version>
 	
+	<javascript-module name="calendar.calendars" version="2.0.1"/>
+	
 	<zscript language="Java">
 	import org.zkoss.calendar.event.*;
 	import org.zkoss.calendar.api.*;
