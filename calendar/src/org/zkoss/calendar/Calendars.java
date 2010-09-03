@@ -733,6 +733,11 @@ public class Calendars extends XulElement implements
 		if (_dataListener == null)
 			_dataListener = new CalendarDataListener() {
 				public void onChange(CalendarDataEvent event) {
+					CalendarEvent ce = event.getCalendarEvent();
+					if (ce == null) {	// if large scope change, such as clearAll
+						reSendEventGroup();
+						return;
+					}
 					switch (event.getType()) {
 					case CalendarDataEvent.INTERVAL_ADDED:
 						addDayEvent(event.getCalendarEvent());			

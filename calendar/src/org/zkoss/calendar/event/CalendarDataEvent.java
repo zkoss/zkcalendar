@@ -68,8 +68,8 @@ public class CalendarDataEvent {
 			throw new IllegalArgumentException();
 		_model = model;
 		_type = type;
-		_begin = e.getBeginDate();
-		_end = e.getEndDate();
+		_begin = e != null ? e.getBeginDate() : null;
+		_end = e != null ? e.getEndDate() : null;
 		_e = e;
 		_timezone = timezone;
 	}
