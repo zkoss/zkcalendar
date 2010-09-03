@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?link rel="stylesheet" type="text/css" href="/calendar.css.dsp?v=${desktop.webApp.build}"?>
+<?script type="text/javascript" src="/calendar.js.dsp?v=${desktop.webApp.build}"?>
 <?component name="divtab" macro-uri="divtab.zul"?>
 <?component name="divarrow" macro-uri="divarrow.zul"?>
 <?component name="create" macro-uri="createEvent.zul" inline="true"?>
 <?component name="edit" macro-uri="editEvent.zul" inline="true"?>
 <zk>
-<style src="calendar.css"/>
 <zscript><![CDATA[//@IMPORT
 	import java.util.Calendar;
 	import java.text.SimpleDateFormat;
