@@ -302,8 +302,8 @@ for (int i = 0; i < evts.length; i++) {
 		  	mychart.setModel(model);
 	}
 ]]></zscript>
-	<chart id="mychart" title="Current Events Chart" width="600" height="250"
-		type="pie" fgAlpha="128" onCreate="syncModel()"/>
+		<flashchart id="mychart" width="600" height="250"
+		type="pie"  onCreate="syncModel()"/>
 </south>
 </borderlayout>
 <create/>
