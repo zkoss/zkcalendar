@@ -640,8 +640,12 @@ public class Calendars extends XulElement implements
 				++week;
 			return week;
 		} else {
+			
+			// The fixed provided by david.hamilton@jiffle.net 
 			cal.set(Calendar.DAY_OF_MONTH, maximun);
-			return cal.get(Calendar.WEEK_OF_MONTH);
+			int last = cal.get(Calendar.WEEK_OF_MONTH);
+			cal.set(Calendar.DAY_OF_MONTH, 1);
+			return last - cal.get( Calendar.WEEK_OF_MONTH) + 1;
 		}
 	}
 	

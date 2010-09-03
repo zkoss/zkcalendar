@@ -14,6 +14,7 @@ calendar 2.0.1
   Issue 25:  Server timezone of UTC makes DST Issue worse
   Issue 27:  Drag event that end date is 00:00 will update the wrong end date on Month mold
   Issue 19:  Initialization problem for more than one calendars in a tabbox  
+  Issue 28:  Last week missing for certain months
   
   
 * Upgrade Notes:
