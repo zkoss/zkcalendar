@@ -15,6 +15,7 @@ calendar 2.0.1
   Issue 27:  Drag event that end date is 00:00 will update the wrong end date on Month mold
   Issue 19:  Initialization problem for more than one calendars in a tabbox  
   Issue 28:  Last week missing for certain months
+  Issue 29:  SimpleCalendarModel.clear() does not redraw Calendar
   
   
 * Upgrade Notes:
