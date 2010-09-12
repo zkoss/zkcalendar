@@ -23,6 +23,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.zkoss.calendar.api.DateFormatter;
+import org.zkoss.util.Locales;
+import org.zkoss.util.TimeZones;
 
 /**
  * A simple implementation of {@link DateFormatter}
@@ -46,9 +48,8 @@ public class SimpleDateFormatter implements DateFormatter {
 	}
 	
 	public String getCaptionByDateOfMonth(Date date, Locale locale, TimeZone timezone) {
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(timezone, locale);
 		cal.setTime(date);
-		cal.setTimeZone(timezone);
 		if (cal.get(Calendar.DAY_OF_MONTH) == 1) {
 			SimpleDateFormat sd = new SimpleDateFormat("MMM d", locale);
 			sd.setTimeZone(timezone);
@@ -81,9 +82,8 @@ public class SimpleDateFormatter implements DateFormatter {
 	}
 	public String getCaptionByWeekOfYear(Date date, Locale locale,
 			TimeZone timezone) {
-		Calendar cal = Calendar.getInstance();
+		Calendar cal = Calendar.getInstance(timezone, locale);
 		cal.setTime(date);
-		cal.setTimeZone(timezone);
 		return String.valueOf(cal.get(Calendar.WEEK_OF_YEAR));
 	}
 

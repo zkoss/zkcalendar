@@ -25,6 +25,7 @@ import org.zkoss.calendar.event.*;
 import org.zkoss.calendar.impl.Util;
 import org.zkoss.lang.*;
 import org.zkoss.util.Locales;
+import org.zkoss.util.TimeZones;
 import org.zkoss.zk.au.out.AuSetAttribute;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.event.*;
@@ -92,14 +93,14 @@ public class Calendars extends XulElement implements
 	
 	public Calendars() {
 		init();
-		_curDate = Calendar.getInstance().getTime();
+		_curDate = getCalendar().getTime();
 	}
 	
 	private void init() {
 		_evts = new HashMap<String, List<CalendarEvent>>(32);
 		_tzones = new LinkedHashMap<TimeZone, String>();
 		_ids = new HashMap<Object, Object>(32);
-		_firstDayOfWeek = Calendar.getInstance().getFirstDayOfWeek();
+		_firstDayOfWeek = getCalendar().getFirstDayOfWeek();
 	}
 	
 	/**
@@ -318,6 +319,10 @@ public class Calendars extends XulElement implements
 				_tzones.remove(es.getKey());
 		}
 		_hasEmptyZone = false;
+	}
+
+	private Calendar getCalendar(){
+		return Calendar.getInstance(getDefaultTimeZone(), Locales.getCurrent());
 	}	
 	
 	/**
@@ -336,7 +341,7 @@ public class Calendars extends XulElement implements
 		if(_hasEmptyZone)
 			cleanEmptyZone();
 		if (!inMonthMold() && _dfmter != null){
-			Calendar cal = Calendar.getInstance(getDefaultTimeZone());			
+			Calendar cal = getCalendar();			
 			cal.set(Calendar.MINUTE, 0);
 			smartUpdate("captionByTimeOfDay", Util.encloseList(Util.packCaptionByTimeOfDay(cal, _tzones, Locales.getCurrent(), _dfmter)));
 		}
@@ -403,7 +408,7 @@ public class Calendars extends XulElement implements
 	public TimeZone getDefaultTimeZone() {
 		if (_tzones.isEmpty()) {
 			_hasEmptyZone = true;
-			TimeZone t = TimeZone.getDefault();
+			TimeZone t = TimeZones.getCurrent();
 			_tzones.put(t, "");
 			return t;
 		}
@@ -487,7 +492,7 @@ public class Calendars extends XulElement implements
 	private void movePage(int day) {
 		if (_curDate == null) return;
 		
-		Calendar cal = Calendar.getInstance(getDefaultTimeZone());
+		Calendar cal = getCalendar();
 		cal.setTime(_curDate);
 		if (inMonthMold())
 			cal.add(Calendar.MONTH, day);
@@ -503,9 +508,7 @@ public class Calendars extends XulElement implements
 	public Date getBeginDate() {
 		if (_curDate == null) return null; 
 
-		TimeZone t = getDefaultTimeZone();
-
-		Calendar cal = Calendar.getInstance(t);
+		Calendar cal = getCalendar();
 		cal.setTime(_curDate);
 		boolean inMonth = inMonthMold();
 		if (inMonth)
@@ -534,7 +537,7 @@ public class Calendars extends XulElement implements
 		
 		if (beginDate == null) return null;
 		
-		Calendar cal = Calendar.getInstance(getDefaultTimeZone());
+		Calendar cal = getCalendar();
 
 		if (inMonthMold()) {
 			int weeks = getWeekOfMonth();
@@ -585,21 +588,18 @@ public class Calendars extends XulElement implements
 		TimeZone timezone = getDefaultTimeZone();
 		smartUpdate("bd", Util.getDSTTime(timezone, beginDate));
 		smartUpdate("ed", Util.getDSTTime(timezone, endDate));	
+		Calendar cal = getCalendar();
 		if (inMonthMold()){
 			smartUpdate("weekOfMonth", getWeekOfMonth());
 			if (isWeekOfYear() && _dfmter == null) {				
-				Calendar cal = Calendar.getInstance(timezone);
 				cal.setTime(endDate);
-				
 				smartUpdate("woy", String.valueOf(cal.get(Calendar.WEEK_OF_YEAR)));
 			}
 		}
 		
 		DateFormatter dfhandler = getDateFormatter();		
 		if(dfhandler == null) return;
-		
 		final Locale locale = Locales.getCurrent();	
-		Calendar cal = Calendar.getInstance(timezone);
 		cal.setTime(beginDate);
 		
 		if (inMonthMold()) {
@@ -619,7 +619,7 @@ public class Calendars extends XulElement implements
 	 * Returns the number of the week of the month in the current date.
 	 */
 	public int getWeekOfMonth() {
-		Calendar cal = Calendar.getInstance(getDefaultTimeZone());
+		Calendar cal = getCalendar();
 		// calculate how many weeks we should display
 		cal.setTime(_curDate);
 		int maximun = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
@@ -859,8 +859,7 @@ public class Calendars extends XulElement implements
 			renderer.render("weekOfMonth", getWeekOfMonth());
 			
 			if (_weekOfYear) {
-				TimeZone timezone = getDefaultTimeZone();
-				Calendar cal = Calendar.getInstance(timezone);
+				Calendar cal = getCalendar();
 				cal.setTime(getBeginDate());
 				
 				renderer.render("woy", String.valueOf(cal.get(Calendar.WEEK_OF_YEAR)));
@@ -883,22 +882,20 @@ public class Calendars extends XulElement implements
 
 	private void rendererDayData(DateFormatter dfhandler, ContentRenderer renderer) throws IOException {
 		final Locale locale = Locales.getCurrent();
-		TimeZone timezone = getDefaultTimeZone();
-		Calendar cal = Calendar.getInstance(timezone);
+		Calendar cal = getCalendar();
 		cal.setTime(getBeginDate());
 
-		renderer.render("captionByDate", Util.encloseList(Util.packCaptionByDate(cal, getDays(), locale, timezone, dfhandler)));
+		renderer.render("captionByDate", Util.encloseList(Util.packCaptionByDate(cal, getDays(), locale, getDefaultTimeZone(), dfhandler)));
 
 		cal.set(Calendar.MINUTE, 0);
 		renderer.render("captionByTimeOfDay", Util.encloseList(Util.packCaptionByTimeOfDay(cal, _tzones, locale, dfhandler)));
 	}
 
 	private void rendererMonthData(DateFormatter dfhandler, ContentRenderer renderer) throws IOException {
-		TimeZone timezone = getDefaultTimeZone();
-		Calendar cal = Calendar.getInstance(timezone);
+		Calendar cal = getCalendar();
 		cal.setTime(getBeginDate());
 
-		List<List<String>> result = Util.packAllCaptionOfMonth(this, cal, Locales.getCurrent(), timezone, dfhandler);
+		List<List<String>> result = Util.packAllCaptionOfMonth(this, cal, Locales.getCurrent(), getDefaultTimeZone(), dfhandler);
 		renderer.render("captionByDayOfWeek", Util.encloseList(result.get(0)));
 		renderer.render("captionByPopup", Util.encloseList(result.get(1)));
 		renderer.render("captionByDateOfMonth", Util.encloseList(result.get(2)));
