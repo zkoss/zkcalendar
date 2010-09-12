@@ -154,7 +154,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			}
 			rdata[ri] = data;
 			if (!isAddClkEvt) continue;
-			this.addDayClickEvent_(rows[0]);
+			this.addDayClickEvent_(jq(rows[0]).children().find('span'));
 		}
 		return rdata;
 	},
@@ -315,7 +315,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			var tables = jq('.' + zcls + '-day-of-month-body'),
 				length = tables.length;
 			for (var i = tables.length; i-- > length - offset;)
-				this.addDayClickEvent_(tables[i].rows[0]);
+				this.addDayClickEvent_(jq(tables[i].rows[0]).children().find('span'));
 		} else {
 			for (var i = -offset; i--;) {
 				jq(cnt.lastChild).remove();
@@ -527,12 +527,11 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		return -1;
 	},
 	
-	onClick: function (cnt, evt) {
+	onClick: function (cnt, evt) {		
 		var widget = zk.Widget.$(cnt),
 			zcls = widget.getZclass(),
 			node = evt.target,
 			ce = zk.Widget.$(node).event;		
-		
 		if (jq(node).hasClass(zcls + '-evt-faker-more') && node.parentNode.id.indexOf('-frow') > 0) return;
 		
 		if (ce) {

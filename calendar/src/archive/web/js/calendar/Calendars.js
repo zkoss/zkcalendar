@@ -245,7 +245,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			if (target.tagName == "SPAN")
 				jq(target).removeClass(zcls + "-day-over");
 		}).bind('click', function (evt) {
-			var target = evt.target;				
+			var target = evt.target;
 			if (target.tagName == "SPAN")
 				widget.fire("onDayClick",{data:[target.time]});
 			evt.stop();
