@@ -876,7 +876,7 @@ public class Calendars extends XulElement implements
 			renderer.render("readonly", true);
 		
 		renderer.render("days", _days);
-		smartUpdate("escapeXML", _escapeXML);
+		renderer.render("escapeXML", _escapeXML);
 		renderer.render("events", Util.encloseEventMap(this, _evts));
 	}		
 
