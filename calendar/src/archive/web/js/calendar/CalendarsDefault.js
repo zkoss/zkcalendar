@@ -957,11 +957,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		// clear ghost
 		widget.clearGhost();
 		var n = evt.domTarget,
-			targetWidget = zk.Widget.$(n);			
-			
+			targetWidget = zk.Widget.$(n);
 		if (targetWidget.className == 'calendar.DayEvent' && (!n.parentNode || targetWidget.event.isLocked ))
-			return true;				
-		else if (n.nodeType == 1 && jq(n).hasClass("z-calevent-resizer-icon")) {		
+			return true;
+		else if (n.nodeType == 1 && (jq(n).hasClass("z-calevent-resizer-icon")) || jq(n).hasClass("z-calevent-resizer")) {		
 			if (widget._drag[cnt.id])
 				widget._drag[cnt.id]._zrz = true;
 		}
@@ -971,7 +970,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	_ghostDaydrag: function (dg, ofs, evt) {
 		var cnt = dg.node,
 			widget = dg.control,
-			targetWidget = zk.Widget.$(evt.domEvent),
+			targetWidget = zk.Widget.$(evt.domTarget),
 			ce = targetWidget.className == 'calendar.DayEvent'? targetWidget.$n(): null,
 			ts = widget.ts,
 			row = widget.cntRows,
@@ -988,14 +987,13 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			ph: ph, // per height
 			th: cells[ts].firstChild.offsetHeight // total height
 		}
-
 		if (!ce) {
 			var x = evt.pageX,
 				y = evt.pageY,
 				y1 = dg._zoffs.t,
 				cIndex = dg._zoffs.s,
 				begin = dg._zoffs.b;
-
+			widget._drag[cnt.id]._zrz = false;
 			for (; cIndex--;)
 				if (cnt._lefts[cIndex] <= x)
 					break;
