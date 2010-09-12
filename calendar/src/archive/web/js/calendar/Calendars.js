@@ -138,6 +138,9 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		}
 	},
 	
+	processChildrenWidget_: function (isExceedOneDay, event) {
+	},
+	
 	drawEvent_: function(preOffset, className, tr, dayNode){
 		var html = [],
 			s = '<td class="' + className + '">&nbsp;</td>';

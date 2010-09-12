@@ -1,4 +1,12 @@
 	--------
+calendar 2.1
+* Features:
+* Bugs:
+  Issue 11:  	 Events do not appear in the month view
+  
+* Upgrade Notes:
+
+	--------
 calendar 2.0.1
 * Features:
 	Issue 5:  calendar.css.dsp browser caching

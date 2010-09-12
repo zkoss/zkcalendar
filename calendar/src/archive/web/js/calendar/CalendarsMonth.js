@@ -502,7 +502,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
     },
 	
 	reAlignEvents_: function (hasAdd) {
-		this._rePositionDay();		
+		this._rePositionDay();
+		this._evtsData = this._createEvtsData(false);
 		// recalculate
 		this.onSize();
     },
