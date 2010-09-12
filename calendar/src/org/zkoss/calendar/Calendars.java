@@ -649,7 +649,7 @@ public class Calendars extends XulElement implements
 		}
 	}
 	
-	private void reSendEventGroup() {
+	protected void reSendEventGroup() {
 		if (getAttribute(ATTR_ON_INIT_POSTED) == null) {
 			setAttribute(ATTR_ON_INIT_POSTED, Boolean.TRUE);
 			Events.postEvent(-10100, "onInitRender", this, null);
