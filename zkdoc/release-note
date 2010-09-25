@@ -2,7 +2,8 @@
 calendar 2.1
 * Features:
 * Bugs:
-  Issue 11:  	 Events do not appear in the month view
+  Issue 11:  Events do not appear in the month view
+  Issue 37:  Null exception will be shown  
   
 * Upgrade Notes:
 

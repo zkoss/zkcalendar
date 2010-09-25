@@ -12,6 +12,37 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
  */
+(function () {
+	
+	function _compareDays(x , y) {
+		var xDays = x._days,
+			yDays = y._days;
+		if (xDays > yDays) return 1;
+		else if (xDays == yDays) return 0;		
+		return -1;
+	}
+	
+	function _compareStartTime(x , y) {
+		var isDaylongMonX = zk.Widget.$(x).className == 'calendar.DaylongOfMonthEvent',
+			isDaylongMonY = zk.Widget.$(y).className == 'calendar.DaylongOfMonthEvent',
+			xBd = isDaylongMonX ? Math.min(x.upperBoundBd, x.zoneBd): x.zoneBd,
+			yBd = isDaylongMonY ? Math.min(y.upperBoundBd, y.zoneBd): y.zoneBd,
+			xEd = x.zoneEd,
+			yEd = y.zoneEd;
+		
+		if (xBd < yBd)
+			return 1;
+		else if (xBd == yBd) {
+			if (xEd < yEd)
+				return -1;
+			else if (xEd == yEd) 
+				return 0;
+			return 1				
+		}				
+		return -1;
+	}
+	
+	
 calendar.Calendars = zk.$extends(zul.Widget, {	
 	ppTemplate: ['<div id="%1-pp" class="%2" style="position:absolute; top:0;left:0;"><div class="%2-t1"></div><div class="%2-t2"><div class="%2-t3"></div></div>',
 			  '<div class="%2-body"><div class="%2-inner">',
@@ -341,29 +372,11 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		this.reAlignEvents_(hasAdd);
     },
 	
-	dateSorting_: function(x, y){
-		var isDaylongMonX = zk.Widget.$(x).className == 'calendar.DaylongOfMonthEvent',
-			isDaylongMonY = zk.Widget.$(y).className == 'calendar.DaylongOfMonthEvent',
-			xBd = x.zoneBd,
-			xEd = x.zoneEd,
-			yBd = y.zoneBd,
-			yEd = y.zoneEd;			
-			
-		if (isDaylongMonX && !isDaylongMonY)
-			xBd = x.upperBoundBd;			
-		else if (!isDaylongMonX && isDaylongMonY)
-			yBd = y.upperBoundBd;			
-		
-		if (xBd < yBd)
-			return 1;
-		else if (xBd == yBd) {
-			if (xEd < yEd)
-				return -1;
-			else if (xEd == yEd) 
-				return 0;
-			return 1				
-		}				
-		return -1;
+	dateSorting_: function(x, y) {
+		var compareStartTime;
+		if (compareStartTime = _compareStartTime(x , y))
+			return compareStartTime;
+		return _compareDays(x , y);
 	},
 	
 	fixTimeZoneFromServer: function (date, tzOffset) {
@@ -431,7 +444,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	
 	onPopupClick: function (evt) {	
 		var childWidget = zk.Widget.$(evt.target);
-		if (childWidget) {
+		if (childWidget.$instanceof(calendar.Event)) {
 			this.fire("onEventEdit",{data:[childWidget.uuid,evt.pageX,evt.pageY,jq.innerWidth(),jq.innerHeight()]});
 			evt.stop();
 		}
@@ -692,3 +705,4 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		}
 	}
 });
+})();
