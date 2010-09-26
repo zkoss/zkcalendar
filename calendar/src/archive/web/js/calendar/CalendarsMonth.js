@@ -1,4 +1,4 @@
-/* Calendars.js
+/* CalendarsMonth.js
 
 	Purpose:
 		
@@ -274,7 +274,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		temp.remove();
 	},
 		
-	_updateDateRange: function () {
+	updateDateRange_: function () {
 		this.updateDateOfBdAndEd_();
 		this._captionByDayOfWeek = this.captionByDayOfWeek ? jq.evalJSON(this.captionByDayOfWeek) : null;
 		this._captionByWeekOfYear = this.captionByWeekOfYear ? jq.evalJSON(this.captionByWeekOfYear) : null;

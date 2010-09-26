@@ -52,12 +52,13 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 	getEvtTitle: function(ce) {
 		var bd = ce.zoneBd,
 			ed = ce.zoneEd;
-		return  ce.title ? ce.title: (ed - bd < this.ONE_HOUR) ? 
+		return  ce.title ? ce.title: (ed - bd < (7200000/this.parent._timeslots)) ? 
 				(zk.fmt.Date.formatDate(bd,'HH:mm') + ' - ' + ce.content):
 				(zk.fmt.Date.formatDate(bd,'HH:mm') + ' - ' + zk.fmt.Date.formatDate(ed,'HH:mm'));	
 	},
 	
 	update: function() {
+		this.clearCache();
 		this.defineCss_();
 		
 		var ce = this.event,

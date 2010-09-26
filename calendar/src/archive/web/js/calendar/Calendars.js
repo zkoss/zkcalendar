@@ -67,10 +67,10 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		},		
 		cd: function(){
 			this._currentDate = new Date(this._cd);
-			this._updateDateRange();			
+			this.updateDateRange_();			
 		},
 		firstDayOfWeek: function(){
-			this._updateDateRange();
+			this.updateDateRange_();
 		},
 		cleardd: function(){
 			if(this._cleardd)
@@ -127,8 +127,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		event.beginDate = new Date(zk.parseInt(event.beginDate));
 		event.endDate = new Date(zk.parseInt(event.endDate));				
 		
-		event.zoneBd = this.adjTime(event.beginDate);
-		event.zoneEd = this.adjTime(event.endDate);
+		event.zoneBd = this.fixTimeZoneFromServer(event.beginDate);
+		event.zoneEd = this.fixTimeZoneFromServer(event.endDate);
 		
 		var key = event.key,
 			period = this._eventKey[key],
@@ -213,8 +213,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	updateDateOfBdAndEd_: function(){
 		this._beginDate = new Date(this.bd);
 		this._endDate = new Date(this.ed);
-		this.zoneBd = this.adjTime(this._beginDate);
-		this.zoneEd = this.adjTime(this._endDate);
+		this.zoneBd = this.fixTimeZoneFromServer(this._beginDate);
+		this.zoneEd = this.fixTimeZoneFromServer(this._endDate);
 	},
 	
 	editMode: function (enable) {
@@ -289,7 +289,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	setAddDayEvent: function (eventArray) {	 	
         eventArray = jq.evalJSON(eventArray);      
 		if (!eventArray.length) return;		
-		this.clearGhost();		
+		this.clearGhost();
 		
 		var hasAdd = {day:false,daylong:false};
 		
@@ -312,7 +312,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	setModifyDayEvent: function (eventArray) {    
         eventArray = jq.evalJSON(eventArray);      
         if (!eventArray.length) return;   
-		     
+		this.clearGhost();
+		
 		var hasAdd = {day:false,daylong:false};
 			 
         for (var event; (event = eventArray.shift());) {
@@ -380,15 +381,11 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	},
 	
 	fixTimeZoneFromServer: function (date, tzOffset) {
-		return new Date(date.getTime() + (date.getTimezoneOffset() + tzOffset) * 60000);
+		return new Date(date.getTime() + (date.getTimezoneOffset() + (tzOffset || this.tz)) * 60000);
 	},
 	
 	getTimeZoneTime: function (date, tzOffset) {
 		return new Date(date.getTime() + (tzOffset - this.tz)  * 60000);
-	},
-	
-	adjTime: function (date) {
-		return this.fixTimeZoneFromServer(date, this.tz);
 	},
 	
 	fixTimeZoneFromClient: function (date) {

@@ -203,7 +203,6 @@ ${z:setCWRCacheControl()}
 	
 }
 .z-calendars-week-cnt {
-	height: 1104px;
 	padding: 0;
 	margin: 0;
 	background-color: ${bodyColor};
@@ -234,7 +233,6 @@ ${z:setCWRCacheControl()}
 	font-size: 22px;
 }
 .z-calendars-hour-of-day {
-	height: 45px;
 	padding-right: 2px;
 	border-bottom: 1px solid ${separatorColor};
 	color: ${fontColor};
@@ -261,8 +259,6 @@ ${z:setCWRCacheControl()}
 	vertical-align: top;
 }
 .z-calendars-week-day-cnt {
-	height: 1104px;
-	margin-bottom: -1104px;
 	margin-right: 12px;
 	position: relative;
 }

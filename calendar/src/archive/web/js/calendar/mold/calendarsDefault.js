@@ -1,4 +1,4 @@
-/* calendars.js
+/* calendarsDefault.js
 
 	Purpose:
 		
@@ -20,7 +20,9 @@ function (out) {
 		bdTime = this.zoneBd.getTime(),
 		begin = new Date(bdTime),		
 		current = new Date(),
-		weekend = [-1, -1, -1];
+		weekend = [-1, -1, -1],
+		beginHour = this._bt,
+		endHour = this._et;
 	
 	// round corner
 	var t1 = zcls + "-t1",
@@ -164,9 +166,10 @@ function (out) {
 			'<td colspan="', days, '">',
 			'<div class="', hour, '">',
 			'<div class="', hour_inner, '">');
-
-	for (var k = 0; k < 24; k++)
-		out.push('<div class="', hour_sep, '"></div>');
+			
+	for (var k = beginHour; k < endHour; k++)
+		for (var i = this._timeslots/2;i--;)
+			out.push('<div class="' + hour_sep + '"></div>');
 
 	// the end of hours separator
 	out.push('</div></div></td></tr>',
@@ -182,7 +185,7 @@ function (out) {
 			out.push(' ', tzone_end);
 		out.push('">');
 		
-		for (var k = 0; k < 24; k++) {
+		for (var k = beginHour; k < endHour; k++) {
 			current.setHours(k);
 			out.push('<div class="', hour_of_day, '">',
 				this._captionByTimeOfDay ?

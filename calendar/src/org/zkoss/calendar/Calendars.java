@@ -71,7 +71,8 @@ public class Calendars extends XulElement implements
 	private boolean _weekOfYear;
 	private boolean _hasEmptyZone= false;
 	private boolean _escapeXML = false;
-	private List<CalendarEvent> _addEvtList, _mdyEvtList, _rmEvtList;	
+	private List<CalendarEvent> _addEvtList, _mdyEvtList, _rmEvtList;
+	private int _beginTime = 0, _endTime = 24, _timeslots = 2;
 	
  	private static final String ATTR_ON_ADD_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onAddEventResponse";
 	private static final String ATTR_ON_REMOVE_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onRemoveEventResponse";
@@ -581,7 +582,73 @@ public class Calendars extends XulElement implements
 	public Date getCurrentDate() {
 		return _curDate;
 	}
-
+	/**
+	 * Sets the begin time.
+	 * <p> Default: 0.
+	 */
+	public void setBeginTime(int beginTime) {
+		if (0 > beginTime || beginTime > 24)
+			throw new IllegalArgumentException("Illegal begin time: " + beginTime + ", time range only allows from 0 to 24");
+		if (beginTime > _endTime)
+			throw new IllegalArgumentException("Illegal begin time: " + beginTime + ", begin time shall not later then end time: " + _endTime);
+		
+		if (!Objects.equals(_beginTime, beginTime)) {
+			_beginTime = beginTime;
+			smartUpdate("bt", beginTime);
+			reSendEventGroup();
+		}
+	}
+	/**
+	 * Returns the begin time.
+	 * <p> Default: 0.
+	 */
+	public int getBeginTime() {
+		return _beginTime;
+	}
+	/**
+	 * Sets the end time.
+	 * <p> Default: 24.
+	 */
+	public void setEndTime(int endTime) {
+		if (0 > endTime || endTime > 24)
+			throw new IllegalArgumentException("Illegal end time: " + endTime + ", time range only allows from 0 to 24");
+		if (_beginTime > endTime)
+			throw new IllegalArgumentException("Illegal end time: " + endTime + ", end time shall not early then begin time: " + _beginTime);
+		if (!Objects.equals(_endTime, endTime)) {
+			_endTime = endTime;
+			smartUpdate("et", endTime);
+			reSendEventGroup();
+		}
+	}
+	/**
+	 * Returns the end time.
+	 * <p> Default: 24.
+	 */
+	public int getEndTime() {
+		return _endTime;
+	}
+	/**
+	 * Sets the time slot per hour.
+	 * <p> Default: 2.
+	 */
+	public void setTimeslots(int timeslots) {
+		if (timeslots != 2 && timeslots != 4 && timeslots != 6)
+		throw new UiException("allowed: 2 or 4 or 6");
+		
+		if (!Objects.equals(this._timeslots, timeslots)) {
+			this._timeslots = timeslots;
+			smartUpdate("timeslots", timeslots);
+			reSendEventGroup();
+		}
+	}
+	/**
+	 * Returns the time slot per hour.
+	 * <p> Default: 2.
+	 */
+	public int getTimeslots() {
+		return _timeslots;
+	}
+	
 	private void reSendDateRange(){
 		Date beginDate = getBeginDate();
 		Date endDate = getEndDate();
@@ -865,8 +932,15 @@ public class Calendars extends XulElement implements
 				renderer.render("woy", String.valueOf(cal.get(Calendar.WEEK_OF_YEAR)));
 			}
 			if (_dfmter != null) rendererMonthData(_dfmter, renderer);
-		} else
+		} else {
 			if (_dfmter != null) rendererDayData(_dfmter ,renderer);
+			if (_beginTime != 0)
+				renderer.render("bt", _beginTime);
+			if (_beginTime != 24)
+				renderer.render("et", _endTime);
+			if (_timeslots != 2)
+				renderer.render("timeslots", _timeslots);
+		}
 		
 		renderer.render("bd", Util.getDSTTime(tz,getBeginDate()));
 		renderer.render("ed", Util.getDSTTime(tz,getEndDate()));
@@ -922,4 +996,6 @@ public class Calendars extends XulElement implements
 	public void setEventRender(EventRender render) {
 		
 	}
+
+
  }

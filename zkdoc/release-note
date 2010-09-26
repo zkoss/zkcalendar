@@ -1,6 +1,9 @@
 	--------
 calendar 2.1
 * Features:
+  Issue 38:  configure calendar hours eh between 8am and 4 pm
+  Issue 39:  configure how many timeslots per hour like 6 for every 10 minutes or 4 for every 15 minutes
+  
 * Bugs:
   Issue 11:  Events do not appear in the month view
   Issue 37:  Null exception will be shown  
