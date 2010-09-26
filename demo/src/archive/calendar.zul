@@ -19,9 +19,9 @@
 	calendar.set(Calendar.MINUTE, 0);
 	calendar.set(Calendar.SECOND, 0);
 	
-	for (int i = 0; i < 48; i++) {
+	for (int i = 0; i < 120; i++) {
 		dateTime.add(sdf.format(calendar.getTime()));
-		calendar.add(Calendar.MINUTE, 30);
+		calendar.add(Calendar.MINUTE, 5);
 	}
 ]]></zscript>
 <zscript><![CDATA[
@@ -89,7 +89,8 @@ for (int i = 0; i < evts.length; i++) {
 		CalendarsEvent evt = (CalendarsEvent) event;
 		int left = evt.getX();
 		int top = evt.getY();
-		
+		int timeslots = cal.getTimeslots();
+		int timeslotTime = 60/timeslots;
 		if (top + 245 > evt.getDesktopHeight())
 			top = evt.getDesktopHeight() - 245;
 		if (left + 410 > evt.getDesktopWidth())
@@ -102,17 +103,17 @@ for (int i = 0; i < evts.length; i++) {
 						
 		Calendar calendar = Calendar.getInstance(org.zkoss.util.Locales.getCurrent());
 		String[] times = create_sdf.format(evt.getBeginDate()).split(":");		
-		int hours = Integer.parseInt(times[0])*2;
+		int hours = Integer.parseInt(times[0])*timeslots;
 		int mins = Integer.parseInt(times[1]);
 		int bdTimeSum = hours + mins;
-		if (mins >= 30) hours++;
-		createEvent.getFellow("ppbt").setSelectedIndex(hours);
+		hours+=mins/timeslotTime;
+		createEvent.getFellow("ppbt").setSelectedIndex(hours*12/timeslots);
 		times = create_sdf.format(evt.getEndDate()).split(":");
-		hours = Integer.parseInt(times[0])*2;
+		hours = Integer.parseInt(times[0])*timeslots;
 		mins = Integer.parseInt(times[1]);
 		int edTimeSum = hours + mins;
-		if (mins >= 30) hours++;
-		createEvent.getFellow("ppet").setSelectedIndex(hours);
+		hours+=mins/timeslotTime;
+		createEvent.getFellow("ppet").setSelectedIndex(hours*12/timeslots);
 		
 		boolean isAllday = (bdTimeSum + edTimeSum) == 0;
 		createEvent.getFellow("ppbegin").setTimeZone(cal.getDefaultTimeZone());
@@ -134,6 +135,8 @@ for (int i = 0; i < evts.length; i++) {
 	    CalendarsEvent evt = (CalendarsEvent) event;
 		int left = evt.getX();
 		int top = evt.getY();
+		int timeslots = cal.getTimeslots();
+		int timeslotTime = 60/timeslots;
 	    
 		if (top + 245 > evt.getDesktopHeight())
 			top = evt.getDesktopHeight() - 245;
@@ -151,17 +154,17 @@ for (int i = 0; i < evts.length; i++) {
 		Calendar calendar = Calendar.getInstance(org.zkoss.util.Locales.getCurrent());
 		String[] times = edit_sdf.format(ce.getBeginDate()).split(":");
 		
-		int hours = Integer.parseInt(times[0])*2;
+		int hours = Integer.parseInt(times[0])*timeslots;
 		int mins = Integer.parseInt(times[1]);
 		int bdTimeSum = hours + mins;
-		if (mins >= 30) hours++;
-		editEvent.getFellow("ppbt").setSelectedIndex(hours);
+		hours+=mins/timeslotTime;
+		editEvent.getFellow("ppbt").setSelectedIndex(hours*12/timeslots);
 		times = edit_sdf.format(ce.getEndDate()).split(":");
-		hours = Integer.parseInt(times[0])*2;
+		hours = Integer.parseInt(times[0])*timeslots;
 		mins = Integer.parseInt(times[1]);
 		int edTimeSum = hours + mins;
-		if (mins >= 30) hours++;
-		editEvent.getFellow("ppet").setSelectedIndex(hours);
+		hours+=mins/timeslotTime;
+		editEvent.getFellow("ppet").setSelectedIndex(hours*12/timeslots);
 		
 		boolean isAllday = (bdTimeSum + edTimeSum) == 0;
 		

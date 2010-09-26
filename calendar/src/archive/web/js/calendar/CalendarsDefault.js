@@ -92,7 +92,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			inner = body.firstChild.firstChild;
 		inner.firstChild.innerHTML = 
 			widget._dateTime[r*widget._slotOffs] + ' - ' + 
-				widget._dateTime[r*widget._slotOffs + 8];			
+				widget._dateTime[r*widget._slotOffs + 12];			
 		
 		for(var child = jq(dg.node).children().get(0);child;child=child.nextSibling){
 			if(widget.isLegalChild(child)) 
@@ -579,9 +579,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		
 		this.weekDay = jq(this.cntRows).children('.'+ zcls +'-week-day');
 		
-		this.perHeight = this.cntRows.firstChild.firstChild.offsetHeight / 2;
-		
 		_updateCntHeight(this);
+		
+		this.perHeight = this.cntRows.firstChild.firstChild.offsetHeight / this._timeslots;
+		
 		
 		this.createChildrenWidget_();
 		this._rePositionDaylong();
@@ -942,7 +943,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			rows += widget.beginIndex;
 			inner.firstChild.innerHTML = 
 				widget._dateTime[rows*widget._slotOffs] + ' - ' + 
-					widget._dateTime[rows*widget._slotOffs + 8];
+					widget._dateTime[rows*widget._slotOffs + 12];
 
 			for (var child = jq(faker).children().get(0);child;child=child.nextSibling) {
 				if (this.isLegalChild(child)) 
