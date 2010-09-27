@@ -24,10 +24,6 @@ Copyright (C) 2008 Potix Corporation. All Rights Reserved.
 	</version>
 	
 	<javascript-module name="calendar.calendars" version="2.1"/>
-	<javascript package="zk.fmt" merge="true"/>
-	<javascript package="zul.inp" merge="true"/>
-	<javascript package="zul.db" merge="true"/>
-	<javascript package="calendar" merge="true"/>
 	
 	<zscript language="Java">
 	import org.zkoss.calendar.event.*;
