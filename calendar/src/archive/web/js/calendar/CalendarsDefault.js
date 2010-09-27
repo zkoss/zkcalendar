@@ -13,6 +13,16 @@ This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
  */
 (function () {
+	function _getHightOffsPercent(date, timeslots) {
+		var timeslotTime = 60/timeslots,
+			bdTimeslot = date.getMinutes()%timeslotTime;
+		
+		if (!bdTimeslot) return 0;
+		if (timeslots == 2)  return bdTimeslot%10 ? 0.5: (30-bdTimeslot)/30;
+		if (timeslots == 4) return 0.5;
+		return 0.5;
+	}
+	
 	function _setEvtWgtHeight(wgt, node, id, height) {
 		var body = jq(node).find('#'+id+'-body')[0];
 		
@@ -262,13 +272,26 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			edHour = ed.getHours(),
 			bt = widget._bt,
 			et = widget._et,
+			timeslots = widget._timeslots,
+			timeslotTime = 60/timeslots,
 			isOverBeginTime = bd.getHours() < bt,
-			isOverEndTime = edHour > et || (edHour == et && ed.getMinutes() > 0);
+			isOverEndTime = edHour > et || (edHour == et && ed.getMinutes() > 0),
+			bdOffs = bd.getMinutes()%timeslotTime,
+			edOffs = ed.getMinutes()%timeslotTime,
+			bdHightOffs = 0;
 		
+		if (bdOffs)  {
+			var bdTimeslot = _getHightOffsPercent(bd, timeslots);
+			bdHightOffs = bdTimeslot ? dg._zoffs.ph * bdTimeslot: 0;
+			bd.setMinutes(bd.getMinutes() - bdOffs);
+		}
+		
+		if (edOffs)
+			ed.setMinutes(ed.getMinutes() - edOffs);
+			
 		dg._overIndex = 0;	
-		if (isOverBeginTime || isOverEndTime) {
+		if (isOverBeginTime || isOverEndTime || bdOffs || edOffs) {
 			var minutes =  (ed-bd) / 60000,
-				timeslots = widget._timeslots,
 				ph = widget.perHeight,
 				id = faker.id;
 			_setEvtWgtHeight(widget, faker, targetWgt.uuid,(minutes/60 * timeslots * ph));
@@ -279,7 +302,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			if (isOverBeginTime)
 				dg._overIndex = _getSlotCount(bd, bt, timeslots);
 		} 
-		dg._zdelta = ce.offsetTop - (evt.pageY + dg.handle.scrollTop - dg._zoffs.t);
+		dg._zdelta = ce.offsetTop + bdHightOffs - (evt.pageY + dg.handle.scrollTop - dg._zoffs.t);
 	}
 	
 	function _updateDragging(dg, evt) {
@@ -337,7 +360,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			ce = dg._zevt;
 		gostNode.parent = jq(gostNode.parentNode);
         dg._zdata = {
-			rows: (ce.offsetTop - gostNode.offsetTop) / dg._zoffs.ph,
+			rows: ce.offsetTop - gostNode.offsetTop,
             cols: ce.parentNode.parentNode.cellIndex -
             		gostNode.parentNode.parentNode.cellIndex,
 			ghostNode: gostNode
@@ -347,21 +370,31 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	function _updateDragEnd(dg, evt) {
 		var widget = dg.control,
 			cols = dg._zdata.cols,
+			perHgh = dg._zoffs.ph,
 			rows = dg._zdata.rows,
 			ce = dg._zevt;
 			
 		if (cols || rows) {
 			var timeslots = widget._timeslots,
 				timeslotTime = 60/timeslots,
-				offset = [cols, rows * timeslotTime],
 				event = zk.Widget.$(ce).event,
 				bd = new Date(event.zoneBd),
 				ed = new Date(event.zoneEd),
+				bdTimeslot = _getHightOffsPercent(bd, timeslots),
+				bdHightOffs = bdTimeslot ? perHgh * bdTimeslot: 0,
 				edOffset = ed.getTimezoneOffset(),
-				edHour = ed.getHours(),
 				bt = widget._bt,
-				et = widget._et;
+				et = widget._et,
+				offset = [cols, Math.round(bdHightOffs + rows) / perHgh * timeslotTime],
+				bdOffs = bd.getMinutes()%timeslotTime,
+				edOffs = ed.getMinutes()%timeslotTime;
+			if (bdOffs) {
+				bd.setMinutes(bd.getMinutes() - bdOffs + timeslotTime);
+				ed.setMinutes(ed.getMinutes() + timeslotTime);
+			}
 			
+			if (edOffs)
+				ed.setMinutes(ed.getMinutes() - edOffs);
 			//adjust time in time range
 			if (bd.getHours() < bt) {
 				var slotCount = _getSlotCount(bd, bt, timeslots);
@@ -370,16 +403,14 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				ed.setMinutes(ed.getMinutes() + 
 					slotCount * timeslotTime);
 			}
-
 			bd.setDate(bd.getDate() - offset[0]);
 			bd.setMinutes(bd.getMinutes() - offset[1]);				
 			ed.setDate(ed.getDate() - offset[0]);
 			ed.setMinutes(ed.getMinutes() - offset[1]);
-			
 			var bdOffset = bd.getTimezoneOffset(),
 				edOffset2 = ed.getTimezoneOffset();
 			//DST: Fixed different offset after update time
-			if (edOffset != edOffset2 || ed.getHours()== bd.getHours()) {
+			if (edOffset != edOffset2 && ed.getHours()== bd.getHours()) {
 				ed = new Date(bd);
 				ed.setUTCMinutes(ed.getUTCMinutes() + _getSlotCount(bd, ed, timeslots) * timeslotTime);			
 			}
@@ -1223,6 +1254,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			jq.alert('The DST begin time and end time are equal', {icon: 'ERROR'});
 			jq('#'+uuid+'-dd').remove();
 			delete this._ghost[uuid];
+			if (id)
+				jq(id, zk)[0].style.visibility = "";
 		} else {
 			var widget = this,
 				data = [
@@ -1303,12 +1336,25 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				// fix hgh
 				var bi = this.getTimeIndex(bd), 
 					ei = this.getTimeIndex(ed),
-					top = bi * perHgh;
+					top = bi * perHgh,
+					timeslots = this._timeslots,
+					bdOffs = 0,
+					edOffs = 0;
+					
+				if (bi) {
+					var bdTimeslot = _getHightOffsPercent(bd, timeslots)
+					bdOffs = bdTimeslot ? perHgh * bdTimeslot: 0;
+				}
+				
+				if (ei) {
+					var edTimeslot = _getHightOffsPercent(ed, timeslots)
+					edOffs = edTimeslot ? perHgh * edTimeslot: 0;
+				}
 				
 				ce._bi = bi;
 				ce._ei = ei;
-				ce.style.top = jq.px(top);
-				_setEvtWgtHeight(this, ce, ce.id, ((ei -bi) * perHgh));
+				ce.style.top = jq.px(top - bdOffs);
+				_setEvtWgtHeight(this, ce, ce.id, ((ei -bi) * perHgh) + bdOffs - edOffs);
 				
 				// width info
 				for (var n = 0; bi < ei && bi < slotCount;) {
