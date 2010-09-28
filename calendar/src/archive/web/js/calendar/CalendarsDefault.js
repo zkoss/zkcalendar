@@ -19,7 +19,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		
 		if (!bdTimeslot) return 0;
 		if (timeslots == 2)  return bdTimeslot%10 ? 0.5: (30-bdTimeslot)/30;
-		if (timeslots == 4) return 0.5;
+		if (timeslots == 4) return (bdTimeslot%30 == 10) ? 1/3: 2/3;
 		return 0.5;
 	}
 	
@@ -238,9 +238,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			dur = dg._zdata.dur,
 			timeslots = widget._timeslots,
 			ce = dg._zevt,
-			event = zk.Widget.$(ce).event,
-			bd = new Date(event.zoneBd),
-			ed = new Date(event.zoneEd),
+			bd = new Date(ce._bd),
+			ed = new Date(ce._ed),
 			edHour = ed.getHours(),
 			bt = widget._bt,
 			et = widget._et,
@@ -266,33 +265,20 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	function _updateDragStart(dg, evt, ce, faker) {
 		var widget = dg.control,
 			targetWgt = zk.Widget.$(ce),
-			event = targetWgt.event,
-			bd = new Date(event.zoneBd),
-			ed = new Date(event.zoneEd),
+			bd = new Date(ce._bd),
+			ed = new Date(ce._ed),
 			edHour = ed.getHours(),
 			bt = widget._bt,
 			et = widget._et,
 			timeslots = widget._timeslots,
 			timeslotTime = 60/timeslots,
+			ph = dg._zoffs.ph,
 			isOverBeginTime = bd.getHours() < bt,
-			isOverEndTime = edHour > et || (edHour == et && ed.getMinutes() > 0),
-			bdOffs = bd.getMinutes()%timeslotTime,
-			edOffs = ed.getMinutes()%timeslotTime,
-			bdHightOffs = 0;
-		
-		if (bdOffs)  {
-			var bdTimeslot = _getHightOffsPercent(bd, timeslots);
-			bdHightOffs = bdTimeslot ? dg._zoffs.ph * bdTimeslot: 0;
-			bd.setMinutes(bd.getMinutes() - bdOffs);
-		}
-		
-		if (edOffs)
-			ed.setMinutes(ed.getMinutes() - edOffs);
+			isOverEndTime = edHour > et || (edHour == et && ed.getMinutes() > 0);
 			
 		dg._overIndex = 0;	
-		if (isOverBeginTime || isOverEndTime || bdOffs || edOffs) {
+		if (isOverBeginTime || isOverEndTime) {
 			var minutes =  (ed-bd) / 60000,
-				ph = widget.perHeight,
 				id = faker.id;
 			_setEvtWgtHeight(widget, faker, targetWgt.uuid,(minutes/60 * timeslots * ph));
 			
@@ -302,7 +288,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			if (isOverBeginTime)
 				dg._overIndex = _getSlotCount(bd, bt, timeslots);
 		} 
-		dg._zdelta = ce.offsetTop + bdHightOffs - (evt.pageY + dg.handle.scrollTop - dg._zoffs.t);
+		dg._zdelta = ce.offsetTop - (evt.pageY + dg.handle.scrollTop - dg._zoffs.t);
 	}
 	
 	function _updateDragging(dg, evt) {
@@ -358,9 +344,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	function _updateDragEndghost(dg) {
 		var gostNode = dg.node,
 			ce = dg._zevt;
+		
 		gostNode.parent = jq(gostNode.parentNode);
         dg._zdata = {
-			rows: ce.offsetTop - gostNode.offsetTop,
+			rows: (ce.offsetTop - gostNode.offsetTop) / dg._zoffs.ph,
             cols: ce.parentNode.parentNode.cellIndex -
             		gostNode.parentNode.parentNode.cellIndex,
 			ghostNode: gostNode
@@ -373,28 +360,17 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			perHgh = dg._zoffs.ph,
 			rows = dg._zdata.rows,
 			ce = dg._zevt;
-			
 		if (cols || rows) {
 			var timeslots = widget._timeslots,
 				timeslotTime = 60/timeslots,
-				event = zk.Widget.$(ce).event,
-				bd = new Date(event.zoneBd),
-				ed = new Date(event.zoneEd),
+				bd = new Date(ce._bd),
+				ed = new Date(ce._ed),
 				bdTimeslot = _getHightOffsPercent(bd, timeslots),
-				bdHightOffs = bdTimeslot ? perHgh * bdTimeslot: 0,
 				edOffset = ed.getTimezoneOffset(),
 				bt = widget._bt,
 				et = widget._et,
-				offset = [cols, Math.round(bdHightOffs + rows) / perHgh * timeslotTime],
-				bdOffs = bd.getMinutes()%timeslotTime,
-				edOffs = ed.getMinutes()%timeslotTime;
-			if (bdOffs) {
-				bd.setMinutes(bd.getMinutes() - bdOffs + timeslotTime);
-				ed.setMinutes(ed.getMinutes() + timeslotTime);
-			}
-			
-			if (edOffs)
-				ed.setMinutes(ed.getMinutes() - edOffs);
+				offset = [cols, rows * timeslotTime];
+				
 			//adjust time in time range
 			if (bd.getHours() < bt) {
 				var slotCount = _getSlotCount(bd, bt, timeslots);
@@ -1283,9 +1259,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	getTimeIndex: function (date) {
 		var timeslots = this._timeslots,
 			timeslotTime = 60/timeslots,
-			index = Math.max(((date.getHours() - this._bt) * timeslots) + Math.ceil(date.getMinutes()/timeslotTime), 0),
-			hourCount = this._et - this._bt,
-			slotCount = hourCount * timeslots;
+			index = Math.max(((date.getHours() - this._bt) * timeslots) + 
+						Math.ceil(date.getMinutes()/timeslotTime), 0),
+			slotCount = (this._et - this._bt) * timeslots;
 		
 		return  Math.min(index, slotCount);
 	},
@@ -1338,24 +1314,25 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					ei = this.getTimeIndex(ed),
 					top = bi * perHgh,
 					timeslots = this._timeslots,
-					bdOffs = 0,
-					edOffs = 0;
+					bdHeightOffs = 0,
+					edHeightOffs = 0;
 					
 				if (bi) {
 					var bdTimeslot = _getHightOffsPercent(bd, timeslots)
-					bdOffs = bdTimeslot ? perHgh * bdTimeslot: 0;
+					bdHeightOffs = bdTimeslot ? perHgh * bdTimeslot: 0;
 				}
-				
 				if (ei) {
 					var edTimeslot = _getHightOffsPercent(ed, timeslots)
-					edOffs = edTimeslot ? perHgh * edTimeslot: 0;
+					edHeightOffs = edTimeslot ? perHgh * edTimeslot: 0;
 				}
 				
 				ce._bi = bi;
 				ce._ei = ei;
-				ce.style.top = jq.px(top - bdOffs);
-				_setEvtWgtHeight(this, ce, ce.id, ((ei -bi) * perHgh) + bdOffs - edOffs);
+				ce.style.top = jq.px(top - bdHeightOffs);
+				_setEvtWgtHeight(this, ce, ce.id, ((ei -bi) * perHgh) + bdHeightOffs - edHeightOffs);
 				
+				if(bi == ei)
+					bi--;
 				// width info
 				for (var n = 0; bi < ei && bi < slotCount;) {
 					var tmp = data[bi++];
@@ -1381,7 +1358,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					ei = ce._ei, 
 					maxSize = 0, 
 					tmp = {};
-				
+				if(bi == ei)
+					bi--;
 				for (var m = bi; m < ei && m < slotCount; m++) {
 					var len = data[m].length;
 					if (maxSize < len) 
@@ -1523,9 +1501,21 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		}
 		if (!ce) _createDragStart(dg, evt);
 		else {
+			var timeslotTime = 60/widget._timeslots,
+				bdOffs = ce._bd.getMinutes()%timeslotTime,
+				edOffs = ce._ed.getMinutes()%timeslotTime;
+			
+			if (bdOffs || edOffs) {
+				jq.alert('Only allowed move with fitted timeslot', {icon: 'ERROR'});
+				ce._error = true;
+				ce.style.visibility = "";
+				jq('#'+widget.uuid+'-dd').remove();
+			}
+			
 			var faker = ce.cloneNode(true),
 				uuid = widget.uuid,
 				beginIndex = widget.beginIndex;
+			
 				
 			faker.id = uuid + '-dd';
 
@@ -1549,6 +1539,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	},
 
 	_drawDaydrag: function (dg, p, evt) {
+		if(dg._zevt && dg._zevt._error) return;
+		
 		var widget = dg.control,
 			zoffs = dg._zoffs,
 			y = evt.pageY,
@@ -1601,10 +1593,15 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 	_endDaydrag: function (dg, evt) {
 		if (!dg || !dg._zdata) return;
-		
 		var widget = dg.control,
 			ghostNode = dg._zdata.ghostNode;
 			
+		if (dg._zevt && dg._zevt._error) {
+			dg._zevt._error = false;
+			dg._zevt.style.visibility = "";
+			jq('#'+widget.uuid+'-dd').remove();
+			return;
+		}
 		clearInterval(widget.run);
 		//keep ghostNode not be disappear
 		ghostNode.parent.append(jq(ghostNode));
