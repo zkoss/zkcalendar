@@ -685,8 +685,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		this._daylongEvents.sort(this.dateSorting_);
 		this._daylongSpace = [];		
 		
-		
-		
 		var uuid = this.uuid;
 			
 		jq(document.body).append(this.blockTemplate.replace(new RegExp("%1", "g"), function (match, index) {

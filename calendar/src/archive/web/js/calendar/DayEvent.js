@@ -13,8 +13,6 @@ This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
  */
 calendar.DayEvent = zk.$extends(calendar.Event, {
-	ONE_HOUR: 60*60*1000,
-
 	redraw: function (out) {
 		this.defineClassName_();
 		

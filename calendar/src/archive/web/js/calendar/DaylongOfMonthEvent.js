@@ -125,7 +125,7 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 			isAfter = this.event.zoneEd > this.parent.zoneEd;
 					
 		cloneNode.lowerBoundEd = lowerBoundEd;
-		cloneNode._afterOffset = this.parent.getPeriod(cloneNode.startWeek.zoneEd, lowerBoundEd);
+		cloneNode._afterOffset = calUtil.getPeriod(cloneNode.startWeek.zoneEd, lowerBoundEd);
 		cloneNode._days = 7 - cloneNode._afterOffset;
 		
 		if (!isAfter) {

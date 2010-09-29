@@ -15,27 +15,18 @@ it will be useful, but WITHOUT ANY WARRANTY.
 calUtil = {
 	DAYTIME: 86400000,
 	AWEEK: 604800000,
-	isZeroTime: function(date) {
-		return (date.getHours() + date.getMinutes() + 
-			date.getSeconds() + date.getMilliseconds() == 0);
+	getPeriod: function(date1, date2) {
+		//adjust for begin and end are not the same in DST time
+		var tzOffset1 = date1.getTimezoneOffset(),
+			tzOffset2 = date2.getTimezoneOffset(),
+			offset = (tzOffset1 != tzOffset2) ? ((tzOffset1 - tzOffset2) * 60000): 0;
+		
+		return Math.abs(date1 - date2 - offset) / this.DAYTIME;	
 	},
 	isTheSameDay: function(date1, date2) {
 		return (date1.getFullYear() == date2.getFullYear() && 
 				date1.getMonth() == date2.getMonth() && 
 				date1.getDate() == date2.getDate());
-	},
-	getDur: function(ce) {
-		var bd = new Date(ce.zoneBd),
-			ed = new Date(ce.zoneEd);
-			
-		if (this.isZeroTime(ed))
-			ed = new Date(ed.getTime() - 1000);
-		
-		bd.setHours(0,0,0,0);
-		ed.setHours(23,59,59,0);
-
-		return Math.ceil((ed - bd)/ this.DAYTIME);
-	}
-	
+	}	
 	
 };

@@ -42,6 +42,34 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		return -1;
 	}
 	
+	function _getEventPeriod(ce){
+		var bd = new Date(ce.zoneBd),
+			ed = new Date(ce.zoneEd);
+			
+		if (_isZeroTime(ed))
+			ed = new Date(ed.getTime() - 1000);
+		
+		bd.setHours(0,0,0,0);
+		ed.setHours(23,59,59,0);
+
+		return Math.ceil((ed - bd)/ calUtil.DAYTIME);
+	}
+	
+	function _isExceedOneDay(wgt, ce){
+		var bd = new Date(ce.zoneBd),
+			ed = new Date(ce.zoneEd);
+			
+		if (bd < wgt.zoneBd || bd.getFullYear() != ed.getFullYear() ||
+			(!calUtil.isTheSameDay(bd, ed) && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
+			(calUtil.getPeriod(ed, bd) >= 1 && calUtil.getPeriod(ed, wgt.zoneBd) >= 1))
+	 		return true;	
+	}
+	
+	function _isZeroTime(date){
+		return (date.getHours() + date.getMinutes() + 
+			date.getSeconds() + date.getMilliseconds() == 0);
+	}
+	
 	
 calendar.Calendars = zk.$extends(zul.Widget, {	
 	ppTemplate: ['<div id="%1-pp" class="%2" style="position:absolute; top:0;left:0;"><div class="%2-t1"></div><div class="%2-t2"><div class="%2-t3"></div></div>',
@@ -106,22 +134,6 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		return zcls ? zcls : "z-calendars";
 	},	
 
-	isExceedOneDay_: function(bd,ed) {		
-		if (bd < this.zoneBd || bd.getFullYear() != ed.getFullYear() ||
-			(!calUtil.isTheSameDay(bd, ed) && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
-			(this.getPeriod(ed, bd) >= 1 && this.getPeriod(ed, this.zoneBd) >= 1))
-	 		return true;
-	},
-	
-	getPeriod: function(date1, date2) {
-		//adjust for begin and end are not the same in DST time
-		var tzOffset1 = date1.getTimezoneOffset(),
-			tzOffset2 = date2.getTimezoneOffset(),
-			offset = (tzOffset1 != tzOffset2) ? ((tzOffset1 - tzOffset2) * 60000): 0;
-		
-		return Math.abs(date1 - date2 - offset) / calUtil.DAYTIME;	
-	},
-	
 	processEvtData_: function(event){
 		event.isLocked = event.isLocked == 'true' ? true: false;		
 		event.beginDate = new Date(zk.parseInt(event.beginDate));
@@ -137,7 +149,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		if (!period) {			
 			var keyDate = zk.fmt.Date.parseDate(key);
 			keyDate.setHours(0,0,0,0);
-			keyDate = this.getPeriod(keyDate, this.zoneBd);
+			keyDate = calUtil.getPeriod(keyDate, this.zoneBd);
 			
 			period = {day:inMon ? keyDate % 7: keyDate};
 			
@@ -159,12 +171,10 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		for (var i = 0, j = this._events.length; i < j; i++) {
 			var events = this._events[i];
 			for (var k = events.length; k--;) {
-				var event = this.processEvtData_(events[k]),
-					bd = event.zoneBd,
-					ed = event.zoneEd;
-				if (bd > this.zoneEd || ed < this.zoneBd) continue;				
+				var event = this.processEvtData_(events[k]);
+				if (event.zoneBd > this.zoneEd || event.zoneEd < this.zoneBd) continue;				
 				
-				this.processChildrenWidget_(this.isExceedOneDay_(bd, ed), event);
+				this.processChildrenWidget_(_isExceedOneDay(this, event), event);
 			}
 		}
 	},
@@ -296,12 +306,10 @@ calendar.Calendars = zk.$extends(zul.Widget, {
         for (var event; (event = eventArray.shift());) {
 			if (zk.Widget.$(event.id)) continue;
 			event = this.processEvtData_(event);
-			var bd = event.zoneBd,
-				ed = event.zoneEd;
 			//over range
-			if (bd > this.zoneEd || ed < this.zoneBd) continue;
+			if (event.zoneBd > this.zoneEd || event.zoneEd < this.zoneBd) continue;
 			
-			var isExceedOneDay = this.isExceedOneDay_(bd, ed);
+			var isExceedOneDay = _isExceedOneDay(this, event);
 			this.processChildrenWidget_(isExceedOneDay, event);
 			hasAdd[isExceedOneDay ? 'daylong': 'day'] = true;
         }
@@ -321,21 +329,19 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 				inMon = this.mon;;
 			
 			event = this.processEvtData_(event);
-        	var bd = event.zoneBd,
-				ed = event.zoneEd;
 			
 			if (inMon)
 				this.removeNodeInArray_(childWidget);
 			
 			//over range
-			if (bd > this.zoneEd || ed < this.zoneBd) {
+			if (event.zoneBd > this.zoneEd || event.zoneEd < this.zoneBd) {
 				if (!inMon)
 					this.removeNodeInArray_(childWidget, hasAdd);
 				this.removeChild(childWidget);
 				continue;
 			}
 			
-			var isExceedOneDay = this.isExceedOneDay_(bd,ed),			
+			var isExceedOneDay = _isExceedOneDay(this, event),			
 				isDayEvent = inMon ? childWidget.className == 'calendar.DayOfMonthEvent':
 									childWidget.className == 'calendar.DayEvent',
 				isChangeEvent = isExceedOneDay ? (isDayEvent ? true : false):
@@ -524,7 +530,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			jq(document.body.firstChild).before(jq(faker));
 			dg.node = jq('#' + uuid + '-dd')[0];
 			
-			dg._zdur = calUtil.getDur(targetWidget.event);
+			dg._zdur = _getEventPeriod(targetWidget.event);
 			dg._zevt = ce;
 		}
 			
@@ -663,7 +669,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 					ed.setFullYear(bd.getFullYear());
 					ed.setDate(1);
 					ed.setMonth(bd.getMonth());
-					ed.setDate(bd.getDate() + calUtil.getDur(event) - (calUtil.isZeroTime(ed) ? 0:1));	
+					ed.setDate(bd.getDate() + _getEventPeriod(event) - (_isZeroTime(ed) ? 0:1));	
 					
 					widget.fire("onEventUpdate", {
 						data: [

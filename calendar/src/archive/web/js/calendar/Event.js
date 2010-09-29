@@ -133,7 +133,7 @@ calendar.Event = zk.$extends(zk.Widget, {
 	},
 	
 	_getOffset: function(time) {
-		return this.parent.getPeriod(time.end, time.start);
+		return calUtil.getPeriod(time.end, time.start);
 	},
 		
 	_setBoundDate: function(date, isAddOneDay) {
