@@ -1225,7 +1225,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	fireCalEvent: function (bd, ed, evt, id) {
 		var uuid = this.uuid;
 		if (bd.getMinutes() == ed.getMinutes() && bd.getHours() == ed.getHours()) {
-			jq.alert('The DST begin time and end time are equal', {icon: 'ERROR'});
+			jq.alert('The DST begin time and end time cannot be equal', {icon: 'ERROR'});
 			jq('#'+uuid+'-dd').remove();
 			delete this._ghost[uuid];
 			if (id)
@@ -1504,7 +1504,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				edOffs = ce._ed.getMinutes()%timeslotTime;
 			
 			if (bdOffs || edOffs) {
-				jq.alert('Only allowed move with fitted timeslot', {icon: 'ERROR'});
+				jq.alert('Only allowed to move within fitted timeslot', {icon: 'ERROR'});
 				ce._error = true;
 				ce.style.visibility = "";
 				jq('#'+widget.uuid+'-dd').remove();

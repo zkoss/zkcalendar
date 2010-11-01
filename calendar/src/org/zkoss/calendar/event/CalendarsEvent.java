@@ -211,6 +211,6 @@ public class CalendarsEvent extends Event {
 	 * @param isClear
 	 */
 	private void clear(Component target,boolean isClear){		
-		((WebAppCtrl)((AbstractComponent)getTarget()).getDesktop().getWebApp()).getUiEngine().addSmartUpdate(target, "cleardd", Boolean.valueOf(isClear));		
+		((WebAppCtrl)((AbstractComponent)getTarget()).getDesktop().getWebApp()).getUiEngine().addSmartUpdate(target, "cleardd", Boolean.valueOf(isClear), false);		
 	}
 }

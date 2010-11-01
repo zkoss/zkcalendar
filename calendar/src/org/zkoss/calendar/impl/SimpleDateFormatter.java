@@ -23,8 +23,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import org.zkoss.calendar.api.DateFormatter;
-import org.zkoss.util.Locales;
-import org.zkoss.util.TimeZones;
 
 /**
  * A simple implementation of {@link DateFormatter}
