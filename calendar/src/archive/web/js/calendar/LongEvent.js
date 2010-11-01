@@ -90,7 +90,7 @@ calendar.LongEvent = zk.$extends(calendar.Event, {
 		
 		//end equals calendar begin
 		if (ed.getHours() == 0 && ed.getMinutes() == 0 && calUtil.isTheSameDay(ed, pbd))
-			ed.setDate(ed.getDate() + 1);
+			ed = calUtil.addDay(ed, 1);
 			
 		return {bd: bd, ed: ed};
 	},

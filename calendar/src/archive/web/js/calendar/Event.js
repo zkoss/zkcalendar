@@ -140,7 +140,7 @@ calendar.Event = zk.$extends(zk.Widget, {
 		var result = new Date(date);
 		if (date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds() != 0) {
 			if (isAddOneDay) 
-				result.setDate(date.getDate() + 1);
+				result = calUtil.addDay(date, 1);
 			result.setHours(0,0,0,0);
 		}
 		return result;

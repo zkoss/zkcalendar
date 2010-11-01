@@ -126,7 +126,7 @@ function (out) {
 		}
 
 		out.push('"><span class="', day_of_week_cnt, '">', content, '</span></div></th>');
-		begin.setDate(begin.getDate() + 1);
+		begin = calUtil.addDay(begin, 1);
 	}
 	out.push('<th class="',day_of_week_end,'">&nbsp;</th></tr>',
 

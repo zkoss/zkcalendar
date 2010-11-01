@@ -27,6 +27,19 @@ calUtil = {
 		return (date1.getFullYear() == date2.getFullYear() && 
 				date1.getMonth() == date2.getMonth() && 
 				date1.getDate() == date2.getDate());
-	}	
+	},
+	addDay: function(date, days) {
+		var resoult = new Date(date),
+			tzOffset1 = date.getTimezoneOffset(),
+			tzOffset2, offset;
+		resoult.setDate(date.getDate() + days);
+		tzOffset2 = resoult.getTimezoneOffset();
+		offset = (tzOffset1 - tzOffset2);
+		
+		if (offset && (date.getHours() != resoult.getHours()))
+			resoult.setMinutes(resoult.getMinutes() + Math.abs(offset));
+		
+		return new Date(resoult);
+	}
 	
 };

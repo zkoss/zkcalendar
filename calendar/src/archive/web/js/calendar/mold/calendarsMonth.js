@@ -84,7 +84,7 @@ function (out) {
 			out.push(' ', week_weekend);
 		}
 		out.push('">', content, '</th>');
-		bd.setDate(bd.getDate() + 1);
+		bd = calUtil.addDay(bd, 1);
 	}
 	out.push('</tr></tbody></table>');
 	
@@ -104,7 +104,7 @@ function (out) {
 					'" style="top:', (number * j),
 					'%; height:', number, '%;"><span class="',
 					week_of_year_text, '">', content, '</span></div>');
-			bd.setDate(bd.getDate() + 7);
+			bd = calUtil.addDay(bd, 7);
 			if (year != bd.getFullYear())
 				woy = 1;
 			else woy++;
@@ -139,7 +139,7 @@ function (out) {
 				out.push(' ', week_today);
 
 			out.push('">&nbsp;</td>');
-			tempBd.setDate(tempBd.getDate() + 1);
+			tempBd = calUtil.addDay(tempBd, 1);
 		}
 
 		out.push('</tr></tbody></table>',
@@ -166,7 +166,7 @@ function (out) {
 				content = zk.fmt.Date.formatDate(bd,'MMM d');
 			out.push('"><span class="', month_date_cnt, '">', content, '</span></td>');
 
-			bd.setDate(bd.getDate() + 1);
+			bd = calUtil.addDay(bd, 1);
 		}
 		out.push('</tr></tbody></table></div>');
 	}

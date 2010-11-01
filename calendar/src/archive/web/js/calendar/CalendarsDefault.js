@@ -602,7 +602,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			ed = new Date(this.zoneEd);
 		//store value in head tag
 		for (var i = title.length; i--;) {
-			ed.setDate(ed.getDate() - 1);
+			ed = calUtil.addDay(ed, -1);
 			title[i].time = this.fixTimeZoneFromClient(ed);
 		}
 		//arrow position
@@ -800,7 +800,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		
 		//update titles
 		for (var i = this._days; i--;) {
-			ed.setDate(ed.getDate() - 1);
+			ed = calUtil.addDay(ed, -1);
 
 			var title = titles[i],
 				content = this._captionByDate ? this._captionByDate[i] : 
@@ -1013,7 +1013,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				0, zoffs, {w: width, h: daylong.offsetHeight, hs:[daylong.offsetHeight]}, 1);
 
 			var ed = new Date(bd);
-			ed.setDate(ed.getDate() + 1);
+			ed = calUtil.addDay(ed, 1);
 
 			widget.fire("onEventCreate", {
 				data: [
@@ -1155,7 +1155,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			oneDay = calUtil.DAYTIME,
 			bd = widget.zoneBd;
 			ed = new Date(bd);
-		ed.setDate(ed.getDate() + 1);
+		ed = calUtil.addDay(ed, 1);
 			
 		for (var i = evts.length; i--;) {				
 			var tr = table.insertRow(0),

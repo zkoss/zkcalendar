@@ -646,7 +646,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 					ebd = new Date(event.zoneBd),
 					ddClass = zcls + '-evt-dd',
 					inMon = widget.mon;
-				bd.setDate(bd.getDate() + dataObj.getDur(dg));
+				bd = calUtil.addDay(bd, dataObj.getDur(dg));
 				ebd.setFullYear(bd.getFullYear());
 				ebd.setDate(1);
 				ebd.setMonth(bd.getMonth());

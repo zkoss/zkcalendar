@@ -8,6 +8,7 @@ calendar 2.1
   Issue 11:  Events do not appear in the month view
   Issue 37:  Null exception will be shown  
   Issue 41:  Problem when using mold=month
+  Issue 42:  Zk calendar crash at sundays on October.
   
 * Upgrade Notes:
 
