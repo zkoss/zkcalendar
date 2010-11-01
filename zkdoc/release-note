@@ -7,6 +7,7 @@ calendar 2.1
 * Bugs:
   Issue 11:  Events do not appear in the month view
   Issue 37:  Null exception will be shown  
+  Issue 41:  Problem when using mold=month
   
 * Upgrade Notes:
 
