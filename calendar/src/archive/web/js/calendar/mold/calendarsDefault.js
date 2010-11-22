@@ -166,10 +166,13 @@ function (out) {
 			'<td colspan="', days, '">',
 			'<div class="', hour, '">',
 			'<div class="', hour_inner, '">');
-			
+	
+	var html = [];
+	for (var i = this._timeslots/2;i--;)
+		html.push('<div class="' + hour_sep + '"></div>');
+	html = html.join('');		
 	for (var k = beginHour; k < endHour; k++)
-		for (var i = this._timeslots/2;i--;)
-			out.push('<div class="' + hour_sep + '"></div>');
+		out.push(html);
 
 	// the end of hours separator
 	out.push('</div></div></td></tr>',
@@ -179,18 +182,22 @@ function (out) {
 
 /*************** time zone and hours column ******************/
 	current.setMinutes(0);
+	
+	var zones = this._zones,
+		zonesOffset = this._zonesOffset,
+		captionByTimeOfDay = this._captionByTimeOfDay;
 	for (var i = 0, j = this._zones.length; i < j; i++) {
 		out.push('<td class="', tzone);
-		if (!this._zones[i+1])
+		if (!zones[i+1])
 			out.push(' ', tzone_end);
 		out.push('">');
 		
 		for (var k = beginHour; k < endHour; k++) {
 			current.setHours(k);
 			out.push('<div class="', hour_of_day, '">',
-				this._captionByTimeOfDay ?
-					this._captionByTimeOfDay[i * 24 + k] :
-					zk.fmt.Date.formatDate(this.getTimeZoneTime(current,this._zonesOffset[i]),'HH:mm'),
+				captionByTimeOfDay ?
+					captionByTimeOfDay[i * 24 + k] :
+					zk.fmt.Date.formatDate(this.getTimeZoneTime(current, zonesOffset[i]),'HH:mm'),
 				'</div>');
 		}
 		out.push("</td>");

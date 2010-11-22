@@ -60,6 +60,74 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		wgt.beginIndex = wgt._bt * timeslots;
 	}
 	
+	function _updateHourColSize(wgt) {
+		var cntRows = wgt.cntRows,
+			timeRows = cntRows.cells,
+			ts = wgt.ts,
+			timeslots = wgt._timeslots,
+			hourCount = wgt._et - wgt._bt,
+			offset = hourCount - timeRows[0].childNodes.length;
+		
+		if (!offset) return;
+		
+		if (offset > 0) {
+			var hourRowHtml = '<div class="z-calendars-hour-of-day"></div>',
+				hourSepRowHtml = '<div class="z-calendars-hour-sep"></div>',
+				html = [];
+			for(var i = offset; i--;)
+				html.push(hourRowHtml);
+			html = html.join('');
+			for (var i = ts; i--;)
+				jq(timeRows[ts - i - 1]).append(html);
+			
+			html = [];
+			for(var i = offset * timeslots/2; i--;)
+				html.push(hourSepRowHtml);
+			jq(cntRows.previousSibling.lastChild).find('.z-calendars-hour-inner').append(html.join(''));
+		} else if (offset < 0){
+			for (var i = ts; i--;)
+				jq(timeRows[ts - i - 1]).children('.z-calendars-hour-of-day:gt('+(hourCount-1)+')').remove();
+			jq(cntRows.previousSibling.lastChild).find('.z-calendars-hour-sep:gt('+(hourCount * timeslots/2 - 1)+')').remove();
+		}
+		
+		_updateCntHeight(wgt);
+		// recalculate
+		wgt.beforeSize();
+		wgt.onSize();
+	}
+	
+	function _updateTimeZoneColSize(wgt) {
+		var cntRows = wgt.cntRows,
+			ts = wgt.ts,
+			offset = ts - (cntRows.previousSibling.childNodes.length - 1);
+		
+		if (!offset) return;
+		
+		var header = wgt.$n('header'),
+			a = wgt.$n("hdarrow");
+		a.style.left = jq.px((a.parentNode.offsetWidth * ts - a.offsetWidth) - 5);
+		if (offset > 0) {
+			var zoneTH = '<th class="z-calendars-timezone" rowspan="3"></th>',
+				zoneTD = '<td class="z-calendars-timezone"></td>',
+				zoneHourTD = '<td class="z-calendars-timezone">' + jq(cntRows).children('.z-calendars-timezone-end').html() + '</td>',
+				html1 = [], html2 = [], html3 = [];
+			
+			for(var i = offset; i--;) {
+				html1.push(zoneTH);
+				html2.push(zoneTD);
+				html3.push(zoneHourTD);
+			}
+			jq(header).children('.z-calendars-timezone-end').before(html1.join(''));
+			jq(cntRows.previousSibling).children('.z-calendars-timezone-end').before(html2.join(''));
+			jq(cntRows).children('.z-calendars-timezone-end').before(html3.join(''));
+		} else if (offset < 0){
+			jq(header).children('.z-calendars-timezone-end').prevAll().slice(ts - 1).remove();
+			jq(cntRows.previousSibling).children('.z-calendars-timezone-end').prevAll().slice(ts - 1).remove();
+			jq(cntRows).children('.z-calendars-timezone-end').prevAll().slice(ts - 1).remove();
+		}
+		return true;
+	}
+	
 	function _createDragStart(dg, evt) {
 		var cnt = dg.node,
 			widget = dg.control,
@@ -491,7 +559,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				temp.remove();
 			}
 			this.title = jq(header).find('.' + this.getZclass() + '-day-of-week-cnt');
-			this.updateDateRange_({ignoreFirstCol: true});
+			this.updateDateRange_();
 		},
 		events: function () {
 			this._events = jq.evalJSON(this._events);
@@ -530,16 +598,21 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	
 			this._captionByTimeOfDay = this.captionByTimeOfDay ? jq.evalJSON(this.captionByTimeOfDay): null;
 		
-			this.updateHourCol_({ignoreFirstCol: true});
+			this.updateTimeZoneCol_({ignoreFirstCol: true});
 		},
 		timeslots: function(){
 			if (!this.desktop) return;
 			var hourSepRowHtml = '<div class="z-calendars-hour-sep"></div>',
 				html = [];
+				
+			for(var i = this._timeslots/2; i--;)
+				html.push(hourSepRowHtml);
+				
+			hourSepRowHtml = html.join('');
+			html = [];
 			
 			for (var k = this._bt; k < this._et; k++)
-				for(var i = this._timeslots/2; i--;)
-					html.push(hourSepRowHtml);
+				html.push(hourSepRowHtml);
 			jq(this.cntRows.previousSibling.lastChild).find('.z-calendars-hour-inner').html(html.join(''));
 			_updateCntHeight(this);
 			// recalculate
@@ -548,7 +621,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		},
 		bt: _zkf = function(){
 			if (!this.desktop) return;
-			this.updateHourCol_();
+			this.updateTimeZoneCol_(this);
 		},
 		et: _zkf
 	},
@@ -606,7 +679,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			title[i].time = this.fixTimeZoneFromClient(ed);
 		}
 		//arrow position
-		a.style.left = jq.px((a.parentNode.offsetWidth * this.ts - a.offsetWidth) - 5);		
+		a.style.left = jq.px((a.parentNode.offsetWidth * this.ts - a.offsetWidth) - 5);
 		jq(a).bind("click", this.onArrowClick);
 /************************** head event **************************************/		
 		if (hd.childNodes.length > this.ts + 2)
@@ -703,48 +776,22 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		temp.remove();
 	},
 	
-	updateHourCol_: function (opts) {
+	updateTimeZoneCol_: function (opts) {
 		var hdChildren = this.$n('header').children,
-			cntRows = this.cntRows,
-			timeRows = cntRows.cells,
-			uuid = this.uuid,
+			timeRows = this.cntRows.cells,
 			zones = this._zones,
 			beginHour = this._bt,
 			endHour = this._et,
 			bt = this._bt,
 			ts = this.ts,
 			timeslots = this._timeslots,
-			captionByTimeOfDay = this._captionByTimeOfDay,
-			hourCount = endHour - beginHour,
-			offset = hourCount - timeRows[0].childNodes.length;
-			
-		if (offset > 0) {
-			var hourRowHtml = '<div class="z-calendars-hour-of-day"></div>',
-				hourSepRowHtml = '<div class="z-calendars-hour-sep"></div>',
-				html = [];
-			for(var i = offset; i--;)
-				html.push(hourRowHtml);
-			for (var i = ts; i--;)
-				jq(timeRows[ts - i - 1]).append(html.join(''));
-			
-			html = [];
-			for(var i = offset * timeslots/2; i--;)
-				html.push(hourSepRowHtml);
-			jq(cntRows.previousSibling.lastChild).find('.z-calendars-hour-inner').append(html.join(''));
-		} else if (offset < 0){
-			for (var i = ts; i--;)
-				jq(timeRows[ts - i - 1]).children('.z-calendars-hour-of-day:gt('+(hourCount-1)+')').remove();
-			jq(cntRows.previousSibling.lastChild).find('.z-calendars-hour-sep:gt('+(hourCount * timeslots/2 - 1)+')').remove();
-		}
+			captionByTimeOfDay = this._captionByTimeOfDay;
 		
-		if (offset) {
-			_updateCntHeight(this);
-			// recalculate
-			this.beforeSize();
-			this.onSize();
-		}
-			
-			
+		_updateHourColSize(this);
+		
+		if (_updateTimeZoneColSize(this))
+			opts = {ignoreFirstCol: false}
+		
 		//update texts
 		for (var i = ts; i--;) {
 			var index = ts - i - 1,
@@ -754,7 +801,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				var str = zoneText.html(),
 					div = str.substr(str.indexOf('<'),str.length);
 				zoneText.html(zones[index] + div);
-				jq('#' + uuid + '-hdarrow').bind("click", this.onArrowClick);
+				this.clearCache();
+				jq(this.$n("hdarrow")).bind("click", this.onArrowClick);
 			} else zoneText.html(zones[index]);
 
 			//fist column is not need to redraw
@@ -830,7 +878,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 						new calendar.DaylongEvent({event:event}):
 						new calendar.DayEvent({event:event});
 		if (!isExceedOneDay && 
-			(event.zoneBd.getHours() > this._et || event.zoneEd.getHours() < this._bt))
+			(event.zoneBd.getHours() >= this._et || event.zoneEd.getHours() <= this._bt))
 			return;		
 		this.appendChild(dayEvent);					
 		this[isExceedOneDay ? '_daylongEvents': '_dayEvents'].push(dayEvent.$n());
