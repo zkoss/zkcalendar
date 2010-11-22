@@ -25,6 +25,7 @@ import org.zkoss.calendar.api.CalendarEvent;
 import org.zkoss.calendar.impl.Util;
 import org.zkoss.json.JSONArray;
 import org.zkoss.zk.au.AuRequest;
+import org.zkoss.zk.au.out.AuSetAttribute;
 import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.event.Event;
@@ -210,7 +211,7 @@ public class CalendarsEvent extends Event {
 	 * @param target
 	 * @param isClear
 	 */
-	private void clear(Component target,boolean isClear){		
-		((WebAppCtrl)((AbstractComponent)getTarget()).getDesktop().getWebApp()).getUiEngine().addSmartUpdate(target, "cleardd", Boolean.valueOf(isClear), false);		
+	private void clear(Component target,boolean isClear) {
+		((WebAppCtrl)((AbstractComponent)getTarget()).getDesktop().getWebApp()).getUiEngine().addResponse("cleardd" + target.getUuid(), new AuSetAttribute(target, "cleardd", Boolean.valueOf(isClear)));
 	}
 }

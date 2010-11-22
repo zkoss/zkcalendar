@@ -100,10 +100,6 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		firstDayOfWeek: function(){
 			this.updateDateRange_();
 		},
-		cleardd: function(){
-			if(this._cleardd)
-				this.clearGhost();
-		},
 		escapeXML: null		
 	},
 
@@ -132,7 +128,12 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	getZclass: function() {
 		var zcls = this._zclass;
 		return zcls ? zcls : "z-calendars";
-	},	
+	},
+
+	setCleardd: function(cleardd) {
+		if (cleardd)
+			this.clearGhost();
+	},
 
 	processEvtData_: function(event){
 		event.isLocked = event.isLocked == 'true' ? true: false;		
