@@ -125,7 +125,28 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			jq(cntRows.previousSibling).children('.z-calendars-timezone-end').prevAll().slice(ts - 1).remove();
 			jq(cntRows).children('.z-calendars-timezone-end').prevAll().slice(ts - 1).remove();
 		}
+		if (zk.ie || zk.opera)
+			_reputContent(wgt);
 		return true;
+	}
+	
+	function _reputContent(wgt) {
+		var uuid = wgt.uuid;
+				
+		jq(document.body).append(wgt.blockTemplate.replace(new RegExp("%1", "g"), function (match, index) {
+			return uuid;
+		}));
+		var temp = jq('#' + uuid + '-tempblock'),
+			hdTable = wgt.$n('header').offsetParent, 
+			parent = hdTable.parentNode,
+			cnt = wgt.$n('cnt'), 
+			cntTable = cnt.firstChild;
+
+		temp.append(hdTable);
+		temp.append(cntTable);
+		jq(parent).append(hdTable);
+		jq(cnt).append(cntTable);
+		temp.remove();
 	}
 	
 	function _createDragStart(dg, evt) {
@@ -541,23 +562,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				jq(header).children('.z-calendars-day-of-week:gt('+(days-1)+')').remove();
 				$row.children('.z-calendars-week-day:gt('+(days-1)+')').remove();
 			}
-			if (zk.ie || zk.opera) {
-				var uuid = this.uuid;
-				
-				jq(document.body).append(this.blockTemplate.replace(new RegExp("%1", "g"), function (match, index) {
-					return uuid;
-				}));
-				var temp = jq('#' + uuid + '-tempblock'),
-					hdTable = header.offsetParent, 
-					parent = hdTable.parentNode,
-					cntTable = cnt.firstChild;
-
-				temp.append(hdTable);
-				temp.append(cntTable);
-				jq(parent).append(hdTable);
-				jq(cnt).append(cntTable);
-				temp.remove();
-			}
+			
+			if (zk.ie || zk.opera)
+				_reputContent(this);
+			
 			this.title = jq(header).find('.' + this.getZclass() + '-day-of-week-cnt');
 			this.updateDateRange_();
 		},
