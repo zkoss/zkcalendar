@@ -1,12 +1,4 @@
-<div class="tabs">
-	<attribute name="onClick">
-	import org.zkoss.zk.ui.metainfo.*;
-	String command = self.getSpaceOwner().getDynamicProperty("command");
-	ZScript zscript = ZScript.parseContent(command);
-	zscript.setLanguage("Java");
-	page.interpret(
-			zscript.getLanguage(), zscript.getContent(page, self), self.getNamespace());
-	</attribute>
+<div class="tabs" forward="onUpdateView(${arg.text})">
 	<div class="t1" />
 	<div class="t2">
 		<div class="t3" />

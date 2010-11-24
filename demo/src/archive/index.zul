@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?page title="ZK Calendars Demo"?>
+<?link rel="stylesheet" type="text/css" href="/calendar.css.dsp?v=${desktop.webApp.build}"?>
+<?component name="divtab" macro-uri="divtab.zul" inline="true"?>
+<?component name="divarrow" macro-uri="divarrow.zul" inline="true"?>
+<?component name="create" macro-uri="createEvent.zul" inline="true"?>
+<?component name="edit" macro-uri="editEvent.zul" inline="true"?>
+<zk xmlns:w="client">
+	<window apply="org.zkoss.zcaldemo.CalendarDemoComposer"
+		height="100%">
+		<borderlayout id="main" vflex="1">
+			<center border="none">
+				<calendars id="calendars" firstDayOfWeek="Sunday"
+					timeZone="Tokyo=GMT+9,Stockholm=GMT+1" model="${cm}"
+					mold="default">
+					<toolbar sclass="calendar-toolbar">
+						<div class="float-left">
+							<hbox>
+								<divarrow type="arrow-left" />
+								<divarrow type="arrow-right" />
+								<div>
+									<button mold="os" label="today" forward="onToday"/>
+									<button mold="os" label="Switch TimeZone" forward="onSwitchTimeZone" />
+									<span id="FDOW">
+										First Day of Week:
+										<listbox mold="select" forward="onSelect=onUpdateFirstDayOfWeek">
+											<listitem label="${each}" 
+												forEach="Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"/>
+										</listbox>
+									</span>
+									<separator orient="vertical" />
+									<label id="label" />
+									<toolbarbutton label="Refresh"
+										class="refresh" onClick='calendars.invalidate();' />
+								</div>
+							</hbox>
+						</div>
+						<div class="float-right">
+							<hbox>
+								<divtab forEach="Day,Week,5 Days, Month" text="${each}" />
+							</hbox>
+						</div>
+					</toolbar>
+				</calendars>
+			</center>
+			<south if="${hasPE}" open="false" size="300px" flex="true"
+				title="Events Analysis" collapsible="true">
+				<hbox>
+					<chart id="mychart" title="Current Events Chart"
+						width="600" height="250" type="pie" fgAlpha="128" />
+					<n:div xmlns:n="http://www.zkoss.org/2005/zk/native"
+						style="padding: 5px;font-family:verdana,arial,helvetica,sans-serif;color:#0F3B82;font-size:18px">
+						ZK Calendars enables Ajax applications to deliver the rich functionality of time management in pure Java. 
+						It can be integreated into enterprise applcaition with ease. 
+						With ZK Calendars functionality,
+						developers can create collaborative and dynamic enterprise applications like never before.
+						<n:br />
+						ZK Calendars supports day, weekly, and monthly views, moreoever,
+						it supports multiple time zones for worldwide users. 
+						Also, developers can leverage Data Model to create the applicaiton in seconds!
+					</n:div>
+				</hbox>
+			</south>
+		</borderlayout>
+		<create/>
+		<edit/>
+		<popup id="updateMsg" width="320px"
+			w:onShow="jq(this.$n()).hide().fadeIn()">
+			<image src="~./zk/img/progress2.gif"/>
+			<label id="popupLabel"/>
+			<timer id="timer" delay="1000" running="false"
+				onTimer="updateMsg.close()" />
+		</popup>
+	</window>
+</zk>

@@ -1,15 +1,6 @@
 <zk>
-	<zscript><![CDATA[//@IMPORT
-	import java.util.Calendar;
-	import java.text.SimpleDateFormat;
-]]></zscript>
-
 	<window width="400px" title="Edit Event" border="normal"
 		id="editEvent" mode="popup" visible="false" closable="true">
-		<attribute name="onClose">
-		event.stopPropagation();
-		self.visible = false;
-	</attribute>
 		<grid fixedLayout="true">
 			<columns>
 				<column width="100px" />
@@ -66,91 +57,15 @@
 						id="ppcnt" />
 				</row>
 				<row><!-- unimplemented -->
-					Unmodifiable:
+					Lock:
 					<checkbox id="pplocked" />
 				</row>
 				<row>
 					Submit:
 					<div>
-						<button mold="os" label="OK">
-							<attribute name="onClick">
-				org.zkoss.calendar.Calendars cals = (org.zkoss.calendar.Calendars) editEvent.getAttribute("calendars");
-				SimpleCalendarEvent ce = (SimpleCalendarEvent) editEvent.getAttribute("ce");
-				Calendar cal = Calendar.getInstance(cals.getDefaultTimeZone());
-				Date beginDate = ppbegin.getValue();
-				Date endDate = ppend.getValue();
-				
-				beginDate.setSeconds(0);
-				endDate.setSeconds(0);
-				
-				if (!ppallDay.isChecked()) {
-					String[] times = ppbt.getSelectedItem().getLabel().split(":");
-					cal.setTime(beginDate);
-					cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(times[0]));
-					cal.set(Calendar.MINUTE, Integer.parseInt(times[1]));
-					cal.set(Calendar.SECOND, 0);
-					cal.set(Calendar.MILLISECOND, 0);
-					beginDate = cal.getTime();
-					times = ppet.getSelectedItem().getLabel().split(":");
-					cal.setTime(endDate);
-					cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(times[0]));
-					cal.set(Calendar.MINUTE, Integer.parseInt(times[1]));
-					cal.set(Calendar.SECOND, 0);
-					cal.set(Calendar.MILLISECOND, 0);
-					endDate = cal.getTime();
-				} else {
-					cal.setTime(beginDate);
-					cal.set(Calendar.HOUR_OF_DAY, 0);
-					cal.set(Calendar.MINUTE, 0);
-					cal.set(Calendar.SECOND, 0);
-					cal.set(Calendar.MILLISECOND, 0);
-					beginDate = cal.getTime();
-					
-					cal.setTime(endDate);
-					cal.set(Calendar.HOUR_OF_DAY, 0);
-					cal.set(Calendar.MINUTE, 0);
-					cal.set(Calendar.SECOND, 0);
-					cal.set(Calendar.MILLISECOND, 0);
-					endDate = cal.getTime();
-				}			
-				
-				if (!beginDate.before(endDate)) {
-					alert("The end date cannot be before/equal than begin date!");
-					return;
-				}
-				String[] colors = ((String)ppcolor.getSelectedItem().getValue()).split(",");
-				ce.setHeaderColor(colors[0]);
-				ce.setContentColor(colors[1]);
-				ce.setBeginDate(beginDate);
-				ce.setEndDate(endDate);
-				ce.setContent(ppcnt.getValue());
-				ce.setLocked(pplocked.isChecked());
-				cm.update(ce);
-				editEvent.visible = false;
-				syncModel();
-							</attribute>
-						</button>
-						<button mold="os" label="Cancel">
-							<attribute name="onClick">
-					editEvent.visible = false;
-							</attribute>
-						</button>
-						<button mold="os" label="Delete">
-							<attribute name="onClick">
-				Messagebox.show("Are you sure to delete the event!", "Question", Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION,
-  					new EventListener() {
-     					public void onEvent(Event evt) {
-     						if(((Integer)evt.getData()).intValue() != Messagebox.OK)	return;				
-        					org.zkoss.calendar.Calendars cals = (org.zkoss.calendar.Calendars) editEvent.getAttribute("calendars");
-							SimpleCalendarEvent ce = (SimpleCalendarEvent) editEvent.getAttribute("ce");
-							((SimpleCalendarModel)cals.getModel()).remove(ce);
-							syncModel();         				
-      					}
-   					}
-				);
-				editEvent.visible = false;
-			</attribute>
-						</button>
+						<button mold="os" id="okBtn" label="OK"/>
+						<button mold="os" label="Cancel" onClick="editEvent.visible = false;"/>
+						<button mold="os" id="deleteBtn" label="Delete"/>
 					</div>
 				</row>
 			</rows>

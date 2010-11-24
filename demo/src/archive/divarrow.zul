@@ -1,14 +1,13 @@
-<div class="tabs arrows"
-	action="onmouseover: zk.addClass(this, 'arrow-over'); onmouseout:zk.rmClass(this, 'arrow-over')">
-	<attribute name="onClick">
-	import org.zkoss.zk.ui.metainfo.*;
-	String command = self.getSpaceOwner().getDynamicProperty("command");
-	ZScript zscript = ZScript.parseContent(command);
-	zscript.setLanguage("Java");
-	page.interpret(
-			zscript.getLanguage(), zscript.getContent(page, self), self.getNamespace());
-	</attribute>
-	<div class="t1" />
+<div class="tabs arrows" xmlns:w="client" forward="onMoveDate(${arg.type})"
+	w:unbind_="function(){this.$unbind_();jq(this).unbind('mouseover').unbind('mouseout');}">
+	<attribute w:name="bind_"><![CDATA[ 
+		function () { 
+			this.$bind_();
+			jq(this).bind('mouseover',function(evt){jq(evt.currentTarget).addClass('arrow-over');})
+					.bind('mouseout',function(evt){jq(evt.currentTarget).removeClass('arrow-over');});
+		} 
+	]]></attribute>
+	<div class="t1"/>
 	<div class="t2">
 		<div class="t3" />
 	</div>

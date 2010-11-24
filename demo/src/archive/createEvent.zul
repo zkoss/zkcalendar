@@ -1,48 +1,38 @@
-<zk>
-	<zscript><![CDATA[//@IMPORT
-	import java.util.Calendar;
-	import java.text.SimpleDateFormat;
-]]></zscript>
-	<window width="400px" title="Create Event" border="normal"
-		id="createEvent" mode="popup" visible="false" closable="true">
-		<attribute name="onClose">
-		event.stopPropagation();
-		((org.zkoss.calendar.event.CalendarsEvent)createEvent.getAttribute("calevent")).clearGhost();
-		self.visible = false;
-		</attribute>
-		<grid fixedLayout="true">
-			<columns>
-				<column width="100px" />
-				<column />
-			</columns>
-			<rows>
-				<row>
-					BeginDate:
-					<div>
-						<datebox id="ppbegin" />
-						<listbox mold="select" id="ppbt"
-							onCreate="self.setSelectedIndex(0)">
-							<listitem forEach="${dateTime}"
-								label="${each}" />
-						</listbox>
-					</div>
-				</row>
-				<row>
-					EndDate:
-					<div>
-						<datebox id="ppend" />
-						<listbox mold="select" id="ppet"
-							onCreate="self.setSelectedIndex(0)">
-							<listitem forEach="${dateTime}"
-								label="${each}" />
-						</listbox>
-						All Day:
-						<checkbox id="ppallDay"
-							onCheck='ppbt.visible = !self.checked;ppet.visible = !self.checked' />
-					</div>
-				</row>
-				<row>
-					Color:
+<window width="400px" title="Create Event" border="normal"
+	id="createEvent" mode="popup" visible="false" closable="true">
+	<grid fixedLayout="true">
+		<columns>
+			<column width="100px" />
+			<column />
+		</columns>
+		<rows>
+			<row>
+				BeginDate:
+				<div>
+					<datebox id="ppbegin" />
+					<listbox mold="select" id="ppbt"
+						onCreate="self.setSelectedIndex(0)">
+						<listitem forEach="${dateTime}"
+							label="${each}" />
+					</listbox>
+				</div>
+			</row>
+			<row>
+				EndDate:
+				<div>
+					<datebox id="ppend" />
+					<listbox mold="select" id="ppet"
+						onCreate="self.setSelectedIndex(0)">
+						<listitem forEach="${dateTime}"
+							label="${each}" />
+					</listbox>
+					All Day:
+					<checkbox id="ppallDay"
+						onCheck='ppbt.visible = !self.checked;ppet.visible = !self.checked' />
+				</div>
+			</row>
+			<row>
+				Color:
 				<combobox id="ppcolor" readonly="true" style="color:#D96666;font-weight: bold;" onCreate="self.selectedIndex = 0">
 					<attribute name="onSelect">
 						switch(self.getSelectedIndex()) {
@@ -59,82 +49,23 @@
 					<comboitem sclass="khaki" label="Khaki" value="#88880E,#BFBF4D"/>
 					<comboitem sclass="purple" label="Purple" value="#7A367A,#B373B3"/>
 				</combobox>
-				</row>
-				<row>
-					Content:
-					<textbox multiline="true" rows="3" width="200px"
-						id="ppcnt" />
-				</row>
-				<row>
-					Unmodifiable:
-					<checkbox id="pplocked" />
-				</row>
-				<row>
-					Submit:
-					<div>
-						<button mold="os" label="OK">
-							<attribute name="onClick"><![CDATA[
-				org.zkoss.calendar.Calendars cals = (org.zkoss.calendar.Calendars) createEvent.getAttribute("calendars");
-							
-				SimpleCalendarEvent ce = new SimpleCalendarEvent();
-				Calendar cal = Calendar.getInstance(cals.getDefaultTimeZone());
-				Date beginDate = ppbegin.getValue();
-				Date endDate = ppend.getValue();
-				
-				beginDate.setSeconds(0);
-				endDate.setSeconds(0);
-				if (!ppallDay.isChecked()) {
-					String[] times = ppbt.getSelectedItem().getLabel().split(":");
-					
-					cal.setTime(beginDate);
-					cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(times[0]));
-					cal.set(Calendar.MINUTE, Integer.parseInt(times[1]));
-					cal.set(Calendar.SECOND, 0);
-					cal.set(Calendar.MILLISECOND, 0);
-					beginDate = cal.getTime();
-					times = ppet.getSelectedItem().getLabel().split(":");
-					cal.setTime(endDate);
-					cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(times[0]));
-					cal.set(Calendar.MINUTE, Integer.parseInt(times[1]));
-					cal.set(Calendar.SECOND, 0);
-					cal.set(Calendar.MILLISECOND, 0);
-					endDate = cal.getTime();
-				}
-				
-
-				if (!beginDate.before(endDate)) {
-					alert("The end date cannot be before/equal than begin date!");
-					return;
-				}
-				
-				String[] colors = ((String)ppcolor.getSelectedItem().getValue()).split(",");
-				ce.setHeaderColor(colors[0]);
-				ce.setContentColor(colors[1]);
-				ce.setBeginDate(beginDate);
-				ce.setEndDate(endDate);
-				ce.setContent(ppcnt.getValue());
-				ce.setLocked(pplocked.isChecked());
-				cm.add(ce);
-				
-				ppcnt.setRawValue("");
-				ppbt.setSelectedIndex(0);
-				ppet.setSelectedIndex(0);
-				createEvent.visible = false;
-				syncModel();
-				  			]]></attribute>
-						</button>
-						<button mold="os" label="Cancel">
-							<attribute name="onClick">
-								ppcnt.setRawValue("");
-								ppbt.setSelectedIndex(0);
-								ppet.setSelectedIndex(0);
-								createEvent.visible = false;
-				((org.zkoss.calendar.event.CalendarsEvent)createEvent.getAttribute("calevent")).clearGhost();
-							</attribute>
-						</button>
-					</div>
-				</row>
-			</rows>
-		</grid>
-	</window>
-</zk>
+			</row>
+			<row>
+				Content:
+				<textbox multiline="true" rows="3" width="200px"
+					id="ppcnt" />
+			</row>
+			<row>
+				Lock:
+				<checkbox id="pplocked" />
+			</row>
+			<row>
+				Submit:
+				<div>
+					<button mold="os" id="okBtn" label="OK"/>
+					<button mold="os" id="cancelBtn" label="Cancel"/>
+				</div>
+			</row>
+		</rows>
+	</grid>
+</window>
