@@ -583,6 +583,7 @@ public class Calendars extends XulElement implements
 		return _curDate;
 	}
 	/**
+	 * @since 2.1.0
 	 * Sets the begin time.
 	 * <p> Default: 0.
 	 */
@@ -599,6 +600,7 @@ public class Calendars extends XulElement implements
 		}
 	}
 	/**
+	 * @since 2.1.0
 	 * Returns the begin time.
 	 * <p> Default: 0.
 	 */
@@ -606,6 +608,7 @@ public class Calendars extends XulElement implements
 		return _beginTime;
 	}
 	/**
+	 * @since 2.1.0
 	 * Sets the end time.
 	 * <p> Default: 24.
 	 */
@@ -621,6 +624,7 @@ public class Calendars extends XulElement implements
 		}
 	}
 	/**
+	 * @since 2.1.0
 	 * Returns the end time.
 	 * <p> Default: 24.
 	 */
@@ -628,6 +632,7 @@ public class Calendars extends XulElement implements
 		return _endTime;
 	}
 	/**
+	 * @since 2.1.0
 	 * Sets the time slot per hour.
 	 * <p> Default: 2.
 	 */
@@ -642,6 +647,7 @@ public class Calendars extends XulElement implements
 		}
 	}
 	/**
+	 * @since 2.1.0
 	 * Returns the time slot per hour.
 	 * <p> Default: 2.
 	 */
