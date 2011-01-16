@@ -140,8 +140,8 @@ cp -rp $prjnm/* /tmp/zk/$binnm/javadoc/$prjnm
 
 #Copy and pack demo
 cd $maindir
-cp -rp demo/src/* /tmp/zk/$demonm/demo/src
-cp dist/lib/demo.war /tmp/zk/$demonm/demo
+cp -rp zkcalendardemo/src/* /tmp/zk/$demonm/demo/src
+cp dist/lib/zkcalendardemo.war /tmp/zk/$demonm/demo
 
 cd /tmp/zk/$demonm/demo
 find -name .svn | xargs rm -rf
@@ -164,12 +164,3 @@ cd /tmp/zk
 echo "Output ${pwd}${srcnm}.zip"
 zip -qr9 ${srcnm}.zip $srcnm
 rm -rf $srcnm
-
-#pack all
-cd /tmp/zk
-echo "Output ${pwd}${pronm}.zip"
-zip -qr9 ${pronm}.zip *
-rm -rf ${binnm}.zip
-rm -rf ${srcnm}.zip
-rm -rf ${demonm}.zip
-
