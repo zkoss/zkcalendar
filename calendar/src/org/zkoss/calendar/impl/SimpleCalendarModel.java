@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
@@ -42,7 +43,7 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 		Serializable {
 	private static final long serialVersionUID = 20090320L;
 
-	protected List<CalendarEvent> _list;
+	protected List _list;
 
 	/**
 	 * Constructor
@@ -60,23 +61,23 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * since {@link Calendars} is not smart enough to handle it.
 	 * Instead, modify it thru this object.
 	 */
-	public SimpleCalendarModel(List<CalendarEvent> list, boolean live) {
-		_list = live ? list: new ArrayList<CalendarEvent>(list);
+	public SimpleCalendarModel(List list, boolean live) {
+		_list = live ? list: new ArrayList(list);
 	}
 
 	/**
 	 * Constructor.
 	 */
 	public SimpleCalendarModel() {
-		_list = new ArrayList<CalendarEvent>();
+		_list = new ArrayList();
 	}
 
 	/**
 	 * Constructor.
 	 * It makes a copy of the specified collection (i.e., not live).
 	 */
-	public SimpleCalendarModel(Collection<CalendarEvent> c) {
-		_list = new ArrayList<CalendarEvent>(c);
+	public SimpleCalendarModel(Collection c) {
+		_list = new ArrayList(c);
 	}
 	/**
 	 * Constructor.
@@ -91,7 +92,7 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * @param initialCapacity the initial capacity for this SimpleCalendarModel.
 	 */
 	public SimpleCalendarModel(int initialCapacity) {
-		_list = new ArrayList<CalendarEvent>(initialCapacity);
+		_list = new ArrayList(initialCapacity);
 	}
 
 	/**
@@ -177,12 +178,13 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * @param endDate the end date
 	 * @param rc a RenderContext encapsulates the information needed for Calendars.
 	 */
-	public List<CalendarEvent> get(Date beginDate, Date endDate, RenderContext rc) {
-		List<CalendarEvent> list = new LinkedList<CalendarEvent>();
+	public List get(Date beginDate, Date endDate, RenderContext rc) {
+		List list = new LinkedList();
 		long begin = beginDate.getTime();
 		long end = endDate.getTime();
 		
-		for (CalendarEvent ce : _list) {
+		for (Iterator it = _list.iterator(); it.hasNext();) {
+			CalendarEvent ce = (CalendarEvent) it.next();
 			long b = ce.getBeginDate().getTime();
 			long e = ce.getEndDate().getTime();
 

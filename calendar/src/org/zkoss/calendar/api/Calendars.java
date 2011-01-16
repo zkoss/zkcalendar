@@ -90,7 +90,7 @@ public interface Calendars extends org.zkoss.zul.impl.api.XulElement {
 	 * Returns the unmodifiable map including all the timezone inside the
 	 * calendar.
 	 */
-	public Map<TimeZone, String> getTimeZones();
+	public Map getTimeZones();
 
 	/**
 	 * 
@@ -100,7 +100,7 @@ public interface Calendars extends org.zkoss.zul.impl.api.XulElement {
 	 * <p>
 	 * Note: never null.
 	 */
-	public List<CalendarEvent> getEvent(Date beginDate);
+	public List getEvent(Date beginDate);
 
 	/**
 	 * @deprecated As of release 2.0-RC

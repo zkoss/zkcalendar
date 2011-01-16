@@ -19,6 +19,7 @@ package org.zkoss.calendar.impl;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
@@ -36,7 +37,7 @@ import org.zkoss.io.Serializables;
  */
 abstract public class AbstractCalendarModel implements CalendarModel, Serializable {
 	private static final long serialVersionUID = 20090317L;
-	private transient List<CalendarDataListener> _listeners = new LinkedList<CalendarDataListener>();
+	private transient List _listeners = new LinkedList();
 		
 	/** 
 	 * @deprecated As of release 2.0-RC, replaced with {@link #fireEvent(int type, CalendarEvent e)}
@@ -65,8 +66,8 @@ abstract public class AbstractCalendarModel implements CalendarModel, Serializab
 	 */
 	protected void fireEvent(int type, Date begin, Date end, TimeZone timezone) {
 		final CalendarDataEvent evt = new CalendarDataEvent(this, type, begin, end, timezone);
-		for (CalendarDataListener listener : _listeners)
-			listener.onChange(evt);
+		for (Iterator it = _listeners.iterator(); it.hasNext();)
+			((CalendarDataListener)it.next()).onChange(evt);
 	}
 	/** Fires a {@link CalendarDataEvent} for all registered listener
 	 * (thru {@link #addCalendarDataListener}.
@@ -75,8 +76,8 @@ abstract public class AbstractCalendarModel implements CalendarModel, Serializab
 	 */
 	protected void fireEvent(int type, CalendarEvent e, TimeZone timezone) {
 		final CalendarDataEvent evt = new CalendarDataEvent(this, type, e, timezone);
-		for (CalendarDataListener listener : _listeners)
-			listener.onChange(evt);		
+		for (Iterator it = _listeners.iterator(); it.hasNext();)
+			((CalendarDataListener)it.next()).onChange(evt);
 	}
 	
 	public void addCalendarDataListener(CalendarDataListener l) {
@@ -99,7 +100,7 @@ abstract public class AbstractCalendarModel implements CalendarModel, Serializab
 	throws java.io.IOException, ClassNotFoundException {
 		s.defaultReadObject();
 
-		_listeners = new LinkedList<CalendarDataListener>();
+		_listeners = new LinkedList();
 		Serializables.smartRead(s, _listeners);
 	}
 }

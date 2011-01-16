@@ -35,7 +35,7 @@ public interface CalendarModel {
 	 * @param endDate the end date
 	 * @param rc a RenderContext encapsulates the information needed for Calendars.
 	 */
-	public List<CalendarEvent> get(Date beginDate, Date endDate, RenderContext rc);	
+	public List get(Date beginDate, Date endDate, RenderContext rc);	
 	/** Adds a listener to the calendar model that's notified each time a change
 	 * to the data model occurs. 
 	 */
