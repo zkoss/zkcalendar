@@ -19,11 +19,11 @@ Copyright (C) 2008 Potix Corporation. All Rights Reserved.
 	
 	<version>
 		<version-class>org.zkoss.calendar.Version</version-class>
-		<version-uid>2.1.0</version-uid>
+		<version-uid>2.1.1</version-uid>
 		<zk-version>5.0.4</zk-version><!-- or later -->
 	</version>
 	
-	<javascript-module name="calendar.calendars" version="2.1.0"/>
+	<javascript-module name="calendar.calendars" version="2.1.1"/>
 	
 	<zscript language="Java">
 	import org.zkoss.calendar.event.*;

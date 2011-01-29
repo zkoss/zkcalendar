@@ -54,18 +54,18 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 	private Textbox editEvent$ppcnt;
 	
 	
-	@Override
+	//@Override
 	public ComponentInfo doBeforeCompose(Page page, Component parent,
 			ComponentInfo compInfo) {
 		initTimeDropdown(page);
 		// prepare model data
 		initCalendarModel(page);
 		hasPE = WebApps.getFeature("pe");
-		page.setAttribute("hasPE", hasPE);
+		page.setAttribute("hasPE", new Boolean(hasPE));
 		return super.doBeforeCompose(page, parent, compInfo);
 	}
 	
-	@Override
+	//@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		syncModel();

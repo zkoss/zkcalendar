@@ -4,10 +4,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.calendar</groupId>
-	<artifactId>zkcalendars</artifactId>
-	<version>2.1.0</version>
+	<artifactId>calendar</artifactId>
+	<version>2.1.1.FL.20110129</version>
 	<properties>
 		<zk.version>5.0.5</zk.version>
+		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+		<packname>-2.1.1-FL-${maven.build.timestamp}</packname>
 	</properties>
 	<packaging>jar</packaging>
 	<name>The ZK Calendars</name>
@@ -20,6 +22,12 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+	<repositories>
+		<repository>
+			<id>zk repository</id>
+			<url>http://mavensync.zkoss.org/maven2</url>
+		</repository>
+	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>zkmaven</id>
@@ -27,29 +35,7 @@
 			<url>http://mavensync.zkoss.org/maven2/</url>
 		</pluginRepository>
 	</pluginRepositories>
-
-	<repositories>
-		<repository>
-			<id>zk repository</id>
-			<url>http://mavensync.zkoss.org/maven2</url>
-		</repository>
-	</repositories>
 	<dependencies>
-		<dependency>
-			<groupId>org.zkoss.common</groupId>
-			<artifactId>zcommon</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.common</groupId>
-			<artifactId>zweb</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zk</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
 			<artifactId>zul</artifactId>
@@ -57,11 +43,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<directory>${project.basedir}/debug</directory>
-		<outputDirectory>${project.basedir}/debug/classes</outputDirectory>
-		<finalName>${project.artifactId}-${project.version}</finalName>
-		<testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
-		<sourceDirectory>${project.basedir}/src/</sourceDirectory>
+		<sourceDirectory>${project.basedir}/src</sourceDirectory>
 		<resources>
 			<resource>
 				<directory>${project.basedir}/src/archive</directory>
@@ -87,7 +69,100 @@
 				<configuration>
 					<source>1.4</source>
 					<target>1.4</target>
+					<excludes>
+						<exclude>**/archive/**</exclude>
+					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<archive>
+						<manifestFile>${project.basedir}/src/archive/META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<configuration>
+							<encoding>UTF-8</encoding>
+							<charset>UTF-8</charset>
+							<reportOutputDirectory>${project.basedir}/target/javadoc</reportOutputDirectory>
+							<destDir>calendar</destDir>
+							<show>protected</show>
+						</configuration>
+						<goals>
+							<goal>javadoc</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<id>source</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>${project.artifactId}</finalName>
+							<descriptors>
+								<descriptor>assembly/source.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>bin</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>zk-${project.artifactId}-bin${packname}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>assembly/bin.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>bundle</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>assembly/source.xml</descriptor>
+								<descriptor>assembly/bundle.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>src</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>zk-${project.artifactId}-src${packname}</finalName>
+							<appendAssemblyId>false</appendAssemblyId>
+							<descriptors>
+								<descriptor>assembly/src.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

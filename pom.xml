@@ -1,0 +1,96 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.zkoss.calendar</groupId>
+	<artifactId>zkcalendar</artifactId>
+	<version>1.0.0</version>
+	<packaging>pom</packaging>
+	<name>The ZK Calendar Project</name>
+	<description>The ZK Calendar Project</description>
+	<url>http://www.zkoss.org/product/zkcalendar.dsp</url>
+	<modules>
+		<module>calendar</module>
+		<module>zkcalendardemo</module>
+	</modules>
+	<properties>
+		<zk.version>5.0.5</zk.version>
+		<jasperreports.version>3.7.0</jasperreports.version>
+		<jfreechart.version>1.0.13</jfreechart.version>
+	</properties>
+	<licenses>
+		<license>
+			<name>GNU General Public License, Version 2.0</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<repositories>
+		<repository>
+			<id>zk repository</id>
+			<url>http://mavensync.zkoss.org/maven2</url>
+		</repository>
+		<repository>
+			<id>ZK PE Evaluation</id>
+			<url>http://mavensync.zkoss.org/zk/pe-eval</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>${jasperreports.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>eclipse</groupId>
+					<artifactId>jdtcore</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-beanutils</groupId>
+					<artifactId>commons-beanutils</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcmail-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcprov-jdk14</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>${jfreechart.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>jfree</groupId>
+					<artifactId>jcommon</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.zkoss.theme</groupId>-->
+<!--			<artifactId>breeze</artifactId>-->
+<!--			<version>${zk.version}</version>-->
+<!--		</dependency>-->
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkex</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkplus</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+	</dependencies>
+</project>

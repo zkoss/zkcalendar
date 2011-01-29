@@ -1,5 +1,12 @@
 	--------
-calendar 2.1
+calendar 2.1.1
+* Features:
+* Bugs:
+* Upgrade Notes:
+
+	--------
+calendar 2.1.0
+November 23, 2010
 * Features:
   Issue 38:  configure calendar hours eh between 8am and 4 pm
   Issue 39:  configure how many timeslots per hour like 6 for every 10 minutes or 4 for every 15 minutes
