@@ -121,6 +121,10 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		// just in case
 		this.closeFloats();
 		zWatch.unlisten({onSize: this, onShow: this});
+		if (this._drag)
+			for (var i in this._drag)
+				if (this._drag[i].destroy)
+					this._drag[i].destroy();
 		this._drag = this._ghost = this._eventKey = this.params = null;
 		this.$supers('unbind_', arguments);
 	},
@@ -243,6 +247,9 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 				evt.stop();
 		});
 		
+		if (!enable && this._drag[daylong.id])
+			this._drag[daylong.id].destroy();
+		
 		this._drag[daylong.id] = enable ? new zk.Draggable(this, daylong, {
 			starteffect: widget.closeFloats,
 			endeffect: cls._enddrag,
@@ -252,6 +259,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			draw: cls._drawdrag,
 			ignoredrag: cls._ignoredrag
 		}): null;
+		
 		jq(this.$n())[enable ? 'bind': 'unbind']('click', this.proxy(this.clearGhost));
 		
 		if (inMon) return;
@@ -266,6 +274,9 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		});
 
 		// daylong drag
+		if (!enable && this._drag[cnt.id])
+			this._drag[cnt.id].destroy();
+			
 		cnt._skipped = enable;
 		this._drag[cnt.id] = enable ? new zk.Draggable(this,cnt, {
 			starteffect: widget.closeFloats,
@@ -275,7 +286,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			change: cls._changeDaydrag,
 			draw: cls._drawDaydrag,
 			ignoredrag: cls._ignoreDaydrag
-		}): null;		
+		}): null;
 	},
 	
 	addDayClickEvent_: function (element) {

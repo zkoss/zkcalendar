@@ -667,15 +667,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		
 		this.weekDay = jq(this.cntRows).children('.'+ zcls +'-week-day');
 		
-		_updateCntHeight(this);
-		
-		this.perHeight = this.cntRows.firstChild.firstChild.offsetHeight / this._timeslots;
-		
-		
-		this.createChildrenWidget_();
-		this._rePositionDaylong();
-		this._rePositionDay();
-		
 /****************************** zone arrow ******************************/		
 		var a = this.$n("hdarrow"),
 			hd = this.$n("header"),
@@ -686,8 +677,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			ed = calUtil.addDay(ed, -1);
 			title[i].time = this.fixTimeZoneFromClient(ed);
 		}
-		//arrow position
-		a.style.left = jq.px((a.parentNode.offsetWidth * this.ts - a.offsetWidth) - 5);
 		jq(a).bind("click", this.onArrowClick);
 /************************** head event **************************************/		
 		if (hd.childNodes.length > this.ts + 2)
@@ -1464,6 +1453,17 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	} : function () {return false;},
 	
 	onSize: _zkf = function () {
+		if (!this.perHeight) {
+			_updateCntHeight(this);
+			this.perHeight = this.cntRows.firstChild.firstChild.offsetHeight / this._timeslots;
+			this.createChildrenWidget_();
+			this._rePositionDaylong();
+			this._rePositionDay();
+			var a = this.$n("hdarrow");
+			//arrow position
+			a.style.left = jq.px((a.parentNode.offsetWidth * this.ts - a.offsetWidth) - 5);
+		}
+		
 		var cmp = this.$n(),
 			hgh = cmp.offsetHeight;
 		this.clearGhost();

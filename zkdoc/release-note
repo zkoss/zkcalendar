@@ -2,6 +2,7 @@
 calendar 2.1.1
 * Features:
 * Bugs:
+	Issue 46: 	Calendar in the second tab of tabbox cannot add event.
 * Upgrade Notes:
 
 	--------
