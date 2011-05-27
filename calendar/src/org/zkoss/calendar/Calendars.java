@@ -16,6 +16,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 package org.zkoss.calendar;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
@@ -29,7 +30,6 @@ import org.zkoss.util.TimeZones;
 import org.zkoss.zk.au.out.AuSetAttribute;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.event.*;
-import org.zkoss.zk.ui.metainfo.LanguageDefinition;
 import org.zkoss.zk.ui.sys.ContentRenderer;
 import org.zkoss.zk.ui.sys.DesktopCtrl;
 import org.zkoss.zul.Toolbar;
@@ -970,6 +970,10 @@ public class Calendars extends XulElement implements
 		renderer.render("days", _days);
 		renderer.render("escapeXML", _escapeXML);
 		renderer.render("events", Util.encloseEventMap(this, _evts));
+		String pattern = ((SimpleDateFormat) DateFormat.getDateInstance(
+				DateFormat.SHORT, Locales.getCurrent())).toPattern().replaceAll(
+				"[^\\p{Alpha}]*y+[^\\p{Alpha}]*", "");
+		renderer.render("weekFmt", pattern);
 	}		
 
 	private void rendererDayData(DateFormatter dfhandler, ContentRenderer renderer) throws IOException {

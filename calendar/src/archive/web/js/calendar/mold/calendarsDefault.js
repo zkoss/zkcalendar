@@ -110,7 +110,7 @@ function (out) {
 	// day-of-week
 	for (var index = 0 , j = 0; j < days; ++j) {
 		var content = captionByDate ? captionByDate[j] : 
-									zk.fmt.Date.formatDate(begin,'EEE MM/d');
+									zk.fmt.Date.formatDate(begin,'EEE ' + this.weekFmt);
 		
 		out.push('<th class="', day_of_week, '">',
 				'<div class="', day_of_week_inner);

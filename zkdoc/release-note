@@ -3,6 +3,7 @@ calendar 2.1.1
 * Features:
 * Bugs:
 	Issue 46: 	Calendar in the second tab of tabbox cannot add event.
+	Issue 47: 	ZK Calendar date format in Spanish
 * Upgrade Notes:
 
 	--------
