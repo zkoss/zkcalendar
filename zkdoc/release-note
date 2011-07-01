@@ -4,6 +4,7 @@ calendar 2.1.1
 * Bugs:
 	Issue 46: 	Calendar in the second tab of tabbox cannot add event.
 	Issue 47: 	ZK Calendar date format in Spanish
+	Issue 49: 	The event object shall not disappear after drag
 * Upgrade Notes:
 
 	--------

@@ -344,9 +344,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				bd.setHours(bt);
 			
 			widget.fireCalEvent(bd, ed, evt, ce.id);
+			widget._restoreCE = ce;
 		} else {
-			ce.style.visibility = "";
 			jq('#'+widget.uuid+'-dd').remove();
+			ce.style.visibility = "";
 		}
 		dg._zrz = false;
 	}
@@ -480,9 +481,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				ed.setUTCMinutes(ed.getUTCMinutes() + _getSlotCount(bd, ed, timeslots) * timeslotTime);			
 			}
 			widget.fireCalEvent(bd, ed, evt, ce.id);
+			widget._restoreCE = ce;
 		} else {
-			ce.style.visibility = "";
 			jq('#'+widget.uuid+'-dd').remove();
+			ce.style.visibility = "";
 		}
 	}
 	

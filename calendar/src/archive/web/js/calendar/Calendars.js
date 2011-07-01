@@ -113,19 +113,19 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 
 	bind_ : function() {
 		this.$supers('bind_', arguments);
-		zWatch.listen({onSize: this, onShow: this});
+		zWatch.listen({onSize: this, onShow: this, onResponse: this});
 	},
 	
 	unbind_ : function() {
 		this.clearGhost();
 		// just in case
 		this.closeFloats();
-		zWatch.unlisten({onSize: this, onShow: this});
+		zWatch.unlisten({onSize: this, onShow: this, onResponse: this});
 		if (this._drag)
 			for (var i in this._drag)
 				if (this._drag[i].destroy)
 					this._drag[i].destroy();
-		this._drag = this._ghost = this._eventKey = this.params = null;
+		this._drag = this._ghost = this._eventKey = this.params = this._restoreCE = null;
 		this.$supers('unbind_', arguments);
 	},
 	
@@ -468,6 +468,12 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	isLegalChild: function (n) {
 		if (!n.id.endsWith("-body"))
 			return n;
+	},
+	onResponse: function () {
+		if (this._restoreCE) {
+			this._restoreCE.style.visibility = "";
+			this._restoreCE = null;
+		}
 	}
 
 },{

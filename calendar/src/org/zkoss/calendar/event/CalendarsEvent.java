@@ -30,6 +30,7 @@ import org.zkoss.zk.mesg.MZk;
 import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.sys.WebAppCtrl;
+import org.zkoss.zk.ui.util.Clients;
 
 /**
  * The event is used for Calendars when user create/update/edit the calendar event.
@@ -212,6 +213,6 @@ public class CalendarsEvent extends Event {
 	 * @param isClear
 	 */
 	private void clear(Component target,boolean isClear) {
-		((WebAppCtrl)((AbstractComponent)getTarget()).getDesktop().getWebApp()).getUiEngine().addResponse("cleardd" + target.getUuid(), new AuSetAttribute(target, "cleardd", Boolean.valueOf(isClear)));
+		Clients.response("cleardd" + target.getUuid(), new AuSetAttribute(target, "cleardd", Boolean.valueOf(isClear)));
 	}
 }
