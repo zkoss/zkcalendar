@@ -851,7 +851,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 			var title = titles[i],
 				content = this._captionByDate ? this._captionByDate[i] : 
-								zk.fmt.Date.formatDate(ed,'EEE MM/d');	
+								zk.fmt.Date.formatDate(ed,'EEE ' + this.weekFmt);	
 			jq(title).html(content);
 			title.time = this.fixTimeZoneFromClient(ed);
 			if (ed.getDay() == 0 || ed.getDay() == 6) {//SUNDAY or SATURDAY
