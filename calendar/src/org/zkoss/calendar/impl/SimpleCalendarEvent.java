@@ -16,7 +16,9 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.calendar.impl;
 
+import java.io.Serializable;
 import java.util.Date;
+
 import org.zkoss.calendar.api.CalendarEvent;
 
 /**
@@ -24,7 +26,7 @@ import org.zkoss.calendar.api.CalendarEvent;
  * @author jumperchen
  *
  */
-public class SimpleCalendarEvent implements CalendarEvent {
+public class SimpleCalendarEvent implements CalendarEvent, Serializable {
 	private String _headerColor = "";
 	private String _contentColor = "";
 	private String _content = "";

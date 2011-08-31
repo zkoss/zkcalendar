@@ -944,7 +944,7 @@ public class Calendars extends XulElement implements
 				cmd.equals(CalendarsEvent.ON_WEEK_CLICK))
 			Events.postEvent(CalendarsEvent.getClickEvent(request, cmd));
 		else if (cmd.equals(Events.ON_DROP)) {
-			Events.postEvent(CalendarDropEvent.getDropEvent(request));
+			Events.postEvent(CalendarDropEvent.getCalendarDropEvent(request));
 		} else super.service(request, everError);
 	}	
 

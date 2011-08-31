@@ -16,6 +16,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.calendar.impl;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,7 +30,7 @@ import org.zkoss.calendar.api.DateFormatter;
  * @author jumperchen
  *
  */
-public class SimpleDateFormatter implements DateFormatter {
+public class SimpleDateFormatter implements DateFormatter, Serializable {
 
 	private String _dayFormat = "EEE MM/d";
 	private String _weekFormat = "EEE";

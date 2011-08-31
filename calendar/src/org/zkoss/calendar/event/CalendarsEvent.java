@@ -27,9 +27,9 @@ import org.zkoss.json.JSONArray;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.au.out.AuSetAttribute;
 import org.zkoss.zk.mesg.MZk;
-import org.zkoss.zk.ui.*;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.sys.WebAppCtrl;
 import org.zkoss.zk.ui.util.Clients;
 
 /**

@@ -31,7 +31,7 @@ import org.zkoss.zk.ui.event.DropEvent;
  * <p>The component being dragged can be retrieved by {@link #getDragged}.
  * The component that received the dragged component is {@link #getTarget}.
  * @author jimmy
- * 
+ * @since 2.1.1
  */
 public class CalendarDropEvent extends DropEvent {
 
@@ -42,7 +42,7 @@ public class CalendarDropEvent extends DropEvent {
 	/** Converts an AU request to a drop event.
 	 * @since 5.0.0
 	 */
-	public static CalendarDropEvent getDropEvent(AuRequest request) {
+	public static CalendarDropEvent getCalendarDropEvent(AuRequest request) {
 		Calendars cmp = (Calendars)request.getComponent();
 		final Map data = request.getData();
 		final int keys = AuRequests.parseKeys(data);

@@ -17,6 +17,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.calendar.event;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -28,7 +29,7 @@ import org.zkoss.calendar.api.CalendarModel;
  * 
  * @author jumperchen,jimmy
  */
-public class CalendarDataEvent {
+public class CalendarDataEvent implements Serializable {
 	/** Identifies one or more changes in the lists contents. */
 	public static final int CONTENTS_CHANGED = 0;
     /** Identifies the addition of one or more contiguous items to the list. */    
