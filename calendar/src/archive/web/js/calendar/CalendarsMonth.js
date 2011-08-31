@@ -745,6 +745,28 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		evt.stop();
 	},
 	
+	onDrop_: function (drag, evt) {
+		var target = evt.domTarget,
+			time = new Date(this.zoneBd),
+			data = zk.copy({dragged: drag.control}, evt.data),
+			ce;
+			
+		if ((ce = zk.Widget.$(target)) && 
+			ce.className != 'calendar.CalendarsMonth') {
+			data.ce = ce.event.id;
+			target = ce.$n().parentNode;
+		}
+		
+		if (jq.nodeName(target, 'td') || jq.nodeName(target = target.parentNode, 'td')) {
+			time.setDate(time.getDate() 
+				+ (jq(target.offsetParent.parentNode).index() * 7 ) 
+				+ target.cellIndex);
+		} else return;
+		
+		data.time = this.fixTimeZoneFromClient(time);
+		this.fire('onDrop', data, null, zk.Widget.auDelay);
+	},
+	
 	unMoreClick: function (evt) {
 		var target = evt.target;
 		if (target.id.endsWith("-ppc") ||!zUtl.isAncestor(this._pp, target))

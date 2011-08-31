@@ -1,6 +1,7 @@
 	--------
 calendar 2.1.1
 * Features:
+	Issue 50: Enhancement to the drop event to return date and time
 * Bugs:
 	Issue 46: 	Calendar in the second tab of tabbox cannot add event.
 	Issue 47: 	ZK Calendar date format in Spanish

@@ -1263,6 +1263,35 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		zk(pp).cleanVisibility();		
 		evt.stop();
 	},
+		
+	onDrop_: function (drag, evt) {
+		var target = evt.domTarget,
+			time = new Date(this.zoneBd),
+			data = zk.copy({dragged: drag.control}, evt.data),
+			ce;
+		
+		if ((ce = zk.Widget.$(target)) && 
+			ce.className != 'calendar.CalendarsDefault') {
+			data.ce = ce.event.id;
+			target = ce.$n().parentNode;
+		}
+		
+		if (jq.nodeName(target, 'td') && 
+			jq(target.offsetParent).hasClass('z-calendars-daylong-cnt')) {
+			time.setDate(time.getDate() + target.cellIndex);
+		} else if (jq(target).hasClass('z-calendars-week-day-cnt')) {
+			target = target.parentNode;
+			time.setDate(time.getDate() + target.cellIndex - this.ts);
+			
+			var cnt = this.$n("cnt"),
+				offs = zk(cnt).revisedOffset(),
+				rows = Math.floor((evt.pageY + cnt.scrollTop - offs[1]) / this.perHeight) 
+					+ this.beginIndex;
+			time.setMinutes(time.getMinutes() + rows * 60/this._timeslots );
+		} else return;
+		data.time = this.fixTimeZoneFromClient(time);
+		this.fire('onDrop', data, null, zk.Widget.auDelay);
+	},
 			
 	unMoreClick: function (evt) {
 		if (!zUtl.isAncestor(this._pp, evt.currentTarget))

@@ -18,18 +18,38 @@ package org.zkoss.calendar;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TimeZone;
 
-import org.zkoss.calendar.api.*;
-import org.zkoss.calendar.event.*;
+import org.zkoss.calendar.api.CalendarEvent;
+import org.zkoss.calendar.api.CalendarModel;
+import org.zkoss.calendar.api.DateFormatter;
+import org.zkoss.calendar.api.EventRender;
+import org.zkoss.calendar.api.RenderContext;
+import org.zkoss.calendar.event.CalendarDataEvent;
+import org.zkoss.calendar.event.CalendarDataListener;
+import org.zkoss.calendar.event.CalendarDropEvent;
+import org.zkoss.calendar.event.CalendarsEvent;
 import org.zkoss.calendar.impl.Util;
-import org.zkoss.lang.*;
+import org.zkoss.lang.Classes;
+import org.zkoss.lang.Objects;
 import org.zkoss.util.Locales;
 import org.zkoss.util.TimeZones;
 import org.zkoss.zk.au.out.AuSetAttribute;
-import org.zkoss.zk.ui.*;
-import org.zkoss.zk.ui.event.*;
+import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.UiException;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.sys.ContentRenderer;
 import org.zkoss.zk.ui.sys.DesktopCtrl;
 import org.zkoss.zul.Toolbar;
@@ -923,7 +943,9 @@ public class Calendars extends XulElement implements
 		else if (cmd.equals(CalendarsEvent.ON_DAY_CLICK) || 
 				cmd.equals(CalendarsEvent.ON_WEEK_CLICK))
 			Events.postEvent(CalendarsEvent.getClickEvent(request, cmd));
-		else super.service(request, everError);
+		else if (cmd.equals(Events.ON_DROP)) {
+			Events.postEvent(CalendarDropEvent.getDropEvent(request));
+		} else super.service(request, everError);
 	}	
 
 	/*
