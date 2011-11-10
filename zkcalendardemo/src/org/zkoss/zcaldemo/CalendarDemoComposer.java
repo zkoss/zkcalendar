@@ -456,21 +456,17 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		syncModel();
 	}
 
-	public void onClick$deleteBtn$editEvent(ForwardEvent event) {
-		try {
-			Messagebox.show("Are you sure to delete the event!", "Question",
-					Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION,
-					new EventListener() {
-						public void onEvent(Event evt) throws Exception {
-							if (((Integer) evt.getData()).intValue() != Messagebox.OK)
-								return;
-							cm.remove((SimpleCalendarEvent) editEvent.getAttribute("ce"));
-							syncModel();
-						}
-					});
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+	public void onClick$deleteBtn$editEvent(ForwardEvent event) throws InterruptedException {
+		Messagebox.show("Are you sure to delete the event!", "Question",
+				Messagebox.OK | Messagebox.CANCEL, Messagebox.QUESTION,
+				new EventListener() {
+					public void onEvent(Event evt) throws Exception {
+						if (((Integer) evt.getData()).intValue() != Messagebox.OK)
+							return;
+						cm.remove((SimpleCalendarEvent) editEvent.getAttribute("ce"));
+						syncModel();
+					}
+				});
 		editEvent.setVisible(false);
 	}
 	

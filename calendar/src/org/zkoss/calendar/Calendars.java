@@ -74,8 +74,7 @@ import org.zkoss.zul.impl.XulElement;
  * @author jumperchen,jimmy
  * 
  */
-public class Calendars extends XulElement implements
-		org.zkoss.calendar.api.Calendars {
+public class Calendars extends XulElement {
 	private static final long serialVersionUID = 20090310L;
 	private static final String ATTR_ON_INIT_POSTED = "org.zkoss.calendar.Calendars.onInitLaterPosted";	
 	private int _firstDayOfWeek;
@@ -458,7 +457,7 @@ public class Calendars extends XulElement implements
 	public String getCalendarEventId(CalendarEvent ce) {
 		Object o = _ids.get(ce);
 		if (o == null) {
-			o = ((DesktopCtrl)getDesktop()).getNextUuid();
+			o = ((DesktopCtrl)getDesktop()).getNextUuid(this);
 			_ids.put(o, ce);
 			_ids.put(ce, o);
 		}

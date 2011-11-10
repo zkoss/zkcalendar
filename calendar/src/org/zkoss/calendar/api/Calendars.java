@@ -26,9 +26,9 @@ import java.util.TimeZone;
  * This interface defines the methods used for Calendars.
  * 
  * @author jumperchen
- * 
+ * @deprecated
  */
-public interface Calendars extends org.zkoss.zul.impl.api.XulElement {
+public interface Calendars {
 	/**
 	 * Returns the current time zone of the calendar.
 	 */
