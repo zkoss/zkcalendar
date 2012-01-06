@@ -177,7 +177,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			var events = this._events[i];
 			for (var k = events.length; k--;) {
 				var event = this.processEvtData_(events[k]);
-				if (event.zoneBd > this.zoneEd || event.zoneEd < this.zoneBd) continue;				
+				if (event.zoneBd >= this.zoneEd || event.zoneEd < this.zoneBd) continue;				
 				
 				this.processChildrenWidget_(_isExceedOneDay(this, event), event);
 			}

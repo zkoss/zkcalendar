@@ -874,10 +874,13 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 	processChildrenWidget_: function (isExceedOneDay, event) {
 		var dayEvent = isExceedOneDay ?
-						new calendar.DaylongEvent({event:event}):
-						new calendar.DayEvent({event:event});
+				new calendar.DaylongEvent({event:event}):
+				new calendar.DayEvent({event:event})
+			zoneBd = event.zoneBd,
+			zoneEd = event.zoneEd;
 		if (!isExceedOneDay && 
-			(event.zoneBd.getHours() >= this._et || event.zoneEd.getHours() <= this._bt))
+			(zoneBd.getHours() >= this._et || 
+			(zoneEd.getHours() <= this._bt && zoneEd.getMinutes() == 0)))
 			return;		
 		this.appendChild(dayEvent);					
 		this[isExceedOneDay ? '_daylongEvents': '_dayEvents'].push(dayEvent.$n());
@@ -1375,7 +1378,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					bd = new Date(event.zoneBd), 
 					ed = new Date(event.zoneEd);
 				jq(target).append(ce);	
-				ce.style.visibility = "";				
+				ce.style.visibility = "";
 				
 				ce._bd = bd;
 				ce._ed = ed;
@@ -1407,6 +1410,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				
 				if(bi == ei)
 					bi--;
+					
+				if (bi < 0) continue;
+				
 				// width info
 				for (var n = 0; bi < ei && bi < slotCount;) {
 					var tmp = data[bi++];
@@ -1434,6 +1440,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					tmp = {};
 				if(bi == ei)
 					bi--;
+					
+				if (bi < 0) continue;
+				
 				for (var m = bi; m < ei && m < slotCount; m++) {
 					var len = data[m].length;
 					if (maxSize < len) 
