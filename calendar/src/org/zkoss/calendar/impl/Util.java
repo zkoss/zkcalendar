@@ -91,7 +91,7 @@ public class Util {
 	
 	public static List packCaptionByTimeOfDay(Calendar cal, Map zones, Locale locale, DateFormatter dfhandler) {
 		List result = new ArrayList();
-		for (Iterator it = zones.entrySet().iterator(); it.hasNext();) {
+		for (Iterator it = zones.keySet().iterator(); it.hasNext();) {
 			TimeZone tz = (TimeZone) it.next();
 			for(int k = 0; k < 24; k++) {
 				cal.set(Calendar.HOUR_OF_DAY, k);				
