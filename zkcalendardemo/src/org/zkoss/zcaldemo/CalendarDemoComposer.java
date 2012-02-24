@@ -262,26 +262,47 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 			cal.set(Calendar.MILLISECOND, 0);
 			endDate = cal.getTime();
 			emin = cal.get(Calendar.MINUTE);
-		}
-		
+			
+			if (!beginDate.before(endDate)) {
+				createEvent.setVisible(false);
+				alert("The end date cannot be earlier than or equal to begin date!");
+				((CalendarsEvent)createEvent.getAttribute("calevent")).clearGhost();
+				return;
+			}
+			if (bmin == 5 || bmin == 25 || bmin == 35 || bmin == 55) {
+				createEvent.setVisible(false);
+				alert("The begin minute:" + bmin + ", is not supported");
+				((CalendarsEvent)createEvent.getAttribute("calevent")).clearGhost();
+				return;
+			}
+			if (emin == 5 || emin == 25 || emin == 35 || emin == 55) {
+				createEvent.setVisible(false);
+				alert("The end minute:" + emin + ", doesn't support");
+				((CalendarsEvent)createEvent.getAttribute("calevent")).clearGhost();
+				return;
+			}			
+		}else{
+			cal.setTime(beginDate);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			beginDate = cal.getTime();
+			bmin = cal.get(Calendar.MINUTE);
 
-		if (!beginDate.before(endDate)) {
-			createEvent.setVisible(false);
-			alert("The end date cannot be earlier than or equal to begin date!");
-			((CalendarsEvent)createEvent.getAttribute("calevent")).clearGhost();
-			return;
-		}
-		if (bmin == 5 || bmin == 25 || bmin == 35 || bmin == 55) {
-			createEvent.setVisible(false);
-			alert("The begin minute:" + bmin + ", is not supported");
-			((CalendarsEvent)createEvent.getAttribute("calevent")).clearGhost();
-			return;
-		}
-		if (emin == 5 || emin == 25 || emin == 35 || emin == 55) {
-			createEvent.setVisible(false);
-			alert("The end minute:" + emin + ", doesn't support");
-			((CalendarsEvent)createEvent.getAttribute("calevent")).clearGhost();
-			return;
+			cal.setTime(endDate);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			endDate = cal.getTime();
+			emin = cal.get(Calendar.MINUTE);
+			
+			if(endDate.equals(beginDate)){
+				cal.set(Calendar.HOUR_OF_DAY, 24);
+				endDate = cal.getTime();
+				emin = cal.get(Calendar.MINUTE);
+			}
 		}
 		
 		String[] colors = ((String)createEvent$ppcolor.getSelectedItem().getValue()).split(",");
@@ -427,6 +448,8 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 			emin = cal.get(Calendar.MINUTE);
 		}			
 		if (!beginDate.before(endDate)) {
+			
+			
 			editEvent.setVisible(false);
 			alert("The end date cannot be earlier than or equal to begin date!");
 			((org.zkoss.calendar.event.CalendarsEvent)editEvent.getAttribute("calevent")).clearGhost();
