@@ -8,6 +8,7 @@ calendar 2.1.1
 	Issue 49: 	The event object shall not disappear after drag
 	ZKCAL-17: 	Problem with Calendars.setBeginTime
 	ZKCAL-21:   Set a DateFormatter to the calendar has ClassCastException
+	ZKCAL-14:    'All day' events visible to the next day
 	 
 * Upgrade Notes:
 

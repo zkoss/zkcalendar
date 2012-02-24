@@ -188,7 +188,7 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 			long b = ce.getBeginDate().getTime();
 			long e = ce.getEndDate().getTime();
 
-			if (e < begin || b >= end)
+			if (e <= begin || b >= end)
 				continue;
 
 			list.add(ce);
