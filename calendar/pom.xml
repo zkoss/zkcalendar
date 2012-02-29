@@ -5,11 +5,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.calendar</groupId>
 	<artifactId>calendar</artifactId>
-	<version>2.1.1-SNAPSHOT</version>
+	<version>2.1.1</version>
 	<properties>
 		<zk.version>6.0.0</zk.version>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
-		<packname>-2.1.1-FL-${maven.build.timestamp}</packname>
+		<packname>-2.1.1</packname>
 	</properties>
 	<packaging>jar</packaging>
 	<name>The ZK Calendars</name>
