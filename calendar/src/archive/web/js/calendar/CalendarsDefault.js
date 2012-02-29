@@ -1576,14 +1576,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	},
 	
 	_ghostDaydrag: function (dg, ofs, evt) {
+		
 		var cnt = dg.node,
-			targetWidget = zk.Widget.$(evt.domTarget),
+			targetWidget = dg.control._resizing ? dg.control._resizing : zk.Widget.$(evt.domTarget),
 			ce = targetWidget.className == 'calendar.DayEvent'? targetWidget.$n(): null,
 			widget = dg.control,
 			ts = widget.ts,
 			cells = widget.cntRows.cells,
 			ph = widget.perHeight;
-
 		dg._zcells = cells;
 		dg._zoffs = {
 			t: zk(cnt).revisedOffset()[1],

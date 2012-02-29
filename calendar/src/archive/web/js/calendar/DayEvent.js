@@ -22,8 +22,7 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 			headerStyle = p.headerStyle,
 			contentStyle = p.contentStyle,
 			resizer = p.resizer;
-			
-		p._resizerCnt = '<div class="' + resizer + '">' +
+		p._resizerCnt = '<div class="' + resizer + '" id="' + id + '-resizer"> ' +
 							'<div class="' + resizer + '-icon"></div></div>';
 		
 		out.push('<div', this.domAttrs_(), '>',
@@ -46,7 +45,32 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 			'<div class="', p.b3, '"></div></div>',
 			'<div class="', p.b1, '"', headerStyle, '></div></div>');
 	},
-	
+	bind_: function (e){
+		this.$supers('bind_', arguments);
+		var ce = this.event;
+		if (ce && !ce.isLocked){
+			var wgt = this;
+			jq(this.$n("resizer")).mousedown(function(){
+				if(wgt.parent){
+					wgt.parent._resizing = wgt;
+				}
+			}).mouseup(function(){
+				wgt.parent._resizing = null;
+			});
+		}
+	},
+	unbind_ : function() {
+		var ce = this.event;
+		if (ce && !ce.isLocked){
+			var wgt = this;
+			jq(this.$n("resizer")).unbind("mousedown");
+			jq(this.$n("resizer")).unbind("mouseup");
+			if(this.parent){
+				this.parent._resizing = null;
+			}
+		}
+		this.$supers('unbind_', arguments);
+	},
 	getEvtTitle: function(ce) {
 		var bd = ce.zoneBd,
 			ed = ce.zoneEd;

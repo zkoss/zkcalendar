@@ -9,7 +9,8 @@ calendar 2.1.1
 	ZKCAL-17: 	Problem with Calendars.setBeginTime
 	ZKCAL-21:   Set a DateFormatter to the calendar has ClassCastException
 	ZKCAL-14:    'All day' events visible to the next day
-	 
+	ZKCAL-15:   Unable to change the rang of Event in Week mode.
+	
 * Upgrade Notes:
 
 	--------
