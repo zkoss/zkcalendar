@@ -55,7 +55,7 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 					wgt.parent._resizing = wgt;
 				}
 			}).mouseup(function(){
-				wgt.parent._resizing = null;
+				if(wgt.parent) wgt.parent._resizing = null;
 			});
 		}
 	},

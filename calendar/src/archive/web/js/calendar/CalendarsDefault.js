@@ -1689,6 +1689,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		if (!dg || !dg._zdata) return;
 		var widget = dg.control,
 			ghostNode = dg._zdata.ghostNode;
+		
+		if(widget._resizing){
+			widget._resizing = null;
+		}
 			
 		if (dg._zevt && dg._zevt._error) {
 			dg._zevt._error = false;
