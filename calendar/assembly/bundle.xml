@@ -16,7 +16,7 @@
 			<outputDirectory>/</outputDirectory>
 		</file>
 		<file>
-			<source>${project.build.directory}/${project.artifactId}-${project.version}-source.jar</source>
+			<source>${project.build.directory}/${project.artifactId}-${project.version}-sources.jar</source>
 			<outputDirectory>/</outputDirectory>
 		</file>
 	</files>
