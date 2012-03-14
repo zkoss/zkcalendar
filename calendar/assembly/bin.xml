@@ -19,7 +19,7 @@
 			<outputDirectory>/dist/lib</outputDirectory>
 		</file>
 		<file>
-			<source>${project.build.directory}/${project.artifactId}-source.jar</source>
+			<source>${project.build.directory}/${project.artifactId}-sources.jar</source>
 			<outputDirectory>/dist/src</outputDirectory>
 		</file>
 		<file>

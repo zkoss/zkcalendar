@@ -118,7 +118,7 @@
 						<configuration>
 							<finalName>${project.artifactId}</finalName>
 							<descriptors>
-								<descriptor>assembly/source.xml</descriptor>
+								<descriptor>assembly/sources.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
@@ -144,7 +144,7 @@
 						</goals>
 						<configuration>
 							<descriptors>
-								<descriptor>assembly/source.xml</descriptor>
+								<descriptor>assembly/sources.xml</descriptor>
 								<descriptor>assembly/bundle.xml</descriptor>
 							</descriptors>
 						</configuration>
