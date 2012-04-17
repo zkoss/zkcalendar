@@ -90,7 +90,7 @@ public class Calendars extends XulElement {
 	private boolean _readonly;
 	private boolean _weekOfYear;
 	private boolean _hasEmptyZone= false;
-	private boolean _escapeXML = false;
+	private boolean _escapeXML = true;
 	private List _addEvtList, _mdyEvtList, _rmEvtList;
 	private int _beginTime = 0, _endTime = 24, _timeslots = 2;
 	
