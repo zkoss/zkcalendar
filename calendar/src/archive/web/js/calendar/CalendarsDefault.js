@@ -1127,7 +1127,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				jq(cell).addClass(zcls + "-daylong-faker-more");
 				if (data[i].length > 0) {
 					var evts = data[i];
-					cell.innerHTML = "+" + evts.length + "&nbsp;" + msgcal.MORE;
+					cell.innerHTML = calUtil.format(msgcal.dayMORE, [evts.length] )
 					jq(cell).bind("click", widget.onMoreClick);
 				} else {
 					cell.innerHTML = zk.ie ? "&nbsp;" : "";

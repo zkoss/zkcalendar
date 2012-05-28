@@ -40,6 +40,12 @@ calUtil = {
 			resoult.setMinutes(resoult.getMinutes() + Math.abs(offset));
 		
 		return new Date(resoult);
-	}
+	},
+    format: function(str, args){
+        for (var i = 0; i < args.length; i++) {
+            str = str.replace(new RegExp("\\{" + i + "\\}", "gm"), args[i]);
+        }
+        return str;
+    }
 	
 };

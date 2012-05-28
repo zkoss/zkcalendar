@@ -808,7 +808,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					jq(cell).addClass(zcls + "-evt-faker-more");
 					if (data[i].length - vc1 > 0) {
 						var evts = data[i];
-						cell.innerHTML = "+" + (evts.length - vc1) + "&nbsp;" + msgcal.MORE;
+						cell.innerHTML = calUtil.format(msgcal.monthMORE, [evts.length - vc1] )
 						jq(cell).bind('click', widget.onMoreClick);
 					} else {
 						cell.innerHTML = "";
