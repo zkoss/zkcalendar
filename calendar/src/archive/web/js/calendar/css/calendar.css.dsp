@@ -592,6 +592,9 @@ ${z:setCWRCacheControl()}
 	font-family: ${fontFamilyC};
 	white-space: nowrap;
 }
+.z-calendars-month-body-hidden-calevents .z-calevent-cnt {
+	display: none;
+}
 <%-- Calendar Popup --%>
 .z-calpp,
 .z-calpp-month {

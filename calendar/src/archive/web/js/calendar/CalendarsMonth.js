@@ -777,13 +777,14 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		var widget = this,
 			cnt = this.$n('cnt'),
 			zcls = this.getZclass();
-
+		jq(cnt).addClass(zcls+ "-month-body-hidden-calevents");
 		for (var ri = 0, n = cnt.firstChild; n; n = n.nextSibling, ri++) {
 			var h = n.offsetHeight,
 				sh = n.lastChild.offsetHeight,
 				table = n.lastChild,
 				rows = table.rows,
-				len = rows.length;
+				len = rows.length,
+				data = this._evtsData[ri];
 			if (len > 1 && (h < sh || rows[len-1].id)) {
 				if (rows[len-1].id && rows[len-1].id.startsWith(this.uuid + "-frow")) {
 					jq(rows[len-1]).remove();
@@ -794,8 +795,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				h -= zk(rows[0]).offsetHeight() + nh;
 
 				var vc = Math.floor(h/nh),
-					vc1 = vc,
-					data = this._evtsData[ri];
+					vc1 = vc;
 
 				for (var i = 1; i < len; i++)
 					rows[i].style.display = --vc < 0 ? 'none' : '';
@@ -817,6 +817,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				}
 			}
 		}
+		jq(cnt).removeClass(zcls+ "-month-body-hidden-calevents");
 	},
 		
 	onSize: _zkf = function () {
