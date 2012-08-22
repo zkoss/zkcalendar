@@ -758,21 +758,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		this._daylongSpace = [];		
 		
 		var uuid = this.uuid;
-			
-		jq(document.body).append(this.blockTemplate.replace(new RegExp("%1", "g"), function (match, index) {
-			return uuid;
-		}));
-		var temp = jq('#' + uuid + '-tempblock');
 		
 		// all daylong event
-		for (var i = this._daylongEvents.length; i--;) {
+		for (var i = 0, j = this._daylongEvents.length; i < j; i++) {
 			var daylongEvent = this._daylongEvents[i];
-			temp.append(daylongEvent);
 			this.putInDaylongSpace_(this._daylongSpace, daylongEvent);
 		}
 						
 		this._resetDaylongPosition();
-		temp.remove();
 	},
 	
 	updateTimeZoneCol_: function (opts) {

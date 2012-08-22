@@ -258,10 +258,6 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			eventWeekSet = this._eventWeekSet,
 			uuid = this.uuid;
 			
-		jq(document.body).append(this.blockTemplate.replace(new RegExp("%1", "g"), function (match, index) {
-			return uuid;
-		}));
-		var temp = jq('#' + uuid + '-tempblock');
 		// all day event
 		for (var i = eventWeekSet.length; i--;) {
 			var list = eventWeekSet[i],
@@ -269,14 +265,12 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			if (!list || !list.length) continue;
 			list.sort(sortFunc);			
 			daySpace.push(weekList);
-			for (var k = list.length; k--;) {
+			for (var k = 0, l =list.length; k < l; k++) {
 				var node = list[k];
-				temp.append(node);
 				this.putInDaylongSpace_(weekList, node);
 			}		
 		}		
 		this._resetDayPosition();
-		temp.remove();
 	},
 		
 	updateDateRange_: function () {

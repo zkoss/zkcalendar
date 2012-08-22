@@ -18,28 +18,41 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		var xDays = x._days,
 			yDays = y._days;
 		if (xDays > yDays) return 1;
-		else if (xDays == yDays) return 0;		
+		else if (xDays == yDays) {
+			var wgtXIndex = zk.Widget.$(x).getChildIndex(),
+				wgtYIndex = zk.Widget.$(y).getChildIndex();
+				
+			if (wgtXIndex > wgtYIndex)
+				return -1;
+			else if (wgtXIndex == wgtYIndex) 
+				return 0;
+			wgtYIndex
+		}		
 		return -1;
 	}
 	
 	function _compareStartTime(x , y) {
 		var isDaylongMonX = zk.Widget.$(x).className == 'calendar.DaylongOfMonthEvent',
 			isDaylongMonY = zk.Widget.$(y).className == 'calendar.DaylongOfMonthEvent',
-			xBd = isDaylongMonX ? Math.min(x.upperBoundBd, x.zoneBd): x.zoneBd,
-			yBd = isDaylongMonY ? Math.min(y.upperBoundBd, y.zoneBd): y.zoneBd,
-			xEd = x.zoneEd,
-			yEd = y.zoneEd;
+			xBd = isDaylongMonX ? 
+				Math.min(x.upperBoundBd.getTime(), x.zoneBd.getTime()): 
+				x.zoneBd.getTime(),
+			yBd = isDaylongMonY ? 
+				Math.min(y.upperBoundBd.getTime(), y.zoneBd.getTime()): 
+				y.zoneBd.getTime(),
+			xEd = x.zoneEd.getTime(),
+			yEd = y.zoneEd.getTime();
 		
 		if (xBd < yBd)
-			return 1;
+			return -1;
 		else if (xBd == yBd) {
 			if (xEd < yEd)
-				return -1;
+				return 1;
 			else if (xEd == yEd) 
 				return 0;
-			return 1				
+			return -1				
 		}				
-		return -1;
+		return 1;
 	}
 	
 	function _getEventPeriod(ce){
