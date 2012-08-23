@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.calendar</groupId>
 	<artifactId>zkcalendar</artifactId>
-	<version>1.0.0</version>
+	<version>2.1.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>The ZK Calendar Project</name>
 	<description>The ZK Calendar Project</description>
@@ -13,7 +13,7 @@
 		<module>zkcalendardemo</module>
 	</modules>
 	<properties>
-		<zk.version>6.0.0</zk.version>
+		<zk.version>6.0.2</zk.version>
 		<jasperreports.version>3.7.0</jasperreports.version>
 		<jfreechart.version>1.0.13</jfreechart.version>
 	</properties>
