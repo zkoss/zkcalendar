@@ -13,7 +13,7 @@ Copyright (C) 2012 Potix Corporation. All Rights Reserved.
 	var _xCalendars = {};
 	zk.override(calendar.Calendars.prototype, _xCalendars, {
 		setMold: function(mold) {
-			this._mold = mold.indexOf('month') > -1 ? 'month' : 'default';
+			this._mold = mold;
 		}
 	});
 })();

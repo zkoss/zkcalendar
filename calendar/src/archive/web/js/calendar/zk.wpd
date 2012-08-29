@@ -20,7 +20,5 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 	<widget name="DayEvent"/>
 	<widget name="DaylongOfMonthEvent"/>
 	<widget name="DayOfMonthEvent"/>
-	<script>zk.afterLoad('zkmax',function(){</script>
 	<script src="calendars-touch.js" browser="ios,android"/>
-	<script>});</script>
 </package>
