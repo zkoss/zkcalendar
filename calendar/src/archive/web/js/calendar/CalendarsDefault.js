@@ -1356,14 +1356,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			timeslots = this._timeslots,
 			slotCount = hourCount * this._timeslots;
 		
-		for (var i =  this._daySpace.length; i--;) {
+		for (var i = 0, j = this._daySpace.length; i < j; i++) {
 			var list = this._daySpace[i];
 			if (!list.length) continue;
 			var data = [];
 			for (var n = slotCount; n--;) 
 				data[n] = [];
 
-			for (var k = list.length; k--;) {
+			for (var k = 0, l =list.length; k < l; k++) {
 				var ce = list[k],
 					childWidget = zk.Widget.$(ce),					
 					target= weekDay[ce._preOffset].firstChild,
