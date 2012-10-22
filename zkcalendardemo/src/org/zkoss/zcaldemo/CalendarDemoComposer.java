@@ -185,6 +185,7 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		 model.setValue("Khaki Events", new Double(size > 0 ? (khaki/size)*100: 0));
 		 model.setValue("Purple Events", new Double(size > 0 ? (purple/size)*100 : 0));
 		 mychart.setModel(model);
+		 mychart.invalidate();
 	}
 	
 	public void onEventCreate$calendars(ForwardEvent event) {
@@ -526,6 +527,21 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		updateDateLabel();
 		syncModel();
 	}
+	
+	
+	public void onWeekClick$calendars(ForwardEvent event) {
+		Event evt = event.getOrigin();
+		Date d = (Date) evt.getData();
+		TimeZone tz = calendars.getDefaultTimeZone();
+		Calendar cal = Calendar.getInstance(tz);
+		cal.setTime(d);
+		
+		System.out.println(cal.get(Calendar.MONTH));
+		System.out.println(cal.get(Calendar.DAY_OF_MONTH));
+		System.out.println(cal.get(Calendar.HOUR_OF_DAY));
+		System.out.println(cal.get(Calendar.MINUTE));
+	}
+	
 	
 	public void onToday(ForwardEvent event) {
 		calendars.setCurrentDate(Calendar.getInstance(calendars.getDefaultTimeZone()).getTime());

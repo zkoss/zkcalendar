@@ -188,7 +188,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		//append all event be widget children
 		for (var i = 0, j = this._events.length; i < j; i++) {
 			var events = this._events[i];
-			for (var k = events.length; k--;) {
+			for (var k = 0, l = events.length; k < l; k++) {
 				var event = this.processEvtData_(events[k]);
 				if (event.zoneBd >= this.zoneEd || event.zoneEd < this.zoneBd) continue;				
 				
@@ -355,7 +355,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			
 			event = this.processEvtData_(event);
 			
-			if (inMon)
+			if (inMon && childWidget.isBeginTimeChange())
 				this.removeNodeInArray_(childWidget);
 			
 			//over range
@@ -380,8 +380,14 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			} else {
 				childWidget.event = event;	
 				childWidget.update();
-				inMon ? this._putInMapList(childWidget): 
-						hasAdd[isExceedOneDay ? 'daylong': 'day'] = true;
+				
+				if (inMon) {
+					if (childWidget.isBeginTimeChange()) {
+						this._putInMapList(childWidget);
+					}
+				} else {
+					hasAdd[isExceedOneDay ? 'daylong': 'day'] = true;
+				}
 			}
         }
 
@@ -521,7 +527,6 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			hs = [];
 
 		jq(document.body).prepend(dataObj.getRope(widget, cnt, hs));
-
 		var row = dataObj.getRow(cnt),
 			width = row.offsetWidth,
 			p = [evt.pageX,evt.pageY];

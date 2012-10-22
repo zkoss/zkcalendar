@@ -112,6 +112,10 @@ calendar.Event = zk.$extends(zk.Widget, {
 		
 		node._days = event._days = this.getDays();
 	},
+	
+	isBeginTimeChange: function() {
+		return this.$n().startWeek.zoneBd.getTime() != this.event.startWeek.zoneBd.getTime();
+	},
 
 	_createBoundTime: function(node, bd, ed) {
 		//have findBoundTime_ function

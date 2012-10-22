@@ -7,7 +7,7 @@
 	<artifactId>calendar</artifactId>
 	<version>2.1.2-SNAPSHOT</version>
 	<properties>
-		<zk.version>6.5.0.FL.20120827</zk.version>
+		<zk.version>6.5.0</zk.version>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>-2.1.2-FL-${maven.build.timestamp}</packname>
 	</properties>

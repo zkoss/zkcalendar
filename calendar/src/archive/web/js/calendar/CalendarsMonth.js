@@ -214,36 +214,35 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			jq(weekRows[i].firstChild).children().not(':first-child').remove();
 		
 		//all Week Row
-		for (var i = daySpace.length; i--;) {
+		for (var i = 0, j = daySpace.length; i < j; i++) {
 			var weekList = daySpace[i],
 				weekIndex = this._weekDates.indexOf(weekList[weekList.length - 1][0].startWeek),
-				title = weekRows[weekIndex].firstChild.firstChild;//tbody
+				title = weekRows[weekIndex].firstChild.firstChild,//tbody
+				prevTr = jq(title);
 			//all week inner row
-			for (var k = weekList.length; k--;) {
-				jq(title).after('<tr></tr>');	
-				var allEvent = weekList[k],
-					tr = jq(title.nextSibling);
-				
+			for (var k = 0, l = weekList.length; k < l; k++) {
+				var allEvent = weekList[k];
+				prevTr = prevTr.after('<tr></tr>').next();
 				//all event
 				for (var m = 0, n = allEvent.length; m < n; m++) {
 					var dayNode = allEvent[m];				
 				
 					if(m == 0)//first
-						this.drawEvent_(dayNode._preOffset, zcls + '-month-date-evt', tr, dayNode);
+						this.drawEvent_(dayNode._preOffset, zcls + '-month-date-evt', prevTr, dayNode);
 					else {
 						var preDayNode = allEvent[m - 1],
 							start = dayNode._preOffset,
 							preEnd = preDayNode._preOffset + preDayNode._days,
 							offset = start - preEnd;
 							
-						this.drawEvent_(offset, zcls + '-month-date-evt', tr, dayNode);
+						this.drawEvent_(offset, zcls + '-month-date-evt', prevTr, dayNode);
 					}
 					dayNode.style.visibility = "";
 					if (m == n - 1) {//last
 						var html = [];
 						for (var x = dayNode._afterOffset; x--;) 
 							html.push('<td class="' + zcls + '-month-date-evt">&nbsp;</td>');							
-						tr.append(html.join(''));
+						prevTr.append(html.join(''));
 					}
 				}
 			}
@@ -259,12 +258,13 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			uuid = this.uuid;
 			
 		// all day event
-		for (var i = eventWeekSet.length; i--;) {
+		for (var i = 0, j = eventWeekSet.length; i < j; i++) {
 			var list = eventWeekSet[i],
 				weekList = [];
 			if (!list || !list.length) continue;
 			list.sort(sortFunc);			
 			daySpace.push(weekList);
+//			for (var k = list.length; k--;) {
 			for (var k = 0, l =list.length; k < l; k++) {
 				var node = list[k];
 				this.putInDaylongSpace_(weekList, node);
@@ -771,7 +771,6 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		var widget = this,
 			cnt = this.$n('cnt'),
 			zcls = this.getZclass();
-		jq(cnt).addClass(zcls+ "-month-body-hidden-calevents");
 		for (var ri = 0, n = cnt.firstChild; n; n = n.nextSibling, ri++) {
 			var h = n.offsetHeight,
 				sh = n.lastChild.offsetHeight,
@@ -789,7 +788,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				h -= zk(rows[0]).offsetHeight() + nh;
 
 				var vc = Math.floor(h/nh),
-					vc1 = vc;
+					vc1 = Math.max(vc, 0);
 
 				for (var i = 1; i < len; i++)
 					rows[i].style.display = --vc < 0 ? 'none' : '';
@@ -800,7 +799,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					cell = faker.insertCell(0);
 					cell.className = zcls + "-month-date-evt";
 					jq(cell).addClass(zcls + "-evt-faker-more");
-					if (data[i].length - vc1 > 0) {
+					if (data[i].length && (data[i].length - vc1 > 0)) {
 						var evts = data[i];
 						cell.innerHTML = calUtil.format(msgcal.monthMORE, [evts.length - vc1] )
 						jq(cell).bind('click', widget.onMoreClick);
@@ -811,7 +810,6 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				}
 			}
 		}
-		jq(cnt).removeClass(zcls+ "-month-body-hidden-calevents");
 	},
 		
 	onSize: _zkf = function () {
