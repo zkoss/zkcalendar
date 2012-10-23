@@ -15,7 +15,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 calendar.Event = zk.$extends(zk.Widget, {
 	bind_ : function() {
 		this.$supers('bind_', arguments);
-		this.calculate_();
+		this.calculate_(true);
 	},
 	
 	unbind_: function() {
@@ -81,7 +81,7 @@ calendar.Event = zk.$extends(zk.Widget, {
 		return this.params.headerStyle;
 	},
 	
-	calculate_: function() {
+	calculate_: function(updateLastModify) {
 		var node = this.$n(),
 			event = this.event,
 			parent = this.parent,
@@ -111,10 +111,12 @@ calendar.Event = zk.$extends(zk.Widget, {
 								this._getOffset({start: node.lowerBoundEd, end: time.zoneEd});
 		
 		node._days = event._days = this.getDays();
+		if (updateLastModify)
+			node._lastModify = new Date().getTime();
 	},
 	
-	isBeginTimeChange: function() {
-		return this.$n().startWeek.zoneBd.getTime() != this.event.startWeek.zoneBd.getTime();
+	isBeginTimeChange: function(event) {
+		return this.$n().zoneBd.getTime() != event.zoneBd.getTime();
 	},
 
 	_createBoundTime: function(node, bd, ed) {

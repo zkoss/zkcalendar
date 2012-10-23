@@ -19,14 +19,14 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			yDays = y._days;
 		if (xDays > yDays) return 1;
 		else if (xDays == yDays) {
-			var wgtXIndex = zk.Widget.$(x).getChildIndex(),
-				wgtYIndex = zk.Widget.$(y).getChildIndex();
+			var xlastModify = x._lastModify,
+				ylastModify = y._lastModify;
 				
-			if (wgtXIndex > wgtYIndex)
-				return -1;
-			else if (wgtXIndex == wgtYIndex) 
+			if (xlastModify > ylastModify)
+				return 1;
+			else if (xlastModify == ylastModify) 
 				return 0;
-			wgtYIndex
+			return -1;
 		}		
 		return -1;
 	}
@@ -351,11 +351,13 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			 
         for (var event; (event = eventArray.shift());) {
 			var childWidget = zk.Widget.$(event.id),
-				inMon = this.mon;;
+				inMon = this.mon,
+				isBeginTimeChange = false;
 			
 			event = this.processEvtData_(event);
 			
-			if (inMon && childWidget.isBeginTimeChange())
+			if (inMon && 
+				(isBeginTimeChange = childWidget.isBeginTimeChange(event)))
 				this.removeNodeInArray_(childWidget);
 			
 			//over range
@@ -379,10 +381,10 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 				hasAdd.day = hasAdd.daylong = true;
 			} else {
 				childWidget.event = event;	
-				childWidget.update();
+				childWidget.update(isBeginTimeChange);
 				
 				if (inMon) {
-					if (childWidget.isBeginTimeChange()) {
+					if (isBeginTimeChange) {
 						this._putInMapList(childWidget);
 					}
 				} else {
@@ -525,7 +527,6 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			targetWidget = zk.Widget.$(evt.domEvent),
 			ce = targetWidget.$instanceof(calendar.Event)? targetWidget.$n(): null,
 			hs = [];
-
 		jq(document.body).prepend(dataObj.getRope(widget, cnt, hs));
 		var row = dataObj.getRow(cnt),
 			width = row.offsetWidth,

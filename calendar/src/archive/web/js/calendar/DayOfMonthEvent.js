@@ -45,7 +45,7 @@ calendar.DayOfMonthEvent = zk.$extends(calendar.Event, {
 		return 1;
 	},
 	
-	update: function() {
+	update: function(updateLastModify) {
 		var ce = this.event,
 			hd = jq(this.$n('hd')),
 			cnt = jq(this.$n('cnt')),		
@@ -59,6 +59,6 @@ calendar.DayOfMonthEvent = zk.$extends(calendar.Event, {
 		cnt.attr('style', contentStyle);			
 		cnt.html(ce.content);
 		
-		this.calculate_();		
+		this.calculate_(updateLastModify);		
 	}
 });

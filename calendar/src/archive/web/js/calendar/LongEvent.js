@@ -52,7 +52,7 @@ calendar.LongEvent = zk.$extends(calendar.Event, {
 				'<div class="', p.b1, '"', headerStyle, '></div></div>');
 	},
 	
-	update: function() {
+	update: function(updateLastModify) {
 		this.defineCss_();
 		
 		var cnt = jq(this.$n('cnt')),
@@ -74,7 +74,7 @@ calendar.LongEvent = zk.$extends(calendar.Event, {
 		this.updateArrow_(isAfter, p.right_arrow, p.right_arrow_icon, p.right_arrowCnt);
 		this.updateArrow_(isBefore, p.left_arrow, p.left_arrow_icon, p.left_arrowCnt);
 		
-		this.calculate_();	
+		this.calculate_(updateLastModify);	
 	},
 	
 	findBoundTime_: function(bd, ed) {

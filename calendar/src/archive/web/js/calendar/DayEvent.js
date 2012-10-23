@@ -79,7 +79,7 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 				(zk.fmt.Date.formatDate(bd,'HH:mm') + ' - ' + zk.fmt.Date.formatDate(ed,'HH:mm'));	
 	},
 	
-	update: function() {
+	update: function(updateLastModify) {
 		this.clearCache();
 		this.defineCss_();
 		
@@ -98,7 +98,7 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 		
 		this._createResizer();
 		
-		this.calculate_();		
+		this.calculate_(updateLastModify);		
 	},
 	
 	_createResizer: function() {

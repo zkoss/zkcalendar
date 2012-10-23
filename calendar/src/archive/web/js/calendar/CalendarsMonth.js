@@ -262,13 +262,13 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			var list = eventWeekSet[i],
 				weekList = [];
 			if (!list || !list.length) continue;
-			list.sort(sortFunc);			
+			list.sort(sortFunc);
+				
 			daySpace.push(weekList);
-//			for (var k = list.length; k--;) {
 			for (var k = 0, l =list.length; k < l; k++) {
 				var node = list[k];
 				this.putInDaylongSpace_(weekList, node);
-			}		
+			}
 		}		
 		this._resetDayPosition();
 	},

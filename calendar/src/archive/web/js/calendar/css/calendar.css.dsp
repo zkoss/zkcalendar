@@ -481,6 +481,9 @@ ${z:setCWRCacheControl()}
 	padding-right: 1px;
 	line-height: 14px;
 	color: white;
+	<c:if test="${zk.mobile > 0}">
+		font-size: ${fontSizeXS};
+	</c:if>
 }
 .z-calevent-resizer {
 	bottom: 2px;
@@ -522,6 +525,9 @@ ${z:setCWRCacheControl()}
 }
 .z-calevent-daylong-month .z-calevent-text {
 	height: 13px;
+	<c:if test="${zk.mobile > 0}">
+		height: 24px;
+	</c:if>
 }
 .z-calevent-left-arrow-icon,
 .z-calevent-right-arrow-icon {
@@ -577,6 +583,9 @@ ${z:setCWRCacheControl()}
 	zoom: 1;
 	padding: 1px;
 	line-height: 14px;
+	<c:if test="${zk.mobile > 0}">
+		line-height: 24px;
+	</c:if>
 }
 .z-calevent-month .z-calevent-header {
 	background: transparent;
