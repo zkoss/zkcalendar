@@ -162,7 +162,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			begin = dg._zoffs.b,
 			timeslots = widget._timeslots;
 			
-		widget._drag[cnt.id]._zrz = false;
+		widget._dragItems[cnt.id]._zrz = false;
 		for (; cIndex--;)
 			if (cnt._lefts[cIndex] <= x)
 				break;
@@ -636,8 +636,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		et: _zkf
 	},
 	
-	$init: function () {
-		this.$supers('$init', arguments);		
+	bind_: function () {
+		this.$supers('bind_', arguments);
+		
 		this._scrollInfo = {};
 		this._dayEvents = [];
 		this._daylongEvents = [];
@@ -649,10 +650,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			p = this.params;
 		p._fakerMoreCls = zcls + "-daylong-faker-more";
 		p._fakerNoMoreCls = zcls + "-daylong-faker-nomore";
-	},
-	
-	bind_: function () {
-		this.$supers('bind_', arguments);
+		
 		var widget = this,
 			$cnt = jq(this.$n("cnt")),
 			zcls = this.getZclass();
@@ -1486,16 +1484,16 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	} : function () {return false;},
 	
 	onSize: _zkf = function () {
-		if (!this.perHeight) {
-			_updateCntHeight(this);
-			this.perHeight = this.cntRows.firstChild.firstChild.offsetHeight / this._timeslots;
-			this.createChildrenWidget_();
-			this._rePositionDaylong();
-			this._rePositionDay();
-			var a = this.$n("hdarrow");
-			//arrow position
-			a.style.left = jq.px((a.parentNode.offsetWidth * this.ts - a.offsetWidth) - 5);
-		}
+//		if (!this.perHeight) {
+		_updateCntHeight(this);
+		this.perHeight = this.cntRows.firstChild.firstChild.offsetHeight / this._timeslots;
+		this.createChildrenWidget_();
+		this._rePositionDaylong();
+		this._rePositionDay();
+		var a = this.$n("hdarrow");
+		//arrow position
+		a.style.left = jq.px((a.parentNode.offsetWidth * this.ts - a.offsetWidth) - 5);
+//		}
 		
 		var cmp = this.$n(),
 			hgh = cmp.offsetHeight;
@@ -1562,8 +1560,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		if (targetWidget.className == 'calendar.DayEvent' && (!n.parentNode || targetWidget.event.isLocked ))
 			return true;
 		else if (n.nodeType == 1 && (jq(n).hasClass("z-calevent-resizer-icon")) || jq(n).hasClass("z-calevent-resizer")) {		
-			if (widget._drag[cnt.id])
-				widget._drag[cnt.id]._zrz = true;
+			if (widget._dragItems[cnt.id])
+				widget._dragItems[cnt.id]._zrz = true;
 		}
 		return false;
 	},

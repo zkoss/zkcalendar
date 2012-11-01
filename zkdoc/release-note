@@ -1,7 +1,9 @@
 calendar 2.1.2
 * Features:
 	ZKCAL-25: Show more label can be customized
+	ZKCAL-30: ZK Calendar support ZK 6.5
 * Bugs:
+	ZKCAL-23: zkcalendar bug with createcomponents on ZK 6
 	ZKCAL-26: ZK Calendar display wrong show more labels in the month mold when use custom HTML content 
 	ZKCAL-28: The wrong event sort order.
 	

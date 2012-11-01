@@ -116,16 +116,12 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		escapeXML: null		
 	},
 
-	$init: function () {
-		this.$supers('$init', arguments);		
-		this._drag = {};
+	bind_ : function() {
+		this.$supers('bind_', arguments);
+		this._dragItems = {};
 		this._ghost = {};
 		this._eventKey = {};
 		this.params = {};
-	},
-
-	bind_ : function() {
-		this.$supers('bind_', arguments);
 		zWatch.listen({onSize: this, onShow: this, onResponse: this});
 	},
 	
@@ -134,11 +130,11 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		// just in case
 		this.closeFloats();
 		zWatch.unlisten({onSize: this, onShow: this, onResponse: this});
-		if (this._drag)
-			for (var i in this._drag)
-				if (this._drag[i].destroy)
-					this._drag[i].destroy();
-		this._drag = this._ghost = this._eventKey = this.params = this._restoreCE = null;
+		if (this._dragItems)
+			for (var i in this._dragItems)
+				if (this._dragItems[i].destroy)
+					this._dragItems[i].destroy();
+		this._dragItems = this._ghost = this._eventKey = this.params = this._restoreCE = null;
 		this.$supers('unbind_', arguments);
 	},
 	
@@ -260,10 +256,10 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 				evt.stop();
 		});
 		
-		if (!enable && this._drag[daylong.id])
-			this._drag[daylong.id].destroy();
+		if (!enable && this._dragItems[daylong.id])
+			this._dragItems[daylong.id].destroy();
 		
-		this._drag[daylong.id] = enable ? new zk.Draggable(this, daylong, {
+		this._dragItems[daylong.id] = enable ? new zk.Draggable(this, daylong, {
 			starteffect: widget.closeFloats,
 			endeffect: cls._enddrag,
 			ghosting: cls._ghostdrag,
@@ -287,11 +283,11 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		});
 
 		// daylong drag
-		if (!enable && this._drag[cnt.id])
-			this._drag[cnt.id].destroy();
+		if (!enable && this._dragItems[cnt.id])
+			this._dragItems[cnt.id].destroy();
 			
 		cnt._skipped = enable;
-		this._drag[cnt.id] = enable ? new zk.Draggable(this,cnt, {
+		this._dragItems[cnt.id] = enable ? new zk.Draggable(this,cnt, {
 			starteffect: widget.closeFloats,
 			endeffect: cls._endDaydrag,
 			ghosting: cls._ghostDaydrag,
@@ -671,7 +667,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	_enddrag: function (dg, evt) {
 		var widget = dg.control,
 			cnt = dg.node,
-			dg = widget._drag[cnt.id];
+			dg = widget._dragItems[cnt.id];
 		if (dg) {
 			var ce,
 				dataObj = widget.getDragDataObj_();
