@@ -61,17 +61,15 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}
 	},
 
-	$init: function () {
-		this.$supers('$init', arguments);
+	bind_ : function () {// after compose
+		this.$supers('bind_', arguments);
+		
 		this._weekDates = [];
 		var zcls = this.getZclass(),
 			p = this.params;
 		p._fakerMoreCls = zcls + "-evt-faker-more";
 		p._fakerNoMoreCls = zcls + "-evt-faker-nomore";
-	},
-
-	bind_ : function () {// after compose
-		this.$supers('bind_', arguments);
+		
 		var widget = this,
 			zcls = this.getZclass(),
 			cnt = this.$n('cnt');
