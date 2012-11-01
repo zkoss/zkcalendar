@@ -352,10 +352,10 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		//reset rows height 	
 		if (this.woy) 			
 			woyChildren = this.woyCnt;		
-		ed = new Date(this.zoneEd);
-		ed = calUtil.addDay(ed, -7);
+		bd = new Date(this.zoneBd);
 		var woy = zk.parseInt(this.woy);
-		for (var i = weeks; i--;) {
+		
+		for (var i = 0, j = weeks; i < j; i++) {
 			var div = jq(cntRows[i]),
 				top = number * i;
 			
@@ -363,19 +363,19 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			div.height(number + '%');
 			
 			if (this.woy) {				
-				var year = ed.getFullYear(),
+				var year = bd.getFullYear(),
 					weekSpan = woyChildren[i],
 					pNode = jq(weekSpan.parentNode);				
 				
 				weekSpan.time = this.fixTimeZoneFromClient(this._weekDates[i].zoneBd);
 				jq(weekSpan).html(captionByWeekOfYear ? captionByWeekOfYear[i]: woy);				
 				
-				ed = calUtil.addDay(ed, -7);
-				ed.setMilliseconds(0);
+				bd = calUtil.addDay(bd, 7);
+				bd.setMilliseconds(0);
 				
-				if (year != ed.getFullYear())
+				if (year != bd.getFullYear())
 					woy = 1;
-				else woy--;	
+				else woy++;	
 				
 				pNode.css('top',top + '%');
 				pNode.height(number + '%');							

@@ -694,8 +694,8 @@ public class Calendars extends XulElement {
 		Calendar cal = getCalendar();
 		if (inMonthMold()){
 			smartUpdate("weekOfMonth", getWeekOfMonth());
-			if (isWeekOfYear() && _dfmter == null) {				
-				cal.setTime(endDate);
+			if (isWeekOfYear() && _dfmter == null) {
+				cal.setTime(beginDate);
 				smartUpdate("woy", String.valueOf(cal.get(Calendar.WEEK_OF_YEAR)));
 			}
 		}
@@ -967,7 +967,6 @@ public class Calendars extends XulElement {
 			if (_weekOfYear) {
 				Calendar cal = getCalendar();
 				cal.setTime(getBeginDate());
-				
 				renderer.render("woy", String.valueOf(cal.get(Calendar.WEEK_OF_YEAR)));
 			}
 			if (_dfmter != null) rendererMonthData(_dfmter, renderer);
