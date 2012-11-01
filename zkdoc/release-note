@@ -3,6 +3,7 @@ calendar 2.1.2
 	ZKCAL-25: Show more label can be customized
 * Bugs:
 	ZKCAL-26: ZK Calendar display wrong show more labels in the month mold when use custom HTML content 
+	ZKCAL-28: The wrong event sort order.
 	
 * Upgrade Notes:
 	--------
