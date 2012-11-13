@@ -871,7 +871,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			zoneEd = event.zoneEd;
 		if (!isExceedOneDay && 
 			(zoneBd.getHours() >= this._et || 
-			(zoneEd.getHours() <= this._bt && zoneEd.getMinutes() == 0)))
+			(zoneEd.getHours() <= this._bt && zoneEd.getHours() != 0 && zoneEd.getMinutes() == 0)))
 			return;		
 		this.appendChild(dayEvent);					
 		this[isExceedOneDay ? '_daylongEvents': '_dayEvents'].push(dayEvent.$n());
@@ -1367,14 +1367,15 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					target= weekDay[ce._preOffset].firstChild,
 					event = childWidget.event,
 					bd = new Date(event.zoneBd), 
-					ed = new Date(event.zoneEd);
+					ed = new Date(event.zoneEd),
+					isCrossDay = ed.getDate() != bd.getDate();
 				jq(target).append(ce);	
 				ce.style.visibility = "";
 				
 				ce._bd = bd;
 				ce._ed = ed;
 				// cross day
-				if (ed.getDate() != bd.getDate())
+				if (isCrossDay)
 					ed = new Date(ed.getTime() - 1000);
 				
 				// fix hgh
@@ -1390,6 +1391,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					bdHeightOffs = bdTimeslot ? perHgh * bdTimeslot: 0;
 				}
 				if (ei) {
+					if (isCrossDay)//ZKCAL-29
+						ed = new Date(ed.getTime() + 1000);
 					var edTimeslot = _getHightOffsPercent(ed, timeslots)
 					edHeightOffs = edTimeslot ? perHgh * edTimeslot: 0;
 				}
@@ -1484,16 +1487,16 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	} : function () {return false;},
 	
 	onSize: _zkf = function () {
-//		if (!this.perHeight) {
-		_updateCntHeight(this);
-		this.perHeight = this.cntRows.firstChild.firstChild.offsetHeight / this._timeslots;
-		this.createChildrenWidget_();
-		this._rePositionDaylong();
-		this._rePositionDay();
-		var a = this.$n("hdarrow");
-		//arrow position
-		a.style.left = jq.px((a.parentNode.offsetWidth * this.ts - a.offsetWidth) - 5);
-//		}
+			_updateCntHeight(this);
+		if (!this.perHeight) {
+			this.perHeight = this.cntRows.firstChild.firstChild.offsetHeight / this._timeslots;
+			this.createChildrenWidget_();
+			this._rePositionDaylong();
+			this._rePositionDay();
+			var a = this.$n("hdarrow");
+			//arrow position
+			a.style.left = jq.px((a.parentNode.offsetWidth * this.ts - a.offsetWidth) - 5);
+		}
 		
 		var cmp = this.$n(),
 			hgh = cmp.offsetHeight;
