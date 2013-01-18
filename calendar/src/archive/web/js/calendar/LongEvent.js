@@ -88,8 +88,8 @@ calendar.LongEvent = zk.$extends(calendar.Event, {
 		if (ed > ped) 
 			ed = new Date(ped);	
 		
-		//end equals calendar begin
-		if (ed.getHours() == 0 && ed.getMinutes() == 0 && calUtil.isTheSameDay(ed, pbd))
+		//end equals calendar begin, Bug ZKCAL-32: should check to seconds
+		if (ed.getHours() == 0 && ed.getMinutes() == 0 && ed.getSeconds() == 0 && calUtil.isTheSameDay(ed, pbd))
 			ed = calUtil.addDay(ed, 1);
 			
 		return {bd: bd, ed: ed};
