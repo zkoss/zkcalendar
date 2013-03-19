@@ -159,11 +159,12 @@ public class Util {
 		DateFormatter df = calendars.getDateFormatter();
 		Locale locale = Locales.getCurrent();
 		TimeZone timezone = calendars.getDefaultTimeZone();
+		String title = Util.createEventTitle(df, locale, timezone, ce);
 		
 		JSONObject json = new JSONObject();
 		json.put("id", calendars.getCalendarEventId(ce));
 		json.put("key", key);
-		json.put("title", Util.createEventTitle(df, locale, timezone, ce));
+		json.put("title", calendars.isEscapeXML() ? escapeXML(title) : title); //ZKCAL-33: title should also escapeXML
 		json.put("headerColor", ce.getHeaderColor());
 		json.put("contentColor", ce.getContentColor());
 		json.put("content", calendars.isEscapeXML() ? escapeXML(ce.getContent()): ce.getContent());

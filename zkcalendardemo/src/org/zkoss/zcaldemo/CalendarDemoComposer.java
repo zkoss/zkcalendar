@@ -153,7 +153,7 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 			}
 			sce.setHeaderColor(evts[i][2]);
 			sce.setContentColor(evts[i][3]);
-			// ce.setTitle() if any, otherwise, the time stamp is assumed.
+			//sce.setTitle("<script>alert(\"Title\");</script>"); //if any, otherwise, the time stamp is assumed.
 			sce.setContent(evts[i][4]);
 			cm.add(sce);
 		}

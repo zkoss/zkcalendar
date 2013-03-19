@@ -4,6 +4,7 @@ calendar 2.1.3
 	
 * Bugs:
 	ZKCAL-32: Event length not correct in next month
+	ZKCAL-33: CalendarEvent title text shall escapeXML
 	
 * Upgrade Notes:
 
