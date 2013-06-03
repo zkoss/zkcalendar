@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zk xmlns="http://www.zkoss.org/2005/zul">
+	<button label="test set day and change first day">
+		<attribute name="onClick"><![CDATA[
+			cal.setMold("default");
+			cal.setDays(14);
+			cal.setFirstDayOfWeek("MONDAY");
+		]]></attribute>
+	</button>
+	<button label="test set day to 7">
+		<attribute name="onClick"><![CDATA[
+			cal.setMold("default");
+			cal.setDays(7);
+		]]></attribute>
+	</button>
+	<button label="test set day to 14">
+		<attribute name="onClick"><![CDATA[
+			cal.setMold("default");
+			cal.setDays(14);
+		]]></attribute>
+	</button>
+	<button label="test change first day">
+		<attribute name="onClick"><![CDATA[
+			cal.setFirstDayOfWeek("MONDAY");
+		]]></attribute>
+	</button>
+	<calendars id="cal" />
+</zk>
