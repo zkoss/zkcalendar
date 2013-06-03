@@ -545,7 +545,7 @@ public class Calendars extends XulElement {
 		if (inMonth)
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			
-		if (_days == 7 || inMonth) {
+		if (_days >= 7 || inMonth) { //ZKCAL-34: should consider _firstDayOfWeek if week view is large than 7
 			int index = cal.get(Calendar.DAY_OF_WEEK);
 			int offset = index - _firstDayOfWeek;
 			if (offset < 0) offset += 7;
