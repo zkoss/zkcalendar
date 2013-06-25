@@ -149,9 +149,9 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	},
 
 	processEvtData_: function(event){
-		event.isLocked = event.isLocked == 'true' ? true: false;		
+		event.isLocked = event.isLocked == 'true' ? true: false;
 		event.beginDate = new Date(zk.parseInt(event.beginDate));
-		event.endDate = new Date(zk.parseInt(event.endDate));				
+		event.endDate = new Date(zk.parseInt(event.endDate));
 		
 		event.zoneBd = this.fixTimeZoneFromServer(event.beginDate);
 		event.zoneEd = this.fixTimeZoneFromServer(event.endDate);
@@ -159,8 +159,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		var key = event.key,
 			period = this._eventKey[key],
 			inMon = this.mon;
-		
-		if (!period) {			
+		if (!period) {
 			var keyDate = zk.fmt.Date.parseDate(key);
 			keyDate.setHours(0,0,0,0);
 			keyDate = calUtil.getPeriod(keyDate, this.zoneBd);
@@ -186,7 +185,10 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			var events = this._events[i];
 			for (var k = 0, l = events.length; k < l; k++) {
 				var event = this.processEvtData_(events[k]);
-				if (event.zoneBd >= this.zoneEd || event.zoneEd < this.zoneBd) continue;				
+				//over range
+				//Bug ZKCAL-36: should check if event endDate and view begin Date are equal
+				if (event.zoneBd >= this.zoneEd || event.zoneEd <= this.zoneBd)
+					continue;
 				
 				this.processChildrenWidget_(_isExceedOneDay(this, event), event);
 			}
@@ -202,11 +204,11 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		for (var n = preOffset; n--;) 
 			html.push(s);
 		
-		html.push('<td class="' + className + '" colspan="' + dayNode._days + '"></td>');		
-		tr.append(html.join(''));			
+		html.push('<td class="' + className + '" colspan="' + dayNode._days + '"></td>');
+		tr.append(html.join(''));
 		jq(tr[0].lastChild).append(dayNode);
-	},	
-		
+	},
+	
 	putInDaylongSpace_: function(list, node) {
 		var bd = node.upperBoundBd,
 			ed = node.lowerBoundEd,
@@ -226,13 +228,13 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 					findSpace = true;
 			}
 			if (findSpace) break;
-		}		
-			
+		}
+		
 		//not row space
-		if (findSpace)			
-			rowSpace.push(node);		
+		if (findSpace)
+			rowSpace.push(node);
 		else list.push([node]);
-	},	
+	},
 	
 	updateDateOfBdAndEd_: function(){
 		this._beginDate = new Date(this.bd);
@@ -317,8 +319,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		});
 	},
 	
-	setAddDayEvent: function (eventArray) {	 	
-        eventArray = jq.evalJSON(eventArray);      
+	setAddDayEvent: function (eventArray) {
+        eventArray = jq.evalJSON(eventArray);
 		if (!eventArray.length) return;		
 		this.clearGhost();
 		
@@ -328,7 +330,9 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			if (zk.Widget.$(event.id)) continue;
 			event = this.processEvtData_(event);
 			//over range
-			if (event.zoneBd > this.zoneEd || event.zoneEd < this.zoneBd) continue;
+			//Bug ZKCAL-36: should check if event endDate and view begin Date are equal
+			if (event.zoneBd >= this.zoneEd || event.zoneEd <= this.zoneBd)
+				continue;
 			
 			var isExceedOneDay = _isExceedOneDay(this, event);
 			this.processChildrenWidget_(isExceedOneDay, event);
