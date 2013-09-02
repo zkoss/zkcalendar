@@ -247,16 +247,22 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		var	widget = this,
 			inMon = this.mon,
 			daylong = inMon ? this.$n('cnt'): this.$n("daylong"),
+			$daylong = jq(daylong),
 			cls = this.$class;
 		// a trick for dragdrop.js
 		daylong._skipped = enable;
-		jq(daylong)[enable ? 'bind': 'unbind']('click',  function (evt) {
-			if (!zk.dragging && !zk.processing) {
-				widget.clearGhost();
-				widget[inMon ? 'onClick': 'onDaylongClick'](daylong, evt);
-			} else
-				evt.stop();
-		});
+		//ZKCAL-36: bind and unbind click event separately based on enable
+		if (enable) {
+			$daylong.bind('click', function (evt) {
+				if (!zk.dragging && !zk.processing) {
+					widget.clearGhost();
+					widget[inMon ? 'onClick': 'onDaylongClick'](daylong, evt);
+				} else
+					evt.stop();
+			});
+		} else {
+			$daylong.unbind('click');
+		}
 		
 		if (!enable && this._dragItems[daylong.id])
 			this._dragItems[daylong.id].destroy();

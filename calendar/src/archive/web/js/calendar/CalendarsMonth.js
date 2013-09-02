@@ -537,18 +537,18 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		return -1;
 	},
 	
-	onClick: function (cnt, evt) {		
+	onClick: function (cnt, evt) {
 		var widget = zk.Widget.$(cnt),
 			zcls = widget.getZclass(),
 			node = evt.target,
-			ce = zk.Widget.$(node).event;		
+			ce = zk.Widget.$(node).event;
 		if (jq(node).hasClass(zcls + '-evt-faker-more') && node.parentNode.id.indexOf('-frow') > 0) return;
-		
+
 		if (ce) {
 			widget.fire("onEventEdit", {
-				data: [ce.id,evt.pageX,evt.pageY, jq.innerWidth(),jq.innerHeight()]});			
+				data: [ce.id,evt.pageX,evt.pageY, jq.innerWidth(),jq.innerHeight()]});
 		} else {
-			var cmp = widget.$n(),				
+			var cmp = widget.$n(),
 				html = '<div id="' + widget.uuid + '-rope" class="' + zcls + '-month-dd">'
 					 + '<div class="' + zcls + '-dd-rope"></div></div>';
 
@@ -565,9 +565,9 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				rows = Math.floor(y/height),
 				bd = new Date(widget.zoneBd),
 				zinfo = [];
-				
+
 			bd.setDate(bd.getDate() + (7 * rows + cols));
-			
+
 			for (var left = 0, n = td; n;
 					left += n.offsetWidth, n = n.nextSibling)
 				zinfo.push({l: left, w: n.offsetWidth});
@@ -588,7 +588,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 			var ed = new Date(bd);
 			ed = calUtil.addDay(ed, 1);
-				
+
 			widget.fire("onEventCreate", {
    				 data: [
 				 	widget.fixTimeZoneFromClient(bd), 
