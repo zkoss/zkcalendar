@@ -251,7 +251,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			cls = this.$class;
 		// a trick for dragdrop.js
 		daylong._skipped = enable;
-		//ZKCAL-36: bind and unbind click event separately based on enable
+		//ZKCAL-38: bind and unbind click event separately based on enable
 		if (enable) {
 			$daylong.bind('click', function (evt) {
 				if (!zk.dragging && !zk.processing) {
