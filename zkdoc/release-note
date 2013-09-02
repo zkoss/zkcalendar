@@ -5,6 +5,10 @@ calendar 2.1.3
 * Bugs:
 	ZKCAL-32: Event length not correct in next month
 	ZKCAL-33: CalendarEvent title text shall escapeXML
+	ZKCAL-34: First day of view is forced to "today" if days is not 7
+	ZKCAL-36: Refresh model make calendar broken
+	ZKCAL-38: Problems when toggling "readonly" on ZK calendar
+	ZKCAL-39: dragged event in month mold disappears (when preventing update)
 	
 * Upgrade Notes:
 
