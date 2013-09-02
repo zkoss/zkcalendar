@@ -277,23 +277,31 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			ignoredrag: cls._ignoredrag
 		}): null;
 		
-		jq(this.$n())[enable ? 'bind': 'unbind']('click', this.proxy(this.clearGhost));
+		var $n = jq(this.$n());
+		if (enable)
+			$n.bind('click', this.proxy(this.clearGhost));
+		else
+			$n.unbind('click');
 		
 		if (inMon) return;
 		
-		var cnt = this.$n("cnt");
-		jq(cnt)[enable ? 'bind': 'unbind']('click', function(evt) {
-			if (!zk.dragging && !zk.processing) {
-				widget.clearGhost();
-				widget.onClick(cnt, evt);
-			} else
-				evt.stop();
-		});
-
+		var cnt = this.$n('cnt'),
+			$cnt = jq(cnt);
+		if (enable)
+			$cnt.bind('click', function(evt) {
+				if (!zk.dragging && !zk.processing) {
+					widget.clearGhost();
+					widget.onClick(cnt, evt);
+				} else
+					evt.stop();
+			});
+		else
+			$cnt.unbind('click');
+		
 		// daylong drag
 		if (!enable && this._dragItems[cnt.id])
 			this._dragItems[cnt.id].destroy();
-			
+		
 		cnt._skipped = enable;
 		this._dragItems[cnt.id] = enable ? new zk.Draggable(this,cnt, {
 			starteffect: widget.closeFloats,
@@ -725,6 +733,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 							jq.innerHeight()
 						]
 					});
+					widget._restoreCE = ce; //ZKCAL-39: should store calendar event
 				}
 				jq('#' + widget.uuid + '-rope').remove();
 				jq('#' + widget.uuid + '-dd').remove();
