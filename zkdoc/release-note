@@ -9,6 +9,7 @@ calendar 2.1.3
 	ZKCAL-36: Refresh model make calendar broken
 	ZKCAL-38: Problems when toggling "readonly" on ZK calendar
 	ZKCAL-39: dragged event in month mold disappears (when preventing update)
+	ZKCAL-40: toggle "readonly" in default mold, causes error when switching to month mold
 	
 * Upgrade Notes:
 

@@ -130,10 +130,16 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		// just in case
 		this.closeFloats();
 		zWatch.unlisten({onSize: this, onShow: this, onResponse: this});
-		if (this._dragItems)
-			for (var i in this._dragItems)
-				if (this._dragItems[i].destroy)
-					this._dragItems[i].destroy();
+		if (this._dragItems) {
+			for (var i in this._dragItems) {
+				var dragItem = this._dragItems[i];
+				//ZKCAL-40: should check dragItem exist or not
+				if (dragItem && dragItem.destroy) {
+					dragItem.destroy();
+					dragItem = this._dragItems[i] = null;
+				}
+			}
+		}
 		this._dragItems = this._ghost = this._eventKey = this.params = this._restoreCE = null;
 		this.$supers('unbind_', arguments);
 	},
