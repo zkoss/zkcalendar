@@ -501,7 +501,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	onPopupClick: function (evt) {	
 		var childWidget = zk.Widget.$(evt.target);
 		if (childWidget.$instanceof(calendar.Event)) {
-			this.fire("onEventEdit",{data:[childWidget.uuid,evt.pageX,evt.pageY,jq.innerWidth(),jq.innerHeight()]});
+			var p = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
+			this.fire("onEventEdit",{data:[childWidget.uuid, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});
 			evt.stop();
 		}
 	},
@@ -691,7 +692,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	_enddrag: function (dg, evt) {
 		var widget = dg.control,
 			cnt = dg.node,
-			dg = widget._dragItems[cnt.id];
+			dg = widget._dragItems[cnt.id],
+			p = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
 		if (dg) {
 			var ce,
 				dataObj = widget.getDragDataObj_();
@@ -726,15 +728,14 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 					ed.setFullYear(bd.getFullYear());
 					ed.setDate(1);
 					ed.setMonth(bd.getMonth());
-					ed.setDate(bd.getDate() + _getEventPeriod(event) - (_isZeroTime(ed) ? 0:1));	
-					
+					ed.setDate(bd.getDate() + _getEventPeriod(event) - (_isZeroTime(ed) ? 0:1));
 					widget.fire("onEventUpdate", {
 						data: [
 							dg._zevt.id,
 							widget.fixTimeZoneFromClient(ebd),
 							widget.fixTimeZoneFromClient(ed),
-							evt.pageX,
-							evt.pageY,
+							p[0],
+							p[1],
 							jq.innerWidth(),
 							jq.innerHeight()
 						]
@@ -750,8 +751,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 					data: [
 						widget.fixTimeZoneFromClient(newData.bd),
 						widget.fixTimeZoneFromClient(newData.ed),
-						evt.pageX,
-						evt.pageY,
+						p[0],
+						p[1],
 						jq.innerWidth(),
 						jq.innerHeight()
 					]

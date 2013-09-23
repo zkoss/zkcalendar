@@ -541,12 +541,13 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		var widget = zk.Widget.$(cnt),
 			zcls = widget.getZclass(),
 			node = evt.target,
-			ce = zk.Widget.$(node).event;
+			ce = zk.Widget.$(node).event,
+			p = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
 		if (jq(node).hasClass(zcls + '-evt-faker-more') && node.parentNode.id.indexOf('-frow') > 0) return;
 
 		if (ce) {
 			widget.fire("onEventEdit", {
-				data: [ce.id,evt.pageX,evt.pageY, jq.innerWidth(),jq.innerHeight()]});
+				data: [ce.id, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});
 		} else {
 			var cmp = widget.$n(),
 				html = '<div id="' + widget.uuid + '-rope" class="' + zcls + '-month-dd">'
@@ -556,7 +557,6 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 			var td = cnt.firstChild.firstChild.rows[0].firstChild,
 				width = td.offsetWidth,
-				p = [evt.pageX,evt.pageY],
 				height = cnt.firstChild.offsetHeight,
 				offs = zk(cnt).revisedOffset(),
 				x = p[0] - offs[0],

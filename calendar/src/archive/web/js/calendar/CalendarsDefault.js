@@ -941,7 +941,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 	onClick: function (cnt, evt) {
 		var widget = zk.Widget.$(cnt),
-			p = [evt.pageX,evt.pageY];
+			p = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
 
 		if (!cnt._lefts || p[0] <= cnt._lefts[0]) return;
 
@@ -1016,11 +1016,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	
 	onDaylongClick: function (daylong, evt) {
 		var widget = zk.Widget.$(daylong),
-			ce = zk.Widget.$(evt.target).event;
+			ce = zk.Widget.$(evt.target).event,
+			p = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
 			
 		if (ce) {		
 			widget.fire("onEventEdit",{
-				data: [ce.id,evt.pageX,evt.pageY, jq.innerWidth(),jq.innerHeight()]});				
+				data: [ce.id, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});				
 		} else {
 			var zcls = widget.getZclass(),
 				html = '<div id="'+ widget.uuid + '-rope" class="' + zcls + '-daylong-dd">'
@@ -1031,7 +1032,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			var row = daylong.firstChild.firstChild.lastChild,
 				width = row.firstChild.offsetWidth,
 				offs = zk(daylong).revisedOffset(),
-				p = [evt.pageX,evt.pageY],
 				cols = Math.floor((p[0] - offs[0])/width),
 				bd = new Date(widget.zoneBd);
 
