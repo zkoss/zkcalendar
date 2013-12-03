@@ -9,7 +9,8 @@ ${z:setCSSCacheControl()}
 	margin-top: 5px;
 	padding-right: 10px;
 }
-.refresh {
+.refresh,
+.refresh .z-toolbarbutton-content { <%-- for ZK 7 --%>
 	background: none !important;
 	text-decoration: underline !important;
 	border: 0 !important;
@@ -31,6 +32,7 @@ ${z:setCSSCacheControl()}
 	height: 1px;
 	padding: 0;
 	overflow: hidden;
+	box-sizing: content-box; <%-- for ZK 7 --%>
 }
 .tabs .t2 {
 	margin: 0 1px;
@@ -71,6 +73,8 @@ ${z:setCSSCacheControl()}
 	white-space: nowrap;
 	color: #0F3B82;
 	padding: 2px 5px;
+	overflow: hidden;
+	box-sizing: content-box; <%-- for ZK 7 --%>
 }
 .tabs .text, .tabs .text * {
 	background: none;
@@ -99,6 +103,9 @@ ${z:setCSSCacheControl()}
 	margin: -3px;
 	padding-top: 5px;
 }
+.calendar-toolbar .z-toolbar-start { <%-- for ZK 7 --%>
+	float: none;
+}
 .gecko2 .calendar-toolbar {
 	margin: -3px;
 }
@@ -107,25 +114,25 @@ ${z:setCSSCacheControl()}
 	zoom: 1;
 }
 .arrow-left {
-	border-color: #CCE5F4 #7EAAC6 #CCE5F4 #CCE5F4;
+	border-color: transparent #7EAAC6 transparent transparent;
 	border-style: solid;
-	border-width: 5px;
+	border-width: 5px 5px 5px 0;
 	height: 0;
 	width: 0;
 	top: 4px;
-	left: 5px;
+	left: 10px;
 	position: absolute;
 	font-size: 0;
 	line-height: 0;
 }
 .arrow-right {
-	border-color: #CCE5F4 #CCE5F4 #CCE5F4 #7EAAC6;
+	border-color: transparent transparent transparent #7EAAC6;
 	border-style: solid;
-	border-width: 5px;
+	border-width: 5px 0 5px 5px;
 	height: 0;
 	width: 0;
 	top: 4px;
-	left: 11px;
+	left: 10px;
 	position: absolute;
 	font-size: 0;
 	line-height: 0;
@@ -134,13 +141,16 @@ ${z:setCSSCacheControl()}
 	background-color: #B9D0DE;
 }
 .arrow-over .arrow-left {
-	border-color: #B9D0DE white #B9D0DE #B9D0DE;
+	border-color: transparent #FFFFFF transparent transparent;
 }
 .arrow-over .arrow-right {
-	border-color: #B9D0DE #B9D0DE #B9D0DE white;
+	border-color: transparent transparent transparent #FFFFFF;
+}
+.blue, .red, .green, .purple, .khaki { <%-- for ZK 7 --%>
+	text-align: center !important;
 }
 .blue *, .red *, .green *, .purple *, .khaki * {
-	color: white;
+	color: white !important;
 	text-align: center;
 }
 .red {
