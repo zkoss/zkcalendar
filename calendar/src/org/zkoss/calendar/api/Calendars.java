@@ -143,13 +143,13 @@ public interface Calendars {
 
 	/**
 	 * Returns the beginning date, which is based on {@link #getCurrentDate()} in
-	 * the current view depended on which {@link #getMold()} is using.
+	 * the current view depended on which mold is using.
 	 */
 	public Date getBeginDate();
 
 	/**
 	 * Returns the end date, which is based on {@link #getCurrentDate()} in the
-	 * current view depended on which {@link #getMold()} is using. 
+	 * current view depended on which mold is using. 
 	 */
 	public Date getEndDate();
 

@@ -177,11 +177,10 @@ public class Util {
 	}
 	
 	/** 
-	 * This method is missing in {@link XMLs}, unfortunatelly. 
-	 * @param sb String Buffer where to write to.
+	 * This method is missing in {@link XMLs}, unfortunately.
 	 * @param s String to escape.
 	 * 
-	 * @return {@code sb} parameter.
+	 * @return {@code s} escaped string.
 	 * 
 	 * @see XMLs#escapeXML(char)
 	 */
