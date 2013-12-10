@@ -19,7 +19,8 @@
 			<outputDirectory>/dist/lib</outputDirectory>
 		</file>
 		<file>
-			<source>${project.build.directory}/${project.artifactId}-sources.jar</source>
+			<source>${project.build.directory}/${project.artifactId}-${version}-sources.jar</source>
+			<destName>${project.artifactId}-sources.jar</destName>
 			<outputDirectory>/dist/src</outputDirectory>
 		</file>
 		<file>
