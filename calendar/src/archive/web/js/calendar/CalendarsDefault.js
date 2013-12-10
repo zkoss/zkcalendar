@@ -24,7 +24,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	}
 	
 	function _setEvtWgtHeight(wgt, node, id, height) {
-		var body = jq(node).find('#'+id+'-body')[0];
+		var body = jq(node).find('#'+id+'-body')[0],
+			inner = body.firstChild.firstChild;
 		
 		for (var child = jq(node).children()[0]; child; child = child.nextSibling) {
 			if (wgt.isLegalChild(child)) 
@@ -32,7 +33,6 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		}
 		height = zk(body).revisedHeight(height);
 		height = zk(body.firstChild).revisedHeight(height);
-		var inner = body.firstChild.firstChild;
 		height = zk(inner).revisedHeight(height - 2);
 		inner.style.height = jq.px(height);
 	}
@@ -748,7 +748,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			var dayEvent = this._dayEvents[i];
 			this._daySpace[dayEvent._preOffset].push(dayEvent);
 		}
-		this.fixPosition();		
+		this.fixPosition();
 	},
 	
 	_rePositionDaylong: function () {	

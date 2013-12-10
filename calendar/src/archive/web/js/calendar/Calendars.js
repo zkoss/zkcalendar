@@ -75,7 +75,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		if (bd < wgt.zoneBd || bd.getFullYear() != ed.getFullYear() ||
 			(!calUtil.isTheSameDay(bd, ed) && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
 			(calUtil.getPeriod(ed, bd) >= 1 && calUtil.getPeriod(ed, wgt.zoneBd) >= 1))
-	 		return true;	
+	 		return true;
 	}
 	
 	function _isZeroTime(date){
@@ -105,15 +105,15 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		readonly: function () {
 			if (!this.$n()) return;			
 			this.editMode(!this._readonly);
-		},		
+		},
 		cd: function(){
 			this._currentDate = new Date(this._cd);
-			this.updateDateRange_();			
+			this.updateDateRange_();
 		},
 		firstDayOfWeek: function(){
 			this.updateDateRange_();
 		},
-		escapeXML: null		
+		escapeXML: null
 	},
 
 	bind_ : function() {
@@ -521,24 +521,23 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 },{
 	_ignoredrag: function (dg, p, evt) {
 		if (zk.processing) return true;
-		var cnt = dg.node,
-			widget = dg.control,
+		var widget = dg.control,
 			p = widget.params;
 
 		widget.clearGhost();
 		var n = evt.domTarget,
-			targetWidget = zk.Widget.$(n);			
+			targetWidget = zk.Widget.$(n);
 		if (widget.mon && n.tagName == 'SPAN' && 
 			jq(n).hasClass(widget.getZclass() + "-month-date-cnt"))
 				return true;
 		if (n.nodeType == 1 && jq(n).hasClass(p._fakerMoreCls) && !jq(n).hasClass(p._fakerNoMoreCls) || 
-			(targetWidget.$instanceof(calendar.Event)&& 
+			(targetWidget.$instanceof(calendar.Event) && 
 				(!n.parentNode || targetWidget.event.isLocked )))
 				return true;
 		return false;
 	},
 
-	_ghostdrag: function (dg, ofs, evt) {		
+	_ghostdrag: function (dg, ofs, evt) {
 		var cnt = dg.node,
 			widget = dg.control,
 			uuid = widget.uuid,
@@ -546,7 +545,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			inMon = widget.mon,
 			dataObj = widget.getDragDataObj_(),
 			targetWidget = zk.Widget.$(evt.domEvent),
-			ce = targetWidget.$instanceof(calendar.Event)? targetWidget.$n(): null,
+			ce = targetWidget.$instanceof(calendar.Event) ? targetWidget.$n(): null,
 			hs = [];
 		jq(document.body).prepend(dataObj.getRope(widget, cnt, hs));
 		var row = dataObj.getRow(cnt),
@@ -630,7 +629,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		}
 	},
 	
-	_changedrag: function(dg, p, evt) {		
+	_changedrag: function(dg, p, evt) {
 		var widget = dg.control,
 			x = p[0],
 			y = p[1],
@@ -695,8 +694,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			dg = widget._dragItems[cnt.id],
 			p = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
 		if (dg) {
-			var ce,
-				dataObj = widget.getDragDataObj_();
+			var ce, dataObj = widget.getDragDataObj_();
 			if (dg._zevt) {
 				var zcls = widget.getZclass(),
 					targetWidget = zk.Widget.$(dg._zevt),
