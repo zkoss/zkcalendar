@@ -376,6 +376,18 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			
 			event = this.processEvtData_(event);
 			
+			//Bug ZKCAL-47: childWidget may not in the range and has beem removed.
+			if (!childWidget) {
+				if (event.zoneBd > this.zoneEd || event.zoneEd < this.zoneBd) {
+					//if event still not in the range, skip
+					continue;
+				} else {
+					//if event is in the range, create childWidget.
+					this.processChildrenWidget_(_isExceedOneDay(this, event), event);
+					childWidget = zk.Widget.$(event.id);
+				}
+			}
+			
 			if (inMon && 
 				(isBeginTimeChange = childWidget.isBeginTimeChange(event)))
 				this.removeNodeInArray_(childWidget);
@@ -388,11 +400,11 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 				continue;
 			}
 			
-			var isExceedOneDay = _isExceedOneDay(this, event),			
-				isDayEvent = inMon ? childWidget.className == 'calendar.DayOfMonthEvent':
-									childWidget.className == 'calendar.DayEvent',
-				isChangeEvent = isExceedOneDay ? (isDayEvent ? true : false):
-													(isDayEvent ? false: true);
+			var isExceedOneDay = _isExceedOneDay(this, event),
+				clsName = childWidget.className,
+				isDayEvent = inMon ? clsName == 'calendar.DayOfMonthEvent' : clsName == 'calendar.DayEvent',
+				isChangeEvent = isExceedOneDay ? isDayEvent : !isDayEvent;
+			
 			if (isChangeEvent) {
 				if (!inMon)
 					this[isDayEvent ? '_dayEvents': '_daylongEvents'].$remove(childWidget.$n());
