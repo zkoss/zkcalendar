@@ -225,6 +225,10 @@ ${z:setCWRCacheControl()}
 	width: 100%;
 }
 .z-calendars-hour-sep {
+	<%-- ZKCAL-46: use content-box instead of border-box in ZK7 --%>
+	box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
 	height: 22px;
 	border-bottom: 1px dotted ${separatorColor};
 	border-top: 1px solid ${separatorColor};
@@ -233,6 +237,10 @@ ${z:setCWRCacheControl()}
 	font-size: 22px;
 }
 .z-calendars-hour-of-day {
+	<%-- ZKCAL-46: use content-box instead of border-box in ZK7 --%>
+	box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
 	padding-right: 2px;
 	border-bottom: 1px solid ${separatorColor};
 	color: ${fontColor};

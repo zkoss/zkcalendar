@@ -51,11 +51,12 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		var $cnt = jq(wgt.$n("cnt")),
 			timeslots = wgt._timeslots,
 			hourCount = wgt._et - wgt._bt,
-			slotHeight = 23,
+			$slot = $cnt.find('.z-calendars-hour-sep'), //fine tune if user customize height by CSS
+			slotHeight = $slot[0] ? ($slot[0].offsetHeight - zk($slot[0]).borderHeight()) : 22,
 			totlaHeight = hourCount * slotHeight * timeslots;
 		$cnt.find('.z-calendars-week-cnt').height(jq.px0(totlaHeight + 4));
 		jq(wgt.cntRows).find('.z-calendars-week-day-cnt').height(totlaHeight).css('margin-bottom', -totlaHeight);
-		jq(wgt.cntRows).find('.z-calendars-hour-of-day').height(slotHeight * timeslots - 1);
+		jq(wgt.cntRows).find('.z-calendars-hour-of-day').height(slotHeight * timeslots + 1);
 		wgt._slotOffs = 12/timeslots;
 		wgt.beginIndex = wgt._bt * timeslots;
 	}
