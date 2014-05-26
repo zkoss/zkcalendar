@@ -3,6 +3,7 @@ calendar 2.1.4
 * Features:
 	
 * Bugs:
+	ZKCAL-46: Calendars times and timeslot lines not align in ZK7
 	ZKCAL-47: JS Error when updating CalendarEvents in the model, which are not displayed in the current view
 	
 * Upgrade Notes:
