@@ -14,6 +14,8 @@
 	</modules>
 	<properties>
 		<zk.version>7.0.0</zk.version>
+		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+		<packname>2.1.4-FL-${maven.build.timestamp}</packname>
 	</properties>
 	<licenses>
 		<license>
@@ -33,14 +35,9 @@
 		</repository>
 	</repositories>
 	<dependencies>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.zkoss.theme</groupId> -->
-<!-- 			<artifactId>breeze</artifactId> -->
-<!-- 			<version>${zk.version}</version> -->
-<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkex</artifactId>
+			<artifactId>zkmax</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
 		<dependency>

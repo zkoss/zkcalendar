@@ -12,15 +12,15 @@
 			<outputDirectory>/</outputDirectory>
 		</file>
 		<file>
-			<source>${project.build.directory}/${project.artifactId}-${project.version}.jar</source>
+			<source>${project.build.directory}/${project.artifactId}-${parent.version}.jar</source>
 			<outputDirectory>/</outputDirectory>
 		</file>
 		<file>
-			<source>${project.build.directory}/${project.artifactId}-${project.version}-sources.jar</source>
+			<source>${project.build.directory}/${project.artifactId}-${parent.version}-sources.jar</source>
 			<outputDirectory>/</outputDirectory>
 		</file>
 		<file>
-			<source>${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar</source>
+			<source>${project.build.directory}/${project.artifactId}-${parent.version}-javadoc.jar</source>
 			<outputDirectory>/</outputDirectory>
 		</file>
 	</files>

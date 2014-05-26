@@ -1,19 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+        <groupId>org.zkoss.calendar</groupId>
+        <artifactId>zkcalendar</artifactId>
+        <version>2.1.4-SNAPSHOT</version>
+    </parent>
 	<groupId>org.zkoss.calendar</groupId>
 	<artifactId>zkcalendardemo</artifactId>
-	<version>2.1.4-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>The ZK Calendar Demo</name>
 	<description>The ZK Calendar Demo</description>
 	<url>http://www.zkoss.org/product/zkcalendar.dsp</url>
-	<properties>
-		<calendar.version>2.1.4-SNAPSHOT</calendar.version>
-		<zk.version>7.0.0</zk.version>
-		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
-		<packname>-2.1.4-FL-${maven.build.timestamp}</packname>
-	</properties>
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
@@ -21,16 +19,6 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	<repositories>
-		<repository>
-			<id>zk repository</id>
-			<url>http://mavensync.zkoss.org/maven2</url>
-		</repository>
-		<repository>
-			<id>ZK PE Evaluation</id>
-			<url>http://mavensync.zkoss.org/zk/pe-eval</url>
-		</repository>
-	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>zkmaven</id>
@@ -42,22 +30,7 @@
 		<dependency>
 			<groupId>org.zkoss.calendar</groupId>
 			<artifactId>calendar</artifactId>
-			<version>${calendar.version}</version>
-		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.zkoss.theme</groupId> -->
-<!-- 			<artifactId>breeze</artifactId> -->
-<!-- 			<version>${zk.version}</version> -->
-<!-- 		</dependency> -->
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkmax</artifactId>
-			<version>${zk.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkplus</artifactId>
-			<version>${zk.version}</version>
+			<version>${parent.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -95,7 +68,7 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<finalName>zk-calendar-demo${packname}</finalName>
+							<finalName>zk-calendar-demo-${packname}</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 							<descriptors>
 								<descriptor>assembly/demo.xml</descriptor>
