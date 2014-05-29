@@ -17,6 +17,11 @@
 		]]>
 		</zscript>
 		<calendars id="calendars" model="${model}" mold="default">
+			<toolbar>
+				<button label="Time slots 2" onClick="calendars.setTimeslots(2)" />
+				<button label="Time slots 4" onClick="calendars.setTimeslots(4)" />
+				<button label="Time slots 6" onClick="calendars.setTimeslots(6)" />
+			</toolbar>
 		</calendars>
 	</window>
 </zk>

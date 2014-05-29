@@ -217,7 +217,7 @@ ${z:setCWRCacheControl()}
 }
 .z-calendars-hour {
 	position: relative;
-	top: 1px;
+	top: 2px;
 	height: 1px;
 }
 .z-calendars-hour-inner {
