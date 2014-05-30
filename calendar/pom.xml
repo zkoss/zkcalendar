@@ -3,13 +3,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-        <groupId>org.zkoss.calendar</groupId>
-        <artifactId>zkcalendar</artifactId>
-        <version>2.1.4-SNAPSHOT</version>
-    </parent>
 	<groupId>org.zkoss.calendar</groupId>
 	<artifactId>calendar</artifactId>
+	<version>2.1.4-SNAPSHOT</version>
+	<properties>
+		<zk.version>7.0.0</zk.version>
+		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+		<packname>2.1.4-FL-${maven.build.timestamp}</packname>
+	</properties>
 	<packaging>jar</packaging>
 	<name>The ZK Calendars</name>
 	<url>http://www.zkoss.org/calendars</url>
@@ -28,6 +29,14 @@
 			<url>http://mavensync.zkoss.org/maven2/</url>
 		</pluginRepository>
 	</pluginRepositories>
+	<dependencies>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zul</artifactId>
+			<version>${zk.version}</version>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
 	<build>
 		<sourceDirectory>${project.basedir}/src</sourceDirectory>
 		<resources>
