@@ -49,6 +49,8 @@ public class CalendarsEvent extends Event {
 	public static final String ON_EVENT_UPDATE = "onEventUpdate";
 	public static final String ON_DAY_CLICK = "onDayClick";
 	public static final String ON_WEEK_CLICK = "onWeekClick";
+	//since 2.1.5
+	public static final String ON_EVENT_TOOLTIP = "onEventTooltip";
 	
 	private Date _beginDate;
 
@@ -123,6 +125,20 @@ public class CalendarsEvent extends Event {
 		return new Event(cmd, cmp, Util.fixDSTTime(cmp.getDefaultTimeZone(), new Date(getLong(data.get(0)))));
 	}
 	
+	public static Event getTooltipEvent(AuRequest request) {
+		final JSONArray data = (JSONArray) request.getData().get("data");
+		final Calendars cmp = verifyEvent(request, data, 5);
+		
+		CalendarEvent ce = cmp.getCalendarEventById(String.valueOf(data.get(0)));
+		
+		if (ce == null)
+			return null;
+		
+		return new CalendarsEvent(ON_EVENT_TOOLTIP, cmp, ce, null, null,
+				getInt(data.get(1)), getInt(data.get(2)),
+				getInt(data.get(3)), getInt(data.get(4)));
+	}
+	
 	private static int getInt(Object obj){
 		return Integer.parseInt(String.valueOf(obj));
 	}
@@ -195,7 +211,7 @@ public class CalendarsEvent extends Event {
 	 */
 	public final int getY() {
 		return _y;
-	}	
+	}
 	
 	/** Returns the pixel width of the client's desktop.
 	 */

@@ -338,6 +338,50 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			evt.stop();
 		});
 	},
+	//ZKCAL-48: support tooltip
+	doTooltipOver_: function(evt) {
+		if (this.isListen('onEventTooltip')) {
+			var zcls = this.getZclass(),
+				node = evt.target,
+				ce = zk.Widget.$(node).event;
+			if (jq(node).hasClass(zcls + '-evt-faker-more') && node.parentNode.id.indexOf('-frow') > 0)
+				return;
+			
+			if (ce) {
+				var tooltip = this.getTooltip();
+				if (tooltip && (pos = tooltip.indexOf(',')) > -1) {
+					var pos;
+					if ((pos = tooltip.indexOf(',')) > -1)
+						tooltip = tooltip.substring(0, pos).trim();
+					tooltip = zk.Widget.$('$' + tooltip);
+					if (tooltip && tooltip.isOpen()) {
+						tooltip.close();
+					}
+				}
+				
+				var p = [Math.round(evt.pageX), Math.round(evt.pageY)],
+					data = {data: [ce.id, p[0], p[1], jq.innerWidth(), jq.innerHeight()]},
+					e = new zk.Event(this, 'onEventTooltip', data, null, evt.domEvent),
+					self = this;
+				
+				setTimeout(function() {
+					if (self._tooltipE) {
+						self.fireX(self._tooltipE);
+						self._tooltipE = null; // clear
+					}
+				}, 300);
+				self._tooltipE = e;
+			} else {
+				return;
+			}
+		}
+		this.$supers('doTooltipOver_', arguments);
+	},
+	//ZKCAL-48: support tooltip
+	doTooltipOut_: function(evt) {
+		this._tooltipE = null;
+		this.$supers('doTooltipOut_', arguments);
+	},
 	
 	setAddDayEvent: function (eventArray) {
         eventArray = jq.evalJSON(eventArray);

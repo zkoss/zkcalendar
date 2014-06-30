@@ -81,9 +81,9 @@ public class Calendars extends XulElement {
 	private Date _curDate;
 	private int _days = 7;
 	private DateFormatter _dfmter;
-	private Map _evts;
-	private Map _tzones;
-	private Map _ids;
+	private Map<String, List<CalendarEvent>> _evts;
+	private Map<TimeZone, String> _tzones;
+	private Map<Object, Object> _ids;
 	private CalendarModel _model;
 	private transient CalendarDataListener _dataListener;
 	private SimpleDateFormat _sdfKey = new SimpleDateFormat("yyyy/MM/dd");
@@ -91,21 +91,16 @@ public class Calendars extends XulElement {
 	private boolean _weekOfYear;
 	private boolean _hasEmptyZone= false;
 	private boolean _escapeXML = true;
-	private List _addEvtList, _mdyEvtList, _rmEvtList;
+	private List<CalendarEvent> _addEvtList, _mdyEvtList, _rmEvtList;
 	private int _beginTime = 0, _endTime = 24, _timeslots = 2;
 	
  	private static final String ATTR_ON_ADD_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onAddEventResponse";
 	private static final String ATTR_ON_REMOVE_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onRemoveEventResponse";
 	private static final String ATTR_ON_MODIFY_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onModifyEventResponse";
 	
-	private static final Comparator _defCompare = new Comparator() {
-		public int compare(Object o1, Object o2) {
-			if(o1 instanceof String && o2 instanceof String) {
-				CalendarEvent ce1 = (CalendarEvent)o1;
-				CalendarEvent ce2 = (CalendarEvent)o2;
-				return ce1.getBeginDate().compareTo(ce2.getBeginDate());
-			}
-			return 0;
+	private static final Comparator<CalendarEvent> _defCompare = new Comparator<CalendarEvent>() {
+		public int compare(CalendarEvent o1, CalendarEvent o2) {
+			return o1.getBeginDate().compareTo(o2.getBeginDate());
 		}
 	};
 	
@@ -115,6 +110,8 @@ public class Calendars extends XulElement {
 		addClientEvent(Calendars.class, CalendarsEvent.ON_EVENT_UPDATE, 0);
 		addClientEvent(Calendars.class, CalendarsEvent.ON_DAY_CLICK, CE_REPEAT_IGNORE);
 		addClientEvent(Calendars.class, CalendarsEvent.ON_WEEK_CLICK, CE_REPEAT_IGNORE);
+		//since 2.1.5
+		addClientEvent(Calendars.class, CalendarsEvent.ON_EVENT_TOOLTIP, CE_REPEAT_IGNORE);
 	}	
 	
 	public Calendars() {
@@ -123,9 +120,9 @@ public class Calendars extends XulElement {
 	}
 	
 	private void init() {
-		_evts = new HashMap(32);
-		_tzones = new LinkedHashMap();
-		_ids = new HashMap(32);
+		_evts = new HashMap<String, List<CalendarEvent>>(32);
+		_tzones = new LinkedHashMap<TimeZone, String>();
+		_ids = new HashMap<Object, Object>(32);
 		_firstDayOfWeek = getCalendar().getFirstDayOfWeek();
 	}
 	
@@ -308,7 +305,7 @@ public class Calendars extends XulElement {
 	public void addDayEvent(CalendarEvent ce){
 		if (ce == null) return;
 		if (_addEvtList == null)
-			_addEvtList = new LinkedList();
+			_addEvtList = new LinkedList<CalendarEvent>();
 		_addEvtList.add(ce);
 		if (getAttribute(ATTR_ON_ADD_EVENT_RESPONSE) == null) {
 			setAttribute(ATTR_ON_ADD_EVENT_RESPONSE, Boolean.TRUE);
@@ -319,7 +316,7 @@ public class Calendars extends XulElement {
 	public void modifyDayEvent(CalendarEvent ce) {
 		if (ce == null) return;
 		if (_mdyEvtList == null)
-			_mdyEvtList = new LinkedList();
+			_mdyEvtList = new LinkedList<CalendarEvent>();
 		_mdyEvtList.add(ce);
 		if (getAttribute(ATTR_ON_MODIFY_EVENT_RESPONSE) == null) {
 			setAttribute(ATTR_ON_MODIFY_EVENT_RESPONSE, Boolean.TRUE);
@@ -330,7 +327,7 @@ public class Calendars extends XulElement {
 	public void removeDayEvent(CalendarEvent ce){
 		if (ce == null) return;
 		if (_rmEvtList == null)
-			_rmEvtList = new LinkedList();
+			_rmEvtList = new LinkedList<CalendarEvent>();
 		_rmEvtList.add(ce);
 		if (getAttribute(ATTR_ON_REMOVE_EVENT_RESPONSE) == null) {
 			setAttribute(ATTR_ON_REMOVE_EVENT_RESPONSE, Boolean.TRUE);
@@ -339,10 +336,10 @@ public class Calendars extends XulElement {
 	}
 	
 	private void cleanEmptyZone(){
-		Map tzones = new HashMap(_tzones);
+		Map<TimeZone, String> tzones = new HashMap<TimeZone, String>(_tzones);
 		
-		for (Iterator it = tzones.entrySet().iterator(); it.hasNext();) {
-			Entry es = (Entry) it.next();
+		for (Iterator<Entry<TimeZone, String>> it = tzones.entrySet().iterator(); it.hasNext();) {
+			Entry<TimeZone, String> es = it.next();
 			if(es.getValue().equals(""))
 				_tzones.remove(es.getKey());
 		}
@@ -450,7 +447,7 @@ public class Calendars extends XulElement {
 	 * Returns the unmodifiable map including all the timezone inside the
 	 * calendar.
 	 */
-	public Map getTimeZones() {
+	public Map<TimeZone, String> getTimeZones() {
 		return Collections.unmodifiableMap(_tzones);
 	}
 		
@@ -489,16 +486,16 @@ public class Calendars extends XulElement {
 	 * <p>
 	 * Note: never null.
 	 */
-	public List getEvent(Date beginDate) {
+	public List<CalendarEvent> getEvent(Date beginDate) {
 		String key = getEventKey(beginDate);
-		List list =  (List) _evts.get(key);
+		List<CalendarEvent> list =  _evts.get(key);
 		if (list != null)
 			Collections.sort(list, getDefaultBeginDateComparator());
 		else list = Collections.emptyList();
 		return Collections.unmodifiableList(list);
 	}
 	
-	private static final Comparator getDefaultBeginDateComparator() {
+	private static final Comparator<CalendarEvent> getDefaultBeginDateComparator() {
 		return _defCompare;
 	}
 	
@@ -706,13 +703,13 @@ public class Calendars extends XulElement {
 		cal.setTime(beginDate);
 		
 		if (inMonthMold()) {
-			List result = Util.packAllCaptionOfMonth(this, cal, locale, timezone, dfhandler);
-			smartUpdate("captionByDayOfWeek", Util.encloseList((List)result.get(0)));				
-			smartUpdate("captionByPopup", Util.encloseList((List)result.get(1)));
-			smartUpdate("captionByDateOfMonth", Util.encloseList((List)result.get(2)));
+			List<List<String>> result = Util.packAllCaptionOfMonth(this, cal, locale, timezone, dfhandler);
+			smartUpdate("captionByDayOfWeek", Util.encloseList(result.get(0)));				
+			smartUpdate("captionByPopup", Util.encloseList(result.get(1)));
+			smartUpdate("captionByDateOfMonth", Util.encloseList(result.get(2)));
 
 			if (isWeekOfYear())
-				smartUpdate("captionByWeekOfYear", Util.encloseList((List)result.get(3)));
+				smartUpdate("captionByWeekOfYear", Util.encloseList(result.get(3)));
 		} else
 			smartUpdate("captionByDate", Util.encloseList(Util.packCaptionByDate(cal, getDays(), locale, timezone, dfhandler)));
 		
@@ -772,7 +769,7 @@ public class Calendars extends XulElement {
 		_sdfKey.setTimeZone(tzone);
 		if (_model != null) {
 			Date beginDate = getBeginDate();
-			List list = _model.get(beginDate, getEndDate(),
+			List<CalendarEvent> list = _model.get(beginDate, getEndDate(),
 					new RenderContext() {
 						public TimeZone getTimeZone() {
 							return tzone;
@@ -780,8 +777,8 @@ public class Calendars extends XulElement {
 					});
 
 			if (list != null) {
-				for (Iterator it = list.iterator(); it.hasNext();) {
-					CalendarEvent ce = (CalendarEvent) it.next();
+				for (Iterator<CalendarEvent> it = list.iterator(); it.hasNext();) {
+					CalendarEvent ce = it.next();
 					if (!ce.getBeginDate().before(ce.getEndDate()))
 						throw new IllegalArgumentException("Illegal date: from " + ce.getBeginDate() + " to " + ce.getEndDate());
 					
@@ -789,9 +786,9 @@ public class Calendars extends XulElement {
 										getEventKey(beginDate): 
 										getEventKey(ce.getBeginDate());
 					
-					List dayevt =  (List) _evts.get(key);
+					List<CalendarEvent> dayevt =  _evts.get(key);
 					if (dayevt == null) {
-						dayevt = new LinkedList();
+						dayevt = new LinkedList<CalendarEvent>();
 						_evts.put(key, dayevt);
 					} 
 					dayevt.add(ce);
@@ -944,8 +941,12 @@ public class Calendars extends XulElement {
 			Events.postEvent(CalendarsEvent.getClickEvent(request, cmd));
 		else if (cmd.equals(Events.ON_DROP)) {
 			Events.postEvent(CalendarDropEvent.getCalendarDropEvent(request));
-		} else super.service(request, everError);
-	}	
+		} else if (cmd.equals(CalendarsEvent.ON_EVENT_TOOLTIP)) {
+			Events.postEvent(CalendarsEvent.getTooltipEvent(request));
+		} else {
+			super.service(request, everError);
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -1011,13 +1012,13 @@ public class Calendars extends XulElement {
 		Calendar cal = getCalendar();
 		cal.setTime(getBeginDate());
 
-		List result = Util.packAllCaptionOfMonth(this, cal, Locales.getCurrent(), getDefaultTimeZone(), dfhandler);
-		renderer.render("captionByDayOfWeek", Util.encloseList((List)result.get(0)));
-		renderer.render("captionByPopup", Util.encloseList((List)result.get(1)));
-		renderer.render("captionByDateOfMonth", Util.encloseList((List)result.get(2)));
+		List<List<String>> result = Util.packAllCaptionOfMonth(this, cal, Locales.getCurrent(), getDefaultTimeZone(), dfhandler);
+		renderer.render("captionByDayOfWeek", Util.encloseList(result.get(0)));
+		renderer.render("captionByPopup", Util.encloseList(result.get(1)));
+		renderer.render("captionByDateOfMonth", Util.encloseList(result.get(2)));
 
 		if (isWeekOfYear())
-			renderer.render("captionByWeekOfYear", Util.encloseList((List)result.get(3)));
+			renderer.render("captionByWeekOfYear", Util.encloseList(result.get(3)));
 	}
 	
 	/**
