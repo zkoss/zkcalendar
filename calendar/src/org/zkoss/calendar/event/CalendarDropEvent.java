@@ -35,7 +35,7 @@ import org.zkoss.zk.ui.event.DropEvent;
  */
 public class CalendarDropEvent extends DropEvent {
 
-	
+	private static final long serialVersionUID = 20110831143446L;
 	private Date _date;
 	private CalendarEvent _ce;
 	
@@ -44,7 +44,7 @@ public class CalendarDropEvent extends DropEvent {
 	 */
 	public static CalendarDropEvent getCalendarDropEvent(AuRequest request) {
 		Calendars cmp = (Calendars)request.getComponent();
-		final Map data = request.getData();
+		final Map<String, Object> data = request.getData();
 		final int keys = AuRequests.parseKeys(data);
 		Date date = null;
 		

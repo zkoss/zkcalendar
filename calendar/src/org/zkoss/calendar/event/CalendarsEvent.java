@@ -42,7 +42,7 @@ import org.zkoss.zk.ui.util.Clients;
  * @author jumperchen,jimmy
  */
 public class CalendarsEvent extends Event {
-	private static final long serialVersionUID = 20090331L;
+	private static final long serialVersionUID = 20090331123655L;
 
 	public static final String ON_EVENT_CREATE = "onEventCreate";
 	public static final String ON_EVENT_EDIT = "onEventEdit";

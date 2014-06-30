@@ -45,15 +45,15 @@ public class Util {
 					+ df.getCaptionByTimeOfDay(end, locale, timezone);
 	}
 
-	public static List packAllCaptionOfMonth(Calendars calendars, Calendar cal, Locale locale, TimeZone timezone, DateFormatter dfhandler) {
+	public static List<List<String>> packAllCaptionOfMonth(Calendars calendars, Calendar cal, Locale locale, TimeZone timezone, DateFormatter dfhandler) {
 		int weeks = calendars.getWeekOfMonth();
 		boolean isWeekOfYear = calendars.isWeekOfYear();		 
 		 
-		List result = new ArrayList();
-		List list1 = new ArrayList();
-		List list2 = new ArrayList();
-		List list3 = new ArrayList();
-		List list4 = new ArrayList();
+		List<List<String>> result = new ArrayList<List<String>>();
+		List<String> list1 = new ArrayList<String>();
+		List<String> list2 = new ArrayList<String>();
+		List<String> list3 = new ArrayList<String>();
+		List<String> list4 = new ArrayList<String>();
 		result.add(list1);
 		result.add(list2);
 		result.add(list3);
@@ -80,8 +80,8 @@ public class Util {
 		return result;
 	}
 		
-	public static List packCaptionByDate(Calendar cal, int days, Locale locale, TimeZone timezone, DateFormatter dfhandler) {
-		List result = new ArrayList();
+	public static List<String> packCaptionByDate(Calendar cal, int days, Locale locale, TimeZone timezone, DateFormatter dfhandler) {
+		List<String> result = new ArrayList<String>();
 		for (int j = 0; j < days; ++j) {
 			result.add(dfhandler.getCaptionByDate(cal.getTime(), locale, timezone));
 			cal.add(Calendar.DAY_OF_WEEK, 1);
@@ -89,10 +89,10 @@ public class Util {
 		return result;
 	}
 	
-	public static List packCaptionByTimeOfDay(Calendar cal, Map zones, Locale locale, DateFormatter dfhandler) {
-		List result = new ArrayList();
-		for (Iterator it = zones.keySet().iterator(); it.hasNext();) {
-			TimeZone tz = (TimeZone) it.next();
+	public static List<String> packCaptionByTimeOfDay(Calendar cal, Map<TimeZone, String> zones, Locale locale, DateFormatter dfhandler) {
+		List<String> result = new ArrayList<String>();
+		for (Iterator<TimeZone> it = zones.keySet().iterator(); it.hasNext();) {
+			TimeZone tz = it.next();
 			for(int k = 0; k < 24; k++) {
 				cal.set(Calendar.HOUR_OF_DAY, k);				
 				result.add(dfhandler.getCaptionByTimeOfDay(cal.getTime(), locale, tz));
@@ -101,19 +101,19 @@ public class Util {
 		return result;
 	}
 		
-	public static List packZonesOffset(Map _tzones) {
-		List result = new ArrayList();
-		for (Iterator it = _tzones.keySet().iterator(); it.hasNext();)
-			result.add("" + (((TimeZone) it.next()).getRawOffset()) / 60000);	
+	public static List<String> packZonesOffset(Map<TimeZone, String> _tzones) {
+		List<String> result = new ArrayList<String>();
+		for (Iterator<TimeZone> it = _tzones.keySet().iterator(); it.hasNext();)
+			result.add("" + ((it.next()).getRawOffset()) / 60000);	
 		return result;
 	}
 		
-	public static String encloseEventList(Calendars calendars, Collection collection) {
+	public static String encloseEventList(Calendars calendars, Collection<CalendarEvent> collection) {
 		final StringBuffer sb = new StringBuffer().append('[');
 		Date beginDate = calendars.getBeginDate();
 		_sdfKey.setTimeZone(calendars.getDefaultTimeZone());
-		for (Iterator it = collection.iterator(); it.hasNext();) {
-			CalendarEvent ce = (CalendarEvent) it.next();
+		for (Iterator<CalendarEvent> it = collection.iterator(); it.hasNext();) {
+			CalendarEvent ce = it.next();
 			String key = ce.getBeginDate().before(beginDate) ?
 					getEventKey(beginDate): 
 					getEventKey(ce.getBeginDate());
@@ -124,23 +124,23 @@ public class Util {
 		return sb.replace(len - 1, len, "]").toString();
 	}
 	
-	public static String encloseList(Collection collection) {
+	public static String encloseList(Collection<String> collection) {
 		final StringBuffer sb = new StringBuffer().append("[\"");
-		for (Iterator it = collection.iterator(); it.hasNext();)
+		for (Iterator<String> it = collection.iterator(); it.hasNext();)
 			sb.append(it.next()).append("\",\"");
 			
 		int len = sb.length();
 		return sb.replace(len - 2, len, "]").toString();
 	}
 		
-	public static String encloseEventMap(Calendars calendars, Map  map) {
+	public static String encloseEventMap(Calendars calendars, Map<String, List<CalendarEvent>> map) {
 		final StringBuffer sb = new StringBuffer().append('[');
 		int len;
-		for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
-			Entry entry = (Entry) it.next();
+		for (Iterator<Entry<String, List<CalendarEvent>>> it = map.entrySet().iterator(); it.hasNext();) {
+			Entry<String, List<CalendarEvent>> entry = it.next();
 			sb.append('[');
 			String key = (String) entry.getKey();
-			for (Iterator it2 = ((List)entry.getValue()).iterator(); it2.hasNext();) {
+			for (Iterator<CalendarEvent> it2 = entry.getValue().iterator(); it2.hasNext();) {
 				appendEventByJSON(sb, calendars, key, (CalendarEvent) it2.next());
 			}
 

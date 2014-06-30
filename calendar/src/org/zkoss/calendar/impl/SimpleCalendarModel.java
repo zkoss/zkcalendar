@@ -43,7 +43,7 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 		Serializable {
 	private static final long serialVersionUID = 20090320L;
 
-	protected List _list;
+	protected List<CalendarEvent> _list;
 
 	/**
 	 * Constructor
@@ -61,23 +61,23 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * since {@link Calendars} is not smart enough to handle it.
 	 * Instead, modify it thru this object.
 	 */
-	public SimpleCalendarModel(List list, boolean live) {
-		_list = live ? list: new ArrayList(list);
+	public SimpleCalendarModel(List<CalendarEvent> list, boolean live) {
+		_list = live ? list: new ArrayList<CalendarEvent>(list);
 	}
 
 	/**
 	 * Constructor.
 	 */
 	public SimpleCalendarModel() {
-		_list = new ArrayList();
+		_list = new ArrayList<CalendarEvent>();
 	}
 
 	/**
 	 * Constructor.
 	 * It makes a copy of the specified collection (i.e., not live).
 	 */
-	public SimpleCalendarModel(Collection c) {
-		_list = new ArrayList(c);
+	public SimpleCalendarModel(Collection<CalendarEvent> c) {
+		_list = new ArrayList<CalendarEvent>(c);
 	}
 	/**
 	 * Constructor.
@@ -92,7 +92,7 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * @param initialCapacity the initial capacity for this SimpleCalendarModel.
 	 */
 	public SimpleCalendarModel(int initialCapacity) {
-		_list = new ArrayList(initialCapacity);
+		_list = new ArrayList<CalendarEvent>(initialCapacity);
 	}
 
 	/**
@@ -178,12 +178,12 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * @param endDate the end date
 	 * @param rc a RenderContext encapsulates the information needed for Calendars.
 	 */
-	public List get(Date beginDate, Date endDate, RenderContext rc) {
-		List list = new LinkedList();
+	public List<CalendarEvent> get(Date beginDate, Date endDate, RenderContext rc) {
+		List<CalendarEvent> list = new LinkedList<CalendarEvent>();
 		long begin = beginDate.getTime();
 		long end = endDate.getTime();
 		
-		for (Iterator it = _list.iterator(); it.hasNext();) {
+		for (Iterator<CalendarEvent> it = _list.iterator(); it.hasNext();) {
 			CalendarEvent ce = (CalendarEvent) it.next();
 			long b = ce.getBeginDate().getTime();
 			long e = ce.getEndDate().getTime();

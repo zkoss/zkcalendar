@@ -27,6 +27,7 @@ import org.zkoss.calendar.api.CalendarEvent;
  *
  */
 public class SimpleCalendarEvent implements CalendarEvent, Serializable {
+	private static final long serialVersionUID = 20091225123622L;
 	private String _headerColor = "";
 	private String _contentColor = "";
 	private String _content = "";

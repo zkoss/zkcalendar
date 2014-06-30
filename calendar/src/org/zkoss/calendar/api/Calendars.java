@@ -90,7 +90,7 @@ public interface Calendars {
 	 * Returns the unmodifiable map including all the timezone inside the
 	 * calendar.
 	 */
-	public Map getTimeZones();
+	public Map<String, TimeZone> getTimeZones();
 
 	/**
 	 * 
@@ -100,7 +100,7 @@ public interface Calendars {
 	 * <p>
 	 * Note: never null.
 	 */
-	public List getEvent(Date beginDate);
+	public List<CalendarEvent> getEvent(Date beginDate);
 
 	/**
 	 * @deprecated As of release 2.0-RC
