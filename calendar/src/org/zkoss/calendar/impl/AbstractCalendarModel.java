@@ -36,7 +36,7 @@ import org.zkoss.io.Serializables;
  *
  */
 abstract public class AbstractCalendarModel implements CalendarModel, Serializable {
-	private static final long serialVersionUID = 20090317L;
+	private static final long serialVersionUID = 20090317164525L;
 	private transient List<CalendarDataListener> _listeners = new LinkedList<CalendarDataListener>();
 		
 	/** 

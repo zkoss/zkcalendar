@@ -10,40 +10,45 @@
 		height="100%">
 		<borderlayout id="main" vflex="1">
 			<center border="none">
-				<calendars id="calendars" firstDayOfWeek="Sunday"
-					timeZone="Tokyo=GMT+9,Stockholm=GMT+1" model="${cm}"
-					mold="default">
-					<toolbar sclass="calendar-toolbar">
-						<div class="float-left">
-							<hbox>
-								<divarrow type="arrow-left" />
-								<divarrow type="arrow-right" />
-								<div>
-									<button mold="os" label="today" forward="onToday"/>
-									<button mold="os" label="Switch TimeZone" forward="onSwitchTimeZone" />
-									<span id="FDOW">
-										First Day of Week:
-										<listbox mold="select" forward="onSelect=onUpdateFirstDayOfWeek">
-											<listitem label="${each}" 
-												forEach="Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"/>
-										</listbox>
-									</span>
-									<separator orient="vertical" />
-									<label id="label" />
-									<toolbarbutton label="Refresh"
-										class="refresh" onClick='calendars.invalidate();' />
-								</div>
-							</hbox>
-						</div>
-						<div class="float-right">
-							<hbox>
-								<divtab forEach="Day,Week,5 Days, Month" text="${each}" />
-							</hbox>
-						</div>
-					</toolbar>
-				</calendars>
+				<div vflex="1">
+					<popup id="test">
+						<label />
+					</popup>
+					<calendars id="calendars" firstDayOfWeek="Sunday"
+						timeZone="Tokyo=GMT+9,Stockholm=GMT+1" model="${cm}"
+						mold="default" tooltip="test, position=after_pointer">
+						<toolbar sclass="calendar-toolbar">
+							<div class="float-left">
+								<hbox>
+									<divarrow type="arrow-left" />
+									<divarrow type="arrow-right" />
+									<div>
+										<button mold="os" label="today" forward="onToday"/>
+										<button mold="os" label="Switch TimeZone" forward="onSwitchTimeZone" />
+										<span id="FDOW">
+											First Day of Week:
+											<listbox mold="select" forward="onSelect=onUpdateFirstDayOfWeek">
+												<listitem label="${each}" 
+													forEach="Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"/>
+											</listbox>
+										</span>
+										<separator orient="vertical" />
+										<label id="label" />
+										<toolbarbutton label="Refresh"
+											class="refresh" onClick='calendars.invalidate();' />
+									</div>
+								</hbox>
+							</div>
+							<div class="float-right">
+								<hbox>
+									<divtab forEach="Day,Week,5 Days, Month" text="${each}" />
+								</hbox>
+							</div>
+						</toolbar>
+					</calendars>
+				</div>
 			</center>
-			<south if="${hasPE}" open="false" size="300px" flex="true"
+			<south if="${hasPE}" open="false" size="300px"
 				title="Events Analysis" collapsible="true">
 				<hbox>
 					<chart id="mychart" title="Current Events Chart"

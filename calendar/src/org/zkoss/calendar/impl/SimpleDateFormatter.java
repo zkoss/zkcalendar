@@ -32,7 +32,7 @@ import org.zkoss.calendar.api.DateFormatter;
  */
 public class SimpleDateFormatter implements DateFormatter, Serializable {
 
-	private static final long serialVersionUID = 20091225123611L;
+	private static final long serialVersionUID = 20090316151208L;
 	private String _dayFormat = "EEE MM/d";
 	private String _weekFormat = "EEE";
 	private String _timeFormat = "HH:mm";

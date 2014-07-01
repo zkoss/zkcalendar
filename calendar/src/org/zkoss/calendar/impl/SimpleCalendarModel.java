@@ -41,7 +41,7 @@ import org.zkoss.zul.event.ListDataEvent;
  */
 public class SimpleCalendarModel extends AbstractCalendarModel implements
 		Serializable {
-	private static final long serialVersionUID = 20090320L;
+	private static final long serialVersionUID = 20090320175712L;
 
 	protected List<CalendarEvent> _list;
 

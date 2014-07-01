@@ -27,7 +27,7 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 	private SimpleCalendarModel cm;
 	private Calendars calendars;
 	private Chart mychart;
-	private Popup updateMsg;
+	private Popup updateMsg, test;
 	private	Label popupLabel;
 	private	Label label;
 	private Timer timer;
@@ -186,6 +186,11 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		 model.setValue("Purple Events", new Double(size > 0 ? (purple/size)*100 : 0));
 		 mychart.setModel(model);
 		 mychart.invalidate();
+	}
+	
+	public void onEventTooltip$calendars(CalendarsEvent event) {
+		//test.open(evt.getX(), evt.getY());
+		((Label)test.getFirstChild()).setValue(event.getCalendarEvent().getContent());
 	}
 	
 	public void onEventCreate$calendars(ForwardEvent event) {

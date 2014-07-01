@@ -75,7 +75,7 @@ import org.zkoss.zul.impl.XulElement;
  * 
  */
 public class Calendars extends XulElement {
-	private static final long serialVersionUID = 20090310L;
+	private static final long serialVersionUID = 20090331171730L;
 	private static final String ATTR_ON_INIT_POSTED = "org.zkoss.calendar.Calendars.onInitLaterPosted";	
 	private int _firstDayOfWeek;
 	private Date _curDate;

@@ -35,7 +35,7 @@ import org.zkoss.zk.ui.event.DropEvent;
  */
 public class CalendarDropEvent extends DropEvent {
 
-	private static final long serialVersionUID = 20110831143446L;
+	private static final long serialVersionUID = 20110830181507L;
 	private Date _date;
 	private CalendarEvent _ce;
 	

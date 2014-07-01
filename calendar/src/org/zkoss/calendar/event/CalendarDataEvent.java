@@ -30,7 +30,7 @@ import org.zkoss.calendar.api.CalendarModel;
  * @author jumperchen,jimmy
  */
 public class CalendarDataEvent implements Serializable {
-	private static final long serialVersionUID = 20091225123626L;
+	private static final long serialVersionUID = 20090317164042L;
 	/** Identifies one or more changes in the lists contents. */
 	public static final int CONTENTS_CHANGED = 0;
     /** Identifies the addition of one or more contiguous items to the list. */    
