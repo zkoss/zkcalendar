@@ -1,7 +1,8 @@
 calendar 2.1.5
 
 * Features:
-	
+	ZKCAL-48: Calendar Event support show tooltip/popup
+
 * Bugs:
 	
 * Upgrade Notes:
