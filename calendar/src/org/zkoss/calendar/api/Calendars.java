@@ -90,7 +90,7 @@ public interface Calendars {
 	 * Returns the unmodifiable map including all the timezone inside the
 	 * calendar.
 	 */
-	public Map<String, TimeZone> getTimeZones();
+	public Map<TimeZone, String> getTimeZones();
 
 	/**
 	 * 
