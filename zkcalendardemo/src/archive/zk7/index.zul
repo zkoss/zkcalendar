@@ -1,0 +1,69 @@
+<?page title="ZK Calendars Demo"?>
+<?link rel="stylesheet" type="text/css" href="calendar.css.dsp?v=${desktop.webApp.build}"?>
+<zk xmlns:w="client" xmlns:n="native">
+	<borderlayout apply="org.zkoss.zcaldemo.ZKCalendarDemoComposer" id="main" vflex="1">
+		<center border="none">
+			<div vflex="1">
+				<popup id="tooltip">
+					<label id="tooltipMsg" />
+				</popup>
+				<popup id="updatePopup" width="320px"
+					w:onShow="jq(this.$n()).hide().fadeIn()">
+					<image src="~./zk/img/progress2.gif"/>
+					<label id="updateMsg"/>
+				</popup>
+				<timer id="timer" delay="1000" running="false" />
+				<calendars id="calendars" firstDayOfWeek="Sunday" timeZone="Tokyo=GMT+9,Stockholm=GMT+1" tooltip="tooltip, position=after_pointer">
+					<toolbar >
+						<div sclass="float-left">
+							<button id="leftBtn" iconSclass="z-icon-chevron-left" sclass="arrowbutton" />
+							<button id="rightBtn" iconSclass="z-icon-chevron-right" sclass="arrowbutton" />
+							<separator orient="vertical" spacing="5px" />
+							<button id="todayBtn" label="Today" />
+							<button id="timezoneBtn" label="Switch Timezone" />
+							<separator orient="vertical" spacing="5px" />
+							<span id="firstdaySpan">
+								First Day of Week:
+								<listbox id="firstdayLbx" mold="select" />
+							</span>
+							<separator orient="vertical" spacing="5px" />
+							<label id="weekLbl" />
+							<button id="refreshBtn" label="Refresh" sclass="refresh" />
+						</div>
+						<div sclass="float-right">
+							<button id="dayViewBtn" label="Day" sclass="viewbutton">
+								<custom-attributes days="1" />
+							</button>
+							<button id="weekViewBtn" label="Week" sclass="viewbutton">
+								<custom-attributes days="7" />
+							</button>
+							<button id="fiveDayViewBtn" label="5 Days" sclass="viewbutton">
+								<custom-attributes days="5" />
+							</button>
+							<button id="monthViewBtn" label="Month" sclass="viewbutton">
+								<custom-attributes days="30" />
+							</button>
+						</div>
+					</toolbar>
+				</calendars>
+			</div>
+		</center>
+		<south if="${hasPE}" open="false" size="300px" title="Events Analysis" collapsible="true">
+			<hlayout>
+				<charts id="evtchart" type="pie" width="600" height="250" />
+				<div hflex="1" class="intro">
+					<n:p class="intro">
+						ZK Calendars enables Ajax applications to deliver the rich functionality of time management in pure Java. 
+						It can be integreated into enterprise applcaition with ease. 
+						With ZK Calendars functionality,
+						developers can create collaborative and dynamic enterprise applications like never before.
+						<n:br />
+						ZK Calendars supports day, weekly, and monthly views, moreoever,
+						it supports multiple time zones for worldwide users. 
+						Also, developers can leverage Data Model to create the applicaiton in seconds!
+					</n:p>
+				</div>
+			</hlayout>
+		</south>
+	</borderlayout>
+</zk>

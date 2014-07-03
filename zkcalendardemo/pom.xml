@@ -32,6 +32,11 @@
 			<artifactId>calendar</artifactId>
 			<version>${parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.zkoss.chart</groupId>
+			<artifactId>zkcharts</artifactId>
+			<version>1.1.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
