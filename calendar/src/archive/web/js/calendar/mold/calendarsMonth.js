@@ -167,6 +167,8 @@ function (out) {
 			out.push('"><span class="', month_date_cnt, '">', content, '</span></td>');
 
 			bd = calUtil.addDay(bd, 1);
+			if (bd.getDate() == content) //ZKCAL-50: DST time happens on 00:00 AM
+				bd.setHours(bd.getHours() + 2); //adjust to correct date
 		}
 		out.push('</tr></tbody></table></div>');
 	}

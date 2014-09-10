@@ -13,7 +13,7 @@
 		<module>zkcalendardemo</module>
 	</modules>
 	<properties>
-		<zk.version>7.0.0</zk.version>
+		<zk.version>7.0.3-Eval</zk.version>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>2.1.5-FL-${maven.build.timestamp}</packname>
 	</properties>
@@ -30,8 +30,8 @@
 			<url>http://mavensync.zkoss.org/maven2</url>
 		</repository>
 		<repository>
-			<id>ZK PE Evaluation</id>
-			<url>http://mavensync.zkoss.org/zk/pe-eval</url>
+			<id>ZK EE Evaluation</id>
+			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
 		</repository>
 	</repositories>
 	<dependencies>

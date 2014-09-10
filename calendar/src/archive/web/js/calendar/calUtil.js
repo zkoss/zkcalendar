@@ -29,17 +29,17 @@ calUtil = {
 				date1.getDate() == date2.getDate());
 	},
 	addDay: function(date, days) {
-		var resoult = new Date(date),
+		var result = new Date(date),
 			tzOffset1 = date.getTimezoneOffset(),
 			tzOffset2, offset;
-		resoult.setDate(date.getDate() + days);
-		tzOffset2 = resoult.getTimezoneOffset();
+		result.setDate(date.getDate() + days);
+		tzOffset2 = result.getTimezoneOffset();
 		offset = (tzOffset1 - tzOffset2);
 		
-		if (offset && (date.getHours() != resoult.getHours()))
-			resoult.setMinutes(resoult.getMinutes() + Math.abs(offset));
+		if (offset && (date.getHours() != result.getHours()))
+			result.setMinutes(result.getMinutes() + Math.abs(offset));
 		
-		return new Date(resoult);
+		return new Date(result);
 	},
     format: function(str, args){
         for (var i = 0; i < args.length; i++) {

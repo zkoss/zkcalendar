@@ -840,11 +840,15 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		
 		//update titles
 		for (var i = this._days; i--;) {
+			var d1 = ed.getDate();
 			ed = calUtil.addDay(ed, -1);
-
+			var d2 = ed.getDate(), d = ed;
+			if (d1 - d2 == 2) //ZKCAL-50: DST time happens on 00:00 AM
+				d.setHours(d.getHours() + 2); //adjust to correct date
+			
 			var title = titles[i],
 				content = this._captionByDate ? this._captionByDate[i] : 
-								zk.fmt.Date.formatDate(ed,'EEE ' + this.weekFmt);	
+								zk.fmt.Date.formatDate(d, 'EEE ' + this.weekFmt);
 			jq(title).html(content);
 			title.time = this.fixTimeZoneFromClient(ed);
 			if (ed.getDay() == 0 || ed.getDay() == 6) {//SUNDAY or SATURDAY
