@@ -588,7 +588,15 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 			var ed = new Date(bd);
 			ed = calUtil.addDay(ed, 1);
-
+			//ZKCAL-50: add event on DST start day
+			var bdhour = bd.getHours(), edhour = ed.getHours();
+			if (bdhour == 23) {
+				bd.setHours(bd.getHours() + 2);
+				ed.setHours(ed.getHours() + 1);
+			} else if (edhour == 23) {
+				ed.setHours(ed.getHours() + 2);
+			}
+			
 			widget.fire("onEventCreate", {
    				 data: [
 				 	widget.fixTimeZoneFromClient(bd), 

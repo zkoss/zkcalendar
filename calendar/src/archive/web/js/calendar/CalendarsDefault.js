@@ -1012,8 +1012,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			bd.setDate(bd.getDate() + cIndex);
 			bd.setMilliseconds(0);// clean			
 			var ed = new Date(bd);
-			bd.setMinutes(bd.getMinutes() + rows * timeslotTime );
-			ed.setMinutes(ed.getMinutes() + (rows + timeslots) * timeslotTime );
+			bd.setMinutes(bd.getMinutes() + rows * timeslotTime);
+			ed.setMinutes(ed.getMinutes() + (rows + timeslots) * timeslotTime);
 			widget.fireCalEvent(bd, ed, evt);
 		}
 		widget.closeFloats();
@@ -1039,9 +1039,13 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				width = row.firstChild.offsetWidth,
 				offs = zk(daylong).revisedOffset(),
 				cols = Math.floor((p[0] - offs[0])/width),
+				zoneBd = widget.zoneBd,
 				bd = new Date(widget.zoneBd);
-
+			if (zoneBd.getHours() == 23) //ZKCAL-50: DST cross between week
+				bd.setHours(bd.getHours() + 2);
 			bd.setDate(bd.getDate() + cols);
+			if (cols != 0)
+				bd.setHours(0);
 			
 			var zinfo = [];
 			for (var left = 0, n = row.firstChild; n;
@@ -1061,7 +1065,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 			var ed = new Date(bd);
 			ed = calUtil.addDay(ed, 1);
-
+			ed.setHours(0); //DST case
 			widget.fire("onEventCreate", {
 				data: [
 			 		widget.fixTimeZoneFromClient(bd), 
@@ -1307,6 +1311,11 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			if (id)
 				jq(id, zk)[0].style.visibility = "";
 		} else {
+			//ZKCAL-50: add event on DST start day
+			var zoneBd = this.zoneBd,
+				DST = zoneBd.getHours() == 23 ? 1 : 0;
+			bd.setHours(bd.getHours() + (bd.getTime() == zoneBd.getTime() ? DST * 2 : DST));
+			ed.setHours(ed.getHours() + DST);
 			var widget = this,
 				data = [
 					this.fixTimeZoneFromClient(bd),

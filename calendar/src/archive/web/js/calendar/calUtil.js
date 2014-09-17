@@ -19,9 +19,10 @@ calUtil = {
 		//adjust for begin and end are not the same in DST time
 		var tzOffset1 = date1.getTimezoneOffset(),
 			tzOffset2 = date2.getTimezoneOffset(),
-			offset = (tzOffset1 != tzOffset2) ? ((tzOffset1 - tzOffset2) * 60000): 0;
+			offset = (tzOffset1 != tzOffset2) ? (Math.abs(tzOffset1 - tzOffset2) * 60000): 0,
+			period = Math.abs(date1 - date2 - offset) / this.DAYTIME;
 		
-		return Math.abs(date1 - date2 - offset) / this.DAYTIME;	
+		return Math.round(period); //ZKCAL-50: across DST time will return float number
 	},
 	isTheSameDay: function(date1, date2) {
 		return (date1.getFullYear() == date2.getFullYear() && 

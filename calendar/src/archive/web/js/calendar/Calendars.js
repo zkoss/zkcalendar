@@ -167,7 +167,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			inMon = this.mon;
 		if (!period) {
 			var keyDate = zk.fmt.Date.parseDate(key);
-			keyDate.setHours(0,0,0,0);
+			//keyDate.setHours(0,0,0,0);
 			keyDate = calUtil.getPeriod(keyDate, this.zoneBd);
 			
 			period = {day:inMon ? keyDate % 7: keyDate};
@@ -242,11 +242,17 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		else list.push([node]);
 	},
 	
-	updateDateOfBdAndEd_: function(){
+	updateDateOfBdAndEd_: function() {
 		this._beginDate = new Date(this.bd);
 		this._endDate = new Date(this.ed);
 		this.zoneBd = this.fixTimeZoneFromServer(this._beginDate);
 		this.zoneEd = this.fixTimeZoneFromServer(this._endDate);
+		var days = this._days || 7,
+			dayBd = this.zoneBd.getDay(),
+			dayEd = this.zoneEd.getDay(),
+			diff = (dayBd <= dayEd) ? (dayBd + 7 - dayEd) : (dayBd - dayEd);
+		if (!this.mon && diff != days && this.zoneEd.getHours() == 23) //only DST can happen
+			this.zoneEd = this._endDate;
 	},
 	
 	editMode: function (enable) {

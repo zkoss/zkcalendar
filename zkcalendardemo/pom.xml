@@ -30,7 +30,7 @@
 		<dependency>
 			<groupId>org.zkoss.calendar</groupId>
 			<artifactId>calendar</artifactId>
-			<version>${project.parent.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.chart</groupId>
