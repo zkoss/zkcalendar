@@ -14,7 +14,7 @@
 				</popup>
 				<timer id="timer" delay="1000" running="false" />
 				<calendars id="calendars" firstDayOfWeek="Sunday" timeZone="Tokyo=GMT+9,Stockholm=GMT+1" tooltip="tooltip, position=after_pointer">
-					<toolbar >
+					<toolbar>
 						<div sclass="float-left">
 							<button id="leftBtn" iconSclass="z-icon-chevron-left" sclass="arrowbutton" />
 							<button id="rightBtn" iconSclass="z-icon-chevron-right" sclass="arrowbutton" />

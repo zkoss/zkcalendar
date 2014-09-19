@@ -993,9 +993,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				height = 0,
 				inner = body.firstChild.firstChild;
 			rows += widget.beginIndex;
-			inner.firstChild.innerHTML = 
-				widget._dateTime[rows*widget._slotOffs] + ' - ' + 
-					widget._dateTime[rows*widget._slotOffs + 12];
+			var beginIndex = rows * widget._slotOffs,
+				eventTimeSlot = this.getNewEventTimeSlots_();
+				endIndex = beginIndex + (eventTimeSlot * timeslotTime / 5);
+			inner.firstChild.innerHTML = widget._dateTime[beginIndex] + ' - ' + widget._dateTime[endIndex];
 
 			for (var child = jq(faker).children().get(0);child;child=child.nextSibling) {
 				if (this.isLegalChild(child)) 
@@ -1006,18 +1007,23 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			height += zk(body.firstChild).padBorderHeight();
 			height += zk(inner).padBorderHeight();
 			height += 2;
-			inner.style.height = jq.px((ph*timeslots) - height);
+			inner.style.height = jq.px((ph*eventTimeSlot) - height);
 
 			var bd = new Date(widget.zoneBd);
 			bd.setDate(bd.getDate() + cIndex);
-			bd.setMilliseconds(0);// clean			
-			var ed = new Date(bd);
+			bd.setMilliseconds(0);// clean
 			bd.setMinutes(bd.getMinutes() + rows * timeslotTime);
-			ed.setMinutes(ed.getMinutes() + (rows + timeslots) * timeslotTime);
+			var ed = new Date(bd);
+			ed.setMinutes(ed.getMinutes() + eventTimeSlot * timeslotTime);
 			widget.fireCalEvent(bd, ed, evt);
 		}
 		widget.closeFloats();
 		evt.stop();
+	},
+	
+	//Feature ZKCAL-51: override to define default event time duration
+	getNewEventTimeSlots_: function() {
+		return this._timeslots;
 	},
 	
 	onDaylongClick: function (daylong, evt) {

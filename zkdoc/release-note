@@ -2,9 +2,11 @@ calendar 2.1.5
 
 * Features:
 	ZKCAL-48: Calendar Event support show tooltip/popup
+	ZKCAL-51: Provide a way do define a default duration for a new Event
 
 * Bugs:
-	
+	ZKCAL-50: Zk calendar hangs at sunday DST Chile
+
 * Upgrade Notes:
 
 	--------
