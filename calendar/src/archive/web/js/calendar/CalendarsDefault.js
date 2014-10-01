@@ -1015,6 +1015,11 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			bd.setMinutes(bd.getMinutes() + rows * timeslotTime);
 			var ed = new Date(bd);
 			ed.setMinutes(ed.getMinutes() + eventTimeSlot * timeslotTime);
+			//ZKCAL-50: available to click on DST day start from 01:00
+			if (bd.getTime() == ed.getTime() && rows == timeslots) {
+				bd.setHours(bd.getHours() + 1);
+				ed.setHours(ed.getHours() + 2);
+			}
 			widget.fireCalEvent(bd, ed, evt);
 		}
 		widget.closeFloats();
