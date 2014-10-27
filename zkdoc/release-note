@@ -6,6 +6,7 @@ calendar 2.1.5
 
 * Bugs:
 	ZKCAL-50: Zk calendar hangs at sunday DST Chile
+	ZKCAL-54: Setting time label format by DateFormatter.getCaptionByTimeOfDay() not working
 
 * Upgrade Notes:
 

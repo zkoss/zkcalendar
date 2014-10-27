@@ -605,11 +605,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			if (!this.desktop) return;	
 
 			this.updateDateOfBdAndEd_();
-			
+
 			if (!oldZones || oldZones.$equals(this._zonesOffset)) return;
-	
-			this._captionByTimeOfDay = this.captionByTimeOfDay ? jq.evalJSON(this.captionByTimeOfDay): null;
-		
+
 			this.updateTimeZoneCol_({ignoreFirstCol: true});
 		},
 		timeslots: function(){
@@ -646,7 +644,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		this._daylongEvents = [];
 		this._daylongSpace = [];
 		this._daySpace = [];
-		this._captionByTimeOfDay = this.captionByTimeOfDay ? jq.evalJSON(this.captionByTimeOfDay): null;
 		
 		var zcls = this.getZclass(),
 			p = this.params;
@@ -815,8 +812,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	
 	updateDateRange_: function () {
 		this.updateDateOfBdAndEd_();
-			
+		
 		this._captionByDate = this.captionByDate ? jq.evalJSON(this.captionByDate): null;
+		//ZKCAL-54: Fix setting time label format by DateFormatter not working
+		this._captionByTimeOfDay = this.captionByTimeOfDay ? jq.evalJSON(this.captionByTimeOfDay): null;
 		if(!this.$n())return;
 		
 		var zcls = this.getZclass();

@@ -16,6 +16,7 @@
 					</popup>
 					<calendars id="calendars" firstDayOfWeek="Sunday"
 						timeZone="Tokyo=GMT+9,Stockholm=GMT+1" model="${cm}"
+						dateFormatter="org.zkoss.zcaldemo.CustomDateFormatter"
 						mold="default" tooltip="test, position=after_pointer">
 						<toolbar sclass="calendar-toolbar">
 							<div class="float-left">
