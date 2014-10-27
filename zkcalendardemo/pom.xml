@@ -6,7 +6,6 @@
         <artifactId>zkcalendar</artifactId>
         <version>2.1.5-SNAPSHOT</version>
     </parent>
-	<groupId>org.zkoss.calendar</groupId>
 	<artifactId>zkcalendardemo</artifactId>
 	<packaging>war</packaging>
 	<name>The ZK Calendar Demo</name>
