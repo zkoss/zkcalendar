@@ -165,9 +165,12 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			timeslots = widget._timeslots;
 			
 		widget._dragItems[cnt.id]._zrz = false;
-		for (; cIndex--;)
-			if (cnt._lefts[cIndex] <= x)
+		for (; cIndex--;) {
+			//Fix ZKCAL-55: Problems with horizontal scrollbar
+			//should consider cnt offset position if it is wrapped by a scrollable container 
+			if (cnt._lefts[cIndex] <= (x - zk(cnt).revisedOffset()[0] + widget._initLeft))
 				break;
+		}
 		if (cIndex < 0)
 			cIndex = 0;
 		jq(cells[begin + cIndex].firstChild).append(
@@ -969,9 +972,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				timeslots = widget._timeslots,
 				timeslotTime = 60/timeslots;
 
-			for (; cIndex--;)
-				if (cnt._lefts[cIndex] <= x)
+			for (; cIndex--;) {
+				//Fix ZKCAL-55: Problems with horizontal scrollbar
+				//should consider cnt offset position if it is wrapped by a scrollable container
+				if (cnt._lefts[cIndex] <= (x - offs[0] + this._initLeft))
 					break;
+			}
 
 			if (cIndex < 0)
 				cIndex = 0;
@@ -1563,6 +1569,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				lefts.push(l);
 		}
 		cnt._lefts = lefts;
+		//Fix ZKCAL-55: Problems with horizontal scrollbar
+		//get the initial offset left value
+		this._initLeft = offs[0];
 
 		this.closeFloats();
 
