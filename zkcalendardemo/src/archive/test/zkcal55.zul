@@ -1,0 +1,15 @@
+<?page title="" contentType="text/html;charset=UTF-8"?>
+<zk>
+	<style>
+		.zulGlobalGroupCalendarContainer { 
+			height:280px; /*no problem with vertical scrollbar*/ 
+			overflow:auto; 
+		}
+	</style>
+	<vlayout>
+	scroll a bit to the right and create a new event using mouse-click or drag'n'drop 
+	<div sclass="zulGlobalGroupCalendarContainer" hflex="1">
+		<calendars mold="default" width="1800px" days="20" />
+	</div>
+	</vlayout>
+</zk>
