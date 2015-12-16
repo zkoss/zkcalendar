@@ -450,16 +450,18 @@ public class Calendars extends XulElement {
 	public Map<TimeZone, String> getTimeZones() {
 		return Collections.unmodifiableMap(_tzones);
 	}
-		
+	
 	public String getCalendarEventId(CalendarEvent ce) {
 		Object o = _ids.get(ce);
-		if (o == null) {
+		if (o == null && super.getDesktop() != null) {
 			o = ((DesktopCtrl)getDesktop()).getNextUuid(this);
 			_ids.put(o, ce);
 			_ids.put(ce, o);
-		}
+		} else if (o == null) {
+                    o = UUID.randomUUID();
+                }
 		return (String) o;
-	}	
+	}
 	
 	public CalendarEvent getCalendarEventById(String id) {
 		return (CalendarEvent)_ids.get(id);
