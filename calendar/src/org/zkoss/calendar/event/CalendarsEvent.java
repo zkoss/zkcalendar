@@ -140,11 +140,11 @@ public class CalendarsEvent extends Event {
 	}
 	
 	private static int getInt(Object obj){
-		return Integer.parseInt(String.valueOf(obj));
+		return ((Number) obj).intValue() ;
 	}
 	
 	private static long getLong(Object obj){
-		return Long.parseLong(String.valueOf(obj));
+		return ((Number) obj).longValue() ;
 	}
 	
 	private static Calendars verifyEvent(AuRequest request, JSONArray data, int size) {
