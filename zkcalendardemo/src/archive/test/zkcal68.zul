@@ -1,0 +1,7 @@
+<zk>
+		<!-- Calendars Body -->
+		<div apply="test.Cal68Controller">
+			<calendars id="calendars" firstDayOfWeek="Sunday" height="600px" 
+				timeZone="Main=GMT+0" mold="month"/>
+		</div>
+</zk>
