@@ -5,11 +5,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.calendar</groupId>
 	<artifactId>calendar</artifactId>
-	<version>2.1.5</version>
+	<version>2.1.6.FL.20161111</version>
 	<properties>
 		<zk.version>7.0.3</zk.version>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
-		<packname>2.1.5</packname>
 	</properties>
 	<packaging>jar</packaging>
 	<name>The ZK Calendars</name>
@@ -101,7 +100,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.2</version>
+				<version>2.5.5</version>
 				<executions>
 					<execution>
 						<id>source</id>
@@ -134,7 +133,7 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<finalName>zk-${project.artifactId}-bin-${packname}</finalName>
+							<finalName>zk-${project.artifactId}-bin-${project.version}</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 							<descriptors>
 								<descriptor>assembly/bin.xml</descriptor>
@@ -160,7 +159,7 @@
 							<goal>single</goal>
 						</goals>
 						<configuration>
-							<finalName>zk-${project.artifactId}-src-${packname}</finalName>
+							<finalName>zk-${project.artifactId}-src-${project.version}</finalName>
 							<appendAssemblyId>false</appendAssemblyId>
 							<descriptors>
 								<descriptor>assembly/src.xml</descriptor>
