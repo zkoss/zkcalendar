@@ -1,3 +1,10 @@
+calendar 2.1.6
+* Bugs:
+    ZKCAL-68 moving an Calendar event causes a NumberFormatException in IE11
+
+* Upgrade Notes:
+
+--------
 calendar 2.1.5
 February 16, 2015
 * Features:
@@ -15,18 +22,18 @@ February 16, 2015
 calendar 2.1.4
 June 17, 2014
 * Features:
-	
+
 * Bugs:
 	ZKCAL-46: Calendars times and timeslot lines not align in ZK7
 	ZKCAL-47: JS Error when updating CalendarEvents in the model, which are not displayed in the current view
-	
+
 * Upgrade Notes:
 
 	--------
 calendar 2.1.3
 December 10, 2013
 * Features:
-	
+
 * Bugs:
 	ZKCAL-32: Event length not correct in next month
 	ZKCAL-33: CalendarEvent title text shall escapeXML
@@ -35,7 +42,8 @@ December 10, 2013
 	ZKCAL-38: Problems when toggling "readonly" on ZK calendar
 	ZKCAL-39: dragged event in month mold disappears (when preventing update)
 	ZKCAL-40: toggle "readonly" in default mold, causes error when switching to month mold
-	
+    ZKCAL-42: Create new data in online ZK calendar demo will show input error (IE10 only)
+
 * Upgrade Notes:
 
 	--------
@@ -44,14 +52,14 @@ December 17, 2012
 * Features:
 	ZKCAL-25: Show more label can be customized
 	ZKCAL-30: ZK Calendar support ZK 6.5
-	
+
 * Bugs:
 	ZKCAL-23: zkcalendar bug with createcomponents on ZK 6
 	ZKCAL-24: Week of the year
-	ZKCAL-26: ZK Calendar display wrong show more labels in the month mold when use custom HTML content 
+	ZKCAL-26: ZK Calendar display wrong show more labels in the month mold when use custom HTML content
 	ZKCAL-28: The wrong event sort order.
 	ZKCAL-29: Events that ends at 00:00 are not visible
-	
+
 * Upgrade Notes:
 	--------
 calendar 2.1.1
@@ -66,7 +74,7 @@ February 29, 2012
 	ZKCAL-21:   Set a DateFormatter to the calendar has ClassCastException
 	ZKCAL-14:    'All day' events visible to the next day
 	ZKCAL-15:   Unable to change the rang of Event in Week mode.
-	
+
 * Upgrade Notes:
 
 	--------
@@ -75,14 +83,14 @@ November 23, 2010
 * Features:
   Issue 38:  configure calendar hours eh between 8am and 4 pm
   Issue 39:  configure how many timeslots per hour like 6 for every 10 minutes or 4 for every 15 minutes
-  
+
 * Bugs:
   Issue 11:  Events do not appear in the month view
-  Issue 37:  Null exception will be shown  
+  Issue 37:  Null exception will be shown
   Issue 41:  Problem when using mold=month
   Issue 42:  Zk calendar crash at sundays on October.
   Issue 44:  Adding time zone error.
-  
+
 * Upgrade Notes:
 
 	--------
@@ -97,14 +105,14 @@ calendar 2.0.1
   Issue 20:  Start of DST hangs Calendar Demo
   Issue 21:  Changing event to all-day causes script error
   Issue 22:  Clearing All-Day property from event causes week-view rendering issues
-  Issue 23:  Deleting any event in week-view causes script error  
+  Issue 23:  Deleting any event in week-view causes script error
   Issue 25:  Server timezone of UTC makes DST Issue worse
   Issue 27:  Drag event that end date is 00:00 will update the wrong end date on Month mold
-  Issue 19:  Initialization problem for more than one calendars in a tabbox  
+  Issue 19:  Initialization problem for more than one calendars in a tabbox
   Issue 28:  Last week missing for certain months
   Issue 29:  SimpleCalendarModel.clear() does not redraw Calendar
-  
-  
+
+
 * Upgrade Notes:
 
 	--------
