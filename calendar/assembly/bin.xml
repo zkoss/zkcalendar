@@ -24,11 +24,11 @@
 			<outputDirectory>/dist/src</outputDirectory>
 		</file>
 		<file>
-			<source>/../${project.basedir}/zkdoc/COPYING</source>
+			<source>../zkdoc/COPYING</source>
 			<outputDirectory>/doc</outputDirectory>
 		</file>
 		<file>
-			<source>/../${project.basedir}/zkdoc/release-note</source>
+			<source>../zkdoc/release-note</source>
 			<outputDirectory>/doc</outputDirectory>
 		</file>
 	</files>
