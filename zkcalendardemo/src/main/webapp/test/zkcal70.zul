@@ -1,0 +1,8 @@
+<zk>
+    <div apply="test.Cal70Composer">
+    <button id="add" label="add"/>
+    <calendars id="calendars" firstDayOfWeek="Sunday" height="600px" />
+
+    </div>
+    <script src="/patch/zkcal-70.js"/>
+</zk>
