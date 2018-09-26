@@ -1,0 +1,16 @@
+<zk>
+    <style>
+        /* workaround
+        .z-calpp-month-cnt{
+            height: 50vh;
+            overflow: auto
+        }
+        */
+    </style>
+    1. click ...more link
+    2. the popup is too height and out of visible range
+    <div apply="test.Cal71Controller">
+        <calendars id="calendars" firstDayOfWeek="Sunday" height="600px"
+                   timeZone="Main=GMT+0" mold="month"/>
+    </div>
+</zk>
