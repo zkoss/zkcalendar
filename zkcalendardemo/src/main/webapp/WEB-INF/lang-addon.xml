@@ -1,0 +1,6 @@
+<language-addon>
+    <addon-name>customization</addon-name>
+    <language-name>xul/html</language-name>
+    <depends>calendar</depends>
+    <javascript src="/js/msgcal*.js" ondemand="true"/>
+</language-addon>
