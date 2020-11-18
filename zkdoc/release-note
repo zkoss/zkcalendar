@@ -1,3 +1,11 @@
+calendar 3.0.0
+* Features:
+
+* Bugs:
+
+* Upgrade Notes:
+
+--------
 calendar 2.1.6
 * Bugs:
     ZKCAL-68 moving an Calendar event causes a NumberFormatException in IE11
