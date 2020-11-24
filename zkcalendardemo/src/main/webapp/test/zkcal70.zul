@@ -1,0 +1,15 @@
+<zk>
+	<label multiline="true">
+		Load this zul and open the browser console, you should not see any js error.
+		Click the button to change the Timeslots and scroll down to find the calendar events:
+		events: (18:33~20:56) (23:40~23:50) (23:45~23:50)
+		The calendar events should display at the position correctly (rely on the beginDate and endDate).
+	</label>
+	<div apply="test.Cal70Composer">
+		<button id="add" label="add"/>
+		<button label="Time slots 2" onClick="calendars.setTimeslots(2)" />
+		<button label="Time slots 4" onClick="calendars.setTimeslots(4)" />
+		<button label="Time slots 6" onClick="calendars.setTimeslots(6)" />
+		<calendars id="calendars" firstDayOfWeek="Sunday" height="600px" beginTime="12"/>
+	</div>
+</zk>

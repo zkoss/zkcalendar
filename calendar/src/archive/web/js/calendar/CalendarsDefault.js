@@ -18,9 +18,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			bdTimeslot = date.getMinutes()%timeslotTime;
 		
 		if (!bdTimeslot) return 0;
-		if (timeslots == 2)  return bdTimeslot%10 ? 0.5: (30-bdTimeslot)/30;
-		if (timeslots == 4) return (bdTimeslot%30 == 10) ? 1/3: 2/3;
-		return 0.5;
+		return bdTimeslot/timeslotTime;
 	}
 	
 	function _setEvtWgtHeight(wgt, node, id, height) {
@@ -1358,11 +1356,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	getTimeIndex: function (date) {
 		var timeslots = this._timeslots,
 			timeslotTime = 60/timeslots,
-			index = Math.max(((date.getHours() - this._bt) * timeslots) + 
-						Math.ceil(date.getMinutes()/timeslotTime), 0),
-			slotCount = (this._et - this._bt) * timeslots;
+			// ZKCAL-70: index out of number of total slots index
+			index = Math.max(((date.getHours() - this._bt) * timeslots) +
+						Math.floor(date.getMinutes()/timeslotTime), 0),
+			maxAvailableTimeslotIndex = (this._et - this._bt) * timeslots - 1;
 		
-		return  Math.min(index, slotCount);
+		return  Math.min(index, maxAvailableTimeslotIndex);
 	},
 	
 	_getTimeOffset: function (d, dur, dur2) {
@@ -1430,16 +1429,13 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				
 				ce._bi = bi;
 				ce._ei = ei;
-				ce.style.top = jq.px(top - bdHeightOffs);
-				_setEvtWgtHeight(this, ce, ce.id, ((ei -bi) * perHgh) + bdHeightOffs - edHeightOffs);
-				
-				if(bi == ei)
-					bi--;
-					
+				ce.style.top = jq.px(top + bdHeightOffs);
+				_setEvtWgtHeight(this, ce, ce.id, ((ei -bi) * perHgh) - bdHeightOffs + edHeightOffs);
+
 				if (bi < 0) continue;
 				
 				// width info
-				for (var n = 0; bi < ei && bi < slotCount;) {
+				for (var n = 0; bi <= ei && bi < slotCount;) {
 					var tmp = data[bi++];
 					if (tmp[n]) {
 						for (;;) {
@@ -1463,12 +1459,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					ei = ce._ei, 
 					maxSize = 0, 
 					tmp = {};
-				if(bi == ei)
-					bi--;
 					
 				if (bi < 0) continue;
 				
-				for (var m = bi; m < ei && m < slotCount; m++) {
+				for (var m = bi; m <= ei && m < slotCount; m++) {
 					var len = data[m].length;
 					if (maxSize < len) 
 						maxSize = len;
