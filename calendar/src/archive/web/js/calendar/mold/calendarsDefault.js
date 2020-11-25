@@ -24,14 +24,6 @@ function (out) {
 		beginHour = this._bt,
 		endHour = this._et;
 	
-	// round corner
-	var t1 = zcls + "-t1",
-		t2 = zcls + "-t2",
-		t3 = zcls + "-t3",
-		b1 = zcls + "-b1",
-		b2 = zcls + "-b2",
-		b3 = zcls + "-b3";
-	
 	// CSS ClassName
 	var header 				= zcls + "-header",
 		body   				= zcls + "-body",
@@ -56,6 +48,7 @@ function (out) {
 		day_of_week 		= zcls + "-day-of-week",
 		day_of_week_inner	= day_of_week + "-inner",
 		day_of_week_cnt 	= day_of_week + "-cnt",
+		day_of_week_fmt 	= day_of_week + "-fmt",
 		day_of_week_end   	= day_of_week + "-end",
 
 		daylong 			= zcls + "-daylong",
@@ -78,10 +71,7 @@ function (out) {
 		toolbar.redraw(out);
 		out.push('</div>');
 	}			
-	out.push('<div class="', t1, '"></div>',
-			'<div class="', t2, '">',
-			'<div class="', t3, '"></div></div>',
-			'<div id="', uuid, '-body" class="', body, '">',
+	out.push('<div id="', uuid, '-body" class="', body, '">',
 			'<div class="', inner, '">',
 			'<div id="', uuid,'-inner" class="', week,'">',
 /**************************************************************************************/	
@@ -109,8 +99,12 @@ function (out) {
 
 	// day-of-week
 	for (var index = 0 , j = 0; j < days; ++j) {
-		var content = captionByDate ? captionByDate[j] : 
-									zk.fmt.Date.formatDate(begin,'EEE ' + this.weekFmt);
+		var content;
+		if (captionByDate)
+			content = captionByDate[j];
+		else
+			content = zk.fmt.Date.formatDate(begin, 'EEE ') +
+				'<div class="' + day_of_week_fmt + '">' + zk.fmt.Date.formatDate(begin, this.weekFmt) + '</div>';
 		
 		out.push('<th class="', day_of_week, '">',
 				'<div class="', day_of_week_inner);
@@ -125,7 +119,7 @@ function (out) {
 			out.push(' ', week_today);
 		}
 
-		out.push('"><span class="', day_of_week_cnt, '">', content, '</span></div></th>');
+		out.push('"><div class="', day_of_week_cnt, '">', content, '</div></div></th>');
 		begin = calUtil.addDay(begin, 1);
 	}
 	out.push('<th class="',day_of_week_end,'">&nbsp;</th></tr>',
@@ -223,12 +217,6 @@ function (out) {
 	out.push('</div></div>');
 	
 	
-/***************************************************************************/			
-	out.push('</div></div>',
-			'<div class="',b2,'">',
-			'<div class="',b3,'"></div></div>',
-			'<div class="',b1,'"></div>',
-			'<div id="',uuid,'-sdw" class="',zcls,'-fl">',
-			'<div class="',zcls,'-fr">',
-			'<div class="',zcls,'-fm"></div></div></div></div>');
+/***************************************************************************/
+	out.push('</div></div></div>');
 }

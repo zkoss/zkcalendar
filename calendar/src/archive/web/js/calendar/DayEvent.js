@@ -26,9 +26,6 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 							'<div class="' + resizer + '-icon"></div></div>';
 		
 		out.push('<div', this.domAttrs_(), '>',
-				'<div class="', p.t1, '"', headerStyle, '></div>',
-				'<div class="', p.t2, '"', headerStyle, '>',
-				'<div class="', p.t3, '"></div></div>',
 				'<div id="', id, '-body" class="', p.body, '"', headerStyle, '>',
 				'<div class="', p.inner, '"', headerStyle, '>',
 				'<dl id="', id, '-inner"', contentStyle, '>',
@@ -40,10 +37,7 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 			out.push(p._resizerCnt);
 			
 		out.push('</dl>',
-			'</div></div>',
-			'<div class="', p.b2, '"', headerStyle, '>',
-			'<div class="', p.b3, '"></div></div>',
-			'<div class="', p.b1, '"', headerStyle, '></div></div>');
+			'</div></div></div>');
 	},
 	bind_: function (e){
 		this.$supers('bind_', arguments);

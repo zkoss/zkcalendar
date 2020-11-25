@@ -57,6 +57,48 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.10.3</version>
+				<configuration>
+					<nodeVersion>v14.15.0</nodeVersion>
+					<workingDirectory>${project.basedir}</workingDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>compile-less</id>
+						<goals>
+							<goal>npx</goal>
+						</goals>
+						<phase>process-resources</phase>
+						<configuration>
+							<!--only compile less file in theme folder-->
+							<arguments>
+								zklessc
+								--source ${project.basedir}/src/archive/web
+								--output ${project.build.outputDirectory}/web
+								--compress
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
@@ -100,7 +142,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.5</version>
+				<version>3.1.1</version>
 				<executions>
 					<execution>
 						<id>source</id>

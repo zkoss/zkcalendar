@@ -39,13 +39,13 @@ Copyright (C) 2008 Potix Corporation. All Rights Reserved.
 			<mold-name>default</mold-name>
 			<widget-class>calendar.CalendarsDefault</widget-class>
 			<mold-uri>mold/calendarsDefault.js</mold-uri>
-			<css-uri>css/calendar.css.dsp</css-uri>
+<!--			<css-uri>css/calendar.css.dsp</css-uri>-->
 		</mold>
 		<mold>
 			<mold-name>month</mold-name>
 			<widget-class>calendar.CalendarsMonth</widget-class>
 			<mold-uri>mold/calendarsMonth.js</mold-uri>
-			<css-uri>css/calendar.css.dsp</css-uri>
+<!--			<css-uri>css/calendar.css.dsp</css-uri>-->
 		</mold>
 	</component>
 </language-addon>

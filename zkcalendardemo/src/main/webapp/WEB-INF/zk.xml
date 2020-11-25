@@ -12,6 +12,16 @@
 		<device-type>ajax</device-type>
 		<timeout-uri>/timeout.zul</timeout-uri><!-- An empty URL can cause the browser to reload the same URL -->
 	</device-config>
+	<!-- Default theme -->
+<!--	<library-property>-->
+<!--		<name>org.zkoss.theme.preferred</name>-->
+<!--		<value>zen</value>-->
+<!--	</library-property>-->
+	<!-- Specific calendar theme theme -->
+<!--	<library-property>-->
+<!--		<name>org.zkoss.calendar.theme.preferred</name>-->
+<!--		<value>iceblue</value>-->
+<!--	</library-property>-->
 	<!--<language-config>-->
 		<!--<addon-uri>/WEB-INF/lang-addon.xml</addon-uri>-->
 	<!--</language-config>-->

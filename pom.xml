@@ -13,7 +13,7 @@
 		<module>zkcalendardemo</module>
 	</modules>
 	<properties>
-		<zk.version>7.0.3-Eval</zk.version>
+		<zk.version>8.6.4.1-Eval</zk.version>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
 		<packname>3.0.0-FL-${maven.build.timestamp}</packname>
 	</properties>

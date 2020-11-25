@@ -13,5 +13,5 @@ This program is distributed under GPL Version 2.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
 msgcal = {};
-msgcal.dayMORE = "+{0} more";
-msgcal.monthMORE = "+{0} more";
+msgcal.dayMORE = "{0} more";
+msgcal.monthMORE = "{0} more";

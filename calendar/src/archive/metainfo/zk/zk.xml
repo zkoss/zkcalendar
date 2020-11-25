@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<zk>
+	<config-name>calendar</config-name><!-- used to resolve dependency -->
+	<depends>zkmax</depends>
+	<desktop-config>
+		<!-- Calendar theme provider -->
+		<theme-provider-class>org.zkoss.calendar.CalendarThemeProvider</theme-provider-class>
+	</desktop-config>
+</zk>

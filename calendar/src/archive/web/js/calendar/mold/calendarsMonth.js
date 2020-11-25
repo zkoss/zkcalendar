@@ -20,14 +20,6 @@ function (out) {
 		current = new Date(),
 		weekend = [-1, -1];
 	
-	// round corner
-	var t1 = zcls + "-t1",
-		t2 = zcls + "-t2",
-		t3 = zcls + "-t3",
-		b1 = zcls + "-b1",
-		b2 = zcls + "-b2",
-		b3 = zcls + "-b3";
-	
 	// CSS ClassName
 	var header 				= zcls + "-header",
 		body   				= zcls + "-body",
@@ -58,10 +50,7 @@ function (out) {
 		toolbar.redraw(out);
 		out.push('</div>');
 	}			
-	out.push('<div class="', t1, '"></div>',
-			'<div class="', t2, '">',
-			'<div class="', t3, '"></div></div>',
-			'<div id="', uuid, '-body" class="', body, '">',
+	out.push('<div id="', uuid, '-body" class="', body, '">',
 			'<div class="', inner, '">',
 /***************************************************************************/
 			'<div id="', uuid, '-inner" class="', month, '">',
@@ -138,6 +127,9 @@ function (out) {
 			if (calUtil.isTheSameDay(current, tempBd))
 				out.push(' ', week_today);
 
+			if (curMonth != tempBd.getMonth())
+				out.push(' ', month_date_off);
+
 			out.push('">&nbsp;</td>');
 			tempBd = calUtil.addDay(tempBd, 1);
 		}
@@ -174,11 +166,5 @@ function (out) {
 	}
 	out.push('</div></div></div>',
 /***************************************************************************/
-			'</div></div>',
-			'<div class="',b2,'">',
-			'<div class="',b3,'"></div></div>',
-			'<div class="',b1,'"></div>',
-			'<div id="',uuid,'-sdw" class="',zcls,'-fl">',
-			'<div class="',zcls,'-fr">',
-			'<div class="',zcls,'-fm"></div></div></div></div>');	
+			'</div></div></div>');
 }

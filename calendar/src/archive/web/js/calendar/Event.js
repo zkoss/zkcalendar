@@ -32,14 +32,7 @@ calendar.Event = zk.$extends(zk.Widget, {
 			headerColor = ce.headerColor,
 			contentColor = ce.contentColor;
 		
-		this.params = {			
-			// round corner
-			t1: zcls + "-t1",
-			t2: zcls + "-t2",
-			t3: zcls + "-t3",
-			b1: zcls + "-b1",
-			b2: zcls + "-b2",
-			b3: zcls + "-b3",
+		this.params = {
 			// CSS ClassName
 			body: zcls + "-body",
 			inner: zcls + "-inner",
@@ -64,10 +57,6 @@ calendar.Event = zk.$extends(zk.Widget, {
 		var node = jq(this.$n()),
 			body = jq(this.$n('body')),
 			p = this.params;
-		node.children('.' + p.t1).attr('style', headerStyle);
-		node.children('.' + p.t2).attr('style', headerStyle);
-		node.children('.' + p.b1).attr('style', headerStyle);
-		node.children('.' + p.b2).attr('style', headerStyle);
 		body.attr('style',headerStyle);
 		body.children('.' + p.inner).attr('style', this.getInnerStyle_());
 	},

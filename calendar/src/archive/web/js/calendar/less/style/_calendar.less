@@ -1,0 +1,738 @@
+e('<%@ taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c" %>');
+e('<%@ taglib uri="http://www.zkoss.org/dsp/zk/core" prefix="z" %>');
+e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
+
+// Core variables
+@import "_variables.less"; // variables needed for zkcalendar
+
+.z-calendars {
+	height: 100%;
+}
+
+.z-calendars-header .z-toolbar {
+	background: none;
+	border: 0;
+}
+.z-calendars-body {
+	zoom: 1;
+}
+
+.z-calendars-week-body .z-calevent-body {
+	border: 1px solid @bodyColor;
+}
+
+.z-calendars-inner {
+	border: 1px solid @separatorColor;
+}
+// Calchildren
+.z-calendars-week {
+	position: relative;
+	overflow: hidden;
+	height: 300px;
+
+	&-header {
+		font-size: @fontSizeL;
+		font-family: @fontFamilyT;
+		background: @mainColor;
+
+		&-cnt {
+			table-layout: fixed;
+			width: 100%;
+			overflow: hidden;
+			border-bottom: 1px solid @separatorColor;
+			background: @headerContentBackground;
+			position: relative;
+			z-index: 2; // larger then breeze background
+		}
+
+		&:before { // for breeze background
+			content: '';
+			width: 100%;
+			height: 56px;
+			display: block;
+			position: absolute;
+			z-index: 1;
+			background: @headerBackground;
+		}
+	}
+}
+.z-calendars-day-header {
+	height: 56px;
+}
+.z-calendars-day-of-week {
+	&-inner {
+		color: @fontColor;
+		height: 46px;
+		white-space: nowrap;
+		display: flex;
+		align-items: center;
+
+		&.z-calendars-week-today {
+			background: @todayColor;
+			border-radius: @borderRadius;
+			font-weight: bold;
+			color: @todayFontColor;
+		}
+	}
+
+	&-cnt {
+		width: 100%;
+	}
+	&-fmt {
+		font-size: @fontSizeXL;
+	}
+	&-end {
+		width: 18px;
+		padding: 0;
+		margin: 0;
+	}
+}
+.z-calendars-daylong {
+	&-body {
+		position: relative;
+	}
+	&-inner {
+		&:after {
+			content: '';
+			width: 1px;
+			background: @separatorColor;
+			position: absolute;
+			right: -1px;
+			top: 0;
+			bottom: 0;
+		}
+	}
+	&-cnt {
+		position: relative;
+		table-layout: fixed;
+		width: 100%;
+	}
+	&-evt {
+		border-left: 1px solid @separatorColor;
+		padding-top: 4px;
+		vertical-align: top;
+	}
+	&-end {
+		font-size: 0;
+		line-height: 0;
+	}
+	&-more {
+		padding-bottom: 2px;
+		padding-top: @basePadding;
+		padding-left: @basePadding;
+	}
+}
+.z-calendars-daylong-faker-more,
+.z-calendars-evt-faker-more {
+	color: @fontColor;
+	font-size: @fontSizeL;
+	font-family: @fontFamilyT;
+	cursor: pointer;
+}
+.z-calendars-evt-faker-more:hover {
+	text-decoration: underline;
+}
+.z-calendars-evt-faker-more {
+	color: @fontColor;
+	background: transparent;
+	padding-left: 10px;
+}
+.z-calendars-evt-faker-nomore {
+	color: @contentColor;
+	padding-left: 0;
+}
+.z-calendars-daylong-faker-nomore,
+.z-calendars-evt-faker-nomore {
+	background: none;
+	cursor: default;
+}
+// .ie .z-calendars-daylong-faker-nomore {
+// 	color: #E2EEF5;
+// }
+.z-calendars-week-body {
+	position: relative;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	padding: 0;
+	margin: 0;
+}
+.z-calendars-week-cnt {
+	padding: 0;
+	margin: 0;
+	background: @bodyColor;
+	table-layout: fixed;
+	width: 100%;
+}
+// .ie .z-calendars-week-cnt {
+// 	margin-right: -17px;
+// }
+.z-calendars-hour-inner {
+	position: absolute;
+	width: 100%;
+}
+.z-calendars-hour-sep {
+	// ZKCAL-46: use content-box instead of border-box in ZK7
+	box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	height: 30px;
+	border-bottom: 1px dashed @separatorColor;
+	border-top: 1px solid @separatorColor;
+	line-height: 30px;
+	margin-bottom: 30px;
+	font-size: 30px;
+
+	&:first-child {
+		border-top: none;
+	}
+}
+.z-calendars-hour-of-day {
+	// ZKCAL-46: use content-box instead of border-box in ZK7
+	box-sizing: content-box;
+	-moz-box-sizing: content-box;
+	-webkit-box-sizing: content-box;
+	padding-right: 2px;
+	border-bottom: 1px solid @contentColor;
+	color: @fontColor;
+	text-align: center;
+	font-size: @fontSizeL;
+	font-family: @fontFamilyC;
+	position: relative;
+	top: -@fontSizeL/2;
+
+	&:first-child {
+		// to hide first hour-of-day
+		font-size: 0;
+		color: transparent;
+	}
+	&:last-child {
+		border-bottom: none;
+	}
+}
+.z-calendars-week-day {
+	border-left: 1px solid @separatorColor;
+	overflow: hidden;
+	vertical-align: top;
+}
+.z-calendars-week-day-cnt {
+	margin-right: 12px;
+	margin-left: @basePadding;
+	position: relative;
+}
+// Calchildren Month View
+.z-calendars-day-over, z-calendars-month-day-over {
+	cursor: pointer;
+	text-decoration: underline;
+}
+.z-calendars-month .z-calendars-inner {
+	padding-right: @basePadding;
+}
+.z-calendars-month-cnt {
+	overflow: hidden;
+	height: 300px;
+}
+.z-calendars-month-cnt,.z-calendars-daylong-cnt {
+	& .z-calevent-body {
+		margin: 0 @basePadding;
+	}
+}
+.z-calendars-month-cnt-inner {
+	height: 100%;
+	position: relative;
+	white-space: nowrap;
+
+	&:before { // for breeze background
+		content: '';
+		width: 100%;
+		height: 30px;
+		display: block;
+		background: @headerBackground;
+	}
+}
+.z-calendars-month-header {
+	color: @fontColor;
+	background: @headerContentBackground;
+	position: absolute;
+	top: 0;
+	left: 0;
+	table-layout: fixed;
+	width: 100%;
+	line-height: 28px;
+}
+.z-calendars-month-header .z-calendars-day-of-week {
+	color: @fontColor;
+	padding: 1px;
+	font-size: @fontSizeL;
+	font-family: @fontFamilyT;
+}
+.z-calendars-month-body {
+	overflow: hidden;
+	position: absolute;
+	top: 30px; // according to .z-calendars-month-header's line-height
+	width: 100%;
+	bottom: 0;
+	left: 0;
+	background: @bodyColor;
+}
+.z-calendars-month-week {
+	left: 0;
+	overflow: hidden;
+	position: absolute;
+	width: 100%;
+}
+.z-calendars-day-of-month-bg {
+	height: 100%;
+	width: 100%;
+	left: 0;
+	top: 0;
+	table-layout: fixed;
+	position: absolute;
+}
+.z-calendars-day-of-month-bg td {
+	border-left: 1px solid @separatorColor;
+}
+.z-calendars-day-of-month-bg td:first-child {
+	border-left: none;
+}
+.z-calendars-day-of-month-body {
+	position: relative;
+	table-layout: fixed;
+	width: 100%;
+}
+.z-calendars-month-date {
+	border-left: 1px solid @separatorColor;
+	border-top: 1px solid @separatorColor;
+	color: @dateFontColor;
+	line-height: 16px;
+	overflow: hidden;
+	padding: 6px;
+	text-align: right;
+	font-size: @fontSizeL;
+	font-family: @fontFamilyC;
+}
+.z-calendars-month-date:first-child {
+	border-left: none;
+}
+.z-calendars-month-date-evt {
+	vertical-align: top;
+	line-height: 20px;
+	padding-bottom: 2px;
+}
+.z-calendars-month-date-off {
+	background: @dateOffColor;
+}
+.z-calendars-month-date-off > .z-calendars-month-date-cnt {
+	color: @dateOffFontColor;
+}
+.z-calendars-month-date-cnt {
+	height: 20px;
+	padding: 2px;
+}
+.z-calendars-week-today > .z-calendars-month-date-cnt {
+	background: @todayColor;
+	color: @todayFontColor;
+	border-radius: @borderRadius;
+}
+// Calendar Timezone
+.z-calendars-timezone {
+	color: @fontColor;
+	width: 80px;
+	overflow: hidden;
+}
+.z-calendars-day-header .z-calendars-timezone {
+	text-align: center;
+	vertical-align: bottom;
+	padding-bottom: 8px;
+	font-weight: normal;
+}
+.z-calendars-day-header th:first-child:before {
+	content: '';
+	display: block;
+	height: 1px;
+	width: 100%;
+	position: absolute;
+	top: 56px;
+	background: @separatorColor;
+}
+.z-calendars-week-cnt .z-calendars-timezone {
+	background: @contentColor;
+	border-right: 1px solid @separatorColor;
+	color: @fontColor;
+	overflow: hidden;
+	padding: 0;
+	text-align: right;
+	vertical-align: top;
+}
+.z-calendars-week-cnt .z-calendars-timezone-end {
+	border-right: 0;
+}
+.z-calendars-week-header-arrow {
+	border-top: 3px solid @arrowColor;
+	border-left: 3px solid @mainColor;
+	border-right: 3px solid @mainColor;
+	border-bottom: 0;
+	height: 0;
+	width: 0;
+	position: absolute;
+	top: 62px;
+	cursor: pointer;
+	font-size: 0;
+	line-height: 0;
+
+	&-close {
+		border-left: 3px solid @arrowColor;
+		border-top: 3px solid @mainColor;
+		border-bottom: 3px solid @mainColor;
+		border-right: 0;
+	}
+}
+// Calendar Event
+.z-calevent {
+	color: @invertFontColor;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.z-calevent-body {
+	border-radius: @borderRadius;
+	overflow: hidden;
+	zoom:1;
+}
+.z-calevent-body.z-calevent-left-arrow {
+	margin-left: 0;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+.z-calevent-body.z-calevent-left-arrow .z-calevent-cnt {
+	padding-left: 10px;
+}
+.z-calevent-body.z-calevent-right-arrow {
+	margin-right: 0;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.z-calevent-inner dt,
+.z-calevent-inner dd,
+.z-calevent-inner dl {
+	margin: 0;
+	overflow: hidden;
+	text-align: left;
+}
+.z-calevent-inner dl {
+	background: @eventColor;
+}
+.z-calevent-header {
+	background: @eventColor;
+	font-size: @fontSizeL;
+	font-family: @fontFamilyT;
+	font-weight: bold;
+	line-height: @fontSizeL + 4px;
+	color: @invertFontColor;
+	white-space: nowrap;
+	padding: 0 @basePadding;
+}
+.z-calevent-inner .z-calevent-cnt {
+	background: @eventColor;
+	font-size: @fontSizeL;
+	font-family: @fontFamilyC;
+	padding-left: @basePadding;
+	padding-right: @basePadding;
+	line-height: 20px;
+	color: @invertFontColor;
+}
+.z-calevent-resizer {
+	bottom: 2px;
+	cursor: s-resize;
+	height: 7px;
+	line-height: 7px;
+	position: absolute;
+	width: 100%;
+	left: 0;
+
+	&-icon {
+		border-top: 2px solid @resizerColor;
+		font-size: 0;
+		line-height: 0;
+		margin: 0 auto;
+		opacity: 0.7;
+		width: 10px;
+	}
+}
+.z-calendars-daylong-evt .z-calevent-inner .z-calevent-left-arrow,
+.z-calevent-daylong-month .z-calevent-inner .z-calevent-left-arrow,
+.z-calevent-left-more-faker .z-calevent-inner .z-calevent-left-arrow {
+	margin-left: 0;
+	zoom: 1;
+}
+.z-calendars-daylong-evt .z-calevent-inner .z-calevent-right-arrow,
+.z-calevent-daylong-month .z-calevent-inner .z-calevent-right-arrow,
+.z-calevent-right-more-faker .z-calevent-inner .z-calevent-right-arrow {
+	margin-right: 0;
+	zoom: 1;
+}
+.z-calendars-daylong-evt .z-calevent-text,
+.z-calevent-daylong-month .z-calevent-text,
+.z-calpp .z-calevent-text,
+.z-calpp-month .z-calevent-text,
+.z-calendars-evt-faker-dd .z-calevent-text {
+	height: 20px;
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+}
+.z-calevent-daylong-month .z-calevent-text {
+	height: 20px;
+	line-height: 20px;
+}
+.z-calendars-week-day-cnt .z-calevent {
+	width: 100%;
+	position: absolute;
+}
+.z-calendars-daylong-evt .z-calevent-cnt,
+.z-calevent-daylong-month .z-calevent-cnt {
+	padding: 0 @basePadding;
+	white-space: nowrap;
+	cursor: pointer;
+	overflow: hidden;
+}
+.z-calevent-daylong-month .z-calevent-cnt {
+	padding: 0 @basePadding;
+}
+
+.z-calevent-daylong-month .z-calevent-t3,
+.z-calevent-daylong-month .z-calevent-b3,
+.z-calpp-month-evt-cnt .z-calevent-t3,
+.z-calpp-month-evt-cnt .z-calevent-b3 {
+	background: @eventColor;
+}
+
+.z-calevent-daylong-month .z-calevent-inner,
+.z-calpp-month-evt-cnt .z-calevent-inner {
+	border-left-color: @eventColor;
+	border-right-color: @eventColor;
+}
+.z-calevent-month {
+	white-space: nowrap;
+	zoom: 1;
+	padding: 0 @basePadding;
+	line-height: 18px;
+}
+.z-calevent-month .z-calevent-header {
+	background: transparent;
+	color: @eventColor;
+	font-size: @fontSizeL;
+	font-family: @fontFamilyT;
+	white-space: nowrap;
+}
+.z-calevent-month .z-calevent-cnt {
+	background: transparent;
+	color: @eventColor;
+	font-size: @fontSizeL;
+	font-family: @fontFamilyC;
+	white-space: nowrap;
+}
+
+// Calendar Popup
+.z-calpp,.z-calpp-month {
+	visibility: hidden;
+	position: absolute;
+	z-index: 28; // less than zkau.initZIndex
+	box-shadow: 0 0 16px 0 rgba(0,0,0,0.16);
+
+	&-inner {
+		background: @popupColor;
+		padding: @basePadding 0;
+		border-radius: @borderRadius;
+		border: 1px solid @separatorColor;
+		overflow: hidden;
+	}
+
+	&-header {
+		line-height: @fontSizeL;
+		overflow: hidden;
+		margin-bottom: 4px;
+		text-align: center;
+
+		&-cnt {
+			color: @popupHeaderFontColor;
+			padding: 1px;
+			font-size: @fontSizeL;
+			font-family: @fontFamilyT;
+			font-weight: bold;
+			white-space: nowrap;
+		}
+	}
+	&-close {
+		cursor: pointer;
+		width: @iconSize;
+		height: @iconSize;
+		position: absolute;
+		right: @iconSize/2;
+		top: @iconSize/2;
+		z-index: 15;
+		opacity: .6;
+
+		&:hover {
+			opacity: 1;
+		}
+
+		&:before,&:after {
+			position: absolute;
+			content: ' ';
+			height: @iconSize;
+			width: 2px;
+			background: @fontColor;
+			transform: rotate(45deg);
+		}
+		&:after {
+			transform: rotate(-45deg);
+		}
+	}
+
+	&-evt {
+		&-l {
+			padding-top: 1px;
+			width: 5px;
+			vertical-align: top;
+			position: relative;
+
+			& .z-calevent-left-more-faker {
+				position: absolute;
+				left: 0px;
+				height: 20px;
+				width: 10px;
+				border-radius: 0;
+				border-top: 10px solid @popupColor;
+				border-right: 5px solid transparent;
+				border-bottom: 10px solid @popupColor;
+			}
+		}
+		&-r {
+			padding-top: 1px;
+			width: 5px;
+			vertical-align: top;
+			position: relative;
+
+			& .z-calevent-right-more-faker {
+				position: absolute;
+				right: 0px;
+				height: 20px;
+				width: 10px;
+				border-radius: 0;
+				border-top: 10px solid @popupColor;
+				border-left: 5px solid transparent;
+				border-bottom: 10px solid @popupColor;
+			}
+		}
+		&-m {
+			vertical-align: top;
+			padding: 1px 0 0;
+			& .z-calevent-text {
+				padding: 0 @basePadding;
+			}
+		}
+		&-cnt {
+			position: relative;
+			table-layout: fixed;
+			width: 100%;
+		}
+		&-faker {
+			cursor: pointer;
+		}
+	}
+	// popup override
+	& .z-calevent-body.z-calevent-left-arrow .z-calevent-cnt {
+		padding-left: @basePadding;
+	}
+}
+
+.z-calevent-left-more-faker,
+.z-calevent-right-more-faker {
+	cursor: pointer;
+}
+.z-calpp-evt-faker .z-calevent-left-arrow-icon,
+.z-calpp-evt-faker .z-calevent-right-arrow-icon,
+.z-calpp-month-evt-faker .z-calevent-left-arrow-icon,
+.z-calpp-month-evt-faker .z-calevent-right-arrow-icon {
+	display: none;
+}
+.z-calpp-evt-faker .z-calevent-inner .z-calevent-left-arrow,
+.z-calpp-evt-faker .z-calevent-inner .z-calevent-right-arrow,
+.z-calpp-month-evt-faker .z-calevent-inner .z-calevent-left-arrow,
+.z-calpp-month-evt-faker .z-calevent-inner .z-calevent-right-arrow {
+	padding: 0 1px;
+}
+.z-calevent-left-more-faker .z-calevent-text {
+	text-align: right;
+}
+.z-calevent-right-more-faker .z-calevent-text {
+	text-align: left;
+}
+
+// Drag and drop
+.z-calendars-month-dd {
+	position: absolute;
+	height: 0;
+	left: 0;
+	top: 0;
+	left: 0;
+	z-index: 28; // less than zkau.initZIndex
+}
+.z-calendars-dd-rope {
+	position: absolute;
+	background: @ropeColor;
+	line-height: 0;
+	font-size: 0;
+	opacity: 0.5;
+	filter: alpha(opacity=50);
+}
+.z-calendars-evt-dd {
+	opacity: 0.5;
+	filter: alpha(opacity=50);
+}
+.z-calendars-evt-faker-dd {
+	position: absolute;
+	z-index: 12000;
+}
+.z-calendars-daylong-dd {
+	position: absolute;
+	height: 0;
+	left: 0;
+	top: 0;
+	left: 0;
+	z-index: 28; // less than zkau.initZIndex
+}
+.z-calendars-evt-faker-dd .z-calevent-inner .z-calevent-left-arrow {
+	padding-left: 10px;
+	zoom: 1;
+}
+.z-calendars-evt-faker-dd .z-calevent-inner .z-calevent-right-arrow {
+	padding-right: 7px;
+	zoom: 1;
+}
+.z-calendars-evt-ghost {
+	opacity: 0.7;
+	filter: alpha(opacity=70);
+}
+.z-calendars-week-of-year {
+	background: @bodyColor;
+	position: absolute;
+	overflow: hidden;
+	width: 32px;
+	top: 30px;
+	left: 0;
+	bottom: 0;
+	border-right: 1px solid @separatorColor;
+	border-top: 1px solid @separatorColor;
+	text-align: center;
+}
+.z-calendars-week-of-year-text {
+	color: @fontColor;
+	font-size: @fontSizeL;
+	font-family: @fontFamilyT;
+	font-weight: bold;
+	white-space: nowrap;
+	cursor: pointer;
+	position: relative;
+	top: calc(50% - 8px);
+}

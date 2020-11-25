@@ -51,9 +51,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			hourCount = wgt._et - wgt._bt,
 			$firstSlot = $cnt.find('.z-calendars-hour-sep')[0], //fine tune if user customize height by CSS
 			slotHeight = $firstSlot ? 
-				($firstSlot.offsetHeight + zk($firstSlot).sumStyles('tb', jq.margins)) : 46,
+				($firstSlot.offsetHeight + zk($firstSlot).sumStyles('tb', jq.margins) + 1) : 46,
 			totalHeight = hourCount * slotHeight * timeslots/2;
-		$cnt.find('.z-calendars-week-cnt').height(totalHeight + 4);
+		$cnt.find('.z-calendars-week-cnt').height(totalHeight);
 		jq(wgt.cntRows).find('.z-calendars-week-day-cnt').height(totalHeight).css('margin-bottom', -totalHeight);
 		jq(wgt.cntRows).find('.z-calendars-hour-of-day').height(slotHeight * timeslots/2 - 1);
 		wgt._slotOffs = 12/timeslots;
@@ -182,7 +182,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		dg.node = jq('#'+uuid+'-dd')[0];
 		dg.node.parent = jq(cells[begin + cIndex].firstChild);
 
-		dg._zecnt = dg.node.childNodes[2].firstChild.firstChild;
+		dg._zecnt = dg.node.childNodes[0].firstChild.firstChild;
 		jq(dg.node).addClass(widget.getZclass() + "-evt-ghost");
 		var r = y + dg.handle.scrollTop - y1;
 		r = Math.floor(r / ph);
@@ -282,7 +282,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	
 	function _resizeDragStart(dg) {
 		dg._zrzoffs = dg.node.offsetHeight + 2 - dg._zhd.parentNode.offsetHeight;
-		dg._zecnt = dg.node.childNodes[2].firstChild.firstChild;
+		dg._zecnt = dg.node.childNodes[0].firstChild.firstChild;
 	}
 	
 	function _resizeDragging(dg, evt) {
@@ -496,9 +496,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	_bt: 0,
 	_et: 24,
 	_timeslots: 2,
-	ddTemplate: ['<div id="%1" class="%2" style="left:0px;width:100%;" ><div class="%2-t1"></div><div class="%2-t2"><div class="%2-t3"></div></div>',
-			  '<div class="%2-body" id="%1-body"><div class="%2-inner"><dl id="%1-inner"><dt class="%2-header"></dt><dd class="%2-cnt"></dd></dl></div></div>',
-			  '<div class="%2-b2"><div class="%2-b3"></div></div><div class="%2-b1"/></div>'].join(''),	
+	ddTemplate: ['<div id="%1" class="%2" style="left:0px;width:100%;" >',
+			  '<div class="%2-body" id="%1-body"><div class="%2-inner"><dl id="%1-inner"><dt class="%2-header"></dt><dd class="%2-cnt"></dd></dl></div></div>'].join(''),
 	
 	_dateTime: [
 		'00:00', '00:05', '00:10', '00:15', '00:20', '00:25', '00:30', '00:35', '00:40', '00:45', '00:50', '00:55', 
@@ -848,7 +847,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			
 			var title = titles[i],
 				content = this._captionByDate ? this._captionByDate[i] : 
-								zk.fmt.Date.formatDate(d, 'EEE ' + this.weekFmt);
+								zk.fmt.Date.formatDate(d, 'EEE ') +
+								'<div class="' + this.getZclass() + "-day-of-week-fmt" + '">' + zk.fmt.Date.formatDate(d, this.weekFmt) + '</div>';
 			jq(title).html(content);
 			title.time = this.fixTimeZoneFromClient(ed);
 			if (ed.getDay() == 0 || ed.getDay() == 6) {//SUNDAY or SATURDAY
@@ -1195,7 +1195,13 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			pp = widget._pp;
 		}
 
-		pp.ci = ci;	
+		pp.ci = ci;
+
+		var date = jq('#' + widget.uuid).find('.z-calendars-day-of-week-cnt')[ci],
+			targetDate = new Date(date.time);
+		if (targetDate)
+			jq('#' + widget.uuid+'-pphd')[0].innerHTML = zk.fmt.Date.formatDate(targetDate, 'EEE, MMM/d');
+
 		var offs= zk(cell).revisedOffset(),
 			wd = daylong.offsetWidth,
 			csz = cell.parentNode.cells.length,
@@ -1641,7 +1647,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			dg.node = jq('#'+uuid+'-dd')[0];
 
 			dg._zevt = ce;
-			dg._zhd = dg.node.childNodes[2].firstChild.firstChild.firstChild;
+			dg._zhd = dg.node.childNodes[0].firstChild.firstChild.firstChild;
 			
 			if (dg._zrz) _resizeDragStart(dg);
 			else _updateDragStart(dg, evt, ce, faker);
@@ -1725,7 +1731,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		clearInterval(widget.run);
 		//keep ghostNode not be disappear
 		ghostNode.parent.append(jq(ghostNode));
-		
+
 		if (!dg._zevt) _createDragEnd(dg, evt);
 		else if (dg._zrz) _resizeDragEnd(dg, evt);
 		else _updateDragEnd(dg, evt);

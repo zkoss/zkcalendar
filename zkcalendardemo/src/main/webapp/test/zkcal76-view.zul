@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import org.zkoss.lang.Library?>
+<!--
+zkcal76-view.zul
+
+		Purpose:
+		
+		Description:
+		
+		History:
+				Wed Nov 25 15:49:20 CST 2020, Created by leon
+
+Copyright (C) 2020 Potix Corporation. All Rights Reserved.
+
+-->
+<zk>
+	<combobox placeholder="switch theme here">
+		<comboitem label="iceblue"/>
+		<comboitem label="breeze"/>
+		<comboitem label="wcag"/>
+		<comboitem label="dark"/>
+		<comboitem label="custom"/>
+		<attribute name="onChange">
+			Library.setProperty("org.zkoss.calendar.theme.preferred", event.value);
+			Executions.sendRedirect("");
+		</attribute>
+	</combobox>
+	<div apply="test.Cal76Controller">
+		<calendars id="calendars" timeZone="Main=GMT+0,Tokyo=GMT+9" height="600px">
+			<toolbar>
+				<button label="default" onClick='calendars.setMold("default")'/>
+				<button label="month" onClick='calendars.setMold("month")'/>
+				<button label="week of year" onClick='calendars.setWeekOfYear(!calendars.isWeekOfYear());calendars.invalidate()'/>
+				set Day in default mold:
+				<intbox onOK="calendars.setDays(self.value)"/>
+				<button label="Time slots 2" onClick="calendars.setTimeslots(2)" />
+				<button label="Time slots 4" onClick="calendars.setTimeslots(4)" />
+				<button label="Time slots 6" onClick="calendars.setTimeslots(6)" />
+			</toolbar>
+		</calendars>
+	</div>
+</zk>

@@ -85,18 +85,18 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	
 	
 calendar.Calendars = zk.$extends(zul.Widget, {	
-	ppTemplate: ['<div id="%1-pp" class="%2" style="position:absolute; top:0;left:0;"><div class="%2-t1"></div><div class="%2-t2"><div class="%2-t3"></div></div>',
+	ppTemplate: ['<div id="%1-pp" class="%2" style="position:absolute; top:0;left:0;">',
 			  '<div class="%2-body"><div class="%2-inner">',
 			  '<div class="%2-header"><div id="%1-ppc" class="%2-close"></div><div id="%1-pphd" class="%2-header-cnt"></div></div>',
 			  '<div class="%2-cnt"><div class="%2-evts"><table id="%1-ppcnt" class="%2-evt-cnt" cellpadding="0" cellspacing="0"><tbody></tbody></table></div></div>',
 			  '</div></div>',
-			  '<div class="%2-b2"><div class="%2-b3"></div></div><div class="%2-b1"></div></div>'].join(''),
+			  '</div>'].join(''),
 
-	evtTemplate: ['<div id="%1" class="%2 %3-more-faker"><div class="%2-t1" %5></div><div class="%2-t2" %5><div class="%2-t3" %9></div></div>',
-			  '<div class="%2-body" %5><div class="%2-inner" %8>',
-			  '<div class="%2-cnt %3-arrow" %6><div class="%3-arrow-icon" %7></div><div class="%2-text">%4</div></div>',
+	evtTemplate: ['<div id="%1" class="%2 %3-more-faker">',
+			  '<div class="%2-body %3-arrow" %5><div class="%2-inner" %8>',
+			  '<div class="%2-cnt" %6><div class="%2-text">%4</div></div>',
 			  '</div></div>',
-			  '<div class="%2-b2" %5><div class="%2-b3" %9></div></div><div class="%2-b1" %5></div></div>'].join(''),
+			  '</div>'].join(''),
 	blockTemplate: '<div id="%1-tempblock"></div>',
 	ropeTemplate: '<div id="%1-rope" class="%2-month-dd">',
 	ddRopeTemplate: '<div class="%1-dd-rope"></div>',

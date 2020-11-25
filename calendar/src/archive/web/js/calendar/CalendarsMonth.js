@@ -436,9 +436,12 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				bgTD = jq(cntBg[rowIndex].rows[0].cells[td[0].cellIndex]);
 				bgTD.addClass(week_today);
 			}
-			if (curMonth != ed.getMonth())
-				td.addClass(month_date_off);			
-			
+			if (curMonth != ed.getMonth()) {
+				td.addClass(month_date_off);
+				bgTD = jq(cntBg[rowIndex].rows[0].cells[td[0].cellIndex]);
+				bgTD.addClass(month_date_off);
+			}
+
 			if (ed.getDate() == 1 && !captionByDateOfMonth)
 				content = zk.fmt.Date.formatDate(ed,'MMM d');		
 			jq(span).html(content);									
@@ -654,7 +657,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		var date = cell.parentNode.parentNode.firstChild.cells[ci].firstChild,
 			targetDate = new Date(date.time);
 		
-		jq('#'+widget.uuid+'-pphd')[0].innerHTML = date.text? date.text: 
+		jq('#'+widget.uuid+'-pphd')[0].innerHTML = date.text ? date.text:
 			zk.fmt.Date.formatDate(targetDate,'EEE, MMM/d');
 
 		if (zk.ie6_) {
