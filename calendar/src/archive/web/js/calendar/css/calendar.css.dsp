@@ -739,6 +739,7 @@ ${z:setCWRCacheControl()}
 	border: 1px solid #5EA0DD;
 	background: white;
 	padding: 2px;
+	overflow: auto;
 }
 .z-calpp-month-close {
 	background-repeat: no-repeat;

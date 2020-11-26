@@ -742,6 +742,19 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				cr.innerHTML = "";
 		}
 		zk(pp).cleanVisibility();
+
+		// ZKCAL-71: set maxHeight to popup content
+		if (pp && jq(pp).is(':visible')) {
+			var vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0),
+				ppRect = pp.getBoundingClientRect(),
+				ppMonthContent = jq(pp).find('.z-calpp-month-cnt')[0],
+				ppPadding = ppRect.height - ppMonthContent.clientHeight,
+				maxh = vh - ppRect.top - ppPadding;
+
+			if (ppRect.bottom > vh) // not enough space for popup
+				ppMonthContent.style.maxHeight = jq.px(maxh);
+		}
+
 		evt.stop();
 	},
 	

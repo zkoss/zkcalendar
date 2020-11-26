@@ -3,6 +3,7 @@ calendar 3.0.0
 
 * Bugs:
 	ZKCAL-70: adding 2 short duration events causes a JavaScript error
+	ZKCAL-71: the height of the popup to show more events is too large
 
 * Upgrade Notes:
 

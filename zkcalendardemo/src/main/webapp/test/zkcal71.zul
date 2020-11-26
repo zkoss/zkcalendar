@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+zkcal71.zul
+
+		Purpose:
+		
+		Description:
+		
+		History:
+				Thu Nov 26 11:18:05 CST 2020, Created by leon
+
+Copyright (C) 2020 Potix Corporation. All Rights Reserved.
+
+-->
+<zk>
+	<label multiline="true">
+		Click +more to open the popup, the popup shouldn't be too high and out of visible range.
+		The popup height should be shorter and inside the viewport.
+	</label>
+	<div apply="test.Cal71Controller">
+		<calendars id="calendars" height="800px"
+			mold="month"/>
+	</div>
+</zk>
