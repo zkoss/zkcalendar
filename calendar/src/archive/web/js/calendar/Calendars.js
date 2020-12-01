@@ -74,7 +74,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			
 		if (bd < wgt.zoneBd || bd.getFullYear() != ed.getFullYear() ||
 			(!calUtil.isTheSameDay(bd, ed) && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
-			(calUtil.getPeriod(ed, bd) >= 1 && calUtil.getPeriod(ed, wgt.zoneBd) >= 1))
+			(calUtil.getPeriodDoubleValue(ed, bd) >= 1 && calUtil.getPeriodDoubleValue(ed, wgt.zoneBd) >= 1))
 	 		return true;
 	}
 	

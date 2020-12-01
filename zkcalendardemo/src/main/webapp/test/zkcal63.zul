@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+zkcal63.zul
+
+		Purpose:
+		
+		Description:
+		
+		History:
+				Tue Dec 01 09:59:48 CST 2020, Created by leon
+
+Copyright (C) 2020 Potix Corporation. All Rights Reserved.
+
+-->
+<zk>
+	<zscript><![CDATA[
+		import org.zkoss.calendar.impl.SimpleCalendarEvent;
+		import org.zkoss.calendar.impl.SimpleCalendarModel;
+		import java.util.Calendar;
+
+		public void init() {
+			SimpleCalendarModel model = new SimpleCalendarModel();
+			SimpleCalendarEvent event = new SimpleCalendarEvent();
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.HOUR_OF_DAY, 10);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			event.setBeginDate(cal.getTime());
+			cal.add(Calendar.HOUR_OF_DAY, 12);
+			event.setEndDate(cal.getTime());
+			event.setContent("10:00 ~ 22:00");
+			model.add(event);
+
+			SimpleCalendarEvent event2 = new SimpleCalendarEvent();
+			cal.set(Calendar.HOUR_OF_DAY, 10);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			event2.setBeginDate(cal.getTime());
+			cal.add(Calendar.HOUR_OF_DAY, 16);
+			event2.setEndDate(cal.getTime());
+			event2.setContent("cross day event");
+			model.add(event2);
+
+			mycal.setModel(model);
+		}
+	]]></zscript>
+	<label multiline="true">
+		you should see the CalendarEvents longer than 12 hours are displayed correctly(10:00 ~ 22:00),
+		and also the cross day event should displayed correctly.
+	</label>
+	<calendars id="mycal" onCreate="init()" hflex="1" vflex="1"/>
+</zk>
