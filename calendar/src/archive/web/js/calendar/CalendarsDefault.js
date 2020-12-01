@@ -1421,10 +1421,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					bdHeightOffs = bdTimeslot ? perHgh * bdTimeslot: 0;
 				}
 				if (ei) {
-					if (isCrossDay)//ZKCAL-29
-						ed = new Date(ed.getTime() + 1000);
 					var edTimeslot = _getHightOffsPercent(ed, timeslots)
 					edHeightOffs = edTimeslot ? perHgh * edTimeslot: 0;
+					if (isCrossDay)//ZKCAL-29
+						ed = new Date(ed.getTime() + 1000);
 				}
 				
 				ce._bi = bi;
