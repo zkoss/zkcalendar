@@ -1,5 +1,6 @@
 calendar 3.0.0
 * Features:
+	ZKCAL-67: CalendarEvent can accept that beingDate and endDate are the same time
 
 * Bugs:
 	ZKCAL-70: adding 2 short duration events causes a JavaScript error

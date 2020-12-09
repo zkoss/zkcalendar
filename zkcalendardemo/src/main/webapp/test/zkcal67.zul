@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+zkcal67.zul
+
+		Purpose:
+		
+		Description:
+		
+		History:
+				Wed Dec 09 12:19:40 CST 2020, Created by leon
+
+Copyright (C) 2020 Potix Corporation. All Rights Reserved.
+
+-->
+<zk>
+	<label>
+		load this page, you should not see any error message.
+	</label>
+	<style>
+		.z-calevent-inner dl {
+			min-height: 14px;
+		}
+	</style>
+	<calendars id="cal" height="1000px"
+			   width="800px" mold="default" onDayClick="System.out.println(event.getData())" />
+	<zscript><![CDATA[
+		import java.util.Calendar;
+		public SimpleCalendarEvent getEvent(){
+			SimpleCalendarEvent sce = new SimpleCalendarEvent();
+			Date today = java.util.Calendar.getInstance().getTime();
+			sce.setBeginDate(today);
+			sce.setEndDate(today);
+			//System.out.println(today.before(today));
+			sce.setContent("This is the content of the event");
+			sce.setTitle("This is the title of the event");
+			return sce;
+		}
+
+		CalendarModel model = new SimpleCalendarModel();
+		model.add(getEvent());
+		cal.setModel(model);
+	]]></zscript>
+</zk>

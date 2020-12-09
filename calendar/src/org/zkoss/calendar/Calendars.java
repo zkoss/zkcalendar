@@ -779,7 +779,7 @@ public class Calendars extends XulElement {
 			if (list != null) {
 				for (Iterator<CalendarEvent> it = list.iterator(); it.hasNext();) {
 					CalendarEvent ce = it.next();
-					if (!ce.getBeginDate().before(ce.getEndDate()))
+					if (ce.getBeginDate().after(ce.getEndDate()))
 						throw new IllegalArgumentException("Illegal date: from " + ce.getBeginDate() + " to " + ce.getEndDate());
 					
 					String key = ce.getBeginDate().before(beginDate) ?
