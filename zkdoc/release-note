@@ -1,6 +1,7 @@
 calendar 3.0.0
 * Features:
 	ZKCAL-67: CalendarEvent can accept that beingDate and endDate are the same time
+	ZKCAL-78: Change Java compiler source/target to 8
 
 * Bugs:
 	ZKCAL-70: adding 2 short duration events causes a JavaScript error
@@ -9,6 +10,7 @@ calendar 3.0.0
 	ZKCAL-68: moving an Calendar event causes a NumberFormatException in IE11
 
 * Upgrade Notes:
+	+ The Java binary-compatible level is Java 8 since ZK Calendar 3.
 
 	--------
 calendar 2.1.5
