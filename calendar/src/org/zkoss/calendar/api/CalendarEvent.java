@@ -17,6 +17,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
  */
 package org.zkoss.calendar.api;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 /**
@@ -31,15 +32,39 @@ public interface CalendarEvent {
 	 * Returns the beginning date of the calendar event.
 	 * <p>
 	 * Note: never null
+	 * @deprecated since 3.0.0
 	 */
-	public Date getBeginDate();
+	@Deprecated
+	default public Date getBeginDate() {
+		return Date.from(getBeginDateInZonedDateTime().toInstant());
+	}
+
+	/**
+	 * Returns the beginning date of the calendar event in ZonedDateTime.
+	 * <p>
+	 * Note: never null
+	 * @since 3.0.0
+	 */
+	public ZonedDateTime getBeginDateInZonedDateTime();
 
 	/**
 	 * Returns the end date of the calendar event. (exclusive)
 	 * <p>
 	 * Note: never null
+	 * @deprecated since 3.0.0
 	 */
-	public Date getEndDate();
+	@Deprecated
+	default public Date getEndDate() {
+		return Date.from(getEndDateInZonedDateTime().toInstant());
+	}
+
+	/**
+	 * Returns the beginning date of the calendar event in ZonedDateTime.
+	 * <p>
+	 * Note: never null
+	 * @since 3.0.0
+	 */
+	public ZonedDateTime getEndDateInZonedDateTime();
 
 	/**
 	 * Returns the title of the calendar event.

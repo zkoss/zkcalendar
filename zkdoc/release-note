@@ -2,6 +2,7 @@ calendar 3.0.0
 * Features:
 	ZKCAL-67: CalendarEvent can accept that beingDate and endDate are the same time
 	ZKCAL-78: Change Java compiler source/target to 8
+	ZKCAL-73: Add compatibility with java.time API
 
 * Bugs:
 	ZKCAL-70: adding 2 short duration events causes a JavaScript error
@@ -11,6 +12,7 @@ calendar 3.0.0
 
 * Upgrade Notes:
 	+ The Java binary-compatible level is Java 8 since ZK Calendar 3.
+	+ Some methods in DateFormatter/CalendarEvent with java.util.Date are deprecated, and add ZonedDateTimeFormatter, LegacyDateFormatter.
 
 	--------
 calendar 2.1.5

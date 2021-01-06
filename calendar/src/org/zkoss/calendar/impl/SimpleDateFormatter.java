@@ -17,74 +17,64 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.calendar.impl;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.IsoFields;
 import java.util.Locale;
-import java.util.TimeZone;
 
-import org.zkoss.calendar.api.DateFormatter;
+import org.zkoss.calendar.api.ZonedDateTimeFormatter;
 
 /**
- * A simple implementation of {@link DateFormatter}
+ * A simple implementation of {@link ZonedDateTimeFormatter}
  * @author jumperchen
  *
  */
-public class SimpleDateFormatter implements DateFormatter, Serializable {
+public class SimpleDateFormatter implements ZonedDateTimeFormatter, Serializable {
 
 	private static final long serialVersionUID = 20090316151208L;
 	private String _dayFormat = "EEE MM/d";
 	private String _weekFormat = "EEE";
 	private String _timeFormat = "HH:mm";
 	private String _ppFormat = "EEE, MMM/d";
-	private SimpleDateFormat _df, _wf, _tf, _pf;
-	
-	public String getCaptionByDate(Date date, Locale locale, TimeZone timezone) {
+	private DateTimeFormatter _df, _wf, _tf, _pf;
+
+	public String getCaptionByDate(ZonedDateTime date, Locale locale) {
 		if (_df == null) {
-			_df = new SimpleDateFormat(_dayFormat, locale);
+			_df = DateTimeFormatter.ofPattern(_dayFormat, locale);
 		}
-		_df.setTimeZone(timezone);
-		return _df.format(date);
-	}
-	
-	public String getCaptionByDateOfMonth(Date date, Locale locale, TimeZone timezone) {
-		Calendar cal = Calendar.getInstance(timezone, locale);
-		cal.setTime(date);
-		if (cal.get(Calendar.DAY_OF_MONTH) == 1) {
-			SimpleDateFormat sd = new SimpleDateFormat("MMM d", locale);
-			sd.setTimeZone(timezone);
-			return sd.format(date);
-		}
-		return Integer.toString(cal.get(Calendar.DAY_OF_MONTH));
+		return date.format(_df);
 	}
 
-	public String getCaptionByDayOfWeek(Date date, Locale locale, TimeZone timezone) {
+	public String getCaptionByDateOfMonth(ZonedDateTime date, Locale locale) {
+		if (date.getDayOfMonth() == 1) {
+			DateTimeFormatter df = DateTimeFormatter.ofPattern("MMM d", locale);
+			return df.format(date);
+		}
+		return Integer.toString(date.getDayOfMonth());
+	}
+
+	public String getCaptionByDayOfWeek(ZonedDateTime date, Locale locale) {
 		if (_wf == null) {
-			_wf = new SimpleDateFormat(_weekFormat, locale);
+			_wf = DateTimeFormatter.ofPattern(_weekFormat, locale);
 		}
-		_wf.setTimeZone(timezone);
-		return _wf.format(date);
+		return date.format(_wf);
 	}
 
-	public String getCaptionByTimeOfDay(Date date, Locale locale, TimeZone timezone) {
+	public String getCaptionByTimeOfDay(ZonedDateTime date, Locale locale) {
 		if (_tf == null) {
-			_tf = new SimpleDateFormat(_timeFormat, locale);
+			_tf = DateTimeFormatter.ofPattern(_timeFormat, locale);
 		}
-		_tf.setTimeZone(timezone);
-		return _tf.format(date);
-	}
-	public String getCaptionByPopup(Date date, Locale locale, TimeZone timezone) {
-		if (_pf == null) {
-			_pf = new SimpleDateFormat(_ppFormat, locale);
-		}
-		_pf.setTimeZone(timezone);
-		return _pf.format(date);
-	}
-	public String getCaptionByWeekOfYear(Date date, Locale locale,
-			TimeZone timezone) {
-		Calendar cal = Calendar.getInstance(timezone, locale);
-		cal.setTime(date);
-		return String.valueOf(cal.get(Calendar.WEEK_OF_YEAR));
+		return date.format(_tf);
 	}
 
+	public String getCaptionByPopup(ZonedDateTime date, Locale locale) {
+		if (_pf == null) {
+			_pf = DateTimeFormatter.ofPattern(_ppFormat, locale);
+		}
+		return date.format(_pf);
+	}
+
+	public String getCaptionByWeekOfYear(ZonedDateTime date, Locale locale) {
+		return String.valueOf(date.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR));
+	}
 }

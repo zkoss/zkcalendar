@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+zkcal73.zul
+
+		Purpose:
+		
+		Description:
+		
+		History:
+				Tue Jan 05 12:37:33 CST 2021, Created by leon
+
+Copyright (C) 2021 Potix Corporation. All Rights Reserved.
+
+-->
+<zk>
+	<label multiline="true">
+		1. You should see 3 calendar events (ZonedDateTime, LocalDateTime, Date) and display correctly.
+		2. Click "setLegacyDateFormatter" button, you should see AM/PM before hour:minute, and month/date.
+		3. Click "setZonedDateTimeFormatter" button, you should see hour-minute, and month-date.
+		4. Click "setSimpleDateFormatter" button, you should see hour:minute, and month/date.
+	</label>
+	<div apply="test.Cal73Controller">
+		<button label="setLegacyDateFormatter" onClick='calendars.setDateFormatter("org.zkoss.zcaldemo.CustomDateFormatter");calendars.invalidate()'/>
+		<button label="setZonedDateTimeFormatter" onClick='calendars.setDateFormatter("org.zkoss.zcaldemo.Cal73DateFormatter");calendars.invalidate()'/>
+		<button label="setSimpleDateFormatter" onClick='calendars.setDateFormatter("org.zkoss.calendar.impl.SimpleDateFormatter");calendars.invalidate()'/>
+		<button label="default" onClick='calendars.setMold("default")'/>
+		<button label="month" onClick='calendars.setMold("month")'/>
+		<calendars id="calendars" height="800px" timeZone="Taipei=GMT+8,Paris=GMT+1" dateFormatter="org.zkoss.zcaldemo.Cal73DateFormatter"/>
+	</div>
+</zk>
