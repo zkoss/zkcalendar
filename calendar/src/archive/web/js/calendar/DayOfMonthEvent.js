@@ -18,26 +18,27 @@ calendar.DayOfMonthEvent = zk.$extends(calendar.Event, {
 		var ce = this.event,
 			id = ce.id,
 			headerColor = ce.headerColor,
-			headerStyle = headerColor ? ' style="color:' + headerColor + '"': '',
-			contentStyle = headerStyle,
+			innerStyle = headerColor ? ' style="background:' + headerColor + '"': '',
 			zcls = this.getZclass(),
+			inner = zcls + "-inner",
 			header = zcls + "-header",
 			content = zcls + "-cnt";
-			
-		this.uuid = id;		
-		
+
+		this.uuid = id;
+
 		out.push('<div', this.domAttrs_(), '>',
-				'<span id="', id, '-hd" class="', header, '"', headerStyle, '>', this.getCntText(ce), '&nbsp;</span>',
-				'<span id="', id, '-cnt" class="', content, '"', contentStyle, '>', ce.content, '</span></div>');		
+				'<div id="', id, '-inner" class="', inner, '"', innerStyle, '>',
+				'<span id="', id, '-hd" class="', header, '">', this.getCntText(ce), '</span>',
+				'<span id="', id, '-cnt" class="', content, '">', ce.content, '</span></div></div>');
 	},
 	
-	getCntText: function(ce) {		
-		return ce.title ? ce.title.substr(0,ce.title.indexOf(' - ')): 
-							zk.fmt.Date.formatDate(ce.zoneBd,'HH:mm');	
+	getCntText: function(ce) {
+		return ce.title ? ce.title.substr(0,ce.title.indexOf(' - ')):
+							zk.fmt.Date.formatDate(ce.zoneBd,'HH:mm');
 	},
 	
 	domClass_: function (no) {
-		var scls = this.$supers('domClass_', arguments);		
+		var scls = this.$supers('domClass_', arguments);
 		return scls + ' ' + this.getZclass() + '-month';
 	},
 	
@@ -47,18 +48,16 @@ calendar.DayOfMonthEvent = zk.$extends(calendar.Event, {
 	
 	update: function(updateLastModify) {
 		var ce = this.event,
+			inner = jq(this.$n('inner')),
 			hd = jq(this.$n('hd')),
-			cnt = jq(this.$n('cnt')),		
+			cnt = jq(this.$n('cnt')),
 			headerColor = ce.headerColor,
-			headerStyle = headerColor ? 'color:' + headerColor : '' ,
-			contentStyle = headerStyle;
-			
-		hd.attr('style', headerStyle);		
+			innerStyle = headerColor ? 'background:' + headerColor : '';
+
+		inner.attr('style', innerStyle);
 		hd.html(this.getCntText(ce) + '&nbsp;');
-				
-		cnt.attr('style', contentStyle);			
 		cnt.html(ce.content);
 		
-		this.calculate_(updateLastModify);		
+		this.calculate_(updateLastModify);
 	}
 });

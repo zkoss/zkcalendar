@@ -694,15 +694,17 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				cm = tr.insertCell(0),
 				cl = tr.insertCell(0),
 				ce = evts[i],
-				event = zk.Widget.$(ce).event,
+				cewgt = zk.Widget.$(ce),
+				event = cewgt.event,
+				isDayLongEvent = cewgt.$instanceof(calendar.DaylongOfMonthEvent),
 				hc = event.headerColor,
 				cc = event.contentColor,
-				zcls = event.zclass;	
+				zcls = event.zclass;
 
 			ce._bd = ce._bd || event.zoneBd;
 			ce._ed = ce._ed || event.zoneEd;
 			cl.className = "z-calpp-month-evt-l";
-			if (bd - ce._bd >= 1000) {
+			if (isDayLongEvent && bd - ce._bd >= 1000) {
 				var info = [
 						ce.id + "-fl",
 						zcls,
@@ -725,7 +727,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			cm.appendChild(faker);
 			cr.className = "z-calpp-month-evt-r";
 
-			if (ce._ed - ed >= 1000) {
+			if (isDayLongEvent && ce._ed - ed >= 1000) {
 				var d = new Date(ce._ed.getTime() - 1000),
 					info = [
 						ce.id + "-fr",

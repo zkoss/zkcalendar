@@ -58,6 +58,7 @@ public class Cal76Controller extends SelectorComposer {
 		calendar.set(Calendar.HOUR_OF_DAY, 10);
 		calendar.set(Calendar.MINUTE, 20);
 		event1.setEndDate(calendar.getTime());
+		event1.setContent("event1");
 		model.add(event1);
 
 		SimpleCalendarEvent event2 = new SimpleCalendarEvent();
@@ -67,6 +68,7 @@ public class Cal76Controller extends SelectorComposer {
 		calendar.set(Calendar.HOUR_OF_DAY, 12);
 		calendar.set(Calendar.MINUTE, 0);
 		event2.setEndDate(calendar.getTime());
+		event2.setContent("event2");
 		model.add(event2);
 
 		SimpleCalendarEvent event3 = new SimpleCalendarEvent();

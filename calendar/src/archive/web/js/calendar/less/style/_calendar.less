@@ -342,7 +342,7 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 .z-calendars-day-header .z-calendars-timezone {
 	text-align: center;
 	vertical-align: bottom;
-	padding-bottom: 8px;
+	padding-bottom: 5px;
 	font-weight: normal;
 }
 .z-calendars-day-header th:first-child:before {
@@ -424,8 +424,7 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 .z-calevent-header {
 	background: @eventColor;
 	font-size: @fontSizeL;
-	font-family: @fontFamilyT;
-	font-weight: bold;
+	font-family: @fontFamilyC;
 	line-height: @fontSizeL + 4px;
 	color: @invertFontColor;
 	white-space: nowrap;
@@ -517,16 +516,21 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	padding: 0 @basePadding;
 	line-height: 18px;
 }
+.z-calevent-month .z-calevent-inner {
+	background: @eventColor;
+	border-radius: @borderRadius;
+	overflow: hidden;
+}
 .z-calevent-month .z-calevent-header {
 	background: transparent;
-	color: @eventColor;
+	color: @invertFontColor;
 	font-size: @fontSizeL;
-	font-family: @fontFamilyT;
+	font-family: @fontFamilyC;
 	white-space: nowrap;
 }
 .z-calevent-month .z-calevent-cnt {
 	background: transparent;
-	color: @eventColor;
+	color: @invertFontColor;
 	font-size: @fontSizeL;
 	font-family: @fontFamilyC;
 	white-space: nowrap;
@@ -627,7 +631,10 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 		&-m {
 			vertical-align: top;
 			padding: 1px 0 0;
-			& .z-calevent-text {
+			.z-calevent-month {
+				padding: 0;
+			}
+			.z-calevent-text {
 				padding: 0 @basePadding;
 			}
 		}

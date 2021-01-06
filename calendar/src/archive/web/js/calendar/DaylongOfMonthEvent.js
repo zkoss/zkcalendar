@@ -152,9 +152,6 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 	},
 	
 	updateContentStyle_: function (contentStyle) {
-		var node = jq(this.$n()),
-			p = this.params;
-		jq(node.children('.' + p.t2)[0].firstChild).attr('style', contentStyle);
-		jq(node.children('.' + p.b2)[0].firstChild).attr('style', contentStyle);
+		// do nothing after ZKCAL-76, t2/b2 was removed
 	}
 });
