@@ -12,7 +12,7 @@ calendar 3.0.0
 
 * Upgrade Notes:
 	+ The Java binary-compatible level is Java 8 since ZK Calendar 3.
-	+ Some methods in DateFormatter/CalendarEvent with java.util.Date are deprecated, and add ZonedDateTimeFormatter for java.time API.
+	+ Some methods in CalendarEvent with java.util.Date are deprecated, and add ZonedDateTimeFormatter for java.time API.
 
 	--------
 calendar 2.1.5
