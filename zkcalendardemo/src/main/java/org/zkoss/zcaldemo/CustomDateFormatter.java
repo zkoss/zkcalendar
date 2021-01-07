@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.zkoss.calendar.api.LegacyDateFormatter;
+import org.zkoss.calendar.api.DateFormatter;
 
-public class CustomDateFormatter implements LegacyDateFormatter {
+public class CustomDateFormatter implements DateFormatter {
 
 	private SimpleDateFormat _datefmt, _weekfmt, _timefmt, _popupfmt;
 
