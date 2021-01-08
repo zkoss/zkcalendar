@@ -593,6 +593,11 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 		}
 	}
 
+	&-cnt {
+		padding: 2px;
+		overflow: auto; // ZKCAL-71: the height of the popup to show more events is too large
+	}
+
 	&-evt {
 		&-l {
 			padding-top: 1px;
