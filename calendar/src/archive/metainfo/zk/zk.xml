@@ -2,7 +2,7 @@
 
 <zk>
 	<config-name>calendar</config-name><!-- used to resolve dependency -->
-	<depends>zkmax</depends>
+	<depends>zul</depends>
 	<desktop-config>
 		<!-- Calendar theme provider -->
 		<theme-provider-class>org.zkoss.calendar.CalendarThemeProvider</theme-provider-class>

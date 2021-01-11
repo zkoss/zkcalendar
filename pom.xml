@@ -37,7 +37,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>
-			<artifactId>zkmax</artifactId>
+			<artifactId>zul</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
 		<dependency>
