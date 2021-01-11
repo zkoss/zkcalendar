@@ -14,7 +14,7 @@ Copyright (C) 2021 Potix Corporation. All Rights Reserved.
 -->
 <zk>
 	<label multiline="true">
-		1. You should see 3 calendar events (ZonedDateTime, LocalDateTime, Date) and display correctly.
+		1. You should see 3 calendar events (ZonedDateTime, Instant, Date) and display correctly.
 		2. Click "setLegacyDateFormatter" button, you should see AM/PM before hour:minute, and month/date.
 		3. Click "setZonedDateTimeFormatter" button, you should see hour-minute, and month-date.
 		4. Click "setSimpleDateFormatter" button, you should see hour:minute, and month/date.

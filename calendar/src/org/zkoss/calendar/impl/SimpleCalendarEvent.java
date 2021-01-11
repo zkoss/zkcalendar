@@ -17,8 +17,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.calendar.impl;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Date;
 
@@ -35,54 +34,46 @@ public class SimpleCalendarEvent implements CalendarEvent, Serializable {
 	private String _contentColor = "";
 	private String _content = "";
 	private String _title = "";
-	private ZonedDateTime _beginDate;
-	private ZonedDateTime _endDate;
+	private Instant _beginDate;
+	private Instant _endDate;
 	private boolean _locked;
 
 	public void setBeginDate(Date beginDate) {
-		setBeginDateInZonedDateTime(beginDate == null ? null : ZonedDateTime.ofInstant(beginDate.toInstant(), ZoneId.systemDefault()));
+		setBeginDateInInstant(beginDate == null ? null : beginDate.toInstant());
 	}
 
-	public ZonedDateTime getBeginDateInZonedDateTime() {
+	public Instant getBeginDateInInstant() {
 		return _beginDate;
 	}
 
-	public void setBeginDateInZonedDateTime(ZonedDateTime beginDate) {
+	public void setBeginDateInInstant(Instant beginDate) {
 		if (beginDate == null)
-			beginDate = ZonedDateTime.now();
+			beginDate = Instant.now();
 		if (!beginDate.equals(_beginDate))
 			_beginDate = beginDate;
 	}
 
-	public LocalDateTime getBeginDateInLocalDateTime() {
-		return getBeginDateInZonedDateTime().toLocalDateTime();
-	}
-
-	public void setBeginDateInLocalDateTime(LocalDateTime beginDate) {
-		setBeginDateInZonedDateTime(beginDate == null ? null : beginDate.atZone(ZoneId.systemDefault()));
+	public void setBeginDateInZonedDateTime(ZonedDateTime beginDate) {
+		setBeginDateInInstant(beginDate == null ? null : beginDate.toInstant());
 	}
 
 	public void setEndDate(Date endDate) {
-		setEndDateInZonedDateTime(endDate == null ? null : ZonedDateTime.ofInstant(endDate.toInstant(), ZoneId.systemDefault()));
+		setEndDateInInstant(endDate == null ? null : endDate.toInstant());
 	}
 
-	public ZonedDateTime getEndDateInZonedDateTime() {
+	public Instant getEndDateInInstant() {
 		return _endDate;
 	}
 
 	public void setEndDateInZonedDateTime(ZonedDateTime endDate) {
+		setEndDateInInstant(endDate == null ? null : endDate.toInstant());
+	}
+
+	public void setEndDateInInstant(Instant endDate) {
 		if (endDate == null)
-			endDate = ZonedDateTime.now();
+			endDate = Instant.now();
 		if (!endDate.equals(_endDate))
 			_endDate = endDate;
-	}
-
-	public LocalDateTime getEndDateInLocalDateTime() {
-		return getEndDateInZonedDateTime().toLocalDateTime();
-	}
-
-	public void setEndDateInLocalDateTime(LocalDateTime endDate) {
-		setEndDateInZonedDateTime(endDate == null ? null : endDate.atZone(ZoneId.systemDefault()));
 	}
 
 	public String getContent() {

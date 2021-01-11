@@ -11,7 +11,7 @@ Copyright (C) 2021 Potix Corporation. All Rights Reserved.
 */
 package test;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
@@ -35,18 +35,18 @@ public class Cal73Controller extends SelectorComposer {
 		calendars.setModel(this.calendarModel);
 
 		SimpleCalendarEvent event = new SimpleCalendarEvent();
-		LocalDateTime localDateTimeNow = LocalDateTime.now();
-		event.setBeginDateInLocalDateTime(localDateTimeNow);
-		event.setEndDateInLocalDateTime(localDateTimeNow.plusHours(3));
-		event.setContent("event with LocalDateTime: " + localDateTimeNow.toString());
+		Instant instantNow = Instant.now();
+		event.setBeginDateInInstant(instantNow);
+		event.setEndDateInInstant(instantNow.plusSeconds(30000));
+		event.setContent("event with Instant: " + event.getBeginDateInInstant().toString());
 		calendarModel.add(event);
 
 		SimpleCalendarEvent event2 = new SimpleCalendarEvent();
 		ZoneId zoneId = ZoneId.of("Europe/Paris");
-		ZonedDateTime zonedDateTimeNow = ZonedDateTime.of(localDateTimeNow, zoneId);
+		ZonedDateTime zonedDateTimeNow = instantNow.atZone(zoneId);
 		event2.setBeginDateInZonedDateTime(zonedDateTimeNow);
 		event2.setEndDateInZonedDateTime(zonedDateTimeNow.plusHours(3));
-		event2.setContent("event with ZonedDateTime: " + zonedDateTimeNow.toString());
+		event2.setContent("event with ZonedDateTime: " + event2.getBeginDateInInstant().toString());
 		calendarModel.add(event2);
 
 		SimpleCalendarEvent event3 = new SimpleCalendarEvent();
@@ -57,7 +57,13 @@ public class Cal73Controller extends SelectorComposer {
 		calendar.set(Calendar.HOUR_OF_DAY, 18);
 		calendar.set(Calendar.MINUTE, 30);
 		event3.setEndDate(calendar.getTime());
-		event3.setContent("event old Date");
+		event3.setContent("event old Date: " + event3.getBeginDate().toString());
 		calendarModel.add(event3);
+
+		SimpleCalendarEvent event4 = new SimpleCalendarEvent();
+		System.out.println(event4.getBeginDateInInstant());
+		System.out.println(event4.getBeginDate());
+		System.out.println(event4.getEndDateInInstant());
+		System.out.println(event4.getEndDate());
 	}
 }
