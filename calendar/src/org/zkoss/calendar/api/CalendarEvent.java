@@ -35,7 +35,7 @@ public interface CalendarEvent {
 	 */
 	@Deprecated
 	default public Date getBeginDate() {
-		return getBeginDateInInstant() == null ? null : Date.from(getBeginDateInInstant());
+		return getBegin() == null ? null : Date.from(getBegin());
 	}
 
 	/**
@@ -43,7 +43,7 @@ public interface CalendarEvent {
 	 * <p>
 	 * @since 3.0.0
 	 */
-	public Instant getBeginDateInInstant();
+	public Instant getBegin();
 
 	/**
 	 * Returns the end date of the calendar event. (exclusive)
@@ -52,7 +52,7 @@ public interface CalendarEvent {
 	 */
 	@Deprecated
 	default public Date getEndDate() {
-		return getEndDateInInstant() == null ? null : Date.from(getEndDateInInstant());
+		return getEnd() == null ? null : Date.from(getEnd());
 	}
 
 	/**
@@ -60,7 +60,7 @@ public interface CalendarEvent {
 	 * <p>
 	 * @since 3.0.0
 	 */
-	public Instant getEndDateInInstant();
+	public Instant getEnd();
 
 	/**
 	 * Returns the title of the calendar event.

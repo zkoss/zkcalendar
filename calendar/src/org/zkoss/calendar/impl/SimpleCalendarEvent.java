@@ -18,7 +18,6 @@ package org.zkoss.calendar.impl;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 import org.zkoss.calendar.api.CalendarEvent;
@@ -26,97 +25,31 @@ import org.zkoss.calendar.api.CalendarEvent;
 /**
  * A simple implementation of {@link CalendarEvent}
  * @author jumperchen
- *
+ * @deprecated since 3.0.0
+ * @see AbstractCalendarEvent
  */
-public class SimpleCalendarEvent implements CalendarEvent, Serializable {
+@Deprecated
+public class SimpleCalendarEvent extends AbstractCalendarEvent<Date> implements Serializable {
 	private static final long serialVersionUID = 20090316143135L;
-	private String _headerColor = "";
-	private String _contentColor = "";
-	private String _content = "";
-	private String _title = "";
-	private Instant _beginDate;
-	private Instant _endDate;
-	private boolean _locked;
 
-	public void setBeginDate(Date beginDate) {
-		setBeginDateInInstant(beginDate == null ? null : beginDate.toInstant());
+	public SimpleCalendarEvent() {
+		super("", "", "", "", false, null, null);
 	}
 
-	public Instant getBeginDateInInstant() {
-		return _beginDate;
+	public SimpleCalendarEvent(String title, String content, String headerColor, String contentColor, boolean locked, Date begin, Date end) {
+		super(title, content, headerColor, contentColor, locked, begin, end);
 	}
 
-	public void setBeginDateInInstant(Instant beginDate) {
-		if (beginDate == null)
-			beginDate = Instant.now();
-		if (!beginDate.equals(_beginDate))
-			_beginDate = beginDate;
+	@Override
+	protected Instant convertToInstant(Date date) {
+		return date == null ? null : date.toInstant();
 	}
 
-	public void setBeginDateInZonedDateTime(ZonedDateTime beginDate) {
-		setBeginDateInInstant(beginDate == null ? null : beginDate.toInstant());
+	public void setBeginDate(Date begin) {
+		setBegin(begin);
 	}
 
-	public void setEndDate(Date endDate) {
-		setEndDateInInstant(endDate == null ? null : endDate.toInstant());
-	}
-
-	public Instant getEndDateInInstant() {
-		return _endDate;
-	}
-
-	public void setEndDateInZonedDateTime(ZonedDateTime endDate) {
-		setEndDateInInstant(endDate == null ? null : endDate.toInstant());
-	}
-
-	public void setEndDateInInstant(Instant endDate) {
-		if (endDate == null)
-			endDate = Instant.now();
-		if (!endDate.equals(_endDate))
-			_endDate = endDate;
-	}
-
-	public String getContent() {
-		return _content;
-	}
-
-	public void setContent(String content) {
-		_content = content;
-	}
-
-	public String getTitle() {
-		return _title;
-	}
-
-	public void setTitle(String title) {
-		_title = title;
-	}
-
-	public String getContentColor() {
-		return _contentColor;
-	}
-
-	public void setContentColor(String ccolor) {
-		_contentColor = ccolor;
-	}
-
-	public String getHeaderColor() {
-		return _headerColor;
-	}
-
-	public void setHeaderColor(String hcolor) {
-		_headerColor = hcolor;
-	}
-
-	public String getZclass() {
-		return "z-calevent";
-	}
-
-	public boolean isLocked() {
-		return _locked;
-	}
-
-	public void setLocked(boolean locked) {
-		_locked = locked;
+	public void setEndDate(Date end) {
+		setEnd(end);
 	}
 }
