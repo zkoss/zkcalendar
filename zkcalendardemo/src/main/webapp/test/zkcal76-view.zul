@@ -14,17 +14,6 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 
 -->
 <zk>
-	<combobox placeholder="switch theme here">
-		<comboitem label="iceblue"/>
-		<comboitem label="breeze"/>
-		<comboitem label="wcag"/>
-		<comboitem label="dark"/>
-		<comboitem label="custom"/>
-		<attribute name="onChange">
-			Library.setProperty("org.zkoss.calendar.theme.preferred", event.value);
-			Executions.sendRedirect("");
-		</attribute>
-	</combobox>
 	<div apply="test.Cal76Controller">
 		<calendars id="calendars" timeZone="Main=GMT+0,Tokyo=GMT+9" height="600px">
 			<toolbar>

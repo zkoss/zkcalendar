@@ -3,8 +3,7 @@
 <zk>
 	<config-name>calendar</config-name><!-- used to resolve dependency -->
 	<depends>zul</depends>
-	<desktop-config>
-		<!-- Calendar theme provider -->
-		<theme-provider-class>org.zkoss.calendar.CalendarThemeProvider</theme-provider-class>
-	</desktop-config>
+	<listener>
+		<listener-class>org.zkoss.calendar.CalendarWebAppInit</listener-class>
+	</listener>
 </zk>

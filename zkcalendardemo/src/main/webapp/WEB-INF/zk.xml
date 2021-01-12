@@ -17,7 +17,7 @@
 <!--		<name>org.zkoss.theme.preferred</name>-->
 <!--		<value>zen</value>-->
 <!--	</library-property>-->
-	<!-- Specific calendar theme theme -->
+	<!-- Specific calendar theme preferred, if value not match "iceblue", "wcag", "breeze", "dark" then no built-in theme will be apply. -->
 <!--	<library-property>-->
 <!--		<name>org.zkoss.calendar.theme.preferred</name>-->
 <!--		<value>iceblue</value>-->
