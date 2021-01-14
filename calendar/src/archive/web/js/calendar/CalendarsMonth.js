@@ -12,7 +12,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
  */
-calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {		
+calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	
 	weekRowTemplate: ['<div class="%1-month-week"><table cellspacing="0" cellpadding="0" class="%1-day-of-month-bg"><tbody><tr>',
 					'<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>',
@@ -28,22 +28,22 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					
 	woyRowTemplate: '<div class="%1-month-week"><span class="%1-week-of-year-text"></span></div>',
 	
-	$define : {
+	$define: {
 		events: function () {
 			this._events = jq.evalJSON(this._events);
 			if (!this.$n()) return;
 			
 			for (var i = this.nChildren; i--;) {
 				var child = this.getChildAt(i),
-					className = child.className;		
+					className = child.className;
 				if (className == 'calendar.DayOfMonthEvent' || className == 'calendar.DaylongOfMonthEvent')
-					this.removeChild(child);		
+					this.removeChild(child);
 			}
 
-			this.createChildrenWidget_();			
+			this.createChildrenWidget_();
 			this._rePositionDay();
 
-			//reset evt data			
+			//reset evt data
 			this._evtsData = this._createEvtsData(false);
 			// recalculate
 			this.onSize();
@@ -52,36 +52,36 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			this._zones = jq.evalJSON(this._zones);
 			this._zonesOffset = jq.evalJSON(this.zonesOffset);
 			this.ts = this._zones.length;
-			for(var i = this._zonesOffset.length; i--;)
+			for (var i = this._zonesOffset.length; i--;)
 				this._zonesOffset[i] = zk.parseInt(this._zonesOffset[i]);
 							
-			if(!this.$n())return;	
+			if (!this.$n()) return;
 			
-			this.updateDateOfBdAndEd_();	
+			this.updateDateOfBdAndEd_();
 		}
 	},
 
-	bind_ : function () {// after compose
+	bind_: function () {// after compose
 		this.$supers('bind_', arguments);
 		
 		this._weekDates = [];
 		var zcls = this.getZclass(),
 			p = this.params;
-		p._fakerMoreCls = zcls + "-evt-faker-more";
-		p._fakerNoMoreCls = zcls + "-evt-faker-nomore";
+		p._fakerMoreCls = zcls + '-evt-faker-more';
+		p._fakerNoMoreCls = zcls + '-evt-faker-nomore';
 		
 		var widget = this,
 			zcls = this.getZclass(),
 			cnt = this.$n('cnt');
 		
-		//define all positions		
+		//define all positions
 		//put the title
 		this.title = this.$n('inner').firstChild.firstChild.rows[0].cells;
 		//put week of year
-		if(this.woy)
+		if (this.woy)
 			this.woyCnt = jq(this.$n('woy')).contents().find('.' + zcls + '-week-of-year-text');
 		//put all day title
-		this.allDayTitle = jq(cnt).contents().find('.' + zcls +'-month-date-cnt');
+		this.allDayTitle = jq(cnt).contents().find('.' + zcls + '-month-date-cnt');
 		//put day event
 		this.weekRows = jq(cnt).contents().find('.' + zcls + '-day-of-month-body');
 		this.weekRowsBg = jq(cnt).contents().find('.' + zcls + '-day-of-month-bg');
@@ -99,38 +99,38 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		for (var i = this.weekOfMonth * 7; i--;) {
 			ed = calUtil.addDay(ed, -1);
 			children[i].time = this.fixTimeZoneFromClient(ed);
-			if(captionByPopup)
+			if (captionByPopup)
 				children[i].text = captionByPopup[i];
 		}
 		
-		if (this.woy) {			
-			var woy = jq(this.$n('woy')),			
+		if (this.woy) {
+			var woy = jq(this.$n('woy')),
 				children = this.woyCnt;
 
 			for (var i = this.weekOfMonth; i--;)
 				children[i].time = this.fixTimeZoneFromClient(this._weekDates[i].zoneBd);
 
 			woy.bind('click', function (evt) {
-				var target = evt.target;				
-				if (target.tagName == "SPAN")
-					widget.fire("onWeekClick",{data:[target.time]});
+				var target = evt.target;
+				if (target.tagName == 'SPAN')
+					widget.fire('onWeekClick',{data:[target.time]});
 				evt.stop();
 			});
-		}		
+		}
 		
 		this._evtsData = this._createEvtsData(true);
 		
-		if (!this._readonly) 
-			this.editMode(true);		
+		if (!this._readonly)
+			this.editMode(true);
 	},
 	
-	unbind_ : function () {
+	unbind_: function () {
 		this.title = this.woyCnt = this.allDayTitle = this.weekRows = null;
 		this.$supers('unbind_', arguments);
 	},
 	
 	_createEvtsData: function (isAddClkEvt) {
-		var cnt = this.$n("cnt"),				
+		var cnt = this.$n('cnt'),
 			rdata = [];
 		for (var ri = 0, n = cnt.firstChild; n; n = n.nextSibling, ri++) {
 			var table = n.lastChild,
@@ -144,10 +144,10 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			for (var i = 1; i < len; i++) {
 				for (var k = 0, z = 0, cells = rows[i].cells; z + k < 7; k++) {
 					if (cells[k].firstChild.id)
-						data[k+z].push(cells[k].firstChild);
+						data[k + z].push(cells[k].firstChild);
 					var cols = cells[k].colSpan;
-					while(--cols > 0)
-						data[k+ ++z].push(cells[k].firstChild);
+					while (--cols > 0)
+						data[k + ++z].push(cells[k].firstChild);
 				}
 			}
 			rdata[ri] = data;
@@ -167,12 +167,12 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		while (bd < ed) {
 			hour = bd.getHours();
 			if (hour != 0 && hour == 23) // fix DST
-				bd.setHours(bd.getHours() + 1)
+				bd.setHours(bd.getHours() + 1);
 			previous = new Date(bd);
 			bd = calUtil.addDay(bd, 7);
 			hour = bd.getHours();
 			if (hour != 0 && hour == 23) // fix DST
-				bd.setHours(bd.getHours() + 1)
+				bd.setHours(bd.getHours() + 1);
 			cur = new Date(bd);
 			weekDates.push({zoneBd: previous, zoneEd: cur});
 		}
@@ -182,14 +182,14 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	
 	_putInMapList: function (dayEvent) {
 		var node = dayEvent.$n(),
-			list = this._eventWeekSet[this._weekDates.indexOf(node.startWeek)];				
+			list = this._eventWeekSet[this._weekDates.indexOf(node.startWeek)];
 		if (!list) {
 			list = [];
 			this._eventWeekSet[this._weekDates.indexOf(node.startWeek)] = list;
-		}				
+		}
 		list.push(node);
 		//add cut node
-		var cloneNodes = dayEvent.cloneNodes;	
+		var cloneNodes = dayEvent.cloneNodes;
 		if (!cloneNodes) return;
 		for (var n = cloneNodes.length; n--;) {
 			var cloneNode = cloneNodes[n],
@@ -198,17 +198,17 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			if (!list) {
 				list = [];
 				this._eventWeekSet[index] = list;
-			}	
+			}
 			list.push(cloneNode);
-		}		
+		}
 	},
 		
-	_resetDayPosition: function () {		
+	_resetDayPosition: function () {
 		var daySpace = this._daySpace,
 			zcls = this.getZclass(),
 			weekRows = this.weekRows;
 		
-		for (var i = weekRows.length; i--;) 
+		for (var i = weekRows.length; i--;)
 			jq(weekRows[i].firstChild).children().not(':first-child').remove();
 		
 		//all Week Row
@@ -223,9 +223,9 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				prevTr = prevTr.after('<tr></tr>').next();
 				//all event
 				for (var m = 0, n = allEvent.length; m < n; m++) {
-					var dayNode = allEvent[m];				
+					var dayNode = allEvent[m];
 				
-					if(m == 0)//first
+					if (m == 0)//first
 						this.drawEvent_(dayNode._preOffset, zcls + '-month-date-evt', prevTr, dayNode);
 					else {
 						var preDayNode = allEvent[m - 1],
@@ -235,19 +235,19 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 							
 						this.drawEvent_(offset, zcls + '-month-date-evt', prevTr, dayNode);
 					}
-					dayNode.style.visibility = "";
+					dayNode.style.visibility = '';
 					if (m == n - 1) {//last
 						var html = [];
-						for (var x = dayNode._afterOffset; x--;) 
-							html.push('<td class="' + zcls + '-month-date-evt">&nbsp;</td>');							
+						for (var x = dayNode._afterOffset; x--;)
+							html.push('<td class="' + zcls + '-month-date-evt">&nbsp;</td>');
 						prevTr.append(html.join(''));
 					}
 				}
 			}
 		}
-	},	
+	},
 		
-	_rePositionDay: function(){	
+	_rePositionDay: function () {
 		this._daySpace = [];
 		
 		var sortFunc = this.dateSorting_,
@@ -263,11 +263,11 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			list.sort(sortFunc);
 				
 			daySpace.push(weekList);
-			for (var k = 0, l =list.length; k < l; k++) {
+			for (var k = 0, l = list.length; k < l; k++) {
 				var node = list[k];
 				this.putInDaylongSpace_(weekList, node);
 			}
-		}		
+		}
 		this._resetDayPosition();
 	},
 		
@@ -278,12 +278,12 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		this._captionByDateOfMonth = this.captionByDateOfMonth ? jq.evalJSON(this.captionByDateOfMonth) : null;
 		this._captionByPopup = this.captionByPopup ? jq.evalJSON(this.captionByPopup) : null;
 		
-		if(!this.$n())return;
+		if (!this.$n()) return;
 		
-		var cnt = this.$n("cnt"),
+		var cnt = this.$n('cnt'),
 			$cnt = jq(cnt),
 			cntRows = $cnt.children(),
-			woy = this.$n("woy"),
+			woy = this.$n('woy'),
 			woyRows = jq(woy).children(),
 			weeks = this.weekOfMonth,
 			zcls = this.getZclass(),
@@ -298,7 +298,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 							}),
 				woyRowHtml = this.woyRowTemplate.replace(new RegExp("%1", "g"), function (match, index) {
 								return zcls;
-							});			
+							});
 						
 			for (var i = offset; i--;) {
 				cntRow.push(cntRowHtml);
@@ -308,7 +308,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			
 			$cnt.append(cntRow.join(''));
 			if (this.woy)
-				jq(woy).append(woyRow.join(''));	
+				jq(woy).append(woyRow.join(''));
 			var tables = jq('.' + zcls + '-day-of-month-body'),
 				length = tables.length;
 			for (var i = tables.length; i-- > length - offset;)
@@ -316,42 +316,42 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		} else {
 			for (var i = -offset; i--;) {
 				jq(cnt.lastChild).remove();
-				if (this.woy) 
+				if (this.woy)
 					jq(woy.lastChild).remove();
-			}				
+			}
 		}
 		
-		this.allDayTitle = $cnt.contents().find('.' + zcls +'-month-date-cnt');
+		this.allDayTitle = $cnt.contents().find('.' + zcls + '-month-date-cnt');
 		this.weekRows = jq(cnt).contents().find('.' + zcls + '-day-of-month-body');
 		this.weekRowsBg = $cnt.contents().find('.' + zcls + '-day-of-month-bg');
-		cntRows = $cnt.children()
+		cntRows = $cnt.children();
 		if (this.woy)
-			this.woyCnt = jq(this.$n('woy')).contents().find('.' + zcls + '-week-of-year-text');		
+			this.woyCnt = jq(this.$n('woy')).contents().find('.' + zcls + '-week-of-year-text');
 		
-		var hd = jq(cnt.parentNode.firstChild),			
+		var hd = jq(cnt.parentNode.firstChild),
 			captionByPopup = this._captionByPopup,
 			captionByDayOfWeek = this._captionByDayOfWeek,
 			captionByWeekOfYear = this._captionByWeekOfYear,
-			captionByDateOfMonth = this._captionByDateOfMonth,				
-			hdChildren = this.title,			
+			captionByDateOfMonth = this._captionByDateOfMonth,
+			hdChildren = this.title,
 			cntChildren = this.allDayTitle,
-			cntBg = this.weekRowsBg,				
-			month_date_off = zcls + '-month-date-off',	
-			week_today = zcls + "-week-today",				
-			week_weekend = zcls + "-week-weekend",					
+			cntBg = this.weekRowsBg,
+			month_date_off = zcls + '-month-date-off',
+			week_today = zcls + '-week-today',
+			week_weekend = zcls + '-week-weekend',
 			bd = new Date(this.zoneBd),
 			ed = new Date(this.zoneEd),
 			current = new Date(),
 			curMonth = this._currentDate.getMonth(),
 			cur,
 			previous,
-			woyChildren;					
+			woyChildren;
 		
 		this._createWeekSet();
 		
-		//reset rows height 	
-		if (this.woy) 			
-			woyChildren = this.woyCnt;		
+		//reset rows height
+		if (this.woy)
+			woyChildren = this.woyCnt;
 		bd = new Date(this.zoneBd);
 		var woy = zk.parseInt(this.woy);
 		
@@ -362,30 +362,30 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			div.css('top',top + '%');
 			div.height(number + '%');
 			
-			if (this.woy) {				
+			if (this.woy) {
 				var year = bd.getFullYear(),
 					weekSpan = woyChildren[i],
-					pNode = jq(weekSpan.parentNode);				
+					pNode = jq(weekSpan.parentNode);
 				
 				weekSpan.time = this.fixTimeZoneFromClient(this._weekDates[i].zoneBd);
-				jq(weekSpan).html(captionByWeekOfYear ? captionByWeekOfYear[i]: woy);				
+				jq(weekSpan).html(captionByWeekOfYear ? captionByWeekOfYear[i] : woy);
 				
 				bd = calUtil.addDay(bd, 7);
 				bd.setMilliseconds(0);
 				
 				if (year != bd.getFullYear())
 					woy = 1;
-				else woy++;	
+				else woy++;
 				
 				pNode.css('top',top + '%');
-				pNode.height(number + '%');							
-			}		
-		}		
+				pNode.height(number + '%');
+			}
+		}
 		
 		//remove today and weekend class
 		hd.children().find('.' + week_weekend).removeClass(week_weekend);
-		$cnt.children().find('.' + month_date_off).removeClass(month_date_off);		
-		$cnt.children().find('.' + week_weekend).removeClass(week_weekend);		
+		$cnt.children().find('.' + month_date_off).removeClass(month_date_off);
+		$cnt.children().find('.' + week_weekend).removeClass(week_weekend);
 		$cnt.children().find('.' + week_today).removeClass(week_today);
 				
 		// reset week title
@@ -394,44 +394,44 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			ed = calUtil.addDay(ed, -1);
 						
 			var th = jq(hdChildren[i]),
-				content = captionByDayOfWeek ? captionByDayOfWeek[i] : 
-												zk.fmt.Date.formatDate(ed,'EEE');			
-			th.html(content);	
-			if (bd.getDay() == 0 || bd.getDay() == 6) //SUNDAY or SATURDAY	
-				th.addClass(week_weekend);		
+				content = captionByDayOfWeek ? captionByDayOfWeek[i] :
+												zk.fmt.Date.formatDate(ed,'EEE');
+			th.html(content);
+			if (bd.getDay() == 0 || bd.getDay() == 6) //SUNDAY or SATURDAY
+				th.addClass(week_weekend);
 		}
 		
 		//reset each day
-		ed = new Date(this.zoneEd);			
+		ed = new Date(this.zoneEd);
 		for (var i = this.weekOfMonth * 7; i--;) {
 			ed = calUtil.addDay(ed, -1);
 			
 			var hour = ed.getHours();
 			if (hour != 0 && hour == 23) // fix DST
-				ed.setHours(ed.getHours() + 1)
-			hour = ed.getHours()	
+				ed.setHours(ed.getHours() + 1);
+			hour = ed.getHours();
 			if (hour != 0 && hour == 23) // fix DST
-				ed.setDate(ed.getDate() + 1)
+				ed.setDate(ed.getDate() + 1);
 			
 			var span = cntChildren[i],
-				td =  jq(span.parentNode),
-				content = captionByDateOfMonth? captionByDateOfMonth[i]: ed.getDate(),
+				td = jq(span.parentNode),
+				content = captionByDateOfMonth ? captionByDateOfMonth[i] : ed.getDate(),
 				bgTD,
-				rowIndex = zk.parseInt(i/7);
+				rowIndex = zk.parseInt(i / 7);
 			
 			if (hour != 0 && hour == 23) // fix DST
-				ed.setDate(ed.getDate() - 1)
+				ed.setDate(ed.getDate() - 1);
 			
 			span.time = this.fixTimeZoneFromClient(ed);
 			if (captionByPopup)
 				span.text = captionByPopup[i];
-			if (ed.getDay() == 0 || ed.getDay() == 6) { //SUNDAY or SATURDAY	
+			if (ed.getDay() == 0 || ed.getDay() == 6) { //SUNDAY or SATURDAY
 				td.addClass(week_weekend);
 				bgTD = jq(cntBg[rowIndex].rows[0].cells[td[0].cellIndex]);
 				bgTD.addClass(week_weekend);
 			}
 
-			if (calUtil.isTheSameDay(current, ed)) {//today 
+			if (calUtil.isTheSameDay(current, ed)) {//today
 				td.addClass(week_today);
 				bgTD = jq(cntBg[rowIndex].rows[0].cells[td[0].cellIndex]);
 				bgTD.addClass(week_today);
@@ -443,9 +443,9 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			}
 
 			if (ed.getDate() == 1 && !captionByDateOfMonth)
-				content = zk.fmt.Date.formatDate(ed,'MMM d');		
-			jq(span).html(content);									
-		}	
+				content = zk.fmt.Date.formatDate(ed,'MMM d');
+			jq(span).html(content);
+		}
 	},
 	
 	cleanEvtAry_: function () {
@@ -455,11 +455,11 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	
 	processChildrenWidget_: function (isExceedOneDay, event) {
 		var dayEvent = isExceedOneDay ?
-						new calendar.DaylongOfMonthEvent({event:event}):
-						new calendar.DayOfMonthEvent({event:event});
+						new calendar.DaylongOfMonthEvent({event: event}) :
+						new calendar.DayOfMonthEvent({event: event});
 		
 		this.appendChild(dayEvent);
-		this._putInMapList(dayEvent);			
+		this._putInMapList(dayEvent);
 	},
 	
 	getDragDataObj_: function () {
@@ -480,19 +480,19 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					}
 					html.push('</div>');
 					return html.join('');
-			    },
+				},
 				getRow: function (cnt) {
 					return cnt.firstChild.firstChild.rows[0].firstChild;
-			    },
+				},
 				getCols: function (p, dg) {
-					return  Math.floor((p[0] - dg._zoffs.l) / dg._zdim.w);			
-			    },
+					return Math.floor((p[0] - dg._zoffs.l) / dg._zdim.w);
+				},
 				getRows: function (p, dg) {
 					return Math.floor((p[1] - dg._zoffs.t)/dg._zdim.h);
-			    },
+				},
 				getDur: function (dg) {
 					return (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]);
-			    },
+				},
 				getNewDate: function (widget, dg) {
 					var c = dg._zpos[0],
 						r = dg._zpos[1],
@@ -507,20 +507,20 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					
 					var ed = new Date(bd);
 					ed.setDate(ed.getDate() + dg._zpos1[2]);
-					return {bd:bd, ed:ed};
-			    }
+					return {bd: bd, ed: ed};
+				}
 			};
 		return this._dragDataObj;
-    },
+	},
 	
 	reAlignEvents_: function (hasAdd) {
 		this._rePositionDay();
 		this._evtsData = this._createEvtsData(false);
 		// recalculate
 		this.onSize();
-    },
-        
-    removeNodeInArray_: function (childWidget, hasAdd) {
+	},
+		
+	removeNodeInArray_: function (childWidget, hasAdd) {
 		var node = childWidget.$n(),
 			weekIndex = this._weekDates.indexOf(node.startWeek);
 		this._eventWeekSet[weekIndex].$remove(node);
@@ -532,7 +532,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			var cloneNode = cloneNodes[n];
 			this._eventWeekSet[weekIndex + n].$remove(cloneNode);
 		}
-    },
+	},
 			
 	getIndex: function (ele) {
 		for (var i = 0, n = ele.parentNode.firstChild; n; n = n.nextSibling, ++i)
@@ -549,7 +549,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		if (jq(node).hasClass(zcls + '-evt-faker-more') && node.parentNode.id.indexOf('-frow') > 0) return;
 
 		if (ce) {
-			widget.fire("onEventEdit", {
+			widget.fire('onEventEdit', {
 				data: [ce.id, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});
 		} else {
 			var cmp = widget.$n(),
@@ -564,8 +564,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				offs = zk(cnt).revisedOffset(),
 				x = p[0] - offs[0],
 				y = p[1] - offs[1],
-				cols = Math.floor(x/width),
-				rows = Math.floor(y/height),
+				cols = Math.floor(x / width),
+				rows = Math.floor(y / height),
 				bd = new Date(widget.zoneBd),
 				zinfo = [];
 
@@ -586,7 +586,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			var hs = [];
 			hs[rows] = cnt.childNodes[rows].offsetHeight;
 
-			widget.fixRope_(zinfo, jq('#'+widget.uuid+"-rope")[0].firstChild,
+			widget.fixRope_(zinfo, jq('#' + widget.uuid + '-rope')[0].firstChild,
 				cols, rows, zoffs, {w: width, h: hs[rows], hs: hs}, 1);
 
 			var ed = new Date(bd);
@@ -600,19 +600,19 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				ed.setHours(ed.getHours() + 2);
 			}
 			
-			widget.fire("onEventCreate", {
-   				 data: [
-				 	widget.fixTimeZoneFromClient(bd), 
-					widget.fixTimeZoneFromClient(ed), 
-					p[0], 
-					p[1], 
-					jq.innerWidth(), 
+			widget.fire('onEventCreate', {
+				data: [
+					widget.fixTimeZoneFromClient(bd),
+					widget.fixTimeZoneFromClient(ed),
+					p[0],
+					p[1],
+					jq.innerWidth(),
 					jq.innerHeight()
 				]
 			});
 
 			widget._ghost[widget.uuid] = function () {
-				jq('#'+widget.uuid+"-rope").remove();
+				jq('#' + widget.uuid + '-rope').remove();
 				delete widget._ghost[widget.uuid];
 			};
 		}
@@ -627,19 +627,19 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			uuid = widget.uuid,
 			ci = cell.cellIndex,
 			pp,
-			table = jq('#'+widget.uuid+'-ppcnt')[0];
+			table = jq('#' + widget.uuid + '-ppcnt')[0];
 
 		widget.clearGhost();
 		if (!widget._pp) {
 			jq(document.body).append(widget.ppTemplate.replace(new RegExp("%([1-2])", "g"), function (match, index) {
 					return index < 2 ? uuid : 'z-calpp-month';
 			}));
-			widget._pp = pp = jq('#'+widget.uuid+'-pp')[0];
+			widget._pp = pp = jq('#' + widget.uuid + '-pp')[0];
 			jq(document.body).bind('click', widget.proxy(widget.unMoreClick));
-			table = jq('#'+widget.uuid+'-ppcnt')[0]; 
+			table = jq('#' + widget.uuid + '-ppcnt')[0];
 
 			if (!widget._readonly)
-				jq(pp).bind("click", widget.proxy(widget.onPopupClick));
+				jq(pp).bind('click', widget.proxy(widget.onPopupClick));
 		} else {
 			if (widget._pp.ci == ci) {
 				// ignore onEventCreate
@@ -652,28 +652,28 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			pp = widget._pp;
 		}
 
-		pp.ci = ci;	
+		pp.ci = ci;
 
 		var date = cell.parentNode.parentNode.firstChild.cells[ci].firstChild,
 			targetDate = new Date(date.time);
 		
-		jq('#'+widget.uuid+'-pphd')[0].innerHTML = date.text ? date.text:
+		jq('#' + widget.uuid + '-pphd')[0].innerHTML = date.text ? date.text :
 			zk.fmt.Date.formatDate(targetDate,'EEE, MMM/d');
 
 		if (zk.ie6_) {
-			var close = jq('#'+widget.uuid+'-ppc');
-			close.bind('mouseover', function() {close.addClass('z-calpp-month-close-over')});
-			close.bind('mouseout', function() {close.removeClass('z-calpp-month-close-over')});
+			var close = jq('#' + widget.uuid + '-ppc');
+			close.bind('mouseover', function () {close.addClass('z-calpp-month-close-over');});
+			close.bind('mouseout', function () {close.removeClass('z-calpp-month-close-over');});
 		}
 
-		var offs= zk(row.lastChild.rows[0].cells[ci]).revisedOffset(),
+		var offs = zk(row.lastChild.rows[0].cells[ci]).revisedOffset(),
 			csz = cell.parentNode.cells.length,
 			single = cell.offsetWidth,
-			wd = single*3*0.9;
+			wd = single * 3 * 0.9;
 
 		if (ci > 0)
-			if (csz != ci+1)
-				pp.style.left = jq.px(offs[0] - (wd - single)/2);
+			if (csz != ci + 1)
+				pp.style.left = jq.px(offs[0] - (wd - single) / 2);
 			else
 				pp.style.left = jq.px(offs[0] - (wd - single));
 		else pp.style.left = jq.px(offs[0]);
@@ -703,13 +703,13 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 			ce._bd = ce._bd || event.zoneBd;
 			ce._ed = ce._ed || event.zoneEd;
-			cl.className = "z-calpp-month-evt-l";
+			cl.className = 'z-calpp-month-evt-l';
 			if (isDayLongEvent && bd - ce._bd >= 1000) {
 				var info = [
-						ce.id + "-fl",
+						ce.id + '-fl',
 						zcls,
-						zcls + "-left",
-						ce._bd.getMonth() + 1 + "/" + ce._bd.getDate(),
+						zcls + '-left',
+						ce._bd.getMonth() + 1 + '/' + ce._bd.getDate(),
 						hc ? ' style="background:' + hc + '"' : '',
 						cc ? ' style="background:' + cc + '"' : '',
 						cc ? ' style="border-bottom-color:' + cc + ';border-top-color:' + cc + '"' : '',
@@ -720,20 +720,20 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					return info[index - 1];
 				});
 			} else
-				cl.innerHTML = "";
-			cm.className = "z-calpp-month-evt-m";
+				cl.innerHTML = '';
+			cm.className = 'z-calpp-month-evt-m';
 			var faker = ce.cloneNode(true);
 			jq(faker).addClass('z-calpp-month-evt-faker');
 			cm.appendChild(faker);
-			cr.className = "z-calpp-month-evt-r";
+			cr.className = 'z-calpp-month-evt-r';
 
 			if (isDayLongEvent && ce._ed - ed >= 1000) {
 				var d = new Date(ce._ed.getTime() - 1000),
 					info = [
-						ce.id + "-fr",
+						ce.id + '-fr',
 						zcls,
-						zcls + "-right",
-						d.getMonth() + 1 + "/" + d.getDate(),
+						zcls + '-right',
+						d.getMonth() + 1 + '/' + d.getDate(),
 						hc ? ' style="background:' + hc + '"' : '',
 						cc ? ' style="background:' + cc + '"' : '',
 						cc ? ' style="border-bottom-color:' + cc + ';border-top-color:' + cc + '"' : '',
@@ -744,7 +744,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					return info[index - 1];
 				});
 			} else
-				cr.innerHTML = "";
+				cr.innerHTML = '';
 		}
 		zk(pp).cleanVisibility();
 
@@ -776,8 +776,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}
 		
 		if (jq.nodeName(target, 'td') || jq.nodeName(target = target.parentNode, 'td')) {
-			time.setDate(time.getDate() 
-				+ (jq(target.offsetParent.parentNode).index() * 7 ) 
+			time.setDate(time.getDate()
+				+ (jq(target.offsetParent.parentNode).index() * 7)
 				+ target.cellIndex);
 		} else return;
 		
@@ -787,7 +787,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	
 	unMoreClick: function (evt) {
 		var target = evt.target;
-		if (target.id.endsWith("-ppc") ||!zUtl.isAncestor(this._pp, target))
+		if (target.id.endsWith('-ppc') ||!zUtl.isAncestor(this._pp, target))
 			this.closeFloats();
 	},
 		
@@ -802,34 +802,34 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				rows = table.rows,
 				len = rows.length,
 				data = this._evtsData[ri];
-			if (len > 1 && (h < sh || rows[len-1].id)) {
-				if (rows[len-1].id && rows[len-1].id.startsWith(this.uuid + "-frow")) {
-					jq(rows[len-1]).remove();
+			if (len > 1 && (h < sh || rows[len - 1].id)) {
+				if (rows[len - 1].id && rows[len - 1].id.startsWith(this.uuid + '-frow')) {
+					jq(rows[len - 1]).remove();
 					len--;
 				}
-				rows[1].style.display = "";
+				rows[1].style.display = '';
 				var nh = zk(rows[1]).offsetHeight();
 				h -= zk(rows[0]).offsetHeight() + nh;
 
-				var vc = Math.floor(h/nh),
+				var vc = Math.floor(h / nh),
 					vc1 = Math.max(vc, 0);
 
 				for (var i = 1; i < len; i++)
 					rows[i].style.display = --vc < 0 ? 'none' : '';
 
 				var faker = table.insertRow(len);
-				faker.id = this.uuid + "-frow" + ri;
+				faker.id = this.uuid + '-frow' + ri;
 				for (var i = 7; i--;) {
 					cell = faker.insertCell(0);
-					cell.className = zcls + "-month-date-evt";
-					jq(cell).addClass(zcls + "-evt-faker-more");
+					cell.className = zcls + '-month-date-evt';
+					jq(cell).addClass(zcls + '-evt-faker-more');
 					if (data[i].length && (data[i].length - vc1 > 0)) {
 						var evts = data[i];
-						cell.innerHTML = calUtil.format(msgcal.monthMORE, [evts.length - vc1] )
+						cell.innerHTML = calUtil.format(msgcal.monthMORE, [evts.length - vc1]);
 						jq(cell).bind('click', widget.onMoreClick);
 					} else {
-						cell.innerHTML = "";
-						jq(cell).addClass(zcls + "-evt-faker-nomore");
+						cell.innerHTML = '';
+						jq(cell).addClass(zcls + '-evt-faker-nomore');
 					}
 				}
 			}
@@ -837,8 +837,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	},
 		
 	onSize: _zkf = function () {
-		var woy = this.woy? this.$n('woy'): null,
-			cmp = this.$n(); 
+		var woy = this.woy ? this.$n('woy') : null,
+			cmp = this.$n();
 
 		if (woy) {
 			var w = woy.offsetWidth,
@@ -847,7 +847,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				ts = woy.previousSibling.style;
 				
 			ts.left = cs.left = jq.px(w);
-			ts.width = cs.width = "";
+			ts.width = cs.width = '';
 			ts.width = cs.width = jq.px(cnt.offsetWidth - w);
 		}
 		this.clearGhost();
@@ -856,9 +856,9 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		if (hgh === 0) return;
 		
 		
-		for(var child = cmp.firstChild;child;child=child.nextSibling){
-			if(this.isLegalChild(child))
-				hgh-=child.offsetHeight;
+		for (var child = cmp.firstChild;child;child = child.nextSibling) {
+			if (this.isLegalChild(child))
+				hgh -= child.offsetHeight;
 		}
 		
 		var inner = this.$n('inner');
@@ -875,7 +875,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			if (woy)
 				woy.style.height = jq.px(hgh);
 		}
-		inner.style.overflowY = "visible";
+		inner.style.overflowY = 'visible';
 		this.fixVisiHgh();
 		this.closeFloats();
 	},

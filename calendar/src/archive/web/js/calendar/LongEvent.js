@@ -99,8 +99,8 @@ calendar.LongEvent = zk.$extends(calendar.Event, {
 		p.left_arrow = zcls + '-left-arrow';
 		p.right_arrow = zcls + '-right-arrow';
 
-		p.arrowStyle = contentColor ? 
-			' style="border-bottom-color:' + contentColor + 
+		p.arrowStyle = contentColor ?
+			' style="border-bottom-color:' + contentColor +
 			';border-top-color:' + contentColor + '"' : '';
 	},
 	
@@ -110,8 +110,8 @@ calendar.LongEvent = zk.$extends(calendar.Event, {
 		var contentColor = this.event.contentColor,
 			p = this.params;
 		
-		p.arrowStyle = contentColor ? 
-			' style="border-bottom-color:' + contentColor + 
+		p.arrowStyle = contentColor ?
+			' style="border-bottom-color:' + contentColor +
 			';border-top-color:' + contentColor + '"' : '';
 	},
 	

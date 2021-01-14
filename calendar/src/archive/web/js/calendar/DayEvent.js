@@ -18,7 +18,7 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 		
 		var ce = this.event,
 			id = ce.id,
-			p = this.params,	
+			p = this.params,
 			headerStyle = p.headerStyle,
 			contentStyle = p.contentStyle,
 			resizer = p.resizer;
@@ -31,7 +31,7 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 				'<dl id="', id, '-inner"', contentStyle, '>',
 				'<dt id="', id, '-hd" class="', p.header, '"', headerStyle, '>', this.getEvtTitle(ce), '</dt>',
 				'<dd id="', id, '-cnt" class="', p.content, '"', contentStyle, '>',
-				'<div class="', p.text, '">', ce.content, '</div></dd>');		
+				'<div class="', p.text, '">', ce.content, '</div></dd>');
 		// resizer
 		if (!ce.isLocked)
 			out.push(p._resizerCnt);
@@ -39,41 +39,41 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 		out.push('</dl>',
 			'</div></div></div>');
 	},
-	bind_: function (e){
+	bind_: function (e) {
 		this.$supers('bind_', arguments);
 		var ce = this.event;
-		if (ce && !ce.isLocked){
+		if (ce && !ce.isLocked) {
 			var wgt = this;
-			jq(this.$n("resizer")).mousedown(function(){
-				if(wgt.parent){
+			jq(this.$n('resizer')).mousedown(function () {
+				if (wgt.parent) {
 					wgt.parent._resizing = wgt;
 				}
-			}).mouseup(function(){
-				if(wgt.parent) wgt.parent._resizing = null;
+			}).mouseup(function () {
+				if (wgt.parent) wgt.parent._resizing = null;
 			});
 		}
 	},
-	unbind_ : function() {
+	unbind_: function () {
 		var ce = this.event;
-		if (ce && !ce.isLocked){
+		if (ce && !ce.isLocked) {
 			var wgt = this;
-			jq(this.$n("resizer")).unbind("mousedown");
-			jq(this.$n("resizer")).unbind("mouseup");
-			if(this.parent){
+			jq(this.$n('resizer')).unbind('mousedown');
+			jq(this.$n('resizer')).unbind('mouseup');
+			if (this.parent) {
 				this.parent._resizing = null;
 			}
 		}
 		this.$supers('unbind_', arguments);
 	},
-	getEvtTitle: function(ce) {
+	getEvtTitle: function (ce) {
 		var bd = ce.zoneBd,
 			ed = ce.zoneEd;
-		return  ce.title ? ce.title: (ed - bd < (7200000/this.parent._timeslots)) ? 
-				(zk.fmt.Date.formatDate(bd,'HH:mm') + ' - ' + ce.content):
-				(zk.fmt.Date.formatDate(bd,'HH:mm') + ' - ' + zk.fmt.Date.formatDate(ed,'HH:mm'));	
+		return ce.title ? ce.title : (ed - bd < (7200000 / this.parent._timeslots)) ?
+				(zk.fmt.Date.formatDate(bd,'HH:mm') + ' - ' + ce.content) :
+				(zk.fmt.Date.formatDate(bd,'HH:mm') + ' - ' + zk.fmt.Date.formatDate(ed,'HH:mm'));
 	},
 	
-	update: function(updateLastModify) {
+	update: function (updateLastModify) {
 		this.clearCache();
 		this.defineCss_();
 		
@@ -85,41 +85,41 @@ calendar.DayEvent = zk.$extends(calendar.Event, {
 		this.updateHeaderStyle_(p.headerStyle);
 		
 		jq(this.$n('inner')).attr('style', contentStyle);
-		cnt.attr('style', contentStyle);		
+		cnt.attr('style', contentStyle);
 		cnt.children('.' + p.text).html(ce.content);
 		
 		jq(this.$n('hd')).html(this.getEvtTitle(ce));
 		
 		this._createResizer();
 		
-		this.calculate_(updateLastModify);		
+		this.calculate_(updateLastModify);
 	},
 	
-	_createResizer: function() {
+	_createResizer: function () {
 		var inner = this.$n('inner'),
 			target = inner.lastChild,
 			p = this.params,
 			hasResizer = target.className == p.resizer;
 		
-		if (!this.event.isLocked){
-			if(!hasResizer)
-				jq(inner).append(p._resizerCnt);				
+		if (!this.event.isLocked) {
+			if (!hasResizer)
+				jq(inner).append(p._resizerCnt);
 		} else if (hasResizer)
 			jq(target).remove();
 	},
 	
-	defineClassName_: function() {
+	defineClassName_: function () {
 		this.$super('defineClassName_', arguments);
 		// CSS ClassName
 		var zcls = this.getZclass(),
 			p = this.params;
 		
-		p.header = zcls + "-header",
-		p.resizer = zcls + "-resizer",
-		p.resizer_icon = p.resizer + "-icon";			
+		p.header = zcls + '-header',
+		p.resizer = zcls + '-resizer',
+		p.resizer_icon = p.resizer + '-icon';
 	},
 	
-	updateHeaderStyle_: function(headerStyle) {
+	updateHeaderStyle_: function (headerStyle) {
 		this.$super('updateHeaderStyle_', arguments);
 		jq(this.$n('hd')).attr('style',headerStyle);
 	}

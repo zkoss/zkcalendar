@@ -24,21 +24,21 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				
 			if (xlastModify > ylastModify)
 				return 1;
-			else if (xlastModify == ylastModify) 
+			else if (xlastModify == ylastModify)
 				return 0;
 			return -1;
-		}		
+		}
 		return -1;
 	}
 	
 	function _compareStartTime(x , y) {
 		var isDaylongMonX = zk.Widget.$(x).className == 'calendar.DaylongOfMonthEvent',
 			isDaylongMonY = zk.Widget.$(y).className == 'calendar.DaylongOfMonthEvent',
-			xBd = isDaylongMonX ? 
-				Math.min(x.upperBoundBd.getTime(), x.zoneBd.getTime()): 
+			xBd = isDaylongMonX ?
+				Math.min(x.upperBoundBd.getTime(), x.zoneBd.getTime()) :
 				x.zoneBd.getTime(),
-			yBd = isDaylongMonY ? 
-				Math.min(y.upperBoundBd.getTime(), y.zoneBd.getTime()): 
+			yBd = isDaylongMonY ?
+				Math.min(y.upperBoundBd.getTime(), y.zoneBd.getTime()) :
 				y.zoneBd.getTime(),
 			xEd = x.zoneEd.getTime(),
 			yEd = y.zoneEd.getTime();
@@ -48,14 +48,14 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		else if (xBd == yBd) {
 			if (xEd < yEd)
 				return 1;
-			else if (xEd == yEd) 
+			else if (xEd == yEd)
 				return 0;
-			return -1				
-		}				
+			return -1;
+		}
 		return 1;
 	}
 	
-	function _getEventPeriod(ce){
+	function _getEventPeriod(ce) {
 		var bd = new Date(ce.zoneBd),
 			ed = new Date(ce.zoneEd);
 			
@@ -65,26 +65,26 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		bd.setHours(0,0,0,0);
 		ed.setHours(23,59,59,0);
 
-		return Math.ceil((ed - bd)/ calUtil.DAYTIME);
+		return Math.ceil((ed - bd) / calUtil.DAYTIME);
 	}
 	
-	function _isExceedOneDay(wgt, ce){
+	function _isExceedOneDay(wgt, ce) {
 		var bd = new Date(ce.zoneBd),
 			ed = new Date(ce.zoneEd);
 			
 		if (bd < wgt.zoneBd || bd.getFullYear() != ed.getFullYear() ||
-			(!calUtil.isTheSameDay(bd, ed) && (ed.getHours() != 0 ||ed.getMinutes() != 0)) ||
+			(!calUtil.isTheSameDay(bd, ed) && (ed.getHours() != 0 || ed.getMinutes() != 0)) ||
 			(calUtil.getPeriodDoubleValue(ed, bd) >= 1 && calUtil.getPeriodDoubleValue(ed, wgt.zoneBd) >= 1))
-	 		return true;
+			return true;
 	}
 	
-	function _isZeroTime(date){
-		return (date.getHours() + date.getMinutes() + 
+	function _isZeroTime(date) {
+		return (date.getHours() + date.getMinutes() +
 			date.getSeconds() + date.getMilliseconds() == 0);
 	}
 	
 	
-calendar.Calendars = zk.$extends(zul.Widget, {	
+calendar.Calendars = zk.$extends(zul.Widget, {
 	ppTemplate: ['<div id="%1-pp" class="%2" style="position:absolute; top:0;left:0;">',
 			  '<div class="%2-body"><div class="%2-inner">',
 			  '<div class="%2-header"><div id="%1-ppc" class="%2-close"></div><div id="%1-pphd" class="%2-header-cnt"></div></div>',
@@ -101,22 +101,22 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	ropeTemplate: '<div id="%1-rope" class="%2-month-dd">',
 	ddRopeTemplate: '<div class="%1-dd-rope"></div>',
 	
-	$define : {
+	$define: {
 		readonly: function () {
-			if (!this.$n()) return;			
+			if (!this.$n()) return;
 			this.editMode(!this._readonly);
 		},
-		cd: function(){
+		cd: function () {
 			this._currentDate = new Date(this._cd);
 			this.updateDateRange_();
 		},
-		firstDayOfWeek: function(){
+		firstDayOfWeek: function () {
 			this.updateDateRange_();
 		},
 		escapeXML: null
 	},
 
-	bind_ : function() {
+	bind_: function () {
 		this.$supers('bind_', arguments);
 		this._dragItems = {};
 		this._ghost = {};
@@ -125,7 +125,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		zWatch.listen({onSize: this, onShow: this, onResponse: this});
 	},
 	
-	unbind_ : function() {
+	unbind_: function () {
 		this.clearGhost();
 		// just in case
 		this.closeFloats();
@@ -144,18 +144,18 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		this.$supers('unbind_', arguments);
 	},
 	
-	getZclass: function() {
+	getZclass: function () {
 		var zcls = this._zclass;
-		return zcls ? zcls : "z-calendars";
+		return zcls ? zcls : 'z-calendars';
 	},
 
-	setCleardd: function(cleardd) {
+	setCleardd: function (cleardd) {
 		if (cleardd)
 			this.clearGhost();
 	},
 
-	processEvtData_: function(event){
-		event.isLocked = event.isLocked == 'true' ? true: false;
+	processEvtData_: function (event) {
+		event.isLocked = event.isLocked == 'true' ? true : false;
 		event.beginDate = new Date(zk.parseInt(event.beginDate));
 		event.endDate = new Date(zk.parseInt(event.endDate));
 		
@@ -170,10 +170,10 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			//keyDate.setHours(0,0,0,0);
 			keyDate = calUtil.getPeriod(keyDate, this.zoneBd);
 			
-			period = {day:inMon ? keyDate % 7: keyDate};
+			period = {day: inMon ? keyDate % 7 : keyDate};
 			
 			if (inMon)
-				period.week = Math.floor(keyDate/7);
+				period.week = Math.floor(keyDate / 7);
 			
 			this._eventKey[key] = period;
 		}
@@ -204,10 +204,10 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	processChildrenWidget_: function (isExceedOneDay, event) {
 	},
 	
-	drawEvent_: function(preOffset, className, tr, dayNode){
+	drawEvent_: function (preOffset, className, tr, dayNode) {
 		var html = [],
 			s = '<td class="' + className + '">&nbsp;</td>';
-		for (var n = preOffset; n--;) 
+		for (var n = preOffset; n--;)
 			html.push(s);
 		
 		html.push('<td class="' + className + '" colspan="' + dayNode._days + '"></td>');
@@ -215,7 +215,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		jq(tr[0].lastChild).append(dayNode);
 	},
 	
-	putInDaylongSpace_: function(list, node) {
+	putInDaylongSpace_: function (list, node) {
 		var bd = node.upperBoundBd,
 			ed = node.lowerBoundEd,
 			rowSpace,
@@ -242,7 +242,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		else list.push([node]);
 	},
 	
-	updateDateOfBdAndEd_: function() {
+	updateDateOfBdAndEd_: function () {
 		this._beginDate = new Date(this.bd);
 		this._endDate = new Date(this.ed);
 		this.zoneBd = this.fixTimeZoneFromServer(this._beginDate);
@@ -258,7 +258,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	editMode: function (enable) {
 		var	widget = this,
 			inMon = this.mon,
-			daylong = inMon ? this.$n('cnt'): this.$n("daylong"),
+			daylong = inMon ? this.$n('cnt') : this.$n('daylong'),
 			$daylong = jq(daylong),
 			cls = this.$class;
 		// a trick for dragdrop.js
@@ -268,7 +268,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			$daylong.bind('click', function (evt) {
 				if (!zk.dragging && !zk.processing) {
 					widget.clearGhost();
-					widget[inMon ? 'onClick': 'onDaylongClick'](daylong, evt);
+					widget[inMon ? 'onClick' : 'onDaylongClick'](daylong, evt);
 				} else
 					evt.stop();
 			});
@@ -287,7 +287,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			change: cls._changedrag,
 			draw: cls._drawdrag,
 			ignoredrag: cls._ignoredrag
-		}): null;
+		}) : null;
 		
 		var $n = jq(this.$n());
 		if (enable)
@@ -300,7 +300,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		var cnt = this.$n('cnt'),
 			$cnt = jq(cnt);
 		if (enable)
-			$cnt.bind('click', function(evt) {
+			$cnt.bind('click', function (evt) {
 				if (!zk.dragging && !zk.processing) {
 					widget.clearGhost();
 					widget.onClick(cnt, evt);
@@ -330,22 +330,22 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		var widget = this,
 			zcls = this.getZclass();
 		jq(element).bind('mouseover', function (evt) {
-			var target = evt.target;				
-			if (target.tagName == "SPAN")
-				jq(target).addClass(zcls + "-day-over");
+			var target = evt.target;
+			if (target.tagName == 'SPAN')
+				jq(target).addClass(zcls + '-day-over');
 		}).bind('mouseout', function (evt) {
-			var target = evt.target;				
-			if (target.tagName == "SPAN")
-				jq(target).removeClass(zcls + "-day-over");
+			var target = evt.target;
+			if (target.tagName == 'SPAN')
+				jq(target).removeClass(zcls + '-day-over');
 		}).bind('click', function (evt) {
 			var target = evt.target;
-			if (target.tagName == "SPAN")
-				widget.fire("onDayClick",{data:[target.time]});
+			if (target.tagName == 'SPAN')
+				widget.fire('onDayClick',{data:[target.time]});
 			evt.stop();
 		});
 	},
 	//ZKCAL-48: support tooltip
-	doTooltipOver_: function(evt) {
+	doTooltipOver_: function (evt) {
 		if (this.isListen('onEventTooltip')) {
 			var zcls = this.getZclass(),
 				node = evt.target,
@@ -370,7 +370,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 					e = new zk.Event(this, 'onEventTooltip', data, null, evt.domEvent),
 					self = this;
 				
-				setTimeout(function() {
+				setTimeout(function () {
 					if (self._tooltipE) {
 						self.fireX(self._tooltipE);
 						self._tooltipE = null; // clear
@@ -384,19 +384,19 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		this.$supers('doTooltipOver_', arguments);
 	},
 	//ZKCAL-48: support tooltip
-	doTooltipOut_: function(evt) {
+	doTooltipOut_: function (evt) {
 		this._tooltipE = null;
 		this.$supers('doTooltipOut_', arguments);
 	},
 	
 	setAddDayEvent: function (eventArray) {
-        eventArray = jq.evalJSON(eventArray);
-		if (!eventArray.length) return;		
+		eventArray = jq.evalJSON(eventArray);
+		if (!eventArray.length) return;
 		this.clearGhost();
 		
-		var hasAdd = {day:false,daylong:false};
+		var hasAdd = {day: false, daylong: false};
 		
-        for (var event; (event = eventArray.shift());) {
+		for (var event; (event = eventArray.shift());) {
 			if (zk.Widget.$(event.id)) continue;
 			event = this.processEvtData_(event);
 			//over range
@@ -406,20 +406,20 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			
 			var isExceedOneDay = _isExceedOneDay(this, event);
 			this.processChildrenWidget_(isExceedOneDay, event);
-			hasAdd[isExceedOneDay ? 'daylong': 'day'] = true;
-        }
+			hasAdd[isExceedOneDay ? 'daylong' : 'day'] = true;
+		}
 		
 		this.reAlignEvents_(hasAdd);
-    },
+	},
 	
-	setModifyDayEvent: function (eventArray) {    
-        eventArray = jq.evalJSON(eventArray);      
-        if (!eventArray.length) return;   
+	setModifyDayEvent: function (eventArray) {
+		eventArray = jq.evalJSON(eventArray);
+		if (!eventArray.length) return;
 		this.clearGhost();
 		
-		var hasAdd = {day:false,daylong:false};
+		var hasAdd = {day: false, daylong: false};
 			 
-        for (var event; (event = eventArray.shift());) {
+		for (var event; (event = eventArray.shift());) {
 			var childWidget = zk.Widget.$(event.id),
 				inMon = this.mon,
 				isBeginTimeChange = false;
@@ -438,7 +438,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 				}
 			}
 			
-			if (inMon && 
+			if (inMon &&
 				(isBeginTimeChange = childWidget.isBeginTimeChange(event)))
 				this.removeNodeInArray_(childWidget);
 			
@@ -457,12 +457,12 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			
 			if (isChangeEvent) {
 				if (!inMon)
-					this[isDayEvent ? '_dayEvents': '_daylongEvents'].$remove(childWidget.$n());
+					this[isDayEvent ? '_dayEvents' : '_daylongEvents'].$remove(childWidget.$n());
 				this.removeChild(childWidget);
 				this.processChildrenWidget_(isExceedOneDay, event);
 				hasAdd.day = hasAdd.daylong = true;
 			} else {
-				childWidget.event = event;	
+				childWidget.event = event;
 				childWidget.update(isBeginTimeChange);
 				
 				if (inMon) {
@@ -470,21 +470,21 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 						this._putInMapList(childWidget);
 					}
 				} else {
-					hasAdd[isExceedOneDay ? 'daylong': 'day'] = true;
+					hasAdd[isExceedOneDay ? 'daylong' : 'day'] = true;
 				}
 			}
-        }
+		}
 
 		this.reAlignEvents_(hasAdd);
-    },
+	},
 	
-	setRemoveDayEvent: function (eventArray) {       
-        eventArray = jq.evalJSON(eventArray);      
-        if (!eventArray.length) return;
+	setRemoveDayEvent: function (eventArray) {
+		eventArray = jq.evalJSON(eventArray);
+		if (!eventArray.length) return;
 
-		var hasAdd = {day:false,daylong:false};
+		var hasAdd = {day: false, daylong: false};
 
-        for (var event; (event = eventArray.shift());) {
+		for (var event; (event = eventArray.shift());) {
 			var childWidget = zk.Widget.$(event.id);
 			if (!childWidget) continue;
 			
@@ -492,9 +492,9 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			this.removeChild(childWidget);
 		}
 		this.reAlignEvents_(hasAdd);
-    },
+	},
 	
-	dateSorting_: function(x, y) {
+	dateSorting_: function (x, y) {
 		var compareStartTime;
 		if (compareStartTime = _compareStartTime(x , y))
 			return compareStartTime;
@@ -506,7 +506,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	},
 	
 	getTimeZoneTime: function (date, tzOffset) {
-		return new Date(date.getTime() + (tzOffset - this.tz)  * 60000);
+		return new Date(date.getTime() + (tzOffset - this.tz) * 60000);
 	},
 	
 	fixTimeZoneFromClient: function (date) {
@@ -538,44 +538,44 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 				this.fixRope_(infos, n.nextSibling, 0, rows, offs, dim, dur);
 			else
 				for (var e = n.nextSibling; e; e = e.nextSibling)
-					e.style.cssText = "";
+					e.style.cssText = '';
 		}
 	},
 	
-	clearGhost: function () {	
+	clearGhost: function () {
 		if (this.$n()) {
 			if (this._ghost[this.uuid])
 				this._ghost[this.uuid]();
 		} else {
 			for (var f in this._ghost)
-				this._ghost[f]();				
+				this._ghost[f]();
 		}
 	},
 
 	closeFloats: function () {
 		if (this._pp) {
-			jq(document.body).unbind("click", this.unMoreClick);
+			jq(document.body).unbind('click', this.unMoreClick);
 			jq(this._pp).remove();
 			this._pp = null;
-		}		
+		}
 	},
 	
-	onPopupClick: function (evt) {	
+	onPopupClick: function (evt) {
 		var childWidget = zk.Widget.$(evt.target);
 		if (childWidget.$instanceof(calendar.Event)) {
 			var p = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
-			this.fire("onEventEdit",{data:[childWidget.uuid, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});
+			this.fire('onEventEdit',{data:[childWidget.uuid, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});
 			evt.stop();
 		}
 	},
 	
 	isLegalChild: function (n) {
-		if (!n.id.endsWith("-body"))
+		if (!n.id.endsWith('-body'))
 			return n;
 	},
 	onResponse: function () {
 		if (this._restoreCE) {
-			this._restoreCE.style.visibility = "";
+			this._restoreCE.style.visibility = '';
 			this._restoreCE = null;
 		}
 	}
@@ -589,12 +589,12 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		widget.clearGhost();
 		var n = evt.domTarget,
 			targetWidget = zk.Widget.$(n);
-		if (widget.mon && n.tagName == 'SPAN' && 
-			jq(n).hasClass(widget.getZclass() + "-month-date-cnt"))
+		if (widget.mon && n.tagName == 'SPAN' &&
+			jq(n).hasClass(widget.getZclass() + '-month-date-cnt'))
 				return true;
-		if (n.nodeType == 1 && jq(n).hasClass(p._fakerMoreCls) && !jq(n).hasClass(p._fakerNoMoreCls) || 
-			(targetWidget.$instanceof(calendar.Event) && 
-				(!n.parentNode || targetWidget.event.isLocked )))
+		if (n.nodeType == 1 && jq(n).hasClass(p._fakerMoreCls) && !jq(n).hasClass(p._fakerNoMoreCls) ||
+			(targetWidget.$instanceof(calendar.Event) &&
+				(!n.parentNode || targetWidget.event.isLocked)))
 				return true;
 		return false;
 	},
@@ -607,7 +607,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			inMon = widget.mon,
 			dataObj = widget.getDragDataObj_(),
 			targetWidget = zk.Widget.$(evt.domEvent),
-			ce = targetWidget.$instanceof(calendar.Event) ? targetWidget.$n(): null,
+			ce = targetWidget.$instanceof(calendar.Event) ? targetWidget.$n() : null,
 			hs = [];
 		jq(document.body).prepend(dataObj.getRope(widget, cnt, hs));
 		var row = dataObj.getRow(cnt),
@@ -617,7 +617,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		for (var left = 0, n = row; n; left += n.offsetWidth, n = n.nextSibling)
 			dg._zinfo.push({l: left, w: n.offsetWidth});
 
-		dg._zoffs = zk(inMon? cnt: dg.handle).revisedOffset();
+		dg._zoffs = zk(inMon ? cnt : dg.handle).revisedOffset();
 		dg._zoffs = {
 			l: dg._zoffs[0],
 			t: dg._zoffs[1],
@@ -634,7 +634,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			
 			faker.style.width = jq.px(width);
 			faker.style.height = jq.px(h);
-			faker.style.left = jq.px(p[0] - (width/2));
+			faker.style.left = jq.px(p[0] - (width / 2));
 			faker.style.top = jq.px(p[1] + h);
 			
 			jq(ce).addClass(zcls + '-evt-dd');
@@ -663,7 +663,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 
 		// fix rope
 		widget.fixRope_(dg._zinfo, dg._zrope.firstChild, cols, rows, dg._zoffs, dg._zdim, dg._zdur);
-		return dg.node;	
+		return dg.node;
 	},
 	
 	_drawdrag: function (dg, p, evt) {
@@ -671,7 +671,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		if (node.id.endsWith('-dd')) {
 			var w = node.offsetWidth,
 				h = node.offsetHeight,
-				x = evt.pageX - (w/2),
+				x = evt.pageX - (w / 2),
 				y = evt.pageY - h,
 				x1 = dg._zoffs.l,
 				y1 = dg._zoffs.t,
@@ -691,7 +691,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		}
 	},
 	
-	_changedrag: function(dg, p, evt) {
+	_changedrag: function (dg, p, evt) {
 		var widget = dg.control,
 			x = p[0],
 			y = p[1],
@@ -712,37 +712,37 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		x -= x1;
 		y -= y1;
 
-	 	var cols = Math.floor(x/dg._zdim.w),
-			rows = Math.floor(y/dg._zdim.h),
+		var cols = Math.floor(x / dg._zdim.w),
+			rows = Math.floor(y / dg._zdim.h),
 			dur = dg._zdur,
 			size = dg._zrope.childNodes.length;
 
 		if (rows == size)
-			--rows
+			--rows;
 		if (cols == dg._zoffs.s)
 			cols = dg._zoffs.s - 1;
 
 		if (!dg._zevt) {
-		 	var c = dg._zpos[0],
+			var c = dg._zpos[0],
 				r = dg._zpos[1],
 				b = dg._zoffs.s * r + c,
 				e = dg._zoffs.s * rows + cols;
 
-			dur = (b < e ? e - b: b - e) + 1;
+			dur = (b < e ? e - b : b - e) + 1;
 			cols = b < e ? c : cols;
 			rows = b < e ? r : rows;
 
-		 } else {
-		 	var total = dg._zoffs.s * size,
+		} else {
+			var total = dg._zoffs.s * size,
 				count = dg._zoffs.s * rows + cols + dur;
 
 			if (total < count)
 				dur = total - (dg._zoffs.s * rows + cols);
-		 }
-		 if (!dg._zpos1 || dg._zpos1[2] != dur || dg._zpos1[0] != cols || dg._zpos1[1] != rows) {
-		 	dg._zpos1 = [cols, rows, dur];
-		 	widget.fixRope_(dg._zinfo, dg._zrope.firstChild, cols, rows, dg._zoffs, dg._zdim, dur);
-		 }
+		}
+		if (!dg._zpos1 || dg._zpos1[2] != dur || dg._zpos1[0] != cols || dg._zpos1[1] != rows) {
+			dg._zpos1 = [cols, rows, dur];
+			widget.fixRope_(dg._zinfo, dg._zrope.firstChild, cols, rows, dg._zoffs, dg._zdim, dur);
+		}
 	},
 	
 	_endghostdrag: function (dg, origin) {
@@ -776,20 +776,20 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 				if (inMon) {
 					var cloneNodes = targetWidget.cloneNodes;
 					if (cloneNodes)
-						for (var n = cloneNodes.length; n--;) 
-							jq(cloneNodes[n]).removeClass(ddClass);					
+						for (var n = cloneNodes.length; n--;)
+							jq(cloneNodes[n]).removeClass(ddClass);
 				}
 				
 				if (!calUtil.isTheSameDay(ebd, event.zoneBd)) {
 					ce = dg._zevt;
-					ce.style.visibility = "hidden";
+					ce.style.visibility = 'hidden';
 
 					var ed = new Date(event.zoneEd);
 					ed.setFullYear(bd.getFullYear());
 					ed.setDate(1);
 					ed.setMonth(bd.getMonth());
-					ed.setDate(bd.getDate() + _getEventPeriod(event) - (_isZeroTime(ed) ? 0:1));
-					widget.fire("onEventUpdate", {
+					ed.setDate(bd.getDate() + _getEventPeriod(event) - (_isZeroTime(ed) ? 0 : 1));
+					widget.fire('onEventUpdate', {
 						data: [
 							dg._zevt.id,
 							widget.fixTimeZoneFromClient(ebd),
@@ -807,7 +807,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			} else {
 				var newData = dataObj.getNewDate(widget, dg);
 
-				widget.fire("onEventCreate", {
+				widget.fire('onEventCreate', {
 					data: [
 						widget.fixTimeZoneFromClient(newData.bd),
 						widget.fixTimeZoneFromClient(newData.ed),

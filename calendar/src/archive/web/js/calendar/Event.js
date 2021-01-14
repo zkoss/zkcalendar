@@ -13,20 +13,20 @@ This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
  */
 calendar.Event = zk.$extends(zk.Widget, {
-	bind_ : function() {
+	bind_: function () {
 		this.$supers('bind_', arguments);
 		this.calculate_(true);
 	},
 	
-	unbind_: function() {
+	unbind_: function () {
 		var node = this.$n();
 		
-		node.zoneBd = node.zoneEd = node._preOffset = node._afterOffset = 
-		node._days = this.event = null;	
+		node.zoneBd = node.zoneEd = node._preOffset = node._afterOffset =
+		node._days = this.event = null;
 		this.$supers('unbind_', arguments);
 	},
 	
-	defineClassName_: function() {
+	defineClassName_: function () {
 		var zcls = this.getZclass(),
 			ce = this.event,
 			headerColor = ce.headerColor,
@@ -34,43 +34,43 @@ calendar.Event = zk.$extends(zk.Widget, {
 		
 		this.params = {
 			// CSS ClassName
-			body: zcls + "-body",
-			inner: zcls + "-inner",
-			content: zcls + "-cnt",
-			text: zcls + "-text",
-			headerStyle: headerColor ? ' style="background:' + headerColor + '"': '',
-			contentStyle: contentColor ? ' style="background:' + contentColor + '"': ''			
+			body: zcls + '-body',
+			inner: zcls + '-inner',
+			content: zcls + '-cnt',
+			text: zcls + '-text',
+			headerStyle: headerColor ? ' style="background:' + headerColor + '"' : '',
+			contentStyle: contentColor ? ' style="background:' + contentColor + '"' : ''
 		};
 		this.uuid = ce.id;
 	},
 	
-	defineCss_: function() {	
+	defineCss_: function () {
 		var ce = this.event,
 			headerColor = ce.headerColor,
 			contentColor = ce.contentColor,
 			p = this.params;
-		p.headerStyle = headerColor ? 'background:' + headerColor: '';
-		p.contentStyle = contentColor ? 'background:' + contentColor: '';
+		p.headerStyle = headerColor ? 'background:' + headerColor : '';
+		p.contentStyle = contentColor ? 'background:' + contentColor : '';
 	},
 	
-	updateHeaderStyle_: function(headerStyle) {
+	updateHeaderStyle_: function (headerStyle) {
 		var node = jq(this.$n()),
 			body = jq(this.$n('body')),
 			p = this.params;
-		body.attr('style',headerStyle);
+		body.attr('style', headerStyle);
 		body.children('.' + p.inner).attr('style', this.getInnerStyle_());
 	},
 		
-	getZclass: function() {
+	getZclass: function () {
 		var zcls = this.event.zclass;
-		return zcls ? zcls: "z-calevent";
+		return zcls ? zcls : 'z-calevent';
 	},
 	
-	getInnerStyle_: function() {
+	getInnerStyle_: function () {
 		return this.params.headerStyle;
 	},
 	
-	calculate_: function(updateLastModify) {
+	calculate_: function (updateLastModify) {
 		var node = this.$n(),
 			event = this.event,
 			parent = this.parent,
@@ -81,12 +81,12 @@ calendar.Event = zk.$extends(zk.Widget, {
 		if (inMon)
 			node.startWeek = event.startWeek;
 		
-		var time = inMon ? node.startWeek: parent;		
+		var time = inMon ? node.startWeek : parent;
 
 		node.zoneBd = bd;
 		node.zoneEd = ed;
 		
-		this._createBoundTime(node, bd, ed);		
+		this._createBoundTime(node, bd, ed);
 		
 		//_afterOffset could be calculated using bound time after processing clone node
 		if (this.processCloneNode_)
@@ -96,7 +96,7 @@ calendar.Event = zk.$extends(zk.Widget, {
 		
 		if (this._isDayEvent()) return;
 		
-		node._afterOffset = this.cloneCount ? 0:
+		node._afterOffset = this.cloneCount ? 0 :
 								this._getOffset({start: node.lowerBoundEd, end: time.zoneEd});
 		
 		node._days = event._days = this.getDays();
@@ -104,11 +104,11 @@ calendar.Event = zk.$extends(zk.Widget, {
 			node._lastModify = new Date().getTime();
 	},
 	
-	isBeginTimeChange: function(event) {
+	isBeginTimeChange: function (event) {
 		return this.$n().zoneBd.getTime() != event.zoneBd.getTime();
 	},
 
-	_createBoundTime: function(node, bd, ed) {
+	_createBoundTime: function (node, bd, ed) {
 		//have findBoundTime_ function
 		if (this.findBoundTime_) {
 			var time = this.findBoundTime_(bd, ed);
@@ -120,21 +120,21 @@ calendar.Event = zk.$extends(zk.Widget, {
 		node.lowerBoundEd = this._setBoundDate(ed, true);
 	},
 	
-	_isDayEvent: function() {
-//		zk.log(this.$instanceof(calendarDayEvent));		
+	_isDayEvent: function () {
+//		zk.log(this.$instanceof(calendarDayEvent));
 		if (!this._isDayEvt)
 			this._isDayEvt = this.className == 'calendar.DayEvent';
-		return this._isDayEvt;	
+		return this._isDayEvt;
 	},
 	
-	_getOffset: function(time) {
+	_getOffset: function (time) {
 		return calUtil.getPeriod(time.end, time.start);
 	},
 		
-	_setBoundDate: function(date, isAddOneDay) {
+	_setBoundDate: function (date, isAddOneDay) {
 		var result = new Date(date);
 		if (date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds() != 0) {
-			if (isAddOneDay) 
+			if (isAddOneDay)
 				result = calUtil.addDay(date, 1);
 			result.setHours(0,0,0,0);
 		}

@@ -14,11 +14,11 @@ it will be useful, but WITHOUT ANY WARRANTY.
  */
 calendar.DaylongEvent = zk.$extends(calendar.LongEvent, {
 	
-	getCornerStyle_: function() {
+	getCornerStyle_: function () {
 		return '';
 	},
 	
-	getDays: function() {
+	getDays: function () {
 		var node = this.$n();
 		return this.parent._days - node._preOffset - node._afterOffset;
 	}

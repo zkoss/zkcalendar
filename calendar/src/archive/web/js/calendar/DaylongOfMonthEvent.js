@@ -136,8 +136,8 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 		
 		var contentColor = this.event.contentColor;
 		
-		this.params.innerStyle = contentColor ? ' style="background:' + contentColor + 
-					';border-left-color:' + contentColor + 
+		this.params.innerStyle = contentColor ? ' style="background:' + contentColor +
+					';border-left-color:' + contentColor +
 					';border-right-color:' + contentColor + '"' : '';
 	},
 	
@@ -146,8 +146,8 @@ calendar.DaylongOfMonthEvent = zk.$extends(calendar.LongEvent, {
 		
 		var contentColor = this.event.contentColor;
 		
-		this.params.innerStyle = contentColor ? 'background:' + contentColor + 
-					';border-left-color:' + contentColor + 
+		this.params.innerStyle = contentColor ? 'background:' + contentColor +
+					';border-left-color:' + contentColor +
 					';border-right-color:' + contentColor : '';
 	},
 	

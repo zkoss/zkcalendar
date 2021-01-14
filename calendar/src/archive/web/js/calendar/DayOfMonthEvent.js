@@ -18,11 +18,11 @@ calendar.DayOfMonthEvent = zk.$extends(calendar.Event, {
 		var ce = this.event,
 			id = ce.id,
 			headerColor = ce.headerColor,
-			innerStyle = headerColor ? ' style="background:' + headerColor + '"': '',
+			innerStyle = headerColor ? ' style="background:' + headerColor + '"' : '',
 			zcls = this.getZclass(),
-			inner = zcls + "-inner",
-			header = zcls + "-header",
-			content = zcls + "-cnt";
+			inner = zcls + '-inner',
+			header = zcls + '-header',
+			content = zcls + '-cnt';
 
 		this.uuid = id;
 
@@ -32,8 +32,8 @@ calendar.DayOfMonthEvent = zk.$extends(calendar.Event, {
 				'<span id="', id, '-cnt" class="', content, '">', ce.content, '</span></div></div>');
 	},
 	
-	getCntText: function(ce) {
-		return ce.title ? ce.title.substr(0,ce.title.indexOf(' - ')):
+	getCntText: function (ce) {
+		return ce.title ? ce.title.substr(0,ce.title.indexOf(' - ')) :
 							zk.fmt.Date.formatDate(ce.zoneBd,'HH:mm');
 	},
 	
@@ -42,11 +42,11 @@ calendar.DayOfMonthEvent = zk.$extends(calendar.Event, {
 		return scls + ' ' + this.getZclass() + '-month';
 	},
 	
-	getDays: function() {
+	getDays: function () {
 		return 1;
 	},
 	
-	update: function(updateLastModify) {
+	update: function (updateLastModify) {
 		var ce = this.event,
 			inner = jq(this.$n('inner')),
 			hd = jq(this.$n('hd')),
