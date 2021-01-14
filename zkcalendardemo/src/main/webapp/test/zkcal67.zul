@@ -17,7 +17,7 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 		load this page, you should not see any error message.
 	</label>
 	<style>
-		.z-calevent-inner dl {
+		.z-calitem-inner dl {
 			min-height: 14px;
 		}
 	</style>

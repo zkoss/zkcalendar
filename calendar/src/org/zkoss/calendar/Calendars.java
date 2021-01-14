@@ -32,10 +32,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimeZone;
 
-import org.zkoss.calendar.api.CalendarEvent;
+import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.api.CalendarModel;
 import org.zkoss.calendar.api.DateFormatter;
-import org.zkoss.calendar.api.EventRender;
+import org.zkoss.calendar.api.ItemRender;
 import org.zkoss.calendar.api.RenderContext;
 import org.zkoss.calendar.event.CalendarDataEvent;
 import org.zkoss.calendar.event.CalendarDataListener;
@@ -62,9 +62,9 @@ import org.zkoss.zul.impl.XulElement;
  * In the month mold, seven days is always assumed.
  * 
  * <p> The Calendars component allows only one single toolbar as its child component, and now it can
- * only manipulate the calendar event by a model named {@link CalendarModel}. And there
- * are three events, <code>onEventCreate</code>, <code>onEventEdit</code>, and 
- * <code>onEventUpdate</code> that can be listened to operate the calendar event
+ * only manipulate the calendar item by a model named {@link CalendarModel}. And there
+ * are three events, <code>onItemCreate</code>, <code>onItemEdit</code>, and
+ * <code>onItemUpdate</code> that can be listened to operate the calendar event
  * triggering by user action, in addition to there are two events <code>onDayClick</code> and
  * <code>onWeekClick</code> to be triggered when user clicks on the caption of
  * the day number and the week number within the current year. Besides,
@@ -81,7 +81,7 @@ public class Calendars extends XulElement {
 	private Date _curDate;
 	private int _days = 7;
 	private DateFormatter _dfmter;
-	private Map<String, List<CalendarEvent>> _evts;
+	private Map<String, List<CalendarItem>> _items;
 	private Map<TimeZone, String> _tzones;
 	private Map<Object, Object> _ids;
 	private CalendarModel _model;
@@ -91,27 +91,27 @@ public class Calendars extends XulElement {
 	private boolean _weekOfYear;
 	private boolean _hasEmptyZone= false;
 	private boolean _escapeXML = true;
-	private List<CalendarEvent> _addEvtList, _mdyEvtList, _rmEvtList;
+	private List<CalendarItem> _addItemList, _mdyItemList, _rmItemList;
 	private int _beginTime = 0, _endTime = 24, _timeslots = 2;
 	
- 	private static final String ATTR_ON_ADD_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onAddEventResponse";
-	private static final String ATTR_ON_REMOVE_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onRemoveEventResponse";
-	private static final String ATTR_ON_MODIFY_EVENT_RESPONSE = "org.zkoss.calendar.Calendars.onModifyEventResponse";
+ 	private static final String ATTR_ON_ADD_ITEM_RESPONSE = "org.zkoss.calendar.Calendars.onAddItemResponse";
+	private static final String ATTR_ON_REMOVE_ITEM_RESPONSE = "org.zkoss.calendar.Calendars.onRemoveItemResponse";
+	private static final String ATTR_ON_MODIFY_ITEM_RESPONSE = "org.zkoss.calendar.Calendars.onModifyItemResponse";
 	
-	private static final Comparator<CalendarEvent> _defCompare = new Comparator<CalendarEvent>() {
-		public int compare(CalendarEvent o1, CalendarEvent o2) {
+	private static final Comparator<CalendarItem> _defCompare = new Comparator<CalendarItem>() {
+		public int compare(CalendarItem o1, CalendarItem o2) {
 			return o1.getBeginDate().compareTo(o2.getBeginDate());
 		}
 	};
 	
 	static {		
-		addClientEvent(Calendars.class, CalendarsEvent.ON_EVENT_CREATE, 0);
-		addClientEvent(Calendars.class, CalendarsEvent.ON_EVENT_EDIT, 0);
-		addClientEvent(Calendars.class, CalendarsEvent.ON_EVENT_UPDATE, 0);
+		addClientEvent(Calendars.class, CalendarsEvent.ON_ITEM_CREATE, 0);
+		addClientEvent(Calendars.class, CalendarsEvent.ON_ITEM_EDIT, 0);
+		addClientEvent(Calendars.class, CalendarsEvent.ON_ITEM_UPDATE, 0);
 		addClientEvent(Calendars.class, CalendarsEvent.ON_DAY_CLICK, CE_REPEAT_IGNORE);
 		addClientEvent(Calendars.class, CalendarsEvent.ON_WEEK_CLICK, CE_REPEAT_IGNORE);
 		//since 2.1.5
-		addClientEvent(Calendars.class, CalendarsEvent.ON_EVENT_TOOLTIP, CE_REPEAT_IGNORE);
+		addClientEvent(Calendars.class, CalendarsEvent.ON_ITEM_TOOLTIP, CE_REPEAT_IGNORE);
 	}	
 	
 	public Calendars() {
@@ -120,7 +120,7 @@ public class Calendars extends XulElement {
 	}
 	
 	private void init() {
-		_evts = new HashMap<String, List<CalendarEvent>>(32);
+		_items = new HashMap<String, List<CalendarItem>>(32);
 		_tzones = new LinkedHashMap<TimeZone, String>();
 		_ids = new HashMap<Object, Object>(32);
 		_firstDayOfWeek = getCalendar().getFirstDayOfWeek();
@@ -177,7 +177,7 @@ public class Calendars extends XulElement {
 			_dfmter = dfmater;
 			reSendDateRange();
 			smartUpdate("cd", Util.getDSTTime(this.getDefaultTimeZone(), getCurrentDate()));
-			reSendEventGroup();
+			reSendItemGroup();
 		}
 	}
 	
@@ -215,7 +215,7 @@ public class Calendars extends XulElement {
 			if (!inMonthMold()) {
 				reSendDateRange();			
 				smartUpdate("days", _days);	
-				reSendEventGroup();
+				reSendItemGroup();
 			}
 		}
 	}
@@ -244,7 +244,7 @@ public class Calendars extends XulElement {
 			if (_days == 7 || inMonthMold()){
 				reSendDateRange();
 				smartUpdate("firstDayOfWeek", _firstDayOfWeek);
-				reSendEventGroup();
+				reSendItemGroup();
 			}
 		}
 	}
@@ -287,55 +287,55 @@ public class Calendars extends XulElement {
 		return _firstDayOfWeek;
 	}
 		
-	public void onAddDayEventResponse() {
-		removeAttribute(ATTR_ON_ADD_EVENT_RESPONSE);
-		response("addEvent" + getUuid(), new AuSetAttribute(this,"addDayEvent",Util.encloseEventList(this, _addEvtList)));
+	public void onAddDayItemResponse() {
+		removeAttribute(ATTR_ON_ADD_ITEM_RESPONSE);
+		response("addEvent" + getUuid(), new AuSetAttribute(this,"addDayItem",Util.encloseItemList(this, _addItemList)));
 	}
 	
-	public void onRemoveDayEventResponse() {
-		removeAttribute(ATTR_ON_REMOVE_EVENT_RESPONSE);
-		response("removeEvent" + getUuid(), new AuSetAttribute(this,"removeDayEvent",Util.encloseEventList(this, _rmEvtList)));
+	public void onRemoveDayItemResponse() {
+		removeAttribute(ATTR_ON_REMOVE_ITEM_RESPONSE);
+		response("removeEvent" + getUuid(), new AuSetAttribute(this,"removeDayItem",Util.encloseItemList(this, _rmItemList)));
 	}
 	
-	public void onModifyDayEventResponse() {
-		removeAttribute(ATTR_ON_MODIFY_EVENT_RESPONSE);
-		response("modifyEvent" + getUuid(), new AuSetAttribute(this,"modifyDayEvent",Util.encloseEventList(this, _mdyEvtList)));
+	public void onModifyDayItemResponse() {
+		removeAttribute(ATTR_ON_MODIFY_ITEM_RESPONSE);
+		response("modifyEvent" + getUuid(), new AuSetAttribute(this,"modifyDayItem",Util.encloseItemList(this, _mdyItemList)));
 	}
 	
-	public void addDayEvent(CalendarEvent ce){
+	public void addDayItem(CalendarItem ce) {
 		if (ce == null) return;
-		if (_addEvtList == null)
-			_addEvtList = new LinkedList<CalendarEvent>();
-		_addEvtList.add(ce);
-		if (getAttribute(ATTR_ON_ADD_EVENT_RESPONSE) == null) {
-			setAttribute(ATTR_ON_ADD_EVENT_RESPONSE, Boolean.TRUE);
-			Events.postEvent(-20000, "onAddDayEventResponse", this, null);
+		if (_addItemList == null)
+			_addItemList = new LinkedList<CalendarItem>();
+		_addItemList.add(ce);
+		if (getAttribute(ATTR_ON_ADD_ITEM_RESPONSE) == null) {
+			setAttribute(ATTR_ON_ADD_ITEM_RESPONSE, Boolean.TRUE);
+			Events.postEvent(-20000, "onAddDayItemResponse", this, null);
 		}
 	}
 	
-	public void modifyDayEvent(CalendarEvent ce) {
+	public void modifyDayItem(CalendarItem ce) {
 		if (ce == null) return;
-		if (_mdyEvtList == null)
-			_mdyEvtList = new LinkedList<CalendarEvent>();
-		_mdyEvtList.add(ce);
-		if (getAttribute(ATTR_ON_MODIFY_EVENT_RESPONSE) == null) {
-			setAttribute(ATTR_ON_MODIFY_EVENT_RESPONSE, Boolean.TRUE);
-			Events.postEvent(-20000, "onModifyDayEventResponse", this, null);
+		if (_mdyItemList == null)
+			_mdyItemList = new LinkedList<CalendarItem>();
+		_mdyItemList.add(ce);
+		if (getAttribute(ATTR_ON_MODIFY_ITEM_RESPONSE) == null) {
+			setAttribute(ATTR_ON_MODIFY_ITEM_RESPONSE, Boolean.TRUE);
+			Events.postEvent(-20000, "onModifyDayItemResponse", this, null);
 		}
 	}
 	
-	public void removeDayEvent(CalendarEvent ce){
+	public void removeDayItem(CalendarItem ce) {
 		if (ce == null) return;
-		if (_rmEvtList == null)
-			_rmEvtList = new LinkedList<CalendarEvent>();
-		_rmEvtList.add(ce);
-		if (getAttribute(ATTR_ON_REMOVE_EVENT_RESPONSE) == null) {
-			setAttribute(ATTR_ON_REMOVE_EVENT_RESPONSE, Boolean.TRUE);
-			Events.postEvent(-20000, "onRemoveDayEventResponse", this, null);
+		if (_rmItemList == null)
+			_rmItemList = new LinkedList<CalendarItem>();
+		_rmItemList.add(ce);
+		if (getAttribute(ATTR_ON_REMOVE_ITEM_RESPONSE) == null) {
+			setAttribute(ATTR_ON_REMOVE_ITEM_RESPONSE, Boolean.TRUE);
+			Events.postEvent(-20000, "onRemoveDayItemResponse", this, null);
 		}
 	}
 	
-	private void cleanEmptyZone(){
+	private void cleanEmptyZone() {
 		Map<TimeZone, String> tzones = new HashMap<TimeZone, String>(_tzones);
 		
 		for (Iterator<Entry<TimeZone, String>> it = tzones.entrySet().iterator(); it.hasNext();) {
@@ -346,7 +346,7 @@ public class Calendars extends XulElement {
 		_hasEmptyZone = false;
 	}
 
-	private Calendar getCalendar(){
+	private Calendar getCalendar() {
 		return Calendar.getInstance(getDefaultTimeZone(), Locales.getCurrent());
 	}	
 	
@@ -375,7 +375,7 @@ public class Calendars extends XulElement {
 		smartUpdate("tz", (tz.getRawOffset())/60000);
 		smartUpdate("bd", Util.getDSTTime(tz,getBeginDate()));
 		smartUpdate("ed", Util.getDSTTime(tz,getEndDate()));
-		reSendEventGroup();
+		reSendItemGroup();
 	}
 
 	/**
@@ -424,7 +424,7 @@ public class Calendars extends XulElement {
 			TimeZone tz = getDefaultTimeZone();
 			smartUpdate("bd", Util.getDSTTime(tz,getBeginDate()));
 			smartUpdate("ed", Util.getDSTTime(tz,getEndDate()));
-			reSendEventGroup();
+			reSendItemGroup();
 			return true;
 		}		
 		return false;
@@ -451,7 +451,7 @@ public class Calendars extends XulElement {
 		return Collections.unmodifiableMap(_tzones);
 	}
 		
-	public String getCalendarEventId(CalendarEvent ce) {
+	public String getCalendarItemId(CalendarItem ce) {
 		Object o = _ids.get(ce);
 		if (o == null) {
 			o = ((DesktopCtrl)getDesktop()).getNextUuid(this);
@@ -461,41 +461,41 @@ public class Calendars extends XulElement {
 		return (String) o;
 	}	
 	
-	public CalendarEvent getCalendarEventById(String id) {
-		return (CalendarEvent)_ids.get(id);
+	public CalendarItem getCalendarItemById(String id) {
+		return (CalendarItem)_ids.get(id);
 	}
 	
-	protected String getEventKey(CalendarEvent evt) {
+	protected String getItemKey(CalendarItem evt) {
 		Date begin = evt.getBeginDate();
 		Date end = evt.getEndDate();
 		if (begin == null)
 			throw new UiException("Begin date cannot be null: " + evt);
 		if (end == null)
 			throw new UiException("End date cannot be null: " + evt);
-		return getEventKey(begin);
+		return getItemKey(begin);
 	}	
 	
-	private String getEventKey(Date date) {
+	private String getItemKey(Date date) {
 		return _sdfKey.format(date);
 	}
 
 	/**
-	 * Returns the unmodifiable list including all the calendar events matching
+	 * Returns the unmodifiable list including all the calendar items matching
 	 * from the specified date in the same date. e.g. "20090324" exclusive the
 	 * time of the date "23:30".
 	 * <p>
 	 * Note: never null.
 	 */
-	public List<CalendarEvent> getEvent(Date beginDate) {
-		String key = getEventKey(beginDate);
-		List<CalendarEvent> list =  _evts.get(key);
+	public List<CalendarItem> getItem(Date beginDate) {
+		String key = getItemKey(beginDate);
+		List<CalendarItem> list =  _items.get(key);
 		if (list != null)
 			Collections.sort(list, getDefaultBeginDateComparator());
 		else list = Collections.emptyList();
 		return Collections.unmodifiableList(list);
 	}
 	
-	private static final Comparator<CalendarEvent> getDefaultBeginDateComparator() {
+	private static final Comparator<CalendarItem> getDefaultBeginDateComparator() {
 		return _defCompare;
 	}
 	
@@ -598,7 +598,7 @@ public class Calendars extends XulElement {
 			_curDate = curDate;
 			reSendDateRange();
 			smartUpdate("cd", Util.getDSTTime(this.getDefaultTimeZone(),getCurrentDate()));
-			reSendEventGroup();
+			reSendItemGroup();
 		}
 	}
 
@@ -623,7 +623,7 @@ public class Calendars extends XulElement {
 		if (_beginTime != beginTime) {
 			_beginTime = beginTime;
 			smartUpdate("bt", beginTime);
-			reSendEventGroup();
+			reSendItemGroup();
 		}
 	}
 	/**
@@ -647,7 +647,7 @@ public class Calendars extends XulElement {
 		if (_endTime != endTime) {
 			_endTime = endTime;
 			smartUpdate("et", endTime);
-			reSendEventGroup();
+			reSendItemGroup();
 		}
 	}
 	/**
@@ -670,7 +670,7 @@ public class Calendars extends XulElement {
 		if (_timeslots != timeslots) {
 			this._timeslots = timeslots;
 			smartUpdate("timeslots", timeslots);
-			reSendEventGroup();
+			reSendItemGroup();
 		}
 	}
 	/**
@@ -749,7 +749,7 @@ public class Calendars extends XulElement {
 		}
 	}
 	
-	protected void reSendEventGroup() {
+	protected void reSendItemGroup() {
 		if (getAttribute(ATTR_ON_INIT_POSTED) == null) {
 			setAttribute(ATTR_ON_INIT_POSTED, Boolean.TRUE);
 			Events.postEvent(-10100, "onInitRender", this, null);
@@ -758,7 +758,7 @@ public class Calendars extends XulElement {
 	
 	public void onInitRender() {
 		removeAttribute(ATTR_ON_INIT_POSTED);
-		_evts.clear();
+		_items.clear();
 		_ids.clear();
 		
 		final TimeZone tzone = getDefaultTimeZone();		
@@ -769,7 +769,7 @@ public class Calendars extends XulElement {
 		_sdfKey.setTimeZone(tzone);
 		if (_model != null) {
 			Date beginDate = getBeginDate();
-			List<CalendarEvent> list = _model.get(beginDate, getEndDate(),
+			List<CalendarItem> list = _model.get(beginDate, getEndDate(),
 					new RenderContext() {
 						public TimeZone getTimeZone() {
 							return tzone;
@@ -777,25 +777,25 @@ public class Calendars extends XulElement {
 					});
 
 			if (list != null) {
-				for (Iterator<CalendarEvent> it = list.iterator(); it.hasNext();) {
-					CalendarEvent ce = it.next();
-					if (ce.getBeginDate().after(ce.getEndDate()))
-						throw new IllegalArgumentException("Illegal date: from " + ce.getBeginDate() + " to " + ce.getEndDate());
+				for (Iterator<CalendarItem> it = list.iterator(); it.hasNext();) {
+					CalendarItem ci = it.next();
+					if (ci.getBeginDate().after(ci.getEndDate()))
+						throw new IllegalArgumentException("Illegal date: from " + ci.getBeginDate() + " to " + ci.getEndDate());
 					
-					String key = ce.getBeginDate().before(beginDate) ?
-										getEventKey(beginDate): 
-										getEventKey(ce.getBeginDate());
+					String key = ci.getBeginDate().before(beginDate) ?
+										getItemKey(beginDate):
+										getItemKey(ci.getBeginDate());
 					
-					List<CalendarEvent> dayevt =  _evts.get(key);
-					if (dayevt == null) {
-						dayevt = new LinkedList<CalendarEvent>();
-						_evts.put(key, dayevt);
+					List<CalendarItem> dayItems = _items.get(key);
+					if (dayItems == null) {
+						dayItems = new LinkedList<CalendarItem>();
+						_items.put(key, dayItems);
 					} 
-					dayevt.add(ce);
+					dayItems.add(ci);
 				}
 			}
 		}
-		smartUpdate("events", Util.encloseEventMap(this, _evts));
+		smartUpdate("items", Util.encloseItemMap(this, _items));
 	}
 	
 	public Toolbar getToolbar() {
@@ -825,7 +825,7 @@ public class Calendars extends XulElement {
 			_model.removeCalendarDataListener(_dataListener);
 			_model = null;
 		}
-		reSendEventGroup();
+		reSendItemGroup();
 	}
 	
 	/** Initializes _dataListener and register the listener to the model
@@ -834,20 +834,20 @@ public class Calendars extends XulElement {
 		if (_dataListener == null)
 			_dataListener = new CalendarDataListener() {
 				public void onChange(CalendarDataEvent event) {
-					CalendarEvent ce = event.getCalendarEvent();
-					if (ce == null) {	// if large scope change, such as clearAll
-						reSendEventGroup();
+					CalendarItem ci = event.getCalendarItem();
+					if (ci == null) {	// if large scope change, such as clearAll
+						reSendItemGroup();
 						return;
 					}
 					switch (event.getType()) {
 					case CalendarDataEvent.INTERVAL_ADDED:
-						addDayEvent(event.getCalendarEvent());			
+						addDayItem(event.getCalendarItem());
 						break;
 					case CalendarDataEvent.INTERVAL_REMOVED:				
-						removeDayEvent(event.getCalendarEvent());			
+						removeDayItem(event.getCalendarItem());
 						break;
 					case CalendarDataEvent.CONTENTS_CHANGED:	
-						modifyDayEvent(event.getCalendarEvent());			
+						modifyDayItem(event.getCalendarItem());
 					}
 				}
 			};
@@ -860,7 +860,7 @@ public class Calendars extends XulElement {
 			mold = "default";
 		if (!Objects.equals(getMold(), mold)) {
 			super.setMold(mold);
-			reSendEventGroup();
+			reSendItemGroup();
 		}
 	}
 	
@@ -869,18 +869,18 @@ public class Calendars extends XulElement {
 	}
 
 	/**
-	 * Sets whether the event content escape XML
+	 * Sets whether the item content escape XML
 	 * @param escapeXML
 	 */
 	public void setEscapeXML(boolean escapeXML) {
 		if (_escapeXML != escapeXML) {
 			this._escapeXML = escapeXML;
 			smartUpdate("escapeXML", escapeXML);
-			reSendEventGroup();
+			reSendItemGroup();
 		}
 	}
 	/**
-	 * Return whether the event content escape XML
+	 * Return whether the item content escape XML
 	 * @return boolean
 	 */
 	public boolean isEscapeXML() {
@@ -930,18 +930,18 @@ public class Calendars extends XulElement {
 	public void service(org.zkoss.zk.au.AuRequest request, boolean everError) {
 		final String cmd = request.getCommand();
 		
-		if (cmd.equals(CalendarsEvent.ON_EVENT_CREATE))
+		if (cmd.equals(CalendarsEvent.ON_ITEM_CREATE))
 			Events.postEvent(CalendarsEvent.getCreateEvent(request));
-		else if (cmd.equals(CalendarsEvent.ON_EVENT_EDIT))
+		else if (cmd.equals(CalendarsEvent.ON_ITEM_EDIT))
 			Events.postEvent(CalendarsEvent.getEditEvent(request));
-		else if (cmd.equals(CalendarsEvent.ON_EVENT_UPDATE))
+		else if (cmd.equals(CalendarsEvent.ON_ITEM_UPDATE))
 			Events.postEvent(CalendarsEvent.getUpdateEvent(request));
 		else if (cmd.equals(CalendarsEvent.ON_DAY_CLICK) || 
 				cmd.equals(CalendarsEvent.ON_WEEK_CLICK))
 			Events.postEvent(CalendarsEvent.getClickEvent(request, cmd));
 		else if (cmd.equals(Events.ON_DROP)) {
 			Events.postEvent(CalendarDropEvent.getCalendarDropEvent(request));
-		} else if (cmd.equals(CalendarsEvent.ON_EVENT_TOOLTIP)) {
+		} else if (cmd.equals(CalendarsEvent.ON_ITEM_TOOLTIP)) {
 			Events.postEvent(CalendarsEvent.getTooltipEvent(request));
 		} else {
 			super.service(request, everError);
@@ -990,7 +990,7 @@ public class Calendars extends XulElement {
 		
 		renderer.render("days", _days);
 		renderer.render("escapeXML", _escapeXML);
-		renderer.render("events", Util.encloseEventMap(this, _evts));
+		renderer.render("items", Util.encloseItemMap(this, _items));
 		String pattern = ((SimpleDateFormat) DateFormat.getDateInstance(
 				DateFormat.SHORT, Locales.getCurrent())).toPattern().replaceAll(
 				"[^\\p{Alpha}]*y+[^\\p{Alpha}]*", "");
@@ -1023,20 +1023,20 @@ public class Calendars extends XulElement {
 	
 	/**
 	 * @deprecated As of release 2.0-RC
-	 * Returns the event renderer used for {@link CalendarEvent} to draw its
+	 * Returns the item renderer used for {@link CalendarItem} to draw its
 	 * outline (i.e. HTML), like the DSP renderer of ZK component.
 	 * <p>
 	 * Note: never null.
 	 */
-	public EventRender getEventRender() {
+	public ItemRender getItemRender() {
 		return null;
 	}
 
 	/**
 	 * @deprecated As of release 2.0-RC
-	 * Sets the event renderer.
+	 * Sets the item renderer.
 	 */
-	public void setEventRender(EventRender render) {
+	public void setItemRender(ItemRender render) {
 		
 	}
 

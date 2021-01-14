@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.zkoss.calendar.api.CalendarEvent;
+import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.api.CalendarModel;
 
 /**
@@ -42,10 +42,10 @@ public class CalendarDataEvent implements Serializable {
 	private final int _type;
 	private final Date _begin, _end;
 	private final TimeZone _timezone;
-	private final CalendarEvent _e;
+	private final CalendarItem _e;
 	
 	/** Contructor.
-	 *@deprecated As of release 2.0-RC, replaced with {@link #CalendarDataEvent(CalendarModel model, int type, CalendarEvent e, TimeZone timezone)}
+	 *@deprecated As of release 2.0-RC, replaced with {@link #CalendarDataEvent(CalendarModel model, int type, CalendarItem e, TimeZone timezone)}
 	 * @param type one of {@link #CONTENTS_CHANGED},
 	 * {@link #INTERVAL_ADDED}, {@link #INTERVAL_REMOVED}.
 	 */
@@ -65,7 +65,7 @@ public class CalendarDataEvent implements Serializable {
 	 * @param type one of {@link #CONTENTS_CHANGED},
 	 * {@link #INTERVAL_ADDED}, {@link #INTERVAL_REMOVED}.
 	 */
-	public CalendarDataEvent(CalendarModel model, int type, CalendarEvent e, TimeZone timezone) {
+	public CalendarDataEvent(CalendarModel model, int type, CalendarItem e, TimeZone timezone) {
 		if (model == null)
 			throw new IllegalArgumentException();
 		_model = model;
@@ -104,9 +104,9 @@ public class CalendarDataEvent implements Serializable {
 	}
 	/**
 	 * @since 1.1.1_50
-	 * Return the CalendarEvent of the calendar
+	 * Return the CalendarItem of the calendar
 	 */
-	public CalendarEvent getCalendarEvent() {
+	public CalendarItem getCalendarItem() {
 		return _e;
 	}
 	

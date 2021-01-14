@@ -29,13 +29,13 @@ import org.zkoss.calendar.event.CalendarDataListener;
  */
 public interface CalendarModel {
 	/**
-	 * Returns the list that must be a list of {@link CalendarEvent} type.
+	 * Returns the list that must be a list of {@link CalendarItem} type.
 	 * 
 	 * @param beginDate the begin date
 	 * @param endDate the end date
 	 * @param rc a RenderContext encapsulates the information needed for Calendars.
 	 */
-	public List<CalendarEvent> get(Date beginDate, Date endDate, RenderContext rc);	
+	public List<CalendarItem> get(Date beginDate, Date endDate, RenderContext rc);
 	/** Adds a listener to the calendar model that's notified each time a change
 	 * to the data model occurs. 
 	 */

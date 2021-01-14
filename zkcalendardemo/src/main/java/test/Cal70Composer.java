@@ -14,7 +14,7 @@ package test;
 import java.util.Calendar;
 
 import org.zkoss.calendar.Calendars;
-import org.zkoss.calendar.impl.SimpleCalendarEvent;
+import org.zkoss.calendar.impl.SimpleCalendarItem;
 import org.zkoss.calendar.impl.SimpleCalendarModel;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
@@ -36,7 +36,7 @@ public class Cal70Composer extends SelectorComposer {
 
 	@Listen("onClick = #add")
 	public void add(){
-		SimpleCalendarEvent event1 = new SimpleCalendarEvent();
+		SimpleCalendarItem event1 = new SimpleCalendarItem();
 		java.util.Calendar calendar  = java.util.Calendar.getInstance();
 		calendar.set(Calendar.HOUR_OF_DAY, 23);
 		calendar.set(Calendar.MINUTE, 40);
@@ -45,7 +45,7 @@ public class Cal70Composer extends SelectorComposer {
 		event1.setEndDate(calendar.getTime());
 		model.add(event1);
 
-		SimpleCalendarEvent event2 = new SimpleCalendarEvent();
+		SimpleCalendarItem event2 = new SimpleCalendarItem();
 		calendar.set(Calendar.HOUR_OF_DAY, 23);
 		calendar.set(Calendar.MINUTE, 45);
 		event2.setBeginDate(calendar.getTime());
@@ -53,7 +53,7 @@ public class Cal70Composer extends SelectorComposer {
 		event2.setEndDate(calendar.getTime());
 		model.add(event2);
 
-		SimpleCalendarEvent event3 = new SimpleCalendarEvent();
+		SimpleCalendarItem event3 = new SimpleCalendarItem();
 		calendar.set(Calendar.HOUR_OF_DAY, 18);
 		calendar.set(Calendar.MINUTE, 33);
 		event3.setBeginDate(calendar.getTime());

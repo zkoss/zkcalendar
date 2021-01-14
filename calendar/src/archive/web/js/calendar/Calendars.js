@@ -32,8 +32,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	}
 	
 	function _compareStartTime(x , y) {
-		var isDaylongMonX = zk.Widget.$(x).className == 'calendar.DaylongOfMonthEvent',
-			isDaylongMonY = zk.Widget.$(y).className == 'calendar.DaylongOfMonthEvent',
+		var isDaylongMonX = zk.Widget.$(x).className == 'calendar.DaylongOfMonthItem',
+			isDaylongMonY = zk.Widget.$(y).className == 'calendar.DaylongOfMonthItem',
 			xBd = isDaylongMonX ?
 				Math.min(x.upperBoundBd.getTime(), x.zoneBd.getTime()) :
 				x.zoneBd.getTime(),
@@ -55,7 +55,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		return 1;
 	}
 	
-	function _getEventPeriod(ce) {
+	function _getItemPeriod(ce) {
 		var bd = new Date(ce.zoneBd),
 			ed = new Date(ce.zoneEd);
 			
@@ -92,7 +92,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			  '</div></div>',
 			  '</div>'].join(''),
 
-	evtTemplate: ['<div id="%1" class="%2 %3-more-faker">',
+	itemTemplate: ['<div id="%1" class="%2 %3-more-faker">',
 			  '<div class="%2-body %3-arrow" %5><div class="%2-inner" %8>',
 			  '<div class="%2-cnt" %6><div class="%2-text">%4</div></div>',
 			  '</div></div>',
@@ -120,7 +120,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		this.$supers('bind_', arguments);
 		this._dragItems = {};
 		this._ghost = {};
-		this._eventKey = {};
+		this._itemKey = {};
 		this.params = {};
 		zWatch.listen({onSize: this, onShow: this, onResponse: this});
 	},
@@ -140,7 +140,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 				}
 			}
 		}
-		this._dragItems = this._ghost = this._eventKey = this.params = this._restoreCE = null;
+		this._dragItems = this._ghost = this._itemKey = this.params = this._restoreCE = null;
 		this.$supers('unbind_', arguments);
 	},
 	
@@ -154,16 +154,16 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			this.clearGhost();
 	},
 
-	processEvtData_: function (event) {
-		event.isLocked = event.isLocked == 'true' ? true : false;
-		event.beginDate = new Date(zk.parseInt(event.beginDate));
-		event.endDate = new Date(zk.parseInt(event.endDate));
+	processItemData_: function (item) {
+		item.isLocked = item.isLocked == 'true' ? true : false;
+		item.beginDate = new Date(zk.parseInt(item.beginDate));
+		item.endDate = new Date(zk.parseInt(item.endDate));
 		
-		event.zoneBd = this.fixTimeZoneFromServer(event.beginDate);
-		event.zoneEd = this.fixTimeZoneFromServer(event.endDate);
+		item.zoneBd = this.fixTimeZoneFromServer(item.beginDate);
+		item.zoneEd = this.fixTimeZoneFromServer(item.endDate);
 		
-		var key = event.key,
-			period = this._eventKey[key],
+		var key = item.key,
+			period = this._itemKey[key],
 			inMon = this.mon;
 		if (!period) {
 			var keyDate = zk.fmt.Date.parseDate(key);
@@ -175,36 +175,36 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			if (inMon)
 				period.week = Math.floor(keyDate / 7);
 			
-			this._eventKey[key] = period;
+			this._itemKey[key] = period;
 		}
-		event._preOffset = period.day;
+		item._preOffset = period.day;
 		if (inMon)
-			event.startWeek = this._weekDates[period.week];
+			item.startWeek = this._weekDates[period.week];
 		
-		return event;
+		return item;
 	},
 	
 	createChildrenWidget_: function () {
-		this.cleanEvtAry_();
-		//append all event be widget children
-		for (var i = 0, j = this._events.length; i < j; i++) {
-			var events = this._events[i];
-			for (var k = 0, l = events.length; k < l; k++) {
-				var event = this.processEvtData_(events[k]);
+		this.cleanItemAry_();
+		//append all item be widget children
+		for (var i = 0, j = this._items.length; i < j; i++) {
+			var items = this._items[i];
+			for (var k = 0, l = items.length; k < l; k++) {
+				var item = this.processItemData_(items[k]);
 				//over range
 				//Bug ZKCAL-36: should check if event endDate and view begin Date are equal
-				if (event.zoneBd >= this.zoneEd || event.zoneEd <= this.zoneBd)
+				if (item.zoneBd >= this.zoneEd || item.zoneEd <= this.zoneBd)
 					continue;
 				
-				this.processChildrenWidget_(_isExceedOneDay(this, event), event);
+				this.processChildrenWidget_(_isExceedOneDay(this, item), item);
 			}
 		}
 	},
 	
-	processChildrenWidget_: function (isExceedOneDay, event) {
+	processChildrenWidget_: function (isExceedOneDay, item) {
 	},
 	
-	drawEvent_: function (preOffset, className, tr, dayNode) {
+	drawItem_: function (preOffset, className, tr, dayNode) {
 		var html = [],
 			s = '<td class="' + className + '">&nbsp;</td>';
 		for (var n = preOffset; n--;)
@@ -323,7 +323,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			change: cls._changeDaydrag,
 			draw: cls._drawDaydrag,
 			ignoredrag: cls._ignoreDaydrag
-		}): null;
+		}) : null;
 	},
 	
 	addDayClickEvent_: function (element) {
@@ -346,10 +346,10 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	},
 	//ZKCAL-48: support tooltip
 	doTooltipOver_: function (evt) {
-		if (this.isListen('onEventTooltip')) {
+		if (this.isListen('onItemTooltip')) {
 			var zcls = this.getZclass(),
 				node = evt.target,
-				ce = zk.Widget.$(node).event;
+				ce = zk.Widget.$(node).item;
 			if (jq(node).hasClass(zcls + '-evt-faker-more') && node.parentNode.id.indexOf('-frow') > 0)
 				return;
 			
@@ -367,7 +367,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 				
 				var p = [Math.round(evt.pageX), Math.round(evt.pageY)],
 					data = {data: [ce.id, p[0], p[1], jq.innerWidth(), jq.innerHeight()]},
-					e = new zk.Event(this, 'onEventTooltip', data, null, evt.domEvent),
+					e = new zk.Event(this, 'onItemTooltip', data, null, evt.domEvent),
 					self = this;
 				
 				setTimeout(function () {
@@ -389,80 +389,80 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		this.$supers('doTooltipOut_', arguments);
 	},
 	
-	setAddDayEvent: function (eventArray) {
-		eventArray = jq.evalJSON(eventArray);
-		if (!eventArray.length) return;
+	setAddDayItem: function (itemArray) {
+		itemArray = jq.evalJSON(itemArray);
+		if (!itemArray.length) return;
 		this.clearGhost();
 		
 		var hasAdd = {day: false, daylong: false};
 		
-		for (var event; (event = eventArray.shift());) {
-			if (zk.Widget.$(event.id)) continue;
-			event = this.processEvtData_(event);
+		for (var item; (item = itemArray.shift());) {
+			if (zk.Widget.$(item.id)) continue;
+			item = this.processItemData_(item);
 			//over range
-			//Bug ZKCAL-36: should check if event endDate and view begin Date are equal
-			if (event.zoneBd >= this.zoneEd || event.zoneEd <= this.zoneBd)
+			//Bug ZKCAL-36: should check if item endDate and view begin Date are equal
+			if (item.zoneBd >= this.zoneEd || item.zoneEd <= this.zoneBd)
 				continue;
 			
-			var isExceedOneDay = _isExceedOneDay(this, event);
-			this.processChildrenWidget_(isExceedOneDay, event);
+			var isExceedOneDay = _isExceedOneDay(this, item);
+			this.processChildrenWidget_(isExceedOneDay, item);
 			hasAdd[isExceedOneDay ? 'daylong' : 'day'] = true;
 		}
 		
-		this.reAlignEvents_(hasAdd);
+		this.reAlignItems_(hasAdd);
 	},
 	
-	setModifyDayEvent: function (eventArray) {
-		eventArray = jq.evalJSON(eventArray);
-		if (!eventArray.length) return;
+	setModifyDayItem: function (itemArray) {
+		itemArray = jq.evalJSON(itemArray);
+		if (!itemArray.length) return;
 		this.clearGhost();
 		
 		var hasAdd = {day: false, daylong: false};
 			 
-		for (var event; (event = eventArray.shift());) {
-			var childWidget = zk.Widget.$(event.id),
+		for (var item; (item = itemArray.shift());) {
+			var childWidget = zk.Widget.$(item.id),
 				inMon = this.mon,
 				isBeginTimeChange = false;
 			
-			event = this.processEvtData_(event);
+			item = this.processItemData_(item);
 			
 			//Bug ZKCAL-47: childWidget may not in the range and has beem removed.
 			if (!childWidget) {
-				if (event.zoneBd > this.zoneEd || event.zoneEd < this.zoneBd) {
-					//if event still not in the range, skip
+				if (item.zoneBd > this.zoneEd || item.zoneEd < this.zoneBd) {
+					//if item still not in the range, skip
 					continue;
 				} else {
-					//if event is in the range, create childWidget.
-					this.processChildrenWidget_(_isExceedOneDay(this, event), event);
-					childWidget = zk.Widget.$(event.id);
+					//if item is in the range, create childWidget.
+					this.processChildrenWidget_(_isExceedOneDay(this, item), item);
+					childWidget = zk.Widget.$(item.id);
 				}
 			}
 			
 			if (inMon &&
-				(isBeginTimeChange = childWidget.isBeginTimeChange(event)))
+				(isBeginTimeChange = childWidget.isBeginTimeChange(item)))
 				this.removeNodeInArray_(childWidget);
 			
 			//over range
-			if (event.zoneBd > this.zoneEd || event.zoneEd < this.zoneBd) {
+			if (item.zoneBd > this.zoneEd || item.zoneEd < this.zoneBd) {
 				if (!inMon)
 					this.removeNodeInArray_(childWidget, hasAdd);
 				this.removeChild(childWidget);
 				continue;
 			}
 			
-			var isExceedOneDay = _isExceedOneDay(this, event),
+			var isExceedOneDay = _isExceedOneDay(this, item),
 				clsName = childWidget.className,
-				isDayEvent = inMon ? clsName == 'calendar.DayOfMonthEvent' : clsName == 'calendar.DayEvent',
-				isChangeEvent = isExceedOneDay ? isDayEvent : !isDayEvent;
+				isDayItem = inMon ? clsName == 'calendar.DayOfMonthItem' : clsName == 'calendar.DayItem',
+				isChangeEvent = isExceedOneDay ? isDayItem : !isDayItem;
 			
 			if (isChangeEvent) {
 				if (!inMon)
-					this[isDayEvent ? '_dayEvents' : '_daylongEvents'].$remove(childWidget.$n());
+					this[isDayItem ? '_dayItems' : '_daylongItems'].$remove(childWidget.$n());
 				this.removeChild(childWidget);
-				this.processChildrenWidget_(isExceedOneDay, event);
+				this.processChildrenWidget_(isExceedOneDay, item);
 				hasAdd.day = hasAdd.daylong = true;
 			} else {
-				childWidget.event = event;
+				childWidget.item = item;
 				childWidget.update(isBeginTimeChange);
 				
 				if (inMon) {
@@ -475,23 +475,23 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			}
 		}
 
-		this.reAlignEvents_(hasAdd);
+		this.reAlignItems_(hasAdd);
 	},
 	
-	setRemoveDayEvent: function (eventArray) {
-		eventArray = jq.evalJSON(eventArray);
-		if (!eventArray.length) return;
+	setRemoveDayItem: function (itemArray) {
+		itemArray = jq.evalJSON(itemArray);
+		if (!itemArray.length) return;
 
 		var hasAdd = {day: false, daylong: false};
 
-		for (var event; (event = eventArray.shift());) {
-			var childWidget = zk.Widget.$(event.id);
+		for (var item; (item = itemArray.shift());) {
+			var childWidget = zk.Widget.$(item.id);
 			if (!childWidget) continue;
 			
 			this.removeNodeInArray_(childWidget, hasAdd);
 			this.removeChild(childWidget);
 		}
-		this.reAlignEvents_(hasAdd);
+		this.reAlignItems_(hasAdd);
 	},
 	
 	dateSorting_: function (x, y) {
@@ -562,9 +562,9 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	
 	onPopupClick: function (evt) {
 		var childWidget = zk.Widget.$(evt.target);
-		if (childWidget.$instanceof(calendar.Event)) {
+		if (childWidget.$instanceof(calendar.Item)) {
 			var p = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
-			this.fire('onEventEdit',{data:[childWidget.uuid, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});
+			this.fire('onItemEdit',{data:[childWidget.uuid, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});
 			evt.stop();
 		}
 	},
@@ -593,8 +593,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			jq(n).hasClass(widget.getZclass() + '-month-date-cnt'))
 				return true;
 		if (n.nodeType == 1 && jq(n).hasClass(p._fakerMoreCls) && !jq(n).hasClass(p._fakerNoMoreCls) ||
-			(targetWidget.$instanceof(calendar.Event) &&
-				(!n.parentNode || targetWidget.event.isLocked)))
+			(targetWidget.$instanceof(calendar.Item) &&
+				(!n.parentNode || targetWidget.item.isLocked)))
 				return true;
 		return false;
 	},
@@ -607,7 +607,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			inMon = widget.mon,
 			dataObj = widget.getDragDataObj_(),
 			targetWidget = zk.Widget.$(evt.domEvent),
-			ce = targetWidget.$instanceof(calendar.Event) ? targetWidget.$n() : null,
+			ce = targetWidget.$instanceof(calendar.Item) ? targetWidget.$n() : null,
 			hs = [];
 		jq(document.body).prepend(dataObj.getRope(widget, cnt, hs));
 		var row = dataObj.getRow(cnt),
@@ -649,7 +649,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			jq(document.body.firstChild).before(jq(faker));
 			dg.node = jq('#' + uuid + '-dd')[0];
 			
-			dg._zdur = _getEventPeriod(targetWidget.event);
+			dg._zdur = _getItemPeriod(targetWidget.item);
 			dg._zevt = ce;
 		}
 			
@@ -760,9 +760,9 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			if (dg._zevt) {
 				var zcls = widget.getZclass(),
 					targetWidget = zk.Widget.$(dg._zevt),
-					event = targetWidget.event,
+					item = targetWidget.item,
 					bd = new Date(widget.zoneBd),
-					ebd = new Date(event.zoneBd),
+					ebd = new Date(item.zoneBd),
 					ddClass = zcls + '-evt-dd',
 					inMon = widget.mon;
 				bd = calUtil.addDay(bd, dataObj.getDur(dg));
@@ -780,16 +780,16 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 							jq(cloneNodes[n]).removeClass(ddClass);
 				}
 				
-				if (!calUtil.isTheSameDay(ebd, event.zoneBd)) {
+				if (!calUtil.isTheSameDay(ebd, item.zoneBd)) {
 					ce = dg._zevt;
 					ce.style.visibility = 'hidden';
 
-					var ed = new Date(event.zoneEd);
+					var ed = new Date(item.zoneEd);
 					ed.setFullYear(bd.getFullYear());
 					ed.setDate(1);
 					ed.setMonth(bd.getMonth());
-					ed.setDate(bd.getDate() + _getEventPeriod(event) - (_isZeroTime(ed) ? 0 : 1));
-					widget.fire('onEventUpdate', {
+					ed.setDate(bd.getDate() + _getItemPeriod(item) - (_isZeroTime(ed) ? 0 : 1));
+					widget.fire('onItemUpdate', {
 						data: [
 							dg._zevt.id,
 							widget.fixTimeZoneFromClient(ebd),
@@ -800,14 +800,14 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 							jq.innerHeight()
 						]
 					});
-					widget._restoreCE = ce; //ZKCAL-39: should store calendar event
+					widget._restoreCE = ce; //ZKCAL-39: should store calendar item
 				}
 				jq('#' + widget.uuid + '-rope').remove();
 				jq('#' + widget.uuid + '-dd').remove();
 			} else {
 				var newData = dataObj.getNewDate(widget, dg);
 
-				widget.fire('onEventCreate', {
+				widget.fire('onItemCreate', {
 					data: [
 						widget.fixTimeZoneFromClient(newData.bd),
 						widget.fixTimeZoneFromClient(newData.ed),

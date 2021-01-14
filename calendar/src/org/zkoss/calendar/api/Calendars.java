@@ -100,22 +100,22 @@ public interface Calendars {
 	 * <p>
 	 * Note: never null.
 	 */
-	public List<CalendarEvent> getEvent(Date beginDate);
+	public List<CalendarItem> getEvent(Date beginDate);
 
 	/**
 	 * @deprecated As of release 2.0-RC
-	 * Returns the event renderer used for {@link CalendarEvent} to draw its
+	 * Returns the item renderer used for {@link CalendarItem} to draw its
 	 * outline (i.e. HTML), like the DSP renderer of ZK component.
 	 * <p>
 	 * Note: never null.
 	 */
-	public EventRender getEventRender();
+	public ItemRender getItemRender();
 
 	/**
 	 * @deprecated As of release 2.0-RC
-	 * Sets the event renderer.
+	 * Sets the item renderer.
 	 */
-	public void setEventRender(EventRender render);
+	public void setItemRender(ItemRender render);
 
 	/**
 	 * Sets the date formatter. In fact, there are five places in the calendar

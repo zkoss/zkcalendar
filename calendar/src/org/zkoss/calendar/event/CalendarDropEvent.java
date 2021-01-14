@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.zkoss.calendar.Calendars;
-import org.zkoss.calendar.api.CalendarEvent;
+import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.impl.Util;
 import org.zkoss.zk.au.AuRequest;
 import org.zkoss.zk.au.AuRequests;
@@ -37,7 +37,7 @@ public class CalendarDropEvent extends DropEvent {
 
 	private static final long serialVersionUID = 20110830181507L;
 	private Date _date;
-	private CalendarEvent _ce;
+	private CalendarItem _ce;
 	
 	/** Converts an AU request to a drop event.
 	 * @since 5.0.0
@@ -58,12 +58,12 @@ public class CalendarDropEvent extends DropEvent {
 			request.getDesktop().getComponentByUuid((String)data.get("dragged")),
 			AuRequests.getInt(data, "x", 0), AuRequests.getInt(data, "y", 0),
 			AuRequests.getInt(data, "pageX", 0), AuRequests.getInt(data, "pageY", 0),
-			keys, date, cmp.getCalendarEventById(String.valueOf(data.get("ce"))));
+			keys, date, cmp.getCalendarItemById(String.valueOf(data.get("ce"))));
 	}
 
 
 	public CalendarDropEvent(String name, Component target, Component dragged,
-			int x, int y, int pageX, int pageY, int keys, Date date, CalendarEvent ce) {
+			int x, int y, int pageX, int pageY, int keys, Date date, CalendarItem ce) {
 		super(name, target, dragged, x, y, pageX, pageY, keys);
 		_date = date;
 		_ce = ce;
@@ -80,7 +80,7 @@ public class CalendarDropEvent extends DropEvent {
 	/**
 	 * Returns the calendar event.
 	 */
-	public CalendarEvent getCalendarEvent() {
+	public CalendarItem getCalendarEvent() {
 		return _ce;
 	}
 }

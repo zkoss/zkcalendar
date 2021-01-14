@@ -25,9 +25,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.zkoss.calendar.Calendars;
-import org.zkoss.calendar.api.CalendarEvent;
+import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.event.CalendarsEvent;
-import org.zkoss.calendar.impl.SimpleCalendarEvent;
+import org.zkoss.calendar.impl.SimpleCalendarItem;
 import org.zkoss.calendar.impl.SimpleCalendarModel;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.event.CheckEvent;
@@ -116,7 +116,7 @@ public class CreateEditEventComposer extends SelectorComposer<Window> {
 			((CalendarsEvent)createOrEdit.getAttribute("calevent")).clearGhost();
 			return;
 		}
-		SimpleCalendarEvent ce = new SimpleCalendarEvent();
+		SimpleCalendarItem ce = new SimpleCalendarItem();
 		Calendar cal = Calendar.getInstance(calendars.getDefaultTimeZone());
 		Date beginDate = beginDbx.getValue();
 		Date endDate = endDbx.getValue();
@@ -217,7 +217,7 @@ public class CreateEditEventComposer extends SelectorComposer<Window> {
 	}
 	
 	private void initWindow(CalendarsEvent calevt) {
-		CalendarEvent ce = calevt.getCalendarEvent();
+		CalendarItem ce = calevt.getCalendarItem();
 		boolean isEdit = ce != null;
 		int left = calevt.getX();
 		int top = calevt.getY();

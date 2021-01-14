@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.Calendar;
 
 import org.zkoss.calendar.*;
-import org.zkoss.calendar.api.CalendarEvent;
+import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.event.CalendarsEvent;
 import org.zkoss.calendar.impl.*;
 import org.zkoss.util.Locales;
@@ -144,7 +144,7 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		cm = new SimpleCalendarModel();
 
 		for (int i = 0; i < evts.length; i++) {
-			SimpleCalendarEvent sce = new SimpleCalendarEvent();
+			SimpleCalendarItem sce = new SimpleCalendarItem();
 			try {
 				sce.setBeginDate(dataSDF.parse(evts[i][0]));
 				sce.setEndDate(dataSDF.parse(evts[i][1]));
@@ -166,7 +166,7 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		double red = 0, blue = 0, green = 0, purple = 0, khaki = 0;
 		int size = list.size();
 		for (Iterator it = list.iterator(); it.hasNext();) {
-			String color = ((CalendarEvent)it.next()).getContentColor();
+			String color = ((CalendarItem)it.next()).getContentColor();
 			if ("#D96666".equals(color))
 				red += 1;
 			else if ("#668CD9".equals(color))
@@ -188,12 +188,12 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		 mychart.invalidate();
 	}
 	
-	public void onEventTooltip$calendars(CalendarsEvent event) {
+	public void onItemTooltip$calendars(CalendarsEvent event) {
 		//test.open(evt.getX(), evt.getY());
-		((Label)test.getFirstChild()).setValue(event.getCalendarEvent().getContent());
+		((Label)test.getFirstChild()).setValue(event.getCalendarItem().getContent());
 	}
-	
-	public void onEventCreate$calendars(ForwardEvent event) {
+
+	public void onItemCreate$calendars(ForwardEvent event) {
 		CalendarsEvent evt = (CalendarsEvent) event.getOrigin();
 		int left = evt.getX();
 		int top = evt.getY();
@@ -243,7 +243,7 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 	}
 	
 	public void onClick$okBtn$createEvent(ForwardEvent event) {
-		SimpleCalendarEvent ce = new SimpleCalendarEvent();
+		SimpleCalendarItem ce = new SimpleCalendarItem();
 		Calendar cal = Calendar.getInstance(calendars.getDefaultTimeZone());
 		Date beginDate = createEvent$ppbegin.getValue();
 		Date endDate = createEvent$ppend.getValue();
@@ -334,8 +334,8 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		createEvent.setVisible(false);
 		((CalendarsEvent)createEvent.getAttribute("calevent")).clearGhost();
 	}
-	
-	public void onEventEdit$calendars(ForwardEvent event) {
+
+	public void onItemEdit$calendars(ForwardEvent event) {
 		CalendarsEvent evt = (CalendarsEvent) event.getOrigin();
 		
 		int left = evt.getX();
@@ -349,7 +349,7 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		
 		editEvent.setLeft(left + "px");
 		editEvent.setTop(top + "px");
-		CalendarEvent ce = evt.getCalendarEvent();
+		CalendarItem ce = evt.getCalendarItem();
 		SimpleDateFormat edit_sdf = new SimpleDateFormat("HH:mm");
 		edit_sdf.setTimeZone(tz);
 		Calendar calendar = Calendar.getInstance(org.zkoss.util.Locales
@@ -415,7 +415,7 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 	}
 	
 	public void onClick$okBtn$editEvent(ForwardEvent event) {
-		SimpleCalendarEvent ce = (SimpleCalendarEvent) editEvent.getAttribute("ce");
+		SimpleCalendarItem ce = (SimpleCalendarItem) editEvent.getAttribute("ce");
 		Calendar cal = Calendar.getInstance(calendars.getDefaultTimeZone());
 		Date beginDate = editEvent$ppbegin.getValue();
 		Date endDate = editEvent$ppend.getValue();
@@ -492,19 +492,19 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 					public void onEvent(Event evt) throws Exception {
 						if (((Integer) evt.getData()).intValue() != Messagebox.OK)
 							return;
-						cm.remove((SimpleCalendarEvent) editEvent.getAttribute("ce"));
+						cm.remove((SimpleCalendarItem) editEvent.getAttribute("ce"));
 						syncModel();
 					}
 				});
 		editEvent.setVisible(false);
 	}
-	
-	public void onEventUpdate$calendars(ForwardEvent event) {
+
+	public void onItemUpdate$calendars(ForwardEvent event) {
 		CalendarsEvent evt = (CalendarsEvent) event.getOrigin();
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/d");
 		sdf1.setTimeZone(calendars.getDefaultTimeZone());
 		StringBuffer sb = new StringBuffer("Update... from ");
-		sb.append(sdf1.format(evt.getCalendarEvent().getBeginDate()));
+		sb.append(sdf1.format(evt.getCalendarItem().getBeginDate()));
 		sb.append(" to ");
 		sb.append(sdf1.format(evt.getBeginDate()));
 		popupLabel.setValue(sb.toString());
@@ -519,7 +519,7 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		org.zkoss.calendar.Calendars cal = (org.zkoss.calendar.Calendars) evt
 				.getTarget();
 		SimpleCalendarModel m = (SimpleCalendarModel) cal.getModel();
-		SimpleCalendarEvent sce = (SimpleCalendarEvent) evt.getCalendarEvent();
+		SimpleCalendarItem sce = (SimpleCalendarItem) evt.getCalendarItem();
 		sce.setBeginDate(evt.getBeginDate());
 		sce.setEndDate(evt.getEndDate());
 		m.update(sce);

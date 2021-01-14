@@ -1,4 +1,4 @@
-/* AbstractCalendarEvent.java
+/* AbstractCalendarItem.java
 
 		Purpose:
 		
@@ -13,14 +13,14 @@ package org.zkoss.calendar.impl;
 
 import java.time.Instant;
 
-import org.zkoss.calendar.api.CalendarEvent;
+import org.zkoss.calendar.api.CalendarItem;
 
 /**
- * A skeletal implementation for {@link CalendarEvent}
+ * A skeletal implementation for {@link CalendarItem}
  * @author leon
  * @since 3.0.0
  */
-public abstract class AbstractCalendarEvent<T> implements CalendarEvent {
+public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	private String _title;
 	private String _content;
 	private String _headerColor;
@@ -29,7 +29,7 @@ public abstract class AbstractCalendarEvent<T> implements CalendarEvent {
 	private T _begin;
 	private T _end;
 
-	public AbstractCalendarEvent(String title, String content, String headerColor, String contentColor, boolean locked, T begin, T end) {
+	public AbstractCalendarItem(String title, String content, String headerColor, String contentColor, boolean locked, T begin, T end) {
 		this._title = title;
 		this._content = content;
 		this._headerColor = headerColor;
@@ -95,7 +95,7 @@ public abstract class AbstractCalendarEvent<T> implements CalendarEvent {
 
 	@Override
 	public String getZclass() {
-		return "z-calevent";
+		return "z-calitem";
 	}
 
 	@Override

@@ -14,7 +14,7 @@ package test;
 import java.util.Calendar;
 
 import org.zkoss.calendar.Calendars;
-import org.zkoss.calendar.impl.SimpleCalendarEvent;
+import org.zkoss.calendar.impl.SimpleCalendarItem;
 import org.zkoss.calendar.impl.SimpleCalendarModel;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
@@ -33,7 +33,7 @@ public class Cal71Controller extends SelectorComposer {
 		java.util.Calendar calendar  = java.util.Calendar.getInstance();
 
 		for (int i = 0; i < 100; i++) {
-			SimpleCalendarEvent event = new SimpleCalendarEvent();
+			SimpleCalendarItem event = new SimpleCalendarItem();
 			calendar.set(Calendar.HOUR_OF_DAY, 9);
 			calendar.set(Calendar.MINUTE, 30);
 			event.setBeginDate(calendar.getTime());

@@ -29,9 +29,9 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import org.zkoss.calendar.Calendars;
-import org.zkoss.calendar.api.CalendarEvent;
+import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.event.CalendarsEvent;
-import org.zkoss.calendar.impl.SimpleCalendarEvent;
+import org.zkoss.calendar.impl.SimpleCalendarItem;
 import org.zkoss.calendar.impl.SimpleCalendarModel;
 import org.zkoss.chart.Charts;
 import org.zkoss.chart.model.DefaultPieModel;
@@ -103,7 +103,7 @@ public class ZKCalendarDemoComposer extends SelectorComposer<Borderlayout> {
 		});
 		calendars.addEventListener("onDeleteEvent", new EventListener<Event>() {
 			public void onEvent(Event event) throws Exception {
-				cm.remove(((CalendarsEvent)event.getData()).getCalendarEvent());
+				cm.remove(((CalendarsEvent)event.getData()).getCalendarItem());
 				syncModel();
 			}
 		});
@@ -161,12 +161,12 @@ public class ZKCalendarDemoComposer extends SelectorComposer<Borderlayout> {
 		syncModel();
 	}
 	
-	@Listen("onEventTooltip = #calendars")
+	@Listen("onItemTooltip = #calendars")
 	public void showTooltip(CalendarsEvent event) {
-		tooltipMsg.setValue(event.getCalendarEvent().getContent());
+		tooltipMsg.setValue(event.getCalendarItem().getContent());
 	}
 	
-	@Listen("onEventCreate = #calendars")
+	@Listen("onItemCreate = #calendars")
 	public void createEvent(CalendarsEvent event) {
 		if (createOrEdit == null) {
 			Map<String, Object> args = new HashMap<String, Object>();
@@ -179,7 +179,7 @@ public class ZKCalendarDemoComposer extends SelectorComposer<Borderlayout> {
 		event.stopClearGhost();
 	}
 
-	@Listen("onEventEdit = #calendars")
+	@Listen("onItemEdit = #calendars")
 	public void editEvent(CalendarsEvent event) {
 		if (createOrEdit == null) {
 			Map<String, Object> args = new HashMap<String, Object>();
@@ -192,12 +192,12 @@ public class ZKCalendarDemoComposer extends SelectorComposer<Borderlayout> {
 		event.stopClearGhost();
 	}
 	
-	@Listen("onEventUpdate = #calendars")
+	@Listen("onItemUpdate = #calendars")
 	public void onUpdateEvent(CalendarsEvent event) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/d");
 		sdf.setTimeZone(calendars.getDefaultTimeZone());
 		StringBuffer sb = new StringBuffer("Update... from ");
-		sb.append(sdf.format(event.getCalendarEvent().getBeginDate()));
+		sb.append(sdf.format(event.getCalendarItem().getBeginDate()));
 		sb.append(" to ");
 		sb.append(sdf.format(event.getBeginDate()));
 		updateMsg.setValue(sb.toString());
@@ -209,7 +209,7 @@ public class ZKCalendarDemoComposer extends SelectorComposer<Borderlayout> {
 			left = event.getDesktopWidth() - 330;
 		updatePopup.open(left, top);
 		timer.start();
-		SimpleCalendarEvent ce = (SimpleCalendarEvent) event.getCalendarEvent();
+		SimpleCalendarItem ce = (SimpleCalendarItem) event.getCalendarItem();
 		ce.setBeginDate(event.getBeginDate());
 		ce.setEndDate(event.getEndDate());
 		cm.update(ce);
@@ -261,7 +261,7 @@ public class ZKCalendarDemoComposer extends SelectorComposer<Borderlayout> {
 		cm = new SimpleCalendarModel();
 
 		for (int i = 0, len = evts.length; i < len; i++) {
-			SimpleCalendarEvent sce = new SimpleCalendarEvent();
+			SimpleCalendarItem sce = new SimpleCalendarItem();
 			try {
 				sce.setBeginDate(dataSDF.parse(evts[i][0]));
 				sce.setEndDate(dataSDF.parse(evts[i][1]));
@@ -279,10 +279,10 @@ public class ZKCalendarDemoComposer extends SelectorComposer<Borderlayout> {
 	private void syncModel() {
 		if (!hasPE)
 			return;
-		List<CalendarEvent> list = cm.get(calendars.getBeginDate(), calendars.getEndDate(), null);
+		List<CalendarItem> list = cm.get(calendars.getBeginDate(), calendars.getEndDate(), null);
 		double red = 0, blue = 0, green = 0, purple = 0, khaki = 0;
 		int size = list.size();
-		for (Iterator<CalendarEvent> it = list.iterator(); it.hasNext();) {
+		for (Iterator<CalendarItem> it = list.iterator(); it.hasNext();) {
 			String color = it.next().getContentColor();
 			if ("#D96666".equals(color))
 				red += 1;

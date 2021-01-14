@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.zkoss.calendar.api.CalendarEvent;
+import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.api.CalendarModel;
 import org.zkoss.calendar.event.CalendarDataEvent;
 import org.zkoss.calendar.event.CalendarDataListener;
@@ -40,7 +40,7 @@ abstract public class AbstractCalendarModel implements CalendarModel, Serializab
 	private transient List<CalendarDataListener> _listeners = new LinkedList<CalendarDataListener>();
 		
 	/** 
-	 * @deprecated As of release 2.0-RC, replaced with {@link #fireEvent(int type, CalendarEvent e)}
+	 * @deprecated As of release 2.0-RC, replaced with {@link #fireEvent(int type, CalendarItem e)}
 	 * Fires a {@link CalendarDataEvent} for all registered listener
 	 * (thru {@link #addCalendarDataListener}.
 	 *
@@ -54,11 +54,11 @@ abstract public class AbstractCalendarModel implements CalendarModel, Serializab
 	 *
 	 * @see #fireEvent(int, Date, Date, TimeZone)
 	 */
-	protected void fireEvent(int type, CalendarEvent e) {
+	protected void fireEvent(int type, CalendarItem e) {
 		fireEvent(type, e, null);
 	}
 	/** 
-	 * @deprecated As of release 2.0-RC, replaced with {@link #fireEvent(int type, CalendarEvent e, TimeZone timezone)}
+	 * @deprecated As of release 2.0-RC, replaced with {@link #fireEvent(int type, CalendarItem e, TimeZone timezone)}
 	 * Fires a {@link CalendarDataEvent} for all registered listener
 	 * (thru {@link #addCalendarDataListener}.
 	 *
@@ -74,7 +74,7 @@ abstract public class AbstractCalendarModel implements CalendarModel, Serializab
 	 *
 	 * <p>Note: you can invoke this method only in an event listener.
 	 */
-	protected void fireEvent(int type, CalendarEvent e, TimeZone timezone) {
+	protected void fireEvent(int type, CalendarItem e, TimeZone timezone) {
 		final CalendarDataEvent evt = new CalendarDataEvent(this, type, e, timezone);
 		for (Iterator<CalendarDataListener> it = _listeners.iterator(); it.hasNext();)
 			it.next().onChange(evt);

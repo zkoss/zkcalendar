@@ -32,7 +32,7 @@ public class Util {
 	private static final int ONE_HOUR = 60 * 60 * 1000;
 	private static final SimpleDateFormat _sdfKey = new SimpleDateFormat("yyyy/MM/dd");
 	
-	public static String createEventTitle(DateFormatter df, Locale locale, TimeZone timezone, CalendarEvent ce) {
+	public static String createItemTitle(DateFormatter df, Locale locale, TimeZone timezone, CalendarItem ce) {
 		if (df == null) return ce.getTitle();
 
 		Date begin = ce.getBeginDate();
@@ -108,16 +108,16 @@ public class Util {
 		return result;
 	}
 		
-	public static String encloseEventList(Calendars calendars, Collection<CalendarEvent> collection) {
+	public static String encloseItemList(Calendars calendars, Collection<CalendarItem> collection) {
 		final StringBuffer sb = new StringBuffer().append('[');
 		Date beginDate = calendars.getBeginDate();
 		_sdfKey.setTimeZone(calendars.getDefaultTimeZone());
-		for (Iterator<CalendarEvent> it = collection.iterator(); it.hasNext();) {
-			CalendarEvent ce = it.next();
+		for (Iterator<CalendarItem> it = collection.iterator(); it.hasNext();) {
+			CalendarItem ce = it.next();
 			String key = ce.getBeginDate().before(beginDate) ?
-					getEventKey(beginDate): 
-					getEventKey(ce.getBeginDate());
-			appendEventByJSON(sb, calendars, key, ce);
+					getItemKey(beginDate):
+					getItemKey(ce.getBeginDate());
+			appendItemByJSON(sb, calendars, key, ce);
 		}		
 		int len = sb.length();
 		collection.clear();
@@ -133,15 +133,15 @@ public class Util {
 		return sb.replace(len - 2, len, "]").toString();
 	}
 		
-	public static String encloseEventMap(Calendars calendars, Map<String, List<CalendarEvent>> map) {
+	public static String encloseItemMap(Calendars calendars, Map<String, List<CalendarItem>> map) {
 		final StringBuffer sb = new StringBuffer().append('[');
 		int len;
-		for (Iterator<Entry<String, List<CalendarEvent>>> it = map.entrySet().iterator(); it.hasNext();) {
-			Entry<String, List<CalendarEvent>> entry = it.next();
+		for (Iterator<Entry<String, List<CalendarItem>>> it = map.entrySet().iterator(); it.hasNext();) {
+			Entry<String, List<CalendarItem>> entry = it.next();
 			sb.append('[');
 			String key = (String) entry.getKey();
-			for (Iterator<CalendarEvent> it2 = entry.getValue().iterator(); it2.hasNext();) {
-				appendEventByJSON(sb, calendars, key, (CalendarEvent) it2.next());
+			for (Iterator<CalendarItem> it2 = entry.getValue().iterator(); it2.hasNext();) {
+				appendItemByJSON(sb, calendars, key, (CalendarItem) it2.next());
 			}
 
 			len = sb.length();
@@ -155,14 +155,14 @@ public class Util {
 		return sb.append(']').toString();
 	}
 
-	private static void appendEventByJSON(StringBuffer sb, Calendars calendars, String key, CalendarEvent ce) {
+	private static void appendItemByJSON(StringBuffer sb, Calendars calendars, String key, CalendarItem ce) {
 		DateFormatter df = calendars.getDateFormatter();
 		Locale locale = Locales.getCurrent();
 		TimeZone timezone = calendars.getDefaultTimeZone();
-		String title = Util.createEventTitle(df, locale, timezone, ce);
+		String title = Util.createItemTitle(df, locale, timezone, ce);
 		
 		JSONObject json = new JSONObject();
-		json.put("id", calendars.getCalendarEventId(ce));
+		json.put("id", calendars.getCalendarItemId(ce));
 		json.put("key", key);
 		json.put("title", calendars.isEscapeXML() ? escapeXML(title) : title); //ZKCAL-33: title should also escapeXML
 		json.put("headerColor", ce.getHeaderColor());
@@ -206,7 +206,7 @@ public class Util {
 		return new Date(date.getTime() - (tz.inDaylightTime(date) ? tz.getDSTSavings(): 0));
 	}
 	
-	private static String getEventKey(Date date) {
+	private static String getItemKey(Date date) {
 		return _sdfKey.format(date);
 	}
 		

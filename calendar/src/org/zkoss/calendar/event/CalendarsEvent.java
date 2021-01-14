@@ -1,4 +1,4 @@
-/* CalendarEvent.java
+/* CalendarsEvent.java
 
 {{IS_NOTE
 	Purpose:
@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import org.zkoss.calendar.Calendars;
-import org.zkoss.calendar.api.CalendarEvent;
+import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.impl.Util;
 import org.zkoss.json.JSONArray;
 import org.zkoss.zk.au.AuRequest;
@@ -33,7 +33,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 
 /**
- * The event is used for Calendars when user create/update/edit the calendar event.
+ * The event is used for Calendars when user create/update/edit the calendar item.
  * <p> The event is able to stop or clear the dragging ghost from server to client,
  *  that is, when application developer doesn't invoke the {@link #stopClearGhost()},
  *  the dragging ghost will be cleared by default. Otherwise, application developer
@@ -44,23 +44,23 @@ import org.zkoss.zk.ui.util.Clients;
 public class CalendarsEvent extends Event {
 	private static final long serialVersionUID = 20090331171731L;
 
-	public static final String ON_EVENT_CREATE = "onEventCreate";
-	public static final String ON_EVENT_EDIT = "onEventEdit";
-	public static final String ON_EVENT_UPDATE = "onEventUpdate";
+	public static final String ON_ITEM_CREATE = "onItemCreate";
+	public static final String ON_ITEM_EDIT = "onItemEdit";
+	public static final String ON_ITEM_UPDATE = "onItemUpdate";
 	public static final String ON_DAY_CLICK = "onDayClick";
 	public static final String ON_WEEK_CLICK = "onWeekClick";
 	//since 2.1.5
-	public static final String ON_EVENT_TOOLTIP = "onEventTooltip";
+	public static final String ON_ITEM_TOOLTIP = "onItemTooltip";
 	
 	private Date _beginDate;
 
 	private Date _endDate;
 
-	private CalendarEvent _ce;
+	private CalendarItem _ce;
 
 	private final int _x, _y, _dtwd, _dthgh;
 
-	public CalendarsEvent(String name, Component target, CalendarEvent ce,
+	public CalendarsEvent(String name, Component target, CalendarItem ce,
 			Date beginDate, Date endDate, int x, int y, int dtwd, int dthgh) {
 		super(name, target);
 		_ce = ce;
@@ -82,7 +82,7 @@ public class CalendarsEvent extends Event {
 		Date eventBegin = Util.fixDSTTime(tz, new Date(getLong(data.get(0))));
 		Date eventEnd = Util.fixDSTTime(tz, new Date(getLong(data.get(1))));
 		
-		return new CalendarsEvent(ON_EVENT_CREATE, cmp, null,
+		return new CalendarsEvent(ON_ITEM_CREATE, cmp, null,
 				eventBegin, eventEnd,
 				getInt(data.get(2)), getInt(data.get(3)),
 				getInt(data.get(4)),getInt(data.get(5)));
@@ -92,11 +92,11 @@ public class CalendarsEvent extends Event {
 		final JSONArray data = (JSONArray) request.getData().get("data");
 		final Calendars cmp = verifyEvent(request, data, 5);
 		
-		CalendarEvent ce = cmp.getCalendarEventById(String.valueOf(data.get(0)));
+		CalendarItem ce = cmp.getCalendarItemById(String.valueOf(data.get(0)));
 		
 		if (ce == null) return null;
 		
-		return new CalendarsEvent(ON_EVENT_EDIT, cmp, ce, null, null,
+		return new CalendarsEvent(ON_ITEM_EDIT, cmp, ce, null, null,
 				getInt(data.get(1)), getInt(data.get(2)),
 				getInt(data.get(3)), getInt(data.get(4)));
 	}	
@@ -105,14 +105,14 @@ public class CalendarsEvent extends Event {
 		final JSONArray data = (JSONArray) request.getData().get("data");
 		final Calendars cmp = verifyEvent(request, data, 7);
 		
-		CalendarEvent ce = cmp.getCalendarEventById(String.valueOf(data.get(0)));
+		CalendarItem ce = cmp.getCalendarItemById(String.valueOf(data.get(0)));
 		
 		if (ce == null) return null;
 		TimeZone tz = cmp.getDefaultTimeZone();
 		Date eventBegin = Util.fixDSTTime(tz, new Date(getLong(data.get(1))));
 		Date eventEnd = Util.fixDSTTime(tz, new Date(getLong(data.get(2))));
 
-		return new CalendarsEvent(ON_EVENT_UPDATE, cmp, ce, 
+		return new CalendarsEvent(ON_ITEM_UPDATE, cmp, ce,
 				eventBegin, eventEnd,
 				getInt(data.get(3)), getInt(data.get(4)),
 				getInt(data.get(5)),getInt(data.get(6)));
@@ -129,12 +129,12 @@ public class CalendarsEvent extends Event {
 		final JSONArray data = (JSONArray) request.getData().get("data");
 		final Calendars cmp = verifyEvent(request, data, 5);
 		
-		CalendarEvent ce = cmp.getCalendarEventById(String.valueOf(data.get(0)));
+		CalendarItem ce = cmp.getCalendarItemById(String.valueOf(data.get(0)));
 		
 		if (ce == null)
 			return null;
 		
-		return new CalendarsEvent(ON_EVENT_TOOLTIP, cmp, ce, null, null,
+		return new CalendarsEvent(ON_ITEM_TOOLTIP, cmp, ce, null, null,
 				getInt(data.get(1)), getInt(data.get(2)),
 				getInt(data.get(3)), getInt(data.get(4)));
 	}
@@ -177,23 +177,23 @@ public class CalendarsEvent extends Event {
 	}
 	
 	/**
-	 * Returns the update beginning date. If the event name is onEventEdit, null is assumed.
+	 * Returns the update beginning date. If the event name is onItemEdit, null is assumed.
 	 */
 	public Date getBeginDate() {
 		return _beginDate;
 	}
 
 	/**
-	 * Returns the update end date. If the event name is onEventEdit, null is assumed.
+	 * Returns the update end date. If the event name is onItemEdit, null is assumed.
 	 */
 	public Date getEndDate() {
 		return _endDate;
 	}
 
 	/**
-	 * Returns the calendar event. If the event name is onEventCreate, null is assumed.
+	 * Returns the calendar item. If the event name is onItemCreate, null is assumed.
 	 */
-	public CalendarEvent getCalendarEvent() {
+	public CalendarItem getCalendarItem() {
 		return _ce;
 	}
 

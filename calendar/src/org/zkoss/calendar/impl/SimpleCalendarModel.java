@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.TimeZone;
 
 import org.zkoss.calendar.Calendars;
-import org.zkoss.calendar.api.CalendarEvent;
+import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.api.CalendarModel;
 import org.zkoss.calendar.api.RenderContext;
 import org.zkoss.calendar.event.CalendarDataEvent;
@@ -43,7 +43,7 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 		Serializable {
 	private static final long serialVersionUID = 20090320175712L;
 
-	protected List<CalendarEvent> _list;
+	protected List<CalendarItem> _list;
 
 	/**
 	 * Constructor
@@ -61,29 +61,29 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * since {@link Calendars} is not smart enough to handle it.
 	 * Instead, modify it thru this object.
 	 */
-	public SimpleCalendarModel(List<CalendarEvent> list, boolean live) {
-		_list = live ? list: new ArrayList<CalendarEvent>(list);
+	public SimpleCalendarModel(List<CalendarItem> list, boolean live) {
+		_list = live ? list: new ArrayList<CalendarItem>(list);
 	}
 
 	/**
 	 * Constructor.
 	 */
 	public SimpleCalendarModel() {
-		_list = new ArrayList<CalendarEvent>();
+		_list = new ArrayList<CalendarItem>();
 	}
 
 	/**
 	 * Constructor.
 	 * It makes a copy of the specified collection (i.e., not live).
 	 */
-	public SimpleCalendarModel(Collection<CalendarEvent> c) {
-		_list = new ArrayList<CalendarEvent>(c);
+	public SimpleCalendarModel(Collection<CalendarItem> c) {
+		_list = new ArrayList<CalendarItem>(c);
 	}
 	/**
 	 * Constructor.
 	 * It makes a copy of the specified array (i.e., not live).
 	 */
-	public SimpleCalendarModel(CalendarEvent[] array) {
+	public SimpleCalendarModel(CalendarItem[] array) {
 		_list = Arrays.asList(array);
 	}
 
@@ -92,33 +92,33 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * @param initialCapacity the initial capacity for this SimpleCalendarModel.
 	 */
 	public SimpleCalendarModel(int initialCapacity) {
-		_list = new ArrayList<CalendarEvent>(initialCapacity);
+		_list = new ArrayList<CalendarItem>(initialCapacity);
 	}
 
 	/**
-	 * Adds the calendar event to the specified index of the list.
+	 * Adds the calendar item to the specified index of the list.
 	 */
-	public void add(int index, CalendarEvent e) {
-		if (e == null) throw new NullPointerException("CalendarEvent cannot be null!");
+	public void add(int index, CalendarItem e) {
+		if (e == null) throw new NullPointerException("CalendarItem cannot be null!");
  		_list.add(index, e);
  		fireEvent(CalendarDataEvent.INTERVAL_ADDED, e);
  	}
 
 	/**
-	 * Adds the calendar event to the list.
+	 * Adds the calendar item to the list.
 	 */
-	public boolean add(CalendarEvent e) {
-		if (e == null) throw new NullPointerException("CalendarEvent cannot be null!");
+	public boolean add(CalendarItem e) {
+		if (e == null) throw new NullPointerException("CalendarItem cannot be null!");
 		boolean ret = _list.add(e);
  		fireEvent(CalendarDataEvent.INTERVAL_ADDED, e);
 		return ret;
 	}
 
 	/**
-	 * Update the calendar event to the list.
+	 * Update the calendar item to the list.
 	 */
-	public boolean update(CalendarEvent e) {
-		if (e == null) throw new NullPointerException("CalendarEvent cannot be null!");
+	public boolean update(CalendarItem e) {
+		if (e == null) throw new NullPointerException("CalendarItem cannot be null!");
 		fireEvent(CalendarDataEvent.CONTENTS_CHANGED, e);
 		boolean ret = _list.remove(e);
 		if(!ret) return ret;
@@ -126,10 +126,10 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 		return ret;
 	}
 	/**
-	 * Removes the calendar event from the specified index.
+	 * Removes the calendar item from the specified index.
 	 */
-	public CalendarEvent remove(int index) {
-		CalendarEvent ret = (CalendarEvent)_list.remove(index);
+	public CalendarItem remove(int index) {
+		CalendarItem ret = (CalendarItem)_list.remove(index);
 		fireEvent(CalendarDataEvent.INTERVAL_REMOVED, ret);
 		return ret;
 	}
@@ -138,15 +138,15 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * Returns the index of the first occurrence of the specified element
      * in this list.
 	 */
-	public int indexOf(CalendarEvent elem) {
+	public int indexOf(CalendarItem elem) {
 		return _list.indexOf(elem);
 	}
 	
 	/**
-	 * Removes from the specified calendar event.
+	 * Removes from the specified calendar item.
 	 */
-	public boolean remove(CalendarEvent e) {
-		if (e == null) throw new NullPointerException("CalendarEvent cannot be null!");
+	public boolean remove(CalendarItem e) {
+		if (e == null) throw new NullPointerException("CalendarItem cannot be null!");
 		int index = indexOf(e);
 		if (index >= 0) {
 			remove(index);
@@ -172,19 +172,19 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 		return _list.size();
 	}
 	/**
-	 * Returns the list that must be a list of {@link CalendarEvent} type.
+	 * Returns the list that must be a list of {@link CalendarItem} type.
 	 * 
 	 * @param beginDate the begin date
 	 * @param endDate the end date
 	 * @param rc a RenderContext encapsulates the information needed for Calendars.
 	 */
-	public List<CalendarEvent> get(Date beginDate, Date endDate, RenderContext rc) {
-		List<CalendarEvent> list = new LinkedList<CalendarEvent>();
+	public List<CalendarItem> get(Date beginDate, Date endDate, RenderContext rc) {
+		List<CalendarItem> list = new LinkedList<CalendarItem>();
 		long begin = beginDate.getTime();
 		long end = endDate.getTime();
 		
-		for (Iterator<CalendarEvent> it = _list.iterator(); it.hasNext();) {
-			CalendarEvent ce = (CalendarEvent) it.next();
+		for (Iterator<CalendarItem> it = _list.iterator(); it.hasNext();) {
+			CalendarItem ce = (CalendarItem) it.next();
 			long b = ce.getBeginDate().getTime();
 			long e = ce.getEndDate().getTime();
 

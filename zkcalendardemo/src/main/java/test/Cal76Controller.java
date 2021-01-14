@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.event.CalendarsEvent;
-import org.zkoss.calendar.impl.SimpleCalendarEvent;
+import org.zkoss.calendar.impl.SimpleCalendarItem;
 import org.zkoss.calendar.impl.SimpleCalendarModel;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Page;
@@ -50,7 +50,7 @@ public class Cal76Controller extends SelectorComposer {
 	}
 
 	private void add(){
-		SimpleCalendarEvent event1 = new SimpleCalendarEvent();
+		SimpleCalendarItem event1 = new SimpleCalendarItem();
 		java.util.Calendar calendar  = java.util.Calendar.getInstance();
 		calendar.set(Calendar.HOUR_OF_DAY, 8);
 		calendar.set(Calendar.MINUTE, 40);
@@ -61,7 +61,7 @@ public class Cal76Controller extends SelectorComposer {
 		event1.setContent("event1");
 		model.add(event1);
 
-		SimpleCalendarEvent event2 = new SimpleCalendarEvent();
+		SimpleCalendarItem event2 = new SimpleCalendarItem();
 		calendar.set(Calendar.HOUR_OF_DAY, 10);
 		calendar.set(Calendar.MINUTE, 0);
 		event2.setBeginDate(calendar.getTime());
@@ -71,7 +71,7 @@ public class Cal76Controller extends SelectorComposer {
 		event2.setContent("event2");
 		model.add(event2);
 
-		SimpleCalendarEvent event3 = new SimpleCalendarEvent();
+		SimpleCalendarItem event3 = new SimpleCalendarItem();
 		calendar.set(Calendar.HOUR_OF_DAY, 12);
 		calendar.set(Calendar.MINUTE, 30);
 		event3.setBeginDate(calendar.getTime());
@@ -143,7 +143,7 @@ public class Cal76Controller extends SelectorComposer {
 		model = new SimpleCalendarModel();
 
 		for (int i = 0; i < evts.length; i++) {
-			SimpleCalendarEvent sce = new SimpleCalendarEvent();
+			SimpleCalendarItem sce = new SimpleCalendarItem();
 			try {
 				sce.setBeginDate(dataSDF.parse(evts[i][0]));
 				sce.setEndDate(dataSDF.parse(evts[i][1]));
@@ -159,9 +159,9 @@ public class Cal76Controller extends SelectorComposer {
 		page.setAttribute("model", model);
 	}
 
-	@Listen("onEventUpdate = #calendars")
+	@Listen("onItemUpdate = #calendars")
 	public void onUpdateEvent(CalendarsEvent event) {
-		SimpleCalendarEvent ce = (SimpleCalendarEvent) event.getCalendarEvent();
+		SimpleCalendarItem ce = (SimpleCalendarItem) event.getCalendarItem();
 		ce.setBeginDate(event.getBeginDate());
 		ce.setEndDate(event.getEndDate());
 		model.update(ce);

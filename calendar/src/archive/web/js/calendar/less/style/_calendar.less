@@ -17,7 +17,7 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	zoom: 1;
 }
 
-.z-calendars-week-body .z-calevent-body {
+.z-calendars-week-body .z-calitem-body {
 	border: 1px solid @bodyColor;
 }
 
@@ -232,7 +232,7 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	height: 300px;
 }
 .z-calendars-month-cnt,.z-calendars-daylong-cnt {
-	& .z-calevent-body {
+	& .z-calitem-body {
 		margin: 0 @basePadding;
 	}
 }
@@ -387,41 +387,41 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	}
 }
 // Calendar Event
-.z-calevent {
+.z-calitem {
 	color: @invertFontColor;
 	overflow: hidden;
 	cursor: pointer;
 }
 
-.z-calevent-body {
+.z-calitem-body {
 	border-radius: @borderRadius;
 	overflow: hidden;
 	zoom:1;
 }
-.z-calevent-body.z-calevent-left-arrow {
+.z-calitem-body.z-calitem-left-arrow {
 	margin-left: 0;
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
 }
-.z-calevent-body.z-calevent-left-arrow .z-calevent-cnt {
+.z-calitem-body.z-calitem-left-arrow .z-calitem-cnt {
 	padding-left: 10px;
 }
-.z-calevent-body.z-calevent-right-arrow {
+.z-calitem-body.z-calitem-right-arrow {
 	margin-right: 0;
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
 }
-.z-calevent-inner dt,
-.z-calevent-inner dd,
-.z-calevent-inner dl {
+.z-calitem-inner dt,
+.z-calitem-inner dd,
+.z-calitem-inner dl {
 	margin: 0;
 	overflow: hidden;
 	text-align: left;
 }
-.z-calevent-inner dl {
+.z-calitem-inner dl {
 	background: @eventColor;
 }
-.z-calevent-header {
+.z-calitem-header {
 	background: @eventColor;
 	font-size: @fontSizeL;
 	font-family: @fontFamilyC;
@@ -430,7 +430,7 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	white-space: nowrap;
 	padding: 0 @basePadding;
 }
-.z-calevent-inner .z-calevent-cnt {
+.z-calitem-inner .z-calitem-cnt {
 	background: @eventColor;
 	font-size: @fontSizeL;
 	font-family: @fontFamilyC;
@@ -439,7 +439,7 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	line-height: 20px;
 	color: @invertFontColor;
 }
-.z-calevent-resizer {
+.z-calitem-resizer {
 	bottom: 2px;
 	cursor: s-resize;
 	height: 7px;
@@ -457,78 +457,78 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 		width: 10px;
 	}
 }
-.z-calendars-daylong-evt .z-calevent-inner .z-calevent-left-arrow,
-.z-calevent-daylong-month .z-calevent-inner .z-calevent-left-arrow,
-.z-calevent-left-more-faker .z-calevent-inner .z-calevent-left-arrow {
+.z-calendars-daylong-evt .z-calitem-inner .z-calitem-left-arrow,
+.z-calitem-daylong-month .z-calitem-inner .z-calitem-left-arrow,
+.z-calitem-left-more-faker .z-calitem-inner .z-calitem-left-arrow {
 	margin-left: 0;
 	zoom: 1;
 }
-.z-calendars-daylong-evt .z-calevent-inner .z-calevent-right-arrow,
-.z-calevent-daylong-month .z-calevent-inner .z-calevent-right-arrow,
-.z-calevent-right-more-faker .z-calevent-inner .z-calevent-right-arrow {
+.z-calendars-daylong-evt .z-calitem-inner .z-calitem-right-arrow,
+.z-calitem-daylong-month .z-calitem-inner .z-calitem-right-arrow,
+.z-calitem-right-more-faker .z-calitem-inner .z-calitem-right-arrow {
 	margin-right: 0;
 	zoom: 1;
 }
-.z-calendars-daylong-evt .z-calevent-text,
-.z-calevent-daylong-month .z-calevent-text,
-.z-calpp .z-calevent-text,
-.z-calpp-month .z-calevent-text,
-.z-calendars-evt-faker-dd .z-calevent-text {
+.z-calendars-daylong-evt .z-calitem-text,
+.z-calitem-daylong-month .z-calitem-text,
+.z-calpp .z-calitem-text,
+.z-calpp-month .z-calitem-text,
+.z-calendars-evt-faker-dd .z-calitem-text {
 	height: 20px;
 	width: 100%;
 	white-space: nowrap;
 	overflow: hidden;
 }
-.z-calevent-daylong-month .z-calevent-text {
+.z-calitem-daylong-month .z-calitem-text {
 	height: 20px;
 	line-height: 20px;
 }
-.z-calendars-week-day-cnt .z-calevent {
+.z-calendars-week-day-cnt .z-calitem {
 	width: 100%;
 	position: absolute;
 }
-.z-calendars-daylong-evt .z-calevent-cnt,
-.z-calevent-daylong-month .z-calevent-cnt {
+.z-calendars-daylong-evt .z-calitem-cnt,
+.z-calitem-daylong-month .z-calitem-cnt {
 	padding: 0 @basePadding;
 	white-space: nowrap;
 	cursor: pointer;
 	overflow: hidden;
 }
-.z-calevent-daylong-month .z-calevent-cnt {
+.z-calitem-daylong-month .z-calitem-cnt {
 	padding: 0 @basePadding;
 }
 
-.z-calevent-daylong-month .z-calevent-t3,
-.z-calevent-daylong-month .z-calevent-b3,
-.z-calpp-month-evt-cnt .z-calevent-t3,
-.z-calpp-month-evt-cnt .z-calevent-b3 {
+.z-calitem-daylong-month .z-calitem-t3,
+.z-calitem-daylong-month .z-calitem-b3,
+.z-calpp-month-evt-cnt .z-calitem-t3,
+.z-calpp-month-evt-cnt .z-calitem-b3 {
 	background: @eventColor;
 }
 
-.z-calevent-daylong-month .z-calevent-inner,
-.z-calpp-month-evt-cnt .z-calevent-inner {
+.z-calitem-daylong-month .z-calitem-inner,
+.z-calpp-month-evt-cnt .z-calitem-inner {
 	border-left-color: @eventColor;
 	border-right-color: @eventColor;
 }
-.z-calevent-month {
+.z-calitem-month {
 	white-space: nowrap;
 	zoom: 1;
 	padding: 0 @basePadding;
 	line-height: 18px;
 }
-.z-calevent-month .z-calevent-inner {
+.z-calitem-month .z-calitem-inner {
 	background: @eventColor;
 	border-radius: @borderRadius;
 	overflow: hidden;
 }
-.z-calevent-month .z-calevent-header {
+.z-calitem-month .z-calitem-header {
 	background: transparent;
 	color: @invertFontColor;
 	font-size: @fontSizeL;
 	font-family: @fontFamilyC;
 	white-space: nowrap;
 }
-.z-calevent-month .z-calevent-cnt {
+.z-calitem-month .z-calitem-cnt {
 	background: transparent;
 	color: @invertFontColor;
 	font-size: @fontSizeL;
@@ -605,7 +605,7 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 			vertical-align: top;
 			position: relative;
 
-			& .z-calevent-left-more-faker {
+			& .z-calitem-left-more-faker {
 				position: absolute;
 				left: 0px;
 				height: 20px;
@@ -622,7 +622,7 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 			vertical-align: top;
 			position: relative;
 
-			& .z-calevent-right-more-faker {
+			& .z-calitem-right-more-faker {
 				position: absolute;
 				right: 0px;
 				height: 20px;
@@ -636,10 +636,10 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 		&-m {
 			vertical-align: top;
 			padding: 1px 0 0;
-			.z-calevent-month {
+			.z-calitem-month {
 				padding: 0;
 			}
-			.z-calevent-text {
+			.z-calitem-text {
 				padding: 0 @basePadding;
 			}
 		}
@@ -653,31 +653,31 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 		}
 	}
 	// popup override
-	& .z-calevent-body.z-calevent-left-arrow .z-calevent-cnt {
+	& .z-calitem-body.z-calitem-left-arrow .z-calitem-cnt {
 		padding-left: @basePadding;
 	}
 }
 
-.z-calevent-left-more-faker,
-.z-calevent-right-more-faker {
+.z-calitem-left-more-faker,
+.z-calitem-right-more-faker {
 	cursor: pointer;
 }
-.z-calpp-evt-faker .z-calevent-left-arrow-icon,
-.z-calpp-evt-faker .z-calevent-right-arrow-icon,
-.z-calpp-month-evt-faker .z-calevent-left-arrow-icon,
-.z-calpp-month-evt-faker .z-calevent-right-arrow-icon {
+.z-calpp-evt-faker .z-calitem-left-arrow-icon,
+.z-calpp-evt-faker .z-calitem-right-arrow-icon,
+.z-calpp-month-evt-faker .z-calitem-left-arrow-icon,
+.z-calpp-month-evt-faker .z-calitem-right-arrow-icon {
 	display: none;
 }
-.z-calpp-evt-faker .z-calevent-inner .z-calevent-left-arrow,
-.z-calpp-evt-faker .z-calevent-inner .z-calevent-right-arrow,
-.z-calpp-month-evt-faker .z-calevent-inner .z-calevent-left-arrow,
-.z-calpp-month-evt-faker .z-calevent-inner .z-calevent-right-arrow {
+.z-calpp-evt-faker .z-calitem-inner .z-calitem-left-arrow,
+.z-calpp-evt-faker .z-calitem-inner .z-calitem-right-arrow,
+.z-calpp-month-evt-faker .z-calitem-inner .z-calitem-left-arrow,
+.z-calpp-month-evt-faker .z-calitem-inner .z-calitem-right-arrow {
 	padding: 0 1px;
 }
-.z-calevent-left-more-faker .z-calevent-text {
+.z-calitem-left-more-faker .z-calitem-text {
 	text-align: right;
 }
-.z-calevent-right-more-faker .z-calevent-text {
+.z-calitem-right-more-faker .z-calitem-text {
 	text-align: left;
 }
 
@@ -714,11 +714,11 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	left: 0;
 	z-index: 28; // less than zkau.initZIndex
 }
-.z-calendars-evt-faker-dd .z-calevent-inner .z-calevent-left-arrow {
+.z-calendars-evt-faker-dd .z-calitem-inner .z-calitem-left-arrow {
 	padding-left: 10px;
 	zoom: 1;
 }
-.z-calendars-evt-faker-dd .z-calevent-inner .z-calevent-right-arrow {
+.z-calendars-evt-faker-dd .z-calitem-inner .z-calitem-right-arrow {
 	padding-right: 7px;
 	zoom: 1;
 }

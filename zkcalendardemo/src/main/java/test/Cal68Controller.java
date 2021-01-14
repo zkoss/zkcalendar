@@ -2,20 +2,16 @@ package test;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.event.CalendarsEvent;
-import org.zkoss.calendar.impl.SimpleCalendarEvent;
+import org.zkoss.calendar.impl.SimpleCalendarItem;
 import org.zkoss.calendar.impl.SimpleCalendarModel;
 import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
-import org.zkoss.zul.Textbox;
 
 
 public class Cal68Controller extends SelectorComposer<Component> {
@@ -41,7 +37,7 @@ public class Cal68Controller extends SelectorComposer<Component> {
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
 		calendarModel = new SimpleCalendarModel();
-		SimpleCalendarEvent calEvent = new SimpleCalendarEvent();
+		SimpleCalendarItem calEvent = new SimpleCalendarItem();
 		calEvent.setBeginDate(getDate("2016/11/01 13:00"));
 		calEvent.setEndDate(getDate("2016/11/01 18:00"));
 		calEvent.setTitle("zkcal issue");
@@ -54,9 +50,9 @@ public class Cal68Controller extends SelectorComposer<Component> {
 	
 	
 	//listen to the calendar-update of event data, usually send when user drag the event data 
-	@Listen("onEventUpdate = #calendars")
+	@Listen("onItemUpdate = #calendars")
 	public void updateEvent(CalendarsEvent event) {
-		SimpleCalendarEvent data = (SimpleCalendarEvent) event.getCalendarEvent();
+		SimpleCalendarItem data = (SimpleCalendarItem) event.getCalendarItem();
 		data.setBeginDate(event.getBeginDate());
 		data.setEndDate(event.getEndDate());
 		calendarModel.update(data);

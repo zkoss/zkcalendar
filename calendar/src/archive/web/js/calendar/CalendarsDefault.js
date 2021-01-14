@@ -14,19 +14,19 @@ it will be useful, but WITHOUT ANY WARRANTY.
  */
 (function () {
 	function _getHightOffsPercent(date, timeslots) {
-		var timeslotTime = 60/timeslots,
-			bdTimeslot = date.getMinutes()%timeslotTime;
+		var timeslotTime = 60 / timeslots,
+			bdTimeslot = date.getMinutes() % timeslotTime;
 		
 		if (!bdTimeslot) return 0;
-		return bdTimeslot/timeslotTime;
+		return bdTimeslot / timeslotTime;
 	}
 	
-	function _setEvtWgtHeight(wgt, node, id, height) {
-		var body = jq(node).find('#'+id+'-body')[0],
+	function _setItemWgtHeight(wgt, node, id, height) {
+		var body = jq(node).find('#' + id + '-body')[0],
 			inner = body.firstChild.firstChild;
 		
 		for (var child = jq(node).children()[0]; child; child = child.nextSibling) {
-			if (wgt.isLegalChild(child)) 
+			if (wgt.isLegalChild(child))
 				height -= child.offsetHeight;
 		}
 		height = zk(body).revisedHeight(height);
@@ -36,27 +36,27 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	}
 
 	function _getSlotCount(bd, ed, timeslots) {
-		var timeslotTime = 60/timeslots,
-			bdHour = (typeof bd) == "number" ? bd: bd.getHours(),
-			edHour = (typeof ed) == "number" ? ed: ed.getHours(),
-			bdMinu = (typeof bd) == "number" ? 0: bd.getMinutes(),
-			edMinu = (typeof ed) == "number" ? 0: ed.getMinutes();
-		return (edHour - bdHour) * timeslots + 
-						(edMinu - bdMinu)/timeslotTime;
+		var timeslotTime = 60 / timeslots,
+			bdHour = (typeof bd) == 'number' ? bd : bd.getHours(),
+			edHour = (typeof ed) == 'number' ? ed : ed.getHours(),
+			bdMinu = (typeof bd) == 'number' ? 0 : bd.getMinutes(),
+			edMinu = (typeof ed) == 'number' ? 0 : ed.getMinutes();
+		return (edHour - bdHour) * timeslots +
+						(edMinu - bdMinu) / timeslotTime;
 	}
 
 	function _updateCntHeight(wgt) {
-		var $cnt = jq(wgt.$n("cnt")),
+		var $cnt = jq(wgt.$n('cnt')),
 			timeslots = wgt._timeslots,
 			hourCount = wgt._et - wgt._bt,
 			$firstSlot = $cnt.find('.z-calendars-hour-sep')[0], //fine tune if user customize height by CSS
-			slotHeight = $firstSlot ? 
+			slotHeight = $firstSlot ?
 				($firstSlot.offsetHeight + zk($firstSlot).sumStyles('tb', jq.margins) + 1) : 46,
-			totalHeight = hourCount * slotHeight * timeslots/2;
+			totalHeight = hourCount * slotHeight * timeslots / 2;
 		$cnt.find('.z-calendars-week-cnt').height(totalHeight);
 		jq(wgt.cntRows).find('.z-calendars-week-day-cnt').height(totalHeight).css('margin-bottom', -totalHeight);
-		jq(wgt.cntRows).find('.z-calendars-hour-of-day').height(slotHeight * timeslots/2 - 1);
-		wgt._slotOffs = 12/timeslots;
+		jq(wgt.cntRows).find('.z-calendars-hour-of-day').height(slotHeight * timeslots / 2 - 1);
+		wgt._slotOffs = 12 / timeslots;
 		wgt.beginIndex = wgt._bt * timeslots;
 	}
 	
@@ -74,20 +74,20 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			var hourRowHtml = '<div class="z-calendars-hour-of-day"></div>',
 				hourSepRowHtml = '<div class="z-calendars-hour-sep"></div>',
 				html = [];
-			for(var i = offset; i--;)
+			for (var i = offset; i--;)
 				html.push(hourRowHtml);
 			html = html.join('');
 			for (var i = ts; i--;)
 				jq(timeRows[ts - i - 1]).append(html);
 			
 			html = [];
-			for(var i = offset * timeslots/2; i--;)
+			for (var i = offset * timeslots / 2; i--;)
 				html.push(hourSepRowHtml);
 			jq(cntRows.previousSibling.lastChild).find('.z-calendars-hour-inner').append(html.join(''));
-		} else if (offset < 0){
+		} else if (offset < 0) {
 			for (var i = ts; i--;)
-				jq(timeRows[ts - i - 1]).children('.z-calendars-hour-of-day:gt('+(hourCount-1)+')').remove();
-			jq(cntRows.previousSibling.lastChild).find('.z-calendars-hour-sep:gt('+(hourCount * timeslots/2 - 1)+')').remove();
+				jq(timeRows[ts - i - 1]).children('.z-calendars-hour-of-day:gt(' + (hourCount - 1) + ')').remove();
+			jq(cntRows.previousSibling.lastChild).find('.z-calendars-hour-sep:gt(' + (hourCount * timeslots / 2 - 1) + ')').remove();
 		}
 		
 		_updateCntHeight(wgt);
@@ -104,7 +104,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		if (!offset) return;
 		
 		var header = wgt.$n('header'),
-			a = wgt.$n("hdarrow");
+			a = wgt.$n('hdarrow');
 		a.style.left = jq.px((a.parentNode.offsetWidth * ts - a.offsetWidth) - 5);
 		if (offset > 0) {
 			var zoneTH = '<th class="z-calendars-timezone" rowspan="3"></th>',
@@ -112,7 +112,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				zoneHourTD = '<td class="z-calendars-timezone">' + jq(cntRows).children('.z-calendars-timezone-end').html() + '</td>',
 				html1 = [], html2 = [], html3 = [];
 			
-			for(var i = offset; i--;) {
+			for (var i = offset; i--;) {
 				html1.push(zoneTH);
 				html2.push(zoneTD);
 				html3.push(zoneHourTD);
@@ -120,7 +120,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			jq(header).children('.z-calendars-timezone-end').before(html1.join(''));
 			jq(cntRows.previousSibling).children('.z-calendars-timezone-end').before(html2.join(''));
 			jq(cntRows).children('.z-calendars-timezone-end').before(html3.join(''));
-		} else if (offset < 0){
+		} else if (offset < 0) {
 			jq(header).children('.z-calendars-timezone-end').prevAll().slice(ts - 1).remove();
 			jq(cntRows.previousSibling).children('.z-calendars-timezone-end').prevAll().slice(ts - 1).remove();
 			jq(cntRows).children('.z-calendars-timezone-end').prevAll().slice(ts - 1).remove();
@@ -137,9 +137,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			return uuid;
 		}));
 		var temp = jq('#' + uuid + '-tempblock'),
-			hdTable = wgt.$n('header').offsetParent, 
+			hdTable = wgt.$n('header').offsetParent,
 			parent = hdTable.parentNode,
-			cnt = wgt.$n('cnt'), 
+			cnt = wgt.$n('cnt'),
 			cntTable = cnt.firstChild;
 
 		temp.append(hdTable);
@@ -173,32 +173,32 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			cIndex = 0;
 		jq(cells[begin + cIndex].firstChild).append(
 			widget.ddTemplate.replace(new RegExp("%([1-2])", "g"), function (match, index) {
-				return index < 2 ? widget.uuid + '-dd' : 'z-calevent';
+				return index < 2 ? widget.uuid + '-dd' : 'z-calitem';
 		}));
 
 		dg._zoffs.x = x;
 		dg._zoffs.y = y;
 
-		dg.node = jq('#'+uuid+'-dd')[0];
+		dg.node = jq('#' + uuid + '-dd')[0];
 		dg.node.parent = jq(cells[begin + cIndex].firstChild);
 
 		dg._zecnt = dg.node.childNodes[0].firstChild.firstChild;
-		jq(dg.node).addClass(widget.getZclass() + "-evt-ghost");
+		jq(dg.node).addClass(widget.getZclass() + '-evt-ghost');
 		var r = y + dg.handle.scrollTop - y1;
 		r = Math.floor(r / ph);
 		dg.node.style.top = jq.px(r * ph);
 
 		var offsHgh = 0,
-			body = jq('#'+uuid+'-dd-body')[0],
+			body = jq('#' + uuid + '-dd-body')[0],
 			height = 0,
 			inner = body.firstChild.firstChild;
-		inner.firstChild.innerHTML = 
-			widget._dateTime[r*widget._slotOffs] + ' - ' + 
-				widget._dateTime[r*widget._slotOffs + 12];			
+		inner.firstChild.innerHTML =
+			widget._dateTime[r * widget._slotOffs] + ' - ' +
+				widget._dateTime[r * widget._slotOffs + 12];
 		
-		for(var child = jq(dg.node).children().get(0);child;child=child.nextSibling){
-			if(widget.isLegalChild(child)) 
-				height+=child.offsetHeight;
+		for (var child = jq(dg.node).children().get(0);child;child = child.nextSibling) {
+			if (widget.isLegalChild(child))
+				height += child.offsetHeight;
 		}
 
 		height += zk(body).padBorderHeight();
@@ -238,7 +238,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		if (r < b) b = r;
 		else if (r > b) e = r;
 
-	 	if (faker.offsetTop != b * ph)
+		if (faker.offsetTop != b * ph)
 			faker.style.top = jq.px(b * ph);
 
 		var hgh = ((e - b) * ph) - dg._zrzoffs,
@@ -247,9 +247,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			dg._zecnt.style.height = jq.px(hgh);
 
 		// Update header
-		dg._zhd.innerHTML = 
-			widget._dateTime[(beginIndex + b)*widget._slotOffs] + ' - ' + 
-				widget._dateTime[(beginIndex + e)*widget._slotOffs];
+		dg._zhd.innerHTML =
+			widget._dateTime[(beginIndex + b) * widget._slotOffs] + ' - ' +
+				widget._dateTime[(beginIndex + e) * widget._slotOffs];
 	}
 	
 	function _createDragEndghost(dg) {
@@ -257,25 +257,25 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			hgh = dg._zoffs.ph;
 			
 		dg._zdata = {
-            rows: dg.node.offsetTop / hgh,
-            cols: dg.node.parentNode.parentNode.cellIndex - widget.ts,
-            dur: Math.ceil(dg.node.offsetHeight / hgh),
+			rows: dg.node.offsetTop / hgh,
+			cols: dg.node.parentNode.parentNode.cellIndex - widget.ts,
+			dur: Math.ceil(dg.node.offsetHeight / hgh),
 			ghostNode: dg.node
-        };
+		};
 	}
 	
 	function _createDragEnd(dg, evt) {
 		var widget = dg.control,
 			rows = dg._zdata.rows,
 			bd = new Date(widget.zoneBd),
-			timeslotTime = 60/widget._timeslots;
+			timeslotTime = 60 / widget._timeslots;
 			
 		bd.setDate(bd.getDate() + dg._zdata.cols);
-		bd.setMilliseconds(0);// clean			
+		bd.setMilliseconds(0);// clean
 		var ed = new Date(bd);
 		rows += widget.beginIndex;
-		bd.setMinutes(bd.getMinutes() + rows * timeslotTime );
-		ed.setMinutes(ed.getMinutes() + (rows + dg._zdata.dur) * timeslotTime );
+		bd.setMinutes(bd.getMinutes() + rows * timeslotTime);
+		ed.setMinutes(ed.getMinutes() + (rows + dg._zdata.dur) * timeslotTime);
 		
 		widget.fireCalEvent(bd, ed, evt);
 	}
@@ -316,9 +316,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		}
 		// Update header
 		r += widget.beginIndex;
-		dg._zhd.innerHTML = 
-			widget._dateTime[zoffs.bi*widget._slotOffs] + ' - ' + 
-				widget._dateTime[r*widget._slotOffs];
+		dg._zhd.innerHTML =
+			widget._dateTime[zoffs.bi * widget._slotOffs] + ' - ' +
+				widget._dateTime[r * widget._slotOffs];
 	}
 	
 	function _resizeDragEndghost(dg) {
@@ -338,10 +338,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			isOverEndTime = edHour > et || (edHour == et && ed.getMinutes() > 0);
 			
 		if (dur || isOverEndTime) {
-			//reset in time range	
+			//reset in time range
 			if (isOverEndTime)
 				ed.setHours(widget._et, 0);
-			ed.setMinutes(ed.getMinutes() + dur * (60/widget._timeslots));
+			ed.setMinutes(ed.getMinutes() + dur * (60 / widget._timeslots));
 			//reset in time range
 			if (bd.getHours() < bt)
 				bd.setHours(bt);
@@ -349,8 +349,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			widget.fireCalEvent(bd, ed, evt, ce.id);
 			widget._restoreCE = ce;
 		} else {
-			jq('#'+widget.uuid+'-dd').remove();
-			ce.style.visibility = "";
+			jq('#' + widget.uuid + '-dd').remove();
+			ce.style.visibility = '';
 		}
 		dg._zrz = false;
 	}
@@ -364,23 +364,23 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			bt = widget._bt,
 			et = widget._et,
 			timeslots = widget._timeslots,
-			timeslotTime = 60/timeslots,
+			timeslotTime = 60 / timeslots,
 			ph = dg._zoffs.ph,
 			isOverBeginTime = bd.getHours() < bt,
 			isOverEndTime = edHour > et || (edHour == et && ed.getMinutes() > 0);
 			
-		dg._overIndex = 0;	
+		dg._overIndex = 0;
 		if (isOverBeginTime || isOverEndTime) {
-			var minutes =  (ed-bd) / 60000,
+			var minutes = (ed - bd) / 60000,
 				id = faker.id;
-			_setEvtWgtHeight(widget, faker, targetWgt.uuid,(minutes/60 * timeslots * ph));
+			_setItemWgtHeight(widget, faker, targetWgt.uuid,(minutes / 60 * timeslots * ph));
 			
 			if (isOverEndTime)
 				dg._overIndex = _getSlotCount(et, ed, timeslots);
 			
 			if (isOverBeginTime)
 				dg._overIndex = _getSlotCount(bd, bt, timeslots);
-		} 
+		}
 		dg._zdelta = ce.offsetTop - (evt.pageY + dg.handle.scrollTop - dg._zoffs.t);
 	}
 	
@@ -397,7 +397,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			cIndex = dg._zoffs.s,
 			lefts = cnt._lefts,
 			cells = dg._zcells,
-			begin = zoffs.b
+			begin = zoffs.b,
 			ph = zoffs.ph,
 			th = zoffs.th;
 		
@@ -429,9 +429,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		}
 	
 		// Update header
-		dg._zhd.innerHTML = 
-			widget._dateTime[(r + widget.beginIndex)*widget._slotOffs] + ' - ' + 
-				widget._dateTime[(r + zoffs.ei + dg._overIndex)*widget._slotOffs];
+		dg._zhd.innerHTML =
+			widget._dateTime[(r + widget.beginIndex) * widget._slotOffs] + ' - ' +
+				widget._dateTime[(r + zoffs.ei + dg._overIndex) * widget._slotOffs];
 	}
 	
 	function _updateDragEndghost(dg) {
@@ -439,12 +439,12 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			ce = dg._zevt;
 		
 		gostNode.parent = jq(gostNode.parentNode);
-        dg._zdata = {
+		dg._zdata = {
 			rows: (ce.offsetTop - gostNode.offsetTop) / dg._zoffs.ph,
-            cols: ce.parentNode.parentNode.cellIndex -
-            		gostNode.parentNode.parentNode.cellIndex,
+			cols: ce.parentNode.parentNode.cellIndex -
+					gostNode.parentNode.parentNode.cellIndex,
 			ghostNode: gostNode
-        };
+		};
 	}
 	
 	function _updateDragEnd(dg, evt) {
@@ -455,7 +455,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			ce = dg._zevt;
 		if (cols || rows) {
 			var timeslots = widget._timeslots,
-				timeslotTime = 60/timeslots,
+				timeslotTime = 60 / timeslots,
 				bd = new Date(ce._bd),
 				ed = new Date(ce._ed),
 				bdTimeslot = _getHightOffsPercent(bd, timeslots),
@@ -467,27 +467,27 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			//adjust time in time range
 			if (bd.getHours() < bt) {
 				var slotCount = _getSlotCount(bd, bt, timeslots);
-				bd.setMinutes(bd.getMinutes() + 
+				bd.setMinutes(bd.getMinutes() +
 					slotCount * timeslotTime);
-				ed.setMinutes(ed.getMinutes() + 
+				ed.setMinutes(ed.getMinutes() +
 					slotCount * timeslotTime);
 			}
 			bd.setDate(bd.getDate() - offset[0]);
-			bd.setMinutes(bd.getMinutes() - offset[1]);				
+			bd.setMinutes(bd.getMinutes() - offset[1]);
 			ed.setDate(ed.getDate() - offset[0]);
 			ed.setMinutes(ed.getMinutes() - offset[1]);
 			var bdOffset = bd.getTimezoneOffset(),
 				edOffset2 = ed.getTimezoneOffset();
 			//DST: Fixed different offset after update time
-			if (edOffset != edOffset2 && ed.getHours()== bd.getHours()) {
+			if (edOffset != edOffset2 && ed.getHours() == bd.getHours()) {
 				ed = new Date(bd);
-				ed.setUTCMinutes(ed.getUTCMinutes() + _getSlotCount(bd, ed, timeslots) * timeslotTime);			
+				ed.setUTCMinutes(ed.getUTCMinutes() + _getSlotCount(bd, ed, timeslots) * timeslotTime);
 			}
 			widget.fireCalEvent(bd, ed, evt, ce.id);
 			widget._restoreCE = ce;
 		} else {
-			jq('#'+widget.uuid+'-dd').remove();
-			ce.style.visibility = "";
+			jq('#' + widget.uuid + '-dd').remove();
+			ce.style.visibility = '';
 		}
 	}
 	
@@ -500,40 +500,40 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			  '<div class="%2-body" id="%1-body"><div class="%2-inner"><dl id="%1-inner"><dt class="%2-header"></dt><dd class="%2-cnt"></dd></dl></div></div>'].join(''),
 	
 	_dateTime: [
-		'00:00', '00:05', '00:10', '00:15', '00:20', '00:25', '00:30', '00:35', '00:40', '00:45', '00:50', '00:55', 
-		'01:00', '01:05', '01:10', '01:15', '01:20', '01:25', '01:30', '01:35', '01:40', '01:45', '01:50', '01:55', 
-		'02:00', '02:05', '02:10', '02:15', '02:20', '02:25', '02:30', '02:35', '02:40', '02:45', '02:50', '02:55', 
-		'03:00', '03:05', '03:10', '03:15', '03:20', '03:25', '03:30', '03:35', '03:40', '03:45', '03:50', '03:55', 
-		'04:00', '04:05', '04:10', '04:15', '04:20', '04:25', '04:30', '04:35', '04:40', '04:45', '04:50', '04:55', 
-		'05:00', '05:05', '05:10', '05:15', '05:20', '05:25', '05:30', '05:35', '05:40', '05:45', '05:50', '05:55', 
-		'06:00', '06:05', '06:10', '06:15', '06:20', '06:25', '06:30', '06:35', '06:40', '06:45', '06:50', '06:55', 
-		'07:00', '07:05', '07:10', '07:15', '07:20', '07:25', '07:30', '07:35', '07:40', '07:45', '07:50', '07:55', 
-		'08:00', '08:05', '08:10', '08:15', '08:20', '08:25', '08:30', '08:35', '08:40', '08:45', '08:50', '08:55', 
-		'09:00', '09:05', '09:10', '09:15', '09:20', '09:25', '09:30', '09:35', '09:40', '09:45', '09:50', '09:55', 
-		'10:00', '10:05', '10:10', '10:15', '10:20', '10:25', '10:30', '10:35', '10:40', '10:45', '10:50', '10:55', 
-		'11:00', '11:05', '11:10', '11:15', '11:20', '11:25', '11:30', '11:35', '11:40', '11:45', '11:50', '11:55', 
-		'12:00', '12:05', '12:10', '12:15', '12:20', '12:25', '12:30', '12:35', '12:40', '12:45', '12:50', '12:55', 
-		'13:00', '13:05', '13:10', '13:15', '13:20', '13:25', '13:30', '13:35', '13:40', '13:45', '13:50', '13:55', 
-		'14:00', '14:05', '14:10', '14:15', '14:20', '14:25', '14:30', '14:35', '14:40', '14:45', '14:50', '14:55', 
-		'15:00', '15:05', '15:10', '15:15', '15:20', '15:25', '15:30', '15:35', '15:40', '15:45', '15:50', '15:55', 
-		'16:00', '16:05', '16:10', '16:15', '16:20', '16:25', '16:30', '16:35', '16:40', '16:45', '16:50', '16:55', 
-		'17:00', '17:05', '17:10', '17:15', '17:20', '17:25', '17:30', '17:35', '17:40', '17:45', '17:50', '17:55', 
-		'18:00', '18:05', '18:10', '18:15', '18:20', '18:25', '18:30', '18:35', '18:40', '18:45', '18:50', '18:55', 
-		'19:00', '19:05', '19:10', '19:15', '19:20', '19:25', '19:30', '19:35', '19:40', '19:45', '19:50', '19:55', 
-		'20:00', '20:05', '20:10', '20:15', '20:20', '20:25', '20:30', '20:35', '20:40', '20:45', '20:50', '20:55', 
-		'21:00', '21:05', '21:10', '21:15', '21:20', '21:25', '21:30', '21:35', '21:40', '21:45', '21:50', '21:55', 
-		'22:00', '22:05', '22:10', '22:15', '22:20', '22:25', '22:30', '22:35', '22:40', '22:45', '22:50', '22:55', 
-		'23:00', '23:05', '23:10', '23:15', '23:20', '23:25', '23:30', '23:35', '23:40', '23:45', '23:50', '23:55', 
+		'00:00', '00:05', '00:10', '00:15', '00:20', '00:25', '00:30', '00:35', '00:40', '00:45', '00:50', '00:55',
+		'01:00', '01:05', '01:10', '01:15', '01:20', '01:25', '01:30', '01:35', '01:40', '01:45', '01:50', '01:55',
+		'02:00', '02:05', '02:10', '02:15', '02:20', '02:25', '02:30', '02:35', '02:40', '02:45', '02:50', '02:55',
+		'03:00', '03:05', '03:10', '03:15', '03:20', '03:25', '03:30', '03:35', '03:40', '03:45', '03:50', '03:55',
+		'04:00', '04:05', '04:10', '04:15', '04:20', '04:25', '04:30', '04:35', '04:40', '04:45', '04:50', '04:55',
+		'05:00', '05:05', '05:10', '05:15', '05:20', '05:25', '05:30', '05:35', '05:40', '05:45', '05:50', '05:55',
+		'06:00', '06:05', '06:10', '06:15', '06:20', '06:25', '06:30', '06:35', '06:40', '06:45', '06:50', '06:55',
+		'07:00', '07:05', '07:10', '07:15', '07:20', '07:25', '07:30', '07:35', '07:40', '07:45', '07:50', '07:55',
+		'08:00', '08:05', '08:10', '08:15', '08:20', '08:25', '08:30', '08:35', '08:40', '08:45', '08:50', '08:55',
+		'09:00', '09:05', '09:10', '09:15', '09:20', '09:25', '09:30', '09:35', '09:40', '09:45', '09:50', '09:55',
+		'10:00', '10:05', '10:10', '10:15', '10:20', '10:25', '10:30', '10:35', '10:40', '10:45', '10:50', '10:55',
+		'11:00', '11:05', '11:10', '11:15', '11:20', '11:25', '11:30', '11:35', '11:40', '11:45', '11:50', '11:55',
+		'12:00', '12:05', '12:10', '12:15', '12:20', '12:25', '12:30', '12:35', '12:40', '12:45', '12:50', '12:55',
+		'13:00', '13:05', '13:10', '13:15', '13:20', '13:25', '13:30', '13:35', '13:40', '13:45', '13:50', '13:55',
+		'14:00', '14:05', '14:10', '14:15', '14:20', '14:25', '14:30', '14:35', '14:40', '14:45', '14:50', '14:55',
+		'15:00', '15:05', '15:10', '15:15', '15:20', '15:25', '15:30', '15:35', '15:40', '15:45', '15:50', '15:55',
+		'16:00', '16:05', '16:10', '16:15', '16:20', '16:25', '16:30', '16:35', '16:40', '16:45', '16:50', '16:55',
+		'17:00', '17:05', '17:10', '17:15', '17:20', '17:25', '17:30', '17:35', '17:40', '17:45', '17:50', '17:55',
+		'18:00', '18:05', '18:10', '18:15', '18:20', '18:25', '18:30', '18:35', '18:40', '18:45', '18:50', '18:55',
+		'19:00', '19:05', '19:10', '19:15', '19:20', '19:25', '19:30', '19:35', '19:40', '19:45', '19:50', '19:55',
+		'20:00', '20:05', '20:10', '20:15', '20:20', '20:25', '20:30', '20:35', '20:40', '20:45', '20:50', '20:55',
+		'21:00', '21:05', '21:10', '21:15', '21:20', '21:25', '21:30', '21:35', '21:40', '21:45', '21:50', '21:55',
+		'22:00', '22:05', '22:10', '22:15', '22:20', '22:25', '22:30', '22:35', '22:40', '22:45', '22:50', '22:55',
+		'23:00', '23:05', '23:10', '23:15', '23:20', '23:25', '23:30', '23:35', '23:40', '23:45', '23:50', '23:55',
 		'00:00'
 	],
 	
-	$define : {
-		days: function() {
+	$define: {
+		days: function () {
 			if (!this.desktop) return;
 
 			var days = this._days,
 				header = this.$n('header'),
-				cnt = this.$n('cnt'), 
+				cnt = this.$n('cnt'),
 				$row = jq(this.cntRows),
 				daylongMoreRows = this.daylongMoreRows,
 				zcls = this.getZclass(),
@@ -541,19 +541,19 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				offset = days - oldRowCount;
 			
 			if (zk.ie) {
-				jq(header.offsetParent).find("td:not(.z-calendars-daylong-evt)").attr('colspan',days);
+				jq(header.offsetParent).find('td:not(.z-calendars-daylong-evt)').attr('colspan',days);
 				jq(cnt).find('tr:eq(1) td:last').attr('colspan',days);
-			} else jq(this.$n('inner')).find("[colspan]").attr('colspan',days);
+			} else jq(this.$n('inner')).find('[colspan]').attr('colspan',days);
 
 			if (offset > 0) {
-				var titleRowHtml = '<th class="' + zcls + '-day-of-week"><div class="' + zcls+'-day-of-week-inner"><span class="'+zcls+'-day-of-week-cnt"></span></div></th>',
+				var titleRowHtml = '<th class="' + zcls + '-day-of-week"><div class="' + zcls + '-day-of-week-inner"><span class="' + zcls + '-day-of-week-cnt"></span></div></th>',
 					daylongRowHtml = '<td class="' + zcls + '-daylong-evt ' + zcls + '-daylong-more">&nbsp;</td>',
-					cntRowHtml ='<td class="' + zcls + '-week-day"><div class="' + zcls + '-week-day-cnt"/></td>',
+					cntRowHtml = '<td class="' + zcls + '-week-day"><div class="' + zcls + '-week-day-cnt"/></td>',
 					html1 = [],
 					html2 = [],
 					html3 = [];
 				
-				for(var i = offset; i--;) {
+				for (var i = offset; i--;) {
 					html1.push(titleRowHtml);
 					html2.push(daylongRowHtml);
 					html3.push(cntRowHtml);
@@ -562,9 +562,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				jq(daylongMoreRows).append(html2.join(''));
 				$row.append(html3.join(''));
 			} else if (offset < 0) {
-				jq(this.$n('daylong')).find('.z-calendars-daylong-more:gt('+(days-1)+')').remove();
-				jq(header).children('.z-calendars-day-of-week:gt('+(days-1)+')').remove();
-				$row.children('.z-calendars-week-day:gt('+(days-1)+')').remove();
+				jq(this.$n('daylong')).find('.z-calendars-daylong-more:gt(' + (days - 1) + ')').remove();
+				jq(header).children('.z-calendars-day-of-week:gt(' + (days - 1) + ')').remove();
+				$row.children('.z-calendars-week-day:gt(' + (days - 1) + ')').remove();
 			}
 			
 			if (zk.ie || zk.opera)
@@ -573,14 +573,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			this.title = jq(header).find('.' + this.getZclass() + '-day-of-week-cnt');
 			this.updateDateRange_();
 		},
-		events: function () {
-			this._events = jq.evalJSON(this._events);
+		items: function () {
+			this._items = jq.evalJSON(this._items);
 			if (!this.$n()) return;
 
 			for (var i = this.nChildren; i--;) {
 				var child = this.getChildAt(i),
 					className = child.className;
-				if (className == 'calendar.DayEvent' || className == 'calendar.DaylongEvent')
+				if (className == 'calendar.DayItem' || className == 'calendar.DaylongItem')
 					this.removeChild(child);
 			}
 
@@ -602,7 +602,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			for (var i = this._zonesOffset.length; i--;)
 				this._zonesOffset[i] = zk.parseInt(this._zonesOffset[i]);
 
-			if (!this.desktop) return;	
+			if (!this.desktop) return;
 
 			this.updateDateOfBdAndEd_();
 
@@ -610,12 +610,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 			this.updateTimeZoneCol_({ignoreFirstCol: true});
 		},
-		timeslots: function(){
+		timeslots: function () {
 			if (!this.desktop) return;
 			var hourSepRowHtml = '<div class="z-calendars-hour-sep"></div>',
 				html = [];
 				
-			for(var i = this._timeslots/2; i--;)
+			for (var i = this._timeslots / 2; i--;)
 				html.push(hourSepRowHtml);
 				
 			hourSepRowHtml = html.join('');
@@ -629,7 +629,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			this.beforeSize();
 			this.onSize();
 		},
-		bt: _zkf = function(){
+		bt: _zkf = function () {
 			if (!this.desktop) return;
 			this.updateTimeZoneCol_(this);
 		},
@@ -640,35 +640,35 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		this.$supers('bind_', arguments);
 		
 		this._scrollInfo = {};
-		this._dayEvents = [];
-		this._daylongEvents = [];
+		this._dayItems = [];
+		this._daylongItems = [];
 		this._daylongSpace = [];
 		this._daySpace = [];
 		
 		var zcls = this.getZclass(),
 			p = this.params;
-		p._fakerMoreCls = zcls + "-daylong-faker-more";
-		p._fakerNoMoreCls = zcls + "-daylong-faker-nomore";
+		p._fakerMoreCls = zcls + '-daylong-faker-more';
+		p._fakerNoMoreCls = zcls + '-daylong-faker-nomore';
 		
 		var widget = this,
-			$cnt = jq(this.$n("cnt")),
+			$cnt = jq(this.$n('cnt')),
 			zcls = this.getZclass();
 		
 		//define all positions
 		//put the title
-		this.title = jq(this.$n("header")).find('.' + zcls + '-day-of-week-cnt');
+		this.title = jq(this.$n('header')).find('.' + zcls + '-day-of-week-cnt');
 		//put the daylong event
 		this.daylongRows = this.$n('daylong').firstChild.firstChild;
 		//put the daylong more space
 		this.daylongMoreRows = this.daylongRows.firstChild;
 		//put the day event
-		this.cntRows = $cnt.find("tr")[zk.ie ? 2: 1];
+		this.cntRows = $cnt.find('tr')[zk.ie ? 2 : 1];
 		
-		this.weekDay = jq(this.cntRows).children('.'+ zcls +'-week-day');
+		this.weekDay = jq(this.cntRows).children('.' + zcls + '-week-day');
 		
-/****************************** zone arrow ******************************/		
-		var a = this.$n("hdarrow"),
-			hd = this.$n("header"),
+/****************************** zone arrow ******************************/
+		var a = this.$n('hdarrow'),
+			hd = this.$n('header'),
 			title = this.title,
 			ed = new Date(this.zoneEd);
 		//store value in head tag
@@ -676,12 +676,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			ed = calUtil.addDay(ed, -1);
 			title[i].time = this.fixTimeZoneFromClient(ed);
 		}
-		jq(a).bind("click", this.onArrowClick);
-/************************** head event **************************************/		
+		jq(a).bind('click', this.onArrowClick);
+/************************** head event **************************************/
 		if (hd.childNodes.length > this.ts + 2)
 			this.addDayClickEvent_(hd);
 
-		$cnt.bind("scroll", function () {
+		$cnt.bind('scroll', function () {
 			widget._scrollInfo[widget.uuid] = $cnt[0].scrollTop;
 		});
 		
@@ -689,76 +689,76 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			this.editMode(true);
 	},
 	
-	unbind_ : function () {			
-		this.title =  this.daylongRows =  this.daylongMoreRows = this.cntRows = 
-		this._scrollInfo = this._dayEvents = this._daylongEvents = 
+	unbind_: function () {
+		this.title = this.daylongRows = this.daylongMoreRows = this.cntRows =
+		this._scrollInfo = this._dayItems = this._daylongItems =
 		this._daylongSpace = this._daySpace = null;
 		this.$supers('unbind_', arguments);
 	},
 	
 	_resetDaylongPosition: function () {
 		var daylongRows = jq(this.daylongRows),
-			zcls = this.getZclass();		
-		//clean all rows exclusive blank row 
+			zcls = this.getZclass();
+		//clean all rows exclusive blank row
 		daylongRows.children().not(':last-child').remove();
 		
-		// append all rows		
+		// append all rows
 		for (var i = this._daylongSpace.length; i--;) {
 			daylongRows.prepend('<tr></tr>');
 			var rowSpace = this._daylongSpace[i],
-				tr = jq(daylongRows[0].firstChild);	
+				tr = jq(daylongRows[0].firstChild);
 			//append events
 			for (var k = 0, l = rowSpace.length; k < l; k++) {
 				var childWgt = rowSpace[k],
 					ce = childWgt;
 					
-				if (k == 0){//first		
-					ce._days = childWgt._days;		
-					this.drawEvent_(childWgt._preOffset, zcls + '-daylong-evt', tr, ce);
+				if (k == 0) {//first
+					ce._days = childWgt._days;
+					this.drawItem_(childWgt._preOffset, zcls + '-daylong-evt', tr, ce);
 				} else {
-					var preWidget = rowSpace[k-1],
+					var preWidget = rowSpace[k - 1],
 						start = childWgt._preOffset,
 						preEnd = preWidget._preOffset + preWidget._days,
 						offset = start - preEnd;
 					ce._days = childWgt._days;
-					this.drawEvent_(offset, zcls + '-daylong-evt', tr, ce);
+					this.drawItem_(offset, zcls + '-daylong-evt', tr, ce);
 				}
-				ce.style.visibility = "";//recover moving event
+				ce.style.visibility = '';//recover moving event
 				if (k == l - 1) {//last
 					var html = '';
-					for (var n = childWgt._afterOffset; n--;) 
+					for (var n = childWgt._afterOffset; n--;)
 						html += '<td class="' + zcls + '-daylong-evt">&nbsp;</td>';
 					tr.append(html);
 				}
 			}
 		}
 		jq('#' + this.uuid + '-hdarrow').removeClass(this.getZclass() + '-week-header-arrow-close');
-	},	
+	},
 	
 	_rePositionDay: function () {
-		this._dayEvents.sort(this.dateSorting_);	
+		this._dayItems.sort(this.dateSorting_);
 		this._daySpace = [];
 			
 		for (var i = this._days; i--;)
 			this._daySpace.push([]);
 				
 		// all daylong event
-		for (var i = 0 ,j = this._dayEvents.length; i < j; i++) {
-			var dayEvent = this._dayEvents[i];
-			this._daySpace[dayEvent._preOffset].push(dayEvent);
+		for (var i = 0 ,j = this._dayItems.length; i < j; i++) {
+			var dayItem = this._dayItems[i];
+			this._daySpace[dayItem._preOffset].push(dayItem);
 		}
 		this.fixPosition();
 	},
 	
-	_rePositionDaylong: function () {	
-		this._daylongEvents.sort(this.dateSorting_);
-		this._daylongSpace = [];		
+	_rePositionDaylong: function () {
+		this._daylongItems.sort(this.dateSorting_);
+		this._daylongSpace = [];
 		
 		var uuid = this.uuid;
 		
 		// all daylong event
-		for (var i = 0, j = this._daylongEvents.length; i < j; i++) {
-			var daylongEvent = this._daylongEvents[i];
+		for (var i = 0, j = this._daylongItems.length; i < j; i++) {
+			var daylongEvent = this._daylongItems[i];
 			this.putInDaylongSpace_(this._daylongSpace, daylongEvent);
 		}
 						
@@ -779,7 +779,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		_updateHourColSize(this);
 		
 		if (_updateTimeZoneColSize(this))
-			opts = {ignoreFirstCol: false}
+			opts = {ignoreFirstCol: false};
 		
 		//update texts
 		for (var i = ts; i--;) {
@@ -791,7 +791,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					div = str.substr(str.indexOf('<'),str.length);
 				zoneText.html(zones[index] + div);
 				this.clearCache();
-				jq(this.$n("hdarrow")).bind("click", this.onArrowClick);
+				jq(this.$n('hdarrow')).bind('click', this.onArrowClick);
 			} else zoneText.html(zones[index]);
 
 			//fist column is not need to redraw
@@ -802,7 +802,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			current.setMinutes(0);
 			for (var k = beginHour; k < endHour; k++) {
 				current.setHours(k);
-				var context = captionByTimeOfDay ?  captionByTimeOfDay[ index * 24 + k ]:
+				var context = captionByTimeOfDay ? captionByTimeOfDay[ index * 24 + k ] :
 						zk.fmt.Date.formatDate(this.getTimeZoneTime(current,zk.parseInt(this._zonesOffset[index])),'HH:mm');
 
 				jq(cell[k - bt]).html(context);
@@ -813,22 +813,22 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	updateDateRange_: function () {
 		this.updateDateOfBdAndEd_();
 		
-		this._captionByDate = this.captionByDate ? jq.evalJSON(this.captionByDate): null;
+		this._captionByDate = this.captionByDate ? jq.evalJSON(this.captionByDate) : null;
 		//ZKCAL-54: Fix setting time label format by DateFormatter not working
-		this._captionByTimeOfDay = this.captionByTimeOfDay ? jq.evalJSON(this.captionByTimeOfDay): null;
-		if(!this.$n())return;
+		this._captionByTimeOfDay = this.captionByTimeOfDay ? jq.evalJSON(this.captionByTimeOfDay) : null;
+		if (!this.$n()) return;
 		
 		var zcls = this.getZclass();
-		this.weekDay = jq(this.cntRows).children('.'+ zcls +'-week-day');
+		this.weekDay = jq(this.cntRows).children('.' + zcls + '-week-day');
 		
-		var hd = jq(this.$n("header")),
-			cnt = jq(this.$n("cnt")),
+		var hd = jq(this.$n('header')),
+			cnt = jq(this.$n('cnt')),
 			titles = this.title,
 			ed = new Date(this.zoneEd),
 			current = new Date(),
-			week_day = zcls + "-week-day",
-			week_today = zcls + "-week-today",		
-			week_weekend = zcls + "-week-weekend",
+			week_day = zcls + '-week-day',
+			week_today = zcls + '-week-today',
+			week_weekend = zcls + '-week-weekend',
 			weekDay = this.weekDay;
 		
 		//remove today and weekend class
@@ -846,9 +846,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				d.setHours(d.getHours() + 2); //adjust to correct date
 			
 			var title = titles[i],
-				content = this._captionByDate ? this._captionByDate[i] : 
+				content = this._captionByDate ? this._captionByDate[i] :
 								zk.fmt.Date.formatDate(d, 'EEE ') +
-								'<div class="' + this.getZclass() + "-day-of-week-fmt" + '">' + zk.fmt.Date.formatDate(d, this.weekFmt) + '</div>';
+								'<div class="' + this.getZclass() + '-day-of-week-fmt' + '">' + zk.fmt.Date.formatDate(d, this.weekFmt) + '</div>';
 			jq(title).html(content);
 			title.time = this.fixTimeZoneFromClient(ed);
 			if (ed.getDay() == 0 || ed.getDay() == 6) {//SUNDAY or SATURDAY
@@ -863,24 +863,24 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		}
 	},
 
-	cleanEvtAry_: function () {
-		this._eventKey = {};
-		this._daylongEvents = [];
-		this._dayEvents = [];
+	cleanItemAry_: function () {
+		this._itemKey = {};
+		this._daylongItems = [];
+		this._dayItems = [];
 	},
 
-	processChildrenWidget_: function (isExceedOneDay, event) {
-		var dayEvent = isExceedOneDay ?
-				new calendar.DaylongEvent({event:event}):
-				new calendar.DayEvent({event:event})
-			zoneBd = event.zoneBd,
-			zoneEd = event.zoneEd;
-		if (!isExceedOneDay && 
-			(zoneBd.getHours() >= this._et || 
+	processChildrenWidget_: function (isExceedOneDay, item) {
+		var dayItem = isExceedOneDay ?
+				new calendar.DaylongItem({item: item}) :
+				new calendar.DayItem({item: item}),
+			zoneBd = item.zoneBd,
+			zoneEd = item.zoneEd;
+		if (!isExceedOneDay &&
+			(zoneBd.getHours() >= this._et ||
 			(zoneEd.getHours() <= this._bt && zoneEd.getHours() != 0 && zoneEd.getMinutes() == 0)))
-			return;		
-		this.appendChild(dayEvent);					
-		this[isExceedOneDay ? '_daylongEvents': '_dayEvents'].push(dayEvent.$n());
+			return;
+		this.appendChild(dayItem);
+		this[isExceedOneDay ? '_daylongItems' : '_dayItems'].push(dayItem.$n());
 	},
 
 	getDragDataObj_: function () {
@@ -898,37 +898,37 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					html.push('</div>');
 					hs.push(cnt.firstChild.offsetHeight);
 					return html.join('');
-			    },
+				},
 				
 				getRow: function (cnt) {
 					return cnt.firstChild.firstChild.lastChild.firstChild;
-			    },
+				},
 				getCols: function (p, dg) {
-					return Math.floor((p[0] - dg._zoffs.l)/dg._zdim.w);
-			    },
+					return Math.floor((p[0] - dg._zoffs.l) / dg._zdim.w);
+				},
 				getRows: function () {
 					return 0;
-			    },
-				getDur: function (dg) {				
+				},
+				getDur: function (dg) {
 					return dg._zpos1[0];
-			    },
+				},
 				getNewDate: function (widget, dg) {
 					var c = dg._zpos[0],
 						c1 = dg._zpos1[0],
 						offs = c < c1 ? c : c1,
-						bd = new Date(widget.zoneBd)
+						bd = new Date(widget.zoneBd),
 						ed = new Date(widget.zoneBd);
 					
 					bd.setDate(bd.getDate() + offs);
 					ed.setDate(bd.getDate() + dg._zpos1[2]);
-					return {bd:bd, ed:ed};
-			    }
+					return {bd: bd, ed: ed};
+				}
 			};
 		return this._dragDataObj;
-    },
+	},
 
-	reAlignEvents_: function (hasAdd) {
-		if (hasAdd.day)			
+	reAlignItems_: function (hasAdd) {
+		if (hasAdd.day)
 			this._rePositionDay();
 		
 		if (hasAdd.daylong)
@@ -937,13 +937,13 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		// recalculate
 		this.beforeSize();
 		this.onSize();
-    },
+	},
 
 	removeNodeInArray_: function (childWidget, hasAdd) {
-		var isDayEvent = childWidget.className == 'calendar.DayEvent';
-		this[isDayEvent ? '_dayEvents': '_daylongEvents'].$remove(childWidget.$n());
-		hasAdd[isDayEvent ? 'day': 'daylong'] = true;
-    },
+		var isDayItem = childWidget.className == 'calendar.DayItem';
+		this[isDayItem ? '_dayItems' : '_daylongItems'].$remove(childWidget.$n());
+		hasAdd[isDayItem ? 'day' : 'daylong'] = true;
+	},
 
 	onClick: function (cnt, evt) {
 		var widget = zk.Widget.$(cnt),
@@ -951,10 +951,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 		if (!cnt._lefts || p[0] <= cnt._lefts[0]) return;
 
-		var ce = zk.Widget.$(evt.target).event;
+		var ce = zk.Widget.$(evt.target).item;
 		
 		if (ce) {
-			widget.fire("onEventEdit",{
+			widget.fire('onItemEdit', {
 				data: [ce.id,p[0],p[1], jq.innerWidth(),jq.innerHeight()]});
 		} else {
 			var ts = widget.ts,
@@ -968,7 +968,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				cIndex = cells.length - ts,
 				rows = Math.floor((y + cnt.scrollTop - offs[1]) / ph),
 				timeslots = widget._timeslots,
-				timeslotTime = 60/timeslots;
+				timeslotTime = 60 / timeslots;
 
 			for (; cIndex--;) {
 				//Fix ZKCAL-55: Problems with horizontal scrollbar
@@ -982,42 +982,42 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 			jq(cells[ts + cIndex].firstChild).prepend(
 				widget.ddTemplate.replace(new RegExp("%([1-2])", "g"), function (match, index) {
-					return index < 2 ? widget.uuid + '-dd' : 'z-calevent';
+					return index < 2 ? widget.uuid + '-dd' : 'z-calitem';
 				})
 			);
 
-			var faker = jq('#'+widget.uuid+'-dd')[0];
-			jq(faker).addClass(widget.getZclass() + "-evt-ghost");
+			var faker = jq('#' + widget.uuid + '-dd')[0];
+			jq(faker).addClass(widget.getZclass() + '-evt-ghost');
 
 			faker.style.top = jq.px(rows * ph);
 
 			var offsHgh = 0,
-				body = jq('#'+widget.uuid+'-dd-body')[0],
+				body = jq('#' + widget.uuid + '-dd-body')[0],
 				height = 0,
 				inner = body.firstChild.firstChild;
 			rows += widget.beginIndex;
 			var beginIndex = rows * widget._slotOffs,
-				eventTimeSlot = this.getNewEventTimeSlots_();
-				endIndex = beginIndex + (eventTimeSlot * timeslotTime / 5);
+				itemTimeSlot = this.getNewItemTimeSlots_();
+				endIndex = beginIndex + (itemTimeSlot * timeslotTime / 5);
 			inner.firstChild.innerHTML = widget._dateTime[beginIndex] + ' - ' + widget._dateTime[endIndex];
 
-			for (var child = jq(faker).children().get(0);child;child=child.nextSibling) {
-				if (this.isLegalChild(child)) 
-					height+=child.offsetHeight;
+			for (var child = jq(faker).children().get(0);child;child = child.nextSibling) {
+				if (this.isLegalChild(child))
+					height += child.offsetHeight;
 			}
 
 			height += zk(body).padBorderHeight();
 			height += zk(body.firstChild).padBorderHeight();
 			height += zk(inner).padBorderHeight();
 			height += 2;
-			inner.style.height = jq.px((ph*eventTimeSlot) - height);
+			inner.style.height = jq.px((ph * itemTimeSlot) - height);
 
 			var bd = new Date(widget.zoneBd);
 			bd.setDate(bd.getDate() + cIndex);
 			bd.setMilliseconds(0);// clean
 			bd.setMinutes(bd.getMinutes() + rows * timeslotTime);
 			var ed = new Date(bd);
-			ed.setMinutes(ed.getMinutes() + eventTimeSlot * timeslotTime);
+			ed.setMinutes(ed.getMinutes() + itemTimeSlot * timeslotTime);
 			//ZKCAL-50: available to click on DST day start from 01:00
 			if (bd.getTime() == ed.getTime() && rows == timeslots) {
 				bd.setHours(bd.getHours() + 1);
@@ -1029,22 +1029,22 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		evt.stop();
 	},
 	
-	//Feature ZKCAL-51: override to define default event time duration
-	getNewEventTimeSlots_: function() {
+	//Feature ZKCAL-51: override to define default item time duration
+	getNewItemTimeSlots_: function () {
 		return this._timeslots;
 	},
 	
 	onDaylongClick: function (daylong, evt) {
 		var widget = zk.Widget.$(daylong),
-			ce = zk.Widget.$(evt.target).event,
+			ce = zk.Widget.$(evt.target).item,
 			p = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
 			
-		if (ce) {		
-			widget.fire("onEventEdit",{
-				data: [ce.id, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});				
+		if (ce) {
+			widget.fire('onItemEdit', {
+				data: [ce.id, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});
 		} else {
 			var zcls = widget.getZclass(),
-				html = '<div id="'+ widget.uuid + '-rope" class="' + zcls + '-daylong-dd">'
+				html = '<div id="' + widget.uuid + '-rope" class="' + zcls + '-daylong-dd">'
 					 + '<div class="' + zcls + '-dd-rope"></div></div>';
 
 			jq(document.body).prepend(html);
@@ -1052,7 +1052,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			var row = daylong.firstChild.firstChild.lastChild,
 				width = row.firstChild.offsetWidth,
 				offs = zk(daylong).revisedOffset(),
-				cols = Math.floor((p[0] - offs[0])/width),
+				cols = Math.floor((p[0] - offs[0]) / width),
 				zoneBd = widget.zoneBd,
 				bd = new Date(widget.zoneBd);
 			if (zoneBd.getHours() == 23) //ZKCAL-50: DST cross between week
@@ -1074,25 +1074,25 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				s: zinfo.length
 			};
 
-			widget.fixRope_(zinfo, jq('#'+widget.uuid+"-rope")[0].firstChild, cols,
-				0, zoffs, {w: width, h: daylong.offsetHeight, hs:[daylong.offsetHeight]}, 1);
+			widget.fixRope_(zinfo, jq('#' + widget.uuid + '-rope')[0].firstChild, cols,
+				0, zoffs, {w: width, h: daylong.offsetHeight, hs: [daylong.offsetHeight]}, 1);
 
 			var ed = new Date(bd);
 			ed = calUtil.addDay(ed, 1);
 			ed.setHours(0); //DST case
-			widget.fire("onEventCreate", {
+			widget.fire('onItemCreate', {
 				data: [
-			 		widget.fixTimeZoneFromClient(bd), 
-					widget.fixTimeZoneFromClient(ed), 
-					p[0], 
-					p[1], 
-					jq.innerWidth(), 
+					widget.fixTimeZoneFromClient(bd),
+					widget.fixTimeZoneFromClient(ed),
+					p[0],
+					p[1],
+					jq.innerWidth(),
 					jq.innerHeight()
 				]
 			});
 
 			widget._ghost[widget.uuid] = function () {
-				jq('#'+widget.uuid+"-rope").remove();
+				jq('#' + widget.uuid + '-rope').remove();
 				delete widget._ghost[widget.uuid];
 			};
 		}
@@ -1105,21 +1105,21 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			$a = jq(a),
 			widget = zk.Widget.$(a),
 			zcls = widget.getZclass(),
-			cls = zcls + "-week-header-arrow-close";
+			cls = zcls + '-week-header-arrow-close';
 			isClose = $a.hasClass(cls),
-			daylong = widget.$n("daylong"),
-			rows = daylong.firstChild.rows,			
+			daylong = widget.$n('daylong'),
+			rows = daylong.firstChild.rows,
 			len = rows.length;
 			
 		widget.clearGhost();
 		
-		isClose ? $a.removeClass(cls): $a.addClass(cls);
+		isClose ? $a.removeClass(cls) : $a.addClass(cls);
 				
 		if (len < 2) return; // nothing to do
 
 		if (!isClose) {
 			var data = [],
-				datas = rows[len-1].cells.length;
+				datas = rows[len - 1].cells.length;
 			for (var i = 0, c = datas; c--; i++)
 				data[i] = [];
 
@@ -1127,32 +1127,32 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				for (var k = 0, z = 0, cells = rows[i].cells,
 						cl = cells.length; k < cl && z + k < datas; k++) {
 					if (cells[k].firstChild.id)
-						data[k+z].push(cells[k].firstChild);
+						data[k + z].push(cells[k].firstChild);
 					var cols = cells[k].colSpan;
 					while (--cols > 0)
-						data[k+ ++z].push(cells[k].firstChild);
+						data[k + ++z].push(cells[k].firstChild);
 				}
-				rows[i].style.display = "none";
+				rows[i].style.display = 'none';
 			}
 
 			var faker = daylong.firstChild.insertRow(len - 1);
 			for (var i = datas; i--;) {
 				cell = faker.insertCell(0);
 				cell.className = rows[len].cells[i].className;
-				jq(cell).addClass(zcls + "-daylong-faker-more");
+				jq(cell).addClass(zcls + '-daylong-faker-more');
 				if (data[i].length > 0) {
 					var evts = data[i];
-					cell.innerHTML = calUtil.format(msgcal.dayMORE, [evts.length] )
-					jq(cell).bind("click", widget.onMoreClick);
+					cell.innerHTML = calUtil.format(msgcal.dayMORE, [evts.length]);
+					jq(cell).bind('click', widget.onMoreClick);
 				} else {
-					cell.innerHTML = zk.ie ? "&nbsp;" : "";
-					jq(cell).addClass(zcls + "-daylong-faker-nomore");
+					cell.innerHTML = zk.ie ? '&nbsp;' : '';
+					jq(cell).addClass(zcls + '-daylong-faker-nomore');
 				}
 			}
-			widget._evtsData = data;
+			widget._itemsData = data;
 		} else {
 			for (var i = 0, j = len - 1; i < j; i++)
-				rows[i].style.display = "";
+				rows[i].style.display = '';
 			jq(rows[len - 2]).remove();
 		}
 
@@ -1170,22 +1170,22 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			uuid = widget.uuid,
 			ci = cell.cellIndex,
 			pp,
-			table = jq('#'+widget.uuid+'-ppcnt')[0];		
+			table = jq('#' + widget.uuid + '-ppcnt')[0];
 		
-		widget.clearGhost();	
+		widget.clearGhost();
 		if (!widget._pp) {
 			jq(document.body).append(widget.ppTemplate.replace(new RegExp("%([1-2])", "g"), function (match, index) {
 					return index < 2 ? uuid : 'z-calpp';
-			}));			
-			pp = widget._pp = jq('#'+uuid+'-pp')[0];
+			}));
+			pp = widget._pp = jq('#' + uuid + '-pp')[0];
 			jq(document.body).bind('click', widget.proxy(widget.unMoreClick));
-			table = jq('#'+uuid+'-ppcnt')[0]; 		
+			table = jq('#' + uuid + '-ppcnt')[0];
 			
-			if(!widget._readonly)
-				jq(widget._pp).bind("click", widget.proxy(widget.onPopupClick));
+			if (!widget._readonly)
+				jq(widget._pp).bind('click', widget.proxy(widget.onPopupClick));
 		} else {
 			if (widget._pp.ci == ci) {
-				// ignore onEventCreate
+				// ignore onItemCreate
 				evt.stop();
 				return;
 			}
@@ -1200,18 +1200,18 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		var date = jq('#' + widget.uuid).find('.z-calendars-day-of-week-cnt')[ci],
 			targetDate = new Date(date.time);
 		if (targetDate)
-			jq('#' + widget.uuid+'-pphd')[0].innerHTML = zk.fmt.Date.formatDate(targetDate, 'EEE, MMM/d');
+			jq('#' + widget.uuid + '-pphd')[0].innerHTML = zk.fmt.Date.formatDate(targetDate, 'EEE, MMM/d');
 
-		var offs= zk(cell).revisedOffset(),
+		var offs = zk(cell).revisedOffset(),
 			wd = daylong.offsetWidth,
 			csz = cell.parentNode.cells.length,
-			single = wd/csz;
+			single = wd / csz;
 
-		wd = csz > 2 ? single*3*0.9 : wd * 0.8;
+		wd = csz > 2 ? single * 3 * 0.9 : wd * 0.8;
 
 		if (csz > 2 && ci > 0)
-			if (csz > ci+1)
-				pp.style.left = jq.px(offs[0] - (wd - single)/2);
+			if (csz > ci + 1)
+				pp.style.left = jq.px(offs[0] - (wd - single) / 2);
 			else
 				pp.style.left = jq.px(offs[0] - (wd - single));
 		else if (csz > 2)
@@ -1222,69 +1222,69 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		pp.style.width = jq.px(wd);
 
 		//filling data
-		var evts = widget._evtsData[ci],
+		var evts = widget._itemsData[ci],
 			oneDay = calUtil.DAYTIME,
 			bd = widget.zoneBd;
 			ed = new Date(bd);
 		ed = calUtil.addDay(ed, 1);
 			
-		for (var i = evts.length; i--;) {				
+		for (var i = evts.length; i--;) {
 			var tr = table.insertRow(0),
 				cr = tr.insertCell(0),
 				cm = tr.insertCell(0),
 				cl = tr.insertCell(0),
 				ce = evts[i],
-				event = zk.Widget.$(ce).event,
-				hc = event.headerColor,
-				cc = event.contentColor,
-				zcls = event.zclass;				
+				item = zk.Widget.$(ce).item,
+				hc = item.headerColor,
+				cc = item.contentColor,
+				zcls = item.zclass;
 				
-			ce._bd = ce._bd || event.zoneBd;
-			ce._ed = ce._ed || event.zoneEd;
-			cl.className = "z-calpp-evt-l";
+			ce._bd = ce._bd || item.zoneBd;
+			ce._ed = ce._ed || item.zoneEd;
+			cl.className = 'z-calpp-evt-l';
 			if (bd.getTime() + (oneDay * ci) - ce._bd.getTime() >= 1000) {
 				var info = [
-						ce.id + "-fl",
+						ce.id + '-fl',
 						zcls,
-						zcls + "-left",
-						ce._bd.getMonth() + 1 + "/" + ce._bd.getDate(),
+						zcls + '-left',
+						ce._bd.getMonth() + 1 + '/' + ce._bd.getDate(),
 						hc ? ' style="background:' + hc + '"' : '',
 						cc ? ' style="background:' + cc + '"' : '',
 						cc ? ' style="border-bottom-color:' + cc + ';border-top-color:' + cc + '"' : '',
 						cc ? ' style="background:' + cc + '"' : '',
-					];				
-				cl.innerHTML = widget.evtTemplate.replace(new RegExp("%([1-8])", "g"), function (match, index) {
+					];
+				cl.innerHTML = widget.itemTemplate.replace(new RegExp("%([1-8])", "g"), function (match, index) {
 					return info[index - 1];
 				});
 			} else
-				cl.innerHTML = "";
+				cl.innerHTML = '';
 		
-			cm.className = "z-calpp-evt-m";
+			cm.className = 'z-calpp-evt-m';
 			
 			var faker = ce.cloneNode(true);
-			jq(faker).addClass("z-calpp-evt-faker");
+			jq(faker).addClass('z-calpp-evt-faker');
 			cm.appendChild(faker);
 
-			cr.className = "z-calpp-evt-r";
+			cr.className = 'z-calpp-evt-r';
 			if (ce._ed.getTime() - (ed.getTime() + (oneDay * ci)) >= 1000) {
 				var d = new Date(ce._ed.getTime() - 1000),
 					info = [
-						ce.id + "-fr",
+						ce.id + '-fr',
 						zcls,
-						zcls + "-right",
-						d.getMonth() + 1 + "/" + d.getDate(),
+						zcls + '-right',
+						d.getMonth() + 1 + '/' + d.getDate(),
 						hc ? ' style="background:' + hc + '"' : '',
 						cc ? ' style="background:' + cc + '"' : '',
 						cc ? ' style="border-bottom-color:' + cc + ';border-top-color:' + cc + '"' : '',
 						cc ? ' style="background:' + cc + '"' : ''
-					];				
-				cr.innerHTML = widget.evtTemplate.replace(new RegExp("%([1-8])", "g"), function (match, index) {
+					];
+				cr.innerHTML = widget.itemTemplate.replace(new RegExp("%([1-8])", "g"), function (match, index) {
 					return info[index - 1];
 				});
 			} else
-				cr.innerHTML = "";			
+				cr.innerHTML = '';
 		}
-		zk(pp).cleanVisibility();		
+		zk(pp).cleanVisibility();
 		evt.stop();
 	},
 		
@@ -1294,24 +1294,24 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			data = zk.copy({dragged: drag.control}, evt.data),
 			ce;
 		
-		if ((ce = zk.Widget.$(target)) && 
+		if ((ce = zk.Widget.$(target)) &&
 			ce.className != 'calendar.CalendarsDefault') {
-			data.ce = ce.event.id;
+			data.ce = ce.item.id;
 			target = ce.$n().parentNode;
 		}
 		
-		if (jq.nodeName(target, 'td') && 
+		if (jq.nodeName(target, 'td') &&
 			jq(target.offsetParent).hasClass('z-calendars-daylong-cnt')) {
 			time.setDate(time.getDate() + target.cellIndex);
 		} else if (jq(target).hasClass('z-calendars-week-day-cnt')) {
 			target = target.parentNode;
 			time.setDate(time.getDate() + target.cellIndex - this.ts);
 			
-			var cnt = this.$n("cnt"),
+			var cnt = this.$n('cnt'),
 				offs = zk(cnt).revisedOffset(),
-				rows = Math.floor((evt.pageY + cnt.scrollTop - offs[1]) / this.perHeight) 
+				rows = Math.floor((evt.pageY + cnt.scrollTop - offs[1]) / this.perHeight)
 					+ this.beginIndex;
-			time.setMinutes(time.getMinutes() + rows * 60/this._timeslots );
+			time.setMinutes(time.getMinutes() + rows * 60 / this._timeslots);
 		} else return;
 		data.time = this.fixTimeZoneFromClient(time);
 		this.fire('onDrop', data, null, zk.Widget.auDelay);
@@ -1326,10 +1326,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		var uuid = this.uuid;
 		if (bd.getMinutes() == ed.getMinutes() && bd.getHours() == ed.getHours()) {
 			jq.alert('The DST begin time and end time cannot be equal', {icon: 'ERROR'});
-			jq('#'+uuid+'-dd').remove();
+			jq('#' + uuid + '-dd').remove();
 			delete this._ghost[uuid];
 			if (id)
-				jq(id, zk)[0].style.visibility = "";
+				jq(id, zk)[0].style.visibility = '';
 		} else {
 			//ZKCAL-50: add event on DST start day
 			var zoneBd = this.zoneBd,
@@ -1345,15 +1345,15 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					jq.innerWidth(),
 					jq.innerHeight()
 				],
-				eventName = "onEventCreate";
+				eventName = 'onItemCreate';
 			if (id) {
 				data.unshift(id);
-				eventName = "onEventUpdate";
+				eventName = 'onItemUpdate';
 			}
 			this.fire(eventName, {data: data});
 			var widget = this;
-			this._ghost[uuid] = function () {	
-				jq('#'+uuid+'-dd').remove();
+			this._ghost[uuid] = function () {
+				jq('#' + uuid + '-dd').remove();
 				delete widget._ghost[uuid];
 			};
 		}
@@ -1361,13 +1361,13 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	
 	getTimeIndex: function (date) {
 		var timeslots = this._timeslots,
-			timeslotTime = 60/timeslots,
+			timeslotTime = 60 / timeslots,
 			// ZKCAL-70: index out of number of total slots index
 			index = Math.max(((date.getHours() - this._bt) * timeslots) +
-						Math.floor(date.getMinutes()/timeslotTime), 0),
+						Math.floor(date.getMinutes() / timeslotTime), 0),
 			maxAvailableTimeslotIndex = (this._et - this._bt) * timeslots - 1;
 		
-		return  Math.min(index, maxAvailableTimeslotIndex);
+		return Math.min(index, maxAvailableTimeslotIndex);
 	},
 	
 	_getTimeOffset: function (d, dur, dur2) {
@@ -1375,14 +1375,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			index = dur2 ? dur2 : this.getTimeIndex(d) + dur,
 			timeslots = this._timeslots;
 
-		d1.setHours(this._bt + Math.floor(index/timeslots), (index%timeslots) * (60/timeslots), 0, 0);
+		d1.setHours(this._bt + Math.floor(index / timeslots), (index % timeslots) * (60 / timeslots), 0, 0);
 		d.setMilliseconds(0);
 
 		return dur2 ? d1 - d : d - d1;
-	},	
+	},
 	
-	fixPosition: function () {		
-		var cnt = this.$n("cnt"),
+	fixPosition: function () {
+		var cnt = this.$n('cnt'),
 			row = this.cntRows,
 			perHgh = this.perHeight,
 			weekDay = this.weekDay,
@@ -1394,19 +1394,19 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			var list = this._daySpace[i];
 			if (!list.length) continue;
 			var data = [];
-			for (var n = slotCount; n--;) 
+			for (var n = slotCount; n--;)
 				data[n] = [];
 
-			for (var k = 0, l =list.length; k < l; k++) {
+			for (var k = 0, l = list.length; k < l; k++) {
 				var ce = list[k],
-					childWidget = zk.Widget.$(ce),					
-					target= weekDay[ce._preOffset].firstChild,
-					event = childWidget.event,
-					bd = new Date(event.zoneBd), 
-					ed = new Date(event.zoneEd),
+					childWidget = zk.Widget.$(ce),
+					target = weekDay[ce._preOffset].firstChild,
+					item = childWidget.item,
+					bd = new Date(item.zoneBd),
+					ed = new Date(item.zoneEd),
 					isCrossDay = ed.getDate() != bd.getDate();
-				jq(target).append(ce);	
-				ce.style.visibility = "";
+				jq(target).append(ce);
+				ce.style.visibility = '';
 				
 				ce._bd = bd;
 				ce._ed = ed;
@@ -1415,7 +1415,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					ed = new Date(ed.getTime() - 1000);
 				
 				// fix hgh
-				var bi = this.getTimeIndex(bd), 
+				var bi = this.getTimeIndex(bd),
 					ei = this.getTimeIndex(ed),
 					top = bi * perHgh,
 					timeslots = this._timeslots,
@@ -1423,12 +1423,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					edHeightOffs = 0;
 					
 				if (bi) {
-					var bdTimeslot = _getHightOffsPercent(bd, timeslots)
-					bdHeightOffs = bdTimeslot ? perHgh * bdTimeslot: 0;
+					var bdTimeslot = _getHightOffsPercent(bd, timeslots);
+					bdHeightOffs = bdTimeslot ? perHgh * bdTimeslot : 0;
 				}
 				if (ei) {
-					var edTimeslot = _getHightOffsPercent(ed, timeslots)
-					edHeightOffs = edTimeslot ? perHgh * edTimeslot: 0;
+					var edTimeslot = _getHightOffsPercent(ed, timeslots);
+					edHeightOffs = edTimeslot ? perHgh * edTimeslot : 0;
 					if (isCrossDay)//ZKCAL-29
 						ed = new Date(ed.getTime() + 1000);
 				}
@@ -1436,7 +1436,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				ce._bi = bi;
 				ce._ei = ei;
 				ce.style.top = jq.px(top + bdHeightOffs);
-				_setEvtWgtHeight(this, ce, ce.id, ((ei -bi) * perHgh) - bdHeightOffs + edHeightOffs);
+				_setItemWgtHeight(this, ce, ce.id, ((ei - bi) * perHgh) - bdHeightOffs + edHeightOffs);
 
 				if (bi < 0) continue;
 				
@@ -1445,7 +1445,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					var tmp = data[bi++];
 					if (tmp[n]) {
 						for (;;) {
-							if (!tmp[++n]) 
+							if (!tmp[++n])
 								break;
 						}
 					}
@@ -1455,46 +1455,46 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			
 			this.clearGhost();
 			
-			// fix width			
+			// fix width
 			var childWidget = list[list.length - 1],
 				target = weekDay[childWidget._preOffset].firstChild;
 				
 			for (var ce = target.firstChild; ce; ce = ce.nextSibling) {
-				var	bd = ce._bd, 
-					bi = ce._bi, 
-					ei = ce._ei, 
-					maxSize = 0, 
+				var	bd = ce._bd,
+					bi = ce._bi,
+					ei = ce._ei,
+					maxSize = 0,
 					tmp = {};
 					
 				if (bi < 0) continue;
 				
 				for (var m = bi; m <= ei && m < slotCount; m++) {
 					var len = data[m].length;
-					if (maxSize < len) 
+					if (maxSize < len)
 						maxSize = len;
 					for (var n = 0; n < len; n++) {
-						if (!data[m][n] || tmp[data[m][n].id]) 
+						if (!data[m][n] || tmp[data[m][n].id])
 							continue;
 						tmp[data[m][n].id] = 1;
 						var ei2 = data[m][n]._ei;
-						if (ei < ei2) 
+						if (ei < ei2)
 							ei = ei2;
 					}
 				}
-				var len = maxSize? maxSize: 1, 
+				var len = maxSize ? maxSize : 1,
 					width = 100 / len,
 					index = data[bi].indexOf(ce);
-				if (index == maxSize - 1) 
-					ce.style.width = width + "%";
-				else 
-					ce.style.width = (width * 1.7) + "%";
-				ce.style.left = width * index + "%";
+				if (index == maxSize - 1)
+					ce.style.width = width + '%';
+				else
+					ce.style.width = (width * 1.7) + '%';
+				ce.style.left = width * index + '%';
 				
-				var fce = ce.previousSibling, 
-					moved = false;				
+				var fce = ce.previousSibling,
+					moved = false;
 				
 				// adjust the order
-				while (fce) {						
+				while (fce) {
 					if (data[fce._bi].indexOf(fce) > index) {
 						fce = fce.previousSibling;
 						moved = true;
@@ -1506,15 +1506,15 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 						}
 						break;
 					}
-				}				
+				}
 			}
 		}
-	},	
+	},
 		
 	beforeSize: zk.ie6_ ? function (cmp) {
-		var inner = this.$n("inner");
-		inner.style.height = "0px";
-		inner.lastChild.style.height = "0px";
+		var inner = this.$n('inner');
+		inner.style.height = '0px';
+		inner.lastChild.style.height = '0px';
 	} : function () {return false;},
 	
 	onSize: _zkf = function () {
@@ -1524,7 +1524,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			this.createChildrenWidget_();
 			this._rePositionDaylong();
 			this._rePositionDay();
-			var a = this.$n("hdarrow");
+			var a = this.$n('hdarrow');
 			//arrow position
 			a.style.left = jq.px((a.parentNode.offsetWidth * this.ts - a.offsetWidth) - 5);
 		}
@@ -1534,12 +1534,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		this.clearGhost();
 		if (!hgh) return;
 			
-		var inner = this.$n("inner"),
-			cnt = this.$n("cnt"),
+		var inner = this.$n('inner'),
+			cnt = this.$n('cnt'),
 			cntHeight = zk(inner.parentNode).padBorderHeight() +
 						zk(inner).padBorderHeight() +
 						zk(cnt).padBorderHeight() +
-						jq(cnt).find('.z-calendars-week-cnt').outerHeight() + 
+						jq(cnt).find('.z-calendars-week-cnt').outerHeight() +
 						jq(inner).find('.z-calendars-week-header').height(),
 			row = this.cntRows;
 		for (var child = cmp.firstChild; child; child = child.nextSibling) {
@@ -1587,16 +1587,16 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		var cnt = dg.node,
 			widget = dg.control;
 		
-		if (zk.processing || !cnt._lefts || p[0] <= cnt._lefts[0] || p[0] > cnt._lefts[cnt._lefts.length-1])
+		if (zk.processing || !cnt._lefts || p[0] <= cnt._lefts[0] || p[0] > cnt._lefts[cnt._lefts.length - 1])
 			return true;
 
 		// clear ghost
 		widget.clearGhost();
 		var n = evt.domTarget,
 			targetWidget = zk.Widget.$(n);
-		if (targetWidget.className == 'calendar.DayEvent' && (!n.parentNode || targetWidget.event.isLocked ))
+		if (targetWidget.className == 'calendar.DayItem' && (!n.parentNode || targetWidget.item.isLocked))
 			return true;
-		else if (n.nodeType == 1 && (jq(n).hasClass("z-calevent-resizer-icon")) || jq(n).hasClass("z-calevent-resizer")) {		
+		else if (n.nodeType == 1 && (jq(n).hasClass('z-calitem-resizer-icon')) || jq(n).hasClass('z-calitem-resizer')) {
 			if (widget._dragItems[cnt.id])
 				widget._dragItems[cnt.id]._zrz = true;
 		}
@@ -1607,7 +1607,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		
 		var cnt = dg.node,
 			targetWidget = dg.control._resizing ? dg.control._resizing : zk.Widget.$(evt.domTarget),
-			ce = targetWidget.className == 'calendar.DayEvent'? targetWidget.$n(): null,
+			ce = targetWidget.className == 'calendar.DayItem' ? targetWidget.$n() : null,
 			widget = dg.control,
 			ts = widget.ts,
 			cells = widget.cntRows.cells,
@@ -1620,18 +1620,18 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			b: ts, // begin index
 			ph: ph, // per height
 			th: cells[ts].firstChild.offsetHeight // total height
-		}
+		};
 		if (!ce) _createDragStart(dg, evt);
 		else {
-			var timeslotTime = 60/widget._timeslots,
-				bdOffs = ce._bd.getMinutes()%timeslotTime,
-				edOffs = ce._ed.getMinutes()%timeslotTime;
+			var timeslotTime = 60 / widget._timeslots,
+				bdOffs = ce._bd.getMinutes() % timeslotTime,
+				edOffs = ce._ed.getMinutes() % timeslotTime;
 			
 			if (bdOffs || edOffs) {
 				jq.alert('Only allowed to move within fitted timeslot', {icon: 'ERROR'});
 				ce._error = true;
-				ce.style.visibility = "";
-				jq('#'+widget.uuid+'-dd').remove();
+				ce.style.visibility = '';
+				jq('#' + widget.uuid + '-dd').remove();
 			}
 			
 			var faker = ce.cloneNode(true),
@@ -1643,8 +1643,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 			//reset
 			ce.parentNode.appendChild(faker);
-			ce.style.visibility = "hidden";
-			dg.node = jq('#'+uuid+'-dd')[0];
+			ce.style.visibility = 'hidden';
+			dg.node = jq('#' + uuid + '-dd')[0];
 
 			dg._zevt = ce;
 			dg._zhd = dg.node.childNodes[0].firstChild.firstChild.firstChild;
@@ -1656,12 +1656,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			dg._zoffs.bi = beginIndex + Math.floor(ce.offsetTop / ph);
 			// end index
 			dg._zoffs.ei = beginIndex + Math.ceil(ce.offsetHeight / ph);
-		}		
+		}
 		return dg.node;
 	},
 
 	_drawDaydrag: function (dg, p, evt) {
-		if(dg._zevt && dg._zevt._error) return;
+		if (dg._zevt && dg._zevt._error) return;
 		
 		var widget = dg.control,
 			zoffs = dg._zoffs,
@@ -1671,8 +1671,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			ph = zoffs.ph;
 
 		// avoid the wrong mousemove event in IE6.
-		if (zk.ie6_ && zoffs.x && 
-			evt.pageX == zoffs.x && 
+		if (zk.ie6_ && zoffs.x &&
+			evt.pageX == zoffs.x &&
 				zoffs.y == y) {
 			zoffs.x = null;
 			return;
@@ -1705,12 +1705,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		else _updateDragging(dg, evt);
 	},
 
-	_endghostDaydrag: function (dg, origin){
-        if (dg._zevt) {
+	_endghostDaydrag: function (dg, origin) {
+		if (dg._zevt) {
 			_updateDragEndghost(dg);
-            if (dg._zrz)
+			if (dg._zrz)
 				_resizeDragEndghost(dg);
-        } else _createDragEndghost(dg);
+		} else _createDragEndghost(dg);
 	},
 
 	_endDaydrag: function (dg, evt) {
@@ -1718,14 +1718,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		var widget = dg.control,
 			ghostNode = dg._zdata.ghostNode;
 		
-		if(widget._resizing){
+		if (widget._resizing) {
 			widget._resizing = null;
 		}
 			
 		if (dg._zevt && dg._zevt._error) {
 			dg._zevt._error = false;
-			dg._zevt.style.visibility = "";
-			jq('#'+widget.uuid+'-dd').remove();
+			dg._zevt.style.visibility = '';
+			jq('#' + widget.uuid + '-dd').remove();
 			return;
 		}
 		clearInterval(widget.run);
@@ -1737,18 +1737,18 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		else _updateDragEnd(dg, evt);
 		
 		// fix opera jumping
-		if (zk.opera) 
+		if (zk.opera)
 			dg.handle.scrollTop = widget._scrollInfo[widget.uuid];
 			
-		dg._zchanged = dg._zecnt = dg._zrzoffs = 
-		dg._zrs = dg._zdata = dg._zcells = 
+		dg._zchanged = dg._zecnt = dg._zrzoffs =
+		dg._zrs = dg._zdata = dg._zcells =
 		dg._zoffs = dg._zevt = null;
 	},
 	
-	_resetPosition: function (faker, widget) {		
-		faker.style.width = "100%";
-		faker.style.left = "0px";
-		jq(faker).addClass(widget.getZclass() + "-evt-ghost");
+	_resetPosition: function (faker, widget) {
+		faker.style.width = '100%';
+		faker.style.left = '0px';
+		jq(faker).addClass(widget.getZclass() + '-evt-ghost');
 	}
 });
 })();
