@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+zkcal83.zul
+
+		Purpose:
+		
+		Description:
+		
+		History:
+				Fri Jan 15 11:55:29 CST 2021, Created by leon
+
+Copyright (C) 2021 Potix Corporation. All Rights Reserved.
+
+-->
+<zk>
+	<label multiline="true">
+		1. click button "short to long event", you should see the correct result is rendered without js error.
+		2. click button "long to longer event", you should see the correct result is rendered(extend to the second week).
+	</label>
+	<div apply="test.Cal83Controller" height="800px"/>
+</zk>

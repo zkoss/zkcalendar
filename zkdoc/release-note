@@ -11,6 +11,7 @@ calendar 3.0.0
 	ZKCAL-71: the height of the popup to show more events is too large
 	ZKCAL-63: CalendarEvents longer than 12 hours are displayed as all day event
 	ZKCAL-68: moving an Calendar event causes a NumberFormatException in IE11
+	ZKCAL-83: errors when updating calendar events
 
 * Upgrade Notes:
 	+ The Java binary-compatible level is Java 8 since ZK Calendar 3.

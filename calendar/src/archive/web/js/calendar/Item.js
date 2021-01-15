@@ -108,6 +108,10 @@ calendar.Item = zk.$extends(zk.Widget, {
 		return this.$n().zoneBd.getTime() != item.zoneBd.getTime();
 	},
 
+	isEndTimeChange: function (item) {
+		return this.$n().zoneEd.getTime() != item.zoneEd.getTime();
+	},
+
 	_createBoundTime: function (node, bd, ed) {
 		//have findBoundTime_ function
 		if (this.findBoundTime_) {

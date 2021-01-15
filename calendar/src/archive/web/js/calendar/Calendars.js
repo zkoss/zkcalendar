@@ -422,7 +422,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 		for (var item; (item = itemArray.shift());) {
 			var childWidget = zk.Widget.$(item.id),
 				inMon = this.mon,
-				isBeginTimeChange = false;
+				isBeginTimeChange = false,
+				isEndTimeChange = false; // ZKCAL-83: should maintain _itemWeekSet
 			
 			item = this.processItemData_(item);
 			
@@ -437,9 +438,9 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 					childWidget = zk.Widget.$(item.id);
 				}
 			}
-			
+
 			if (inMon &&
-				(isBeginTimeChange = childWidget.isBeginTimeChange(item)))
+				((isBeginTimeChange = childWidget.isBeginTimeChange(item)) || (isEndTimeChange = childWidget.isEndTimeChange(item))))
 				this.removeNodeInArray_(childWidget);
 			
 			//over range
@@ -458,6 +459,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			if (isChangeEvent) {
 				if (!inMon)
 					this[isDayItem ? '_dayItems' : '_daylongItems'].$remove(childWidget.$n());
+				this.removeNodeInArray_(childWidget, hasAdd); // ZKCAL-83: should maintain _itemWeekSet
 				this.removeChild(childWidget);
 				this.processChildrenWidget_(isExceedOneDay, item);
 				hasAdd.day = hasAdd.daylong = true;
@@ -466,7 +468,7 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 				childWidget.update(isBeginTimeChange);
 				
 				if (inMon) {
-					if (isBeginTimeChange) {
+					if (isBeginTimeChange || isEndTimeChange) {
 						this._putInMapList(childWidget);
 					}
 				} else {
