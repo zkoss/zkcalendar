@@ -100,7 +100,8 @@ public interface CalendarItem {
 	public String getZclass();
 
 	/**
-	 * Returns whether the calendar item is locked or not.
+	 * When it returns true, an end-user can't move the calendar item by mouse drag & drop in a browser.
+	 * Otherwise, an end-user can freely move the item.
 	 */
 	public boolean isLocked();
 }
