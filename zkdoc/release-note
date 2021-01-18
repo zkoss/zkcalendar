@@ -16,7 +16,7 @@ calendar 3.0.0
 * Upgrade Notes:
 	+ The Java binary-compatible level is Java 8 since ZK Calendar 3.
 	+ CalendarEvent and SimpleCalendarEvent are renamed to CalendarItem and SimpleCalendarItem, the related API are renamed too.
-	+ Some methods in CalendarItem with java.util.Date are deprecated, and add ZonedDateTimeFormatter/LocaleDateTimeCalendarItem for java.time API.
+	+ Some methods in CalendarItem with java.util.Date are deprecated, and add ZonedDateTimeFormatter/DefaultCalendarItem for java.time API.
 
 	--------
 calendar 2.1.5

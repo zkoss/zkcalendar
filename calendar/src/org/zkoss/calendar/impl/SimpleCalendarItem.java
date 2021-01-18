@@ -25,10 +25,8 @@ import org.zkoss.calendar.api.CalendarItem;
 /**
  * A simple implementation of {@link CalendarItem}
  * @author jumperchen
- * @deprecated since 3.0.0
  * @see AbstractCalendarItem
  */
-@Deprecated
 public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Serializable {
 	private static final long serialVersionUID = 20090316143135L;
 

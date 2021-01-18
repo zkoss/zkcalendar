@@ -17,7 +17,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 
 import org.zkoss.calendar.Calendars;
-import org.zkoss.calendar.impl.LocaleDateTimeCalendarItem;
+import org.zkoss.calendar.impl.DefaultCalendarItem;
 import org.zkoss.calendar.impl.SimpleCalendarItem;
 import org.zkoss.calendar.impl.SimpleCalendarModel;
 import org.zkoss.zk.ui.Component;
@@ -38,8 +38,8 @@ public class Cal73Controller extends SelectorComposer {
 		LocalDateTime start = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
 		LocalDateTime end = start.plusMinutes(120);
 		ZoneId zoneId = ZoneId.of("Europe/Paris");
-		LocaleDateTimeCalendarItem event = new LocaleDateTimeCalendarItem(start, end, zoneId);
-		event.setContent("LocaleDateTimeCalendarEvent: " + start.toString());
+		DefaultCalendarItem event = new DefaultCalendarItem(start, end, zoneId);
+		event.setContent("LocalDateTimeCalendarEvent: " + start.toString());
 		calendarModel.add(event);
 
 		SimpleCalendarItem event2 = new SimpleCalendarItem();

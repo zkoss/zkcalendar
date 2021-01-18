@@ -1,4 +1,4 @@
-/* LocaleDateTimeCalendarItem.java
+/* DefaultCalendarItem.java
 
 		Purpose:
 		
@@ -19,28 +19,30 @@ import java.time.ZoneId;
 import org.zkoss.zk.ui.WrongValueException;
 
 /**
- * A LocaleDateTime implementation of {@link AbstractCalendarItem}
+ * A LocalDateTime implementation of {@link AbstractCalendarItem}
  * @author leon
  * @since since 3.0.0
  */
-public class LocaleDateTimeCalendarItem extends AbstractCalendarItem<LocalDateTime> implements Serializable {
+public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> implements Serializable {
 	private static final long serialVersionUID = 20210112095645L;
 	private ZoneId _zoneId;
 
-	public LocaleDateTimeCalendarItem(LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
+	public DefaultCalendarItem(LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
 		super("", "", "", "", false, begin, end);
+		if (_zoneId == null)
+			throw new IllegalArgumentException("Must specify ZoneId");
 		this._zoneId = zoneId;
 	}
 
-	public LocaleDateTimeCalendarItem(String title, String content, String headerColor, String contentColor, boolean locked, LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
+	public DefaultCalendarItem(String title, String content, String headerColor, String contentColor, boolean locked, LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
 		super(title, content, headerColor, contentColor, locked, begin, end);
+		if (_zoneId == null)
+			throw new IllegalArgumentException("Must specify ZoneId");
 		this._zoneId = zoneId;
 	}
 
 	@Override
 	protected Instant convertToInstant(LocalDateTime dateTime) throws WrongValueException {
-		if (_zoneId == null)
-			throw new WrongValueException("Must specify ZoneId");
 		return dateTime == null ? null : dateTime.atZone(_zoneId).toInstant();
 	}
 }
