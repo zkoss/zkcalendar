@@ -19,6 +19,10 @@ import org.zkoss.zk.ui.WebApp;
 import org.zkoss.zk.ui.util.Configuration;
 import org.zkoss.zk.ui.util.WebAppInit;
 
+/**
+ * This is a fallback for older ZK versions in which the ThemeProvider cannot be customized for themed addon components.
+ * To be refactored after ZK-4771 is available.
+ */
 public class CalendarWebAppInit implements WebAppInit {
 	private static final String CALENDAR_THEME_PREFERRED_KEY = "org.zkoss.calendar.theme.preferred";
 	private static final String THEME_PREFERRED_KEY = "org.zkoss.theme.preferred";
@@ -26,18 +30,21 @@ public class CalendarWebAppInit implements WebAppInit {
 	private static final List<String> CLASSIC_THEMES = Arrays.asList("breeze", "sapphire", "silvertail");
 	private static final List<String> WCAG_THEMES = Arrays.asList("wcag", "wcag_navy", "wcag_purple");
 	private static final List<String> DARK_THEMES = Arrays.asList("ruby", "amber", "emerald", "aquamarine", "montana", "violet", "spaceblack", "cardinal", "mysteriousgreen", "zen");
+	public static final String PREFIX = "~./js/calendar/css/theme/calendar-";
+	public static final String SUFFIX = ".css.dsp";
 
-	public String getCalendarThemeURI() {
+	public static String getCalendarThemeURI() {
 		String calendarThemePreferred = Library.getProperty(CALENDAR_THEME_PREFERRED_KEY);
-		String prefix = "~./js/calendar/css/theme/calendar-";
-		String suffix = ".css.dsp";
 		if (calendarThemePreferred != null && !calendarThemePreferred.trim().isEmpty()) {
 			if (BUILT_IN_THEMES.contains(calendarThemePreferred))
-				return prefix + calendarThemePreferred + suffix;// use built-in theme
+				return PREFIX + calendarThemePreferred + SUFFIX;// use built-in theme
 			return ""; // custom theme, don't apply built-in theme
 		}
 
-		String themePreferred = Library.getProperty(THEME_PREFERRED_KEY);
+		return getCalendarThemeURI(Library.getProperty(THEME_PREFERRED_KEY));
+	}
+
+	public static String getCalendarThemeURI(String themePreferred) {
 		String result = "";
 		if (themePreferred != null && !themePreferred.trim().isEmpty()) {
 			themePreferred = themePreferred.toLowerCase();
@@ -52,7 +59,7 @@ public class CalendarWebAppInit implements WebAppInit {
 		}
 		if (result.isEmpty())
 			result = "iceblue";
-		return prefix + result + suffix;
+		return PREFIX + result + SUFFIX;
 	}
 
 	@Override
