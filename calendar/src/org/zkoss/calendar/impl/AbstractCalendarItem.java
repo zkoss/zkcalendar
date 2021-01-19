@@ -104,7 +104,7 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	}
 
 	/**
-	 * When setting it to true, an end-user can't move a calendar item by mouse drag & drop in a browser.
+	 * When setting it to true, an end-user can't move a calendar item by mouse drag and drop in a browser.
 	 * @param locked
 	 */
 	public void setLocked(boolean locked) {
