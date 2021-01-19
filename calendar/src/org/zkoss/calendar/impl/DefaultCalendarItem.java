@@ -16,10 +16,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-import org.zkoss.zk.ui.WrongValueException;
-
 /**
- * A LocalDateTime implementation of {@link AbstractCalendarItem}
+ * An immutable implementation of {@link AbstractCalendarItem} using LocalDateTime and ZoneId.
  * @author leon
  * @since since 3.0.0
  */
@@ -28,21 +26,18 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 	private ZoneId _zoneId;
 
 	public DefaultCalendarItem(LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
-		super("", "", "", "", false, begin, end);
-		if (_zoneId == null)
-			throw new IllegalArgumentException("Must specify ZoneId");
-		this._zoneId = zoneId;
+		this("", "", "", "", false, begin, end, zoneId);
 	}
 
 	public DefaultCalendarItem(String title, String content, String headerColor, String contentColor, boolean locked, LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
 		super(title, content, headerColor, contentColor, locked, begin, end);
-		if (_zoneId == null)
+		if (zoneId == null)
 			throw new IllegalArgumentException("Must specify ZoneId");
 		this._zoneId = zoneId;
 	}
 
 	@Override
-	protected Instant convertToInstant(LocalDateTime dateTime) throws WrongValueException {
+	protected Instant convertToInstant(LocalDateTime dateTime) {
 		return dateTime == null ? null : dateTime.atZone(_zoneId).toInstant();
 	}
 }
