@@ -1,0 +1,3 @@
+<zk>
+    <calendars height="100%" width="100%" beginTime="8" apply="org.zkoss.calendar.essentials.DisplayComposer" readonly="true"/>
+</zk>

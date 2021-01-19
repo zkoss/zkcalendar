@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zk>
+    <div height="100%" apply="org.zkoss.calendar.essentials.CalendarCrudComposer">
+        <calendars id="calendars" firstDayOfWeek="Sunday"
+                   mold="default" vflex="1" width="80%"/>
+        <popup id="creationBox">
+            <vlayout>
+                <datebox id="beginBox" placeholder="beginning date" format="yyyy-MM-dd HH:mm" hflex="min"/>
+                <datebox id="endBox" placeholder="end date" format="yyyy-MM-dd HH:mm" hflex="min"/>
+                <textbox id="titleBox" placeholder="title"/>
+                <textbox id="contentBox" placeholder="content"/>
+                <hlayout>
+                    <button label="Cancel"/>
+                    <button id="update" label="Update"/>
+                    <button id="delete" label="Delete"/>
+                    <button id="create" label="Create"/>
+                </hlayout>
+            </vlayout>
+        </popup>
+    </div>
+</zk>

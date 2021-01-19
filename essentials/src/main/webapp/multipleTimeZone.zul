@@ -1,0 +1,7 @@
+<zk>
+    Default Time Zone: <label id="message" />
+    <calendars id="cal" timeZone="Finland=GMT+2, Taiwan=GMT+8"/>
+    <zscript><![CDATA[
+    message.setValue(cal.getDefaultTimeZone().getDisplayName());
+    ]]></zscript>
+</zk>
