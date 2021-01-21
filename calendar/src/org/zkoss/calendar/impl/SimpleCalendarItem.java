@@ -50,4 +50,36 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 	public void setEndDate(Date end) {
 		setEnd(end);
 	}
+
+	public void setBegin(Date begin) {
+		this._begin = begin;
+	}
+
+	public void setEnd(Date end) {
+		this._end = end;
+	}
+
+	public void setTitle(String title) {
+		_title = title;
+	}
+
+	public void setContent(String content) {
+		_content = content;
+	}
+
+	public void setHeaderColor(String hcolor) {
+		_headerColor = hcolor;
+	}
+
+	public void setContentColor(String contentColor) {
+		_contentColor = contentColor;
+	}
+
+	/**
+	 * When setting it to true, an end-user can't move a calendar item by mouse drag and drop in a browser.
+	 * @param locked
+	 */
+	public void setLocked(boolean locked) {
+		_locked = locked;
+	}
 }

@@ -39,7 +39,6 @@ public class Cal73Controller extends SelectorComposer {
 		LocalDateTime end = start.plusMinutes(120);
 		ZoneId zoneId = ZoneId.of("Europe/Paris");
 		DefaultCalendarItem event = new DefaultCalendarItem(start, end, zoneId);
-		event.setContent("LocalDateTimeCalendarEvent: " + start.toString());
 		calendarModel.add(event);
 
 		SimpleCalendarItem event2 = new SimpleCalendarItem();

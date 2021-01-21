@@ -21,13 +21,13 @@ import org.zkoss.calendar.api.CalendarItem;
  * @since 3.0.0
  */
 public abstract class AbstractCalendarItem<T> implements CalendarItem {
-	private String _title;
-	private String _content;
-	private String _headerColor;
-	private String _contentColor;
-	private boolean _locked;
-	private T _begin;
-	private T _end;
+	protected String _title;
+	protected String _content;
+	protected String _headerColor;
+	protected String _contentColor;
+	protected boolean _locked;
+	protected T _begin;
+	protected T _end;
 
 	public AbstractCalendarItem(String title, String content, String headerColor, String contentColor, boolean locked, T begin, T end) {
 		this._title = title;
@@ -43,16 +43,8 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 		return convertToInstant(_begin);
 	}
 
-	public void setBegin(T begin) {
-		this._begin = begin;
-	}
-
 	public Instant getEnd() {
 		return convertToInstant(_end);
-	}
-
-	public void setEnd(T end) {
-		this._end = end;
 	}
 
 	protected abstract Instant convertToInstant(T date);
@@ -62,17 +54,9 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 		return _title;
 	}
 
-	public void setTitle(String title) {
-		_title = title;
-	}
-
 	@Override
 	public String getContent() {
 		return _content;
-	}
-
-	public void setContent(String content) {
-		_content = content;
 	}
 
 	@Override
@@ -80,17 +64,9 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 		return _headerColor;
 	}
 
-	public void setHeaderColor(String hcolor) {
-		_headerColor = hcolor;
-	}
-
 	@Override
 	public String getContentColor() {
 		return _contentColor;
-	}
-
-	public void setContentColor(String contentColor) {
-		_contentColor = contentColor;
 	}
 
 	@Override
@@ -101,13 +77,5 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	@Override
 	public boolean isLocked() {
 		return _locked;
-	}
-
-	/**
-	 * When setting it to true, an end-user can't move a calendar item by mouse drag and drop in a browser.
-	 * @param locked
-	 */
-	public void setLocked(boolean locked) {
-		_locked = locked;
 	}
 }
