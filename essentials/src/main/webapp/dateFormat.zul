@@ -1,0 +1,3 @@
+<zk>
+    <calendars dateFormatter="org.zkoss.calendar.essentials.MyDateFormatter"/>
+</zk>
