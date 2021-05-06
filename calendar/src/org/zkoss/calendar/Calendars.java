@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.api.CalendarModel;
@@ -453,11 +454,13 @@ public class Calendars extends XulElement {
 		
 	public String getCalendarItemId(CalendarItem ce) {
 		Object o = _ids.get(ce);
-		if (o == null) {
+		if (o == null && super.getDesktop() != null) {
 			o = ((DesktopCtrl)getDesktop()).getNextUuid(this);
 			_ids.put(o, ce);
 			_ids.put(ce, o);
-		}
+		} else if (o == null) {
+			o = UUID.randomUUID().toString();
+        	}
 		return (String) o;
 	}	
 	
