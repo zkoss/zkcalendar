@@ -22,7 +22,7 @@
         <repository>
             <id>ZK CE</id>
             <name>ZK CE Repository</name>
-            <url>http://mavensync.zkoss.org/maven2</url>
+            <url>https://mavensync.zkoss.org/maven2</url>
         </repository>
         <repository>
             <id>ZK EE Evaluation</id>
@@ -37,7 +37,7 @@
         <pluginRepository>
             <id>zkmaven</id>
             <name>ZK Maven Plugin Repository</name>
-            <url>http://mavensync.zkoss.org/maven2</url>
+            <url>https://mavensync.zkoss.org/maven2</url>
         </pluginRepository>
     </pluginRepositories>
     <dependencies>

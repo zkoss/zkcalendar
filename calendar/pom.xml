@@ -25,7 +25,7 @@
 		<pluginRepository>
 			<id>zkmaven</id>
 			<name>zk maven repository</name>
-			<url>http://mavensync.zkoss.org/maven2/</url>
+			<url>https://mavensync.zkoss.org/maven2/</url>
 		</pluginRepository>
 	</pluginRepositories>
 	<dependencies>
