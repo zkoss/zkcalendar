@@ -1,0 +1,11 @@
+{
+  "name": "zkcalendardemo",
+  "version": "3.0.1",
+  "private": true,
+  "devDependencies": {
+    "testcafe": "^1.4.3"
+  },
+  "scripts": {
+    "test": "testcafe chrome test/"
+  }
+}
