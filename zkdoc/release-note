@@ -2,6 +2,7 @@ calendar 3.0.1
 * Features:
 
 * Bugs:
+	ZKCAL-85: drag endate in day/week view truncates last 30 mins
 
 * Upgrade Notes:
 

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+zkcal85.zul
+
+		Purpose:
+		
+		Description:
+		
+		History:
+				Mon Oct 04 15:49:43 CST 2021, Created by leon
+
+Copyright (C) 2021 Potix Corporation. All Rights Reserved.
+
+-->
+<zk>
+	<label multiline="true">
+		1.drag mouse to create an event (e.g. 2:00~6:00), you should see "end time received at server side:" with correct end time
+		A) drag end time to 6:30, you should see endDate updates to 6:30 + corresponding server event
+		B) drag end time to 7:00, you should see endDate updates to 7:00 + same time in event to server
+	</label>
+	<calendars apply="test.Cal85Composer"/>
+</zk>

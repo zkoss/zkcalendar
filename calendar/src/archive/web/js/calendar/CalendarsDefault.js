@@ -322,7 +322,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	}
 	
 	function _resizeDragEndghost(dg) {
-		dg._zdata.dur = Math.floor((dg.node.offsetHeight - dg._zevt.offsetHeight) / dg._zoffs.ph);
+		dg._zdata.dur = Math.round((dg.node.offsetHeight - dg._zevt.offsetHeight) / dg._zoffs.ph);
 	}
 	
 	function _resizeDragEnd(dg, evt) {
