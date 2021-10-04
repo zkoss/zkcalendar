@@ -10,11 +10,11 @@
     <packaging>war</packaging>
     <name>The ZK Calendar Demo</name>
     <description>The ZK Calendar Demo</description>
-    <url>http://www.zkoss.org/product/zkcalendar</url>
+    <url>https://www.zkoss.org/product/zkcalendar</url>
     <licenses>
         <license>
             <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
-            <url>http://www.gnu.org/licenses/lgpl.html</url>
+            <url>https://www.gnu.org/licenses/lgpl.html</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -26,11 +26,15 @@
         </repository>
         <repository>
             <id>ZK EE Evaluation</id>
-            <url>http://mavensync.zkoss.org/zk/ee-eval</url>
+            <url>https://mavensync.zkoss.org/zk/ee-eval</url>
         </repository>
         <repository>
             <id>ZK EE</id>
             <url>https://maven.zkoss.org/repo/zk/ee</url>
+        </repository>
+        <repository>
+            <id>jaspersoft-third-party</id>
+            <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
         </repository>
     </repositories>
     <pluginRepositories>

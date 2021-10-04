@@ -12,12 +12,12 @@
 	</properties>
 	<packaging>jar</packaging>
 	<name>The ZK Calendars</name>
-	<url>http://www.zkoss.org/calendars</url>
+	<url>https://www.zkoss.org/calendars</url>
 	<description>The ZK Calendars</description>
 	<licenses>
 		<license>
 			<name>GNU General Public License, Version 2.0</name>
-			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<url>https://www.gnu.org/licenses/gpl.html</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>

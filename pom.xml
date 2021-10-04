@@ -7,7 +7,7 @@
 	<packaging>pom</packaging>
 	<name>The ZK Calendar Project</name>
 	<description>The ZK Calendar Project</description>
-	<url>http://www.zkoss.org/product/zkcalendar.dsp</url>
+	<url>https://www.zkoss.org/product/zkcalendar.dsp</url>
 	<modules>
 		<module>calendar</module>
 		<module>zkcalendardemo</module>
@@ -20,7 +20,7 @@
 	<licenses>
 		<license>
 			<name>GNU General Public License, Version 2.0</name>
-			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<url>https://www.gnu.org/licenses/gpl.html</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -31,7 +31,7 @@
 		</repository>
 		<repository>
 			<id>ZK EE Evaluation</id>
-			<url>http://mavensync.zkoss.org/zk/ee-eval</url>
+			<url>https://mavensync.zkoss.org/zk/ee-eval</url>
 		</repository>
 	</repositories>
 	<dependencies>
