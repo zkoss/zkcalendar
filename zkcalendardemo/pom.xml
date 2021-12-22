@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.zkoss.calendar</groupId>
         <artifactId>zkcalendar</artifactId>
-        <version>3.0.1</version>
+        <version>3.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>zkcalendardemo</artifactId>
     <packaging>war</packaging>
