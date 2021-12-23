@@ -75,6 +75,14 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 		_contentColor = contentColor;
 	}
 
+	/** Sets the CSS class.
+	 *
+	 * @since 3.0.2
+	 */
+	public void setSclass(String scalss) {
+		_sclass = scalss;
+	}
+
 	/**
 	 * When setting it to true, an end-user can't move a calendar item by mouse drag and drop in a browser.
 	 * @param locked

@@ -65,7 +65,11 @@ calendar.Item = zk.$extends(zk.Widget, {
 		var zcls = this.item.zclass;
 		return zcls ? zcls : 'z-calitem';
 	},
-	
+
+	getSclass: function () {
+		return this.item.sclass;
+	},
+
 	getInnerStyle_: function () {
 		return this.params.headerStyle;
 	},

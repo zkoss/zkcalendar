@@ -25,15 +25,21 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	protected String _content;
 	protected String _headerColor;
 	protected String _contentColor;
+	protected String _sclass;
 	protected boolean _locked;
 	protected T _begin;
 	protected T _end;
 
 	public AbstractCalendarItem(String title, String content, String headerColor, String contentColor, boolean locked, T begin, T end) {
+		this(title, content, headerColor, contentColor, "", locked, begin, end);
+	}
+
+	public AbstractCalendarItem(String title, String content, String headerColor, String contentColor, String sclass, boolean locked, T begin, T end) {
 		this._title = title;
 		this._content = content;
 		this._headerColor = headerColor;
 		this._contentColor = contentColor;
+		this._sclass = sclass;
 		this._locked = locked;
 		this._begin = begin;
 		this._end = end;
@@ -72,6 +78,11 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	@Override
 	public String getZclass() {
 		return "z-calitem";
+	}
+
+	@Override
+	public String getSclass() {
+		return _sclass;
 	}
 
 	@Override

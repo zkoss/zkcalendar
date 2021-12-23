@@ -99,6 +99,23 @@ public interface CalendarItem {
 	 */
 	public String getZclass();
 
+	/** Returns the CSS class.
+	 *
+	 * <p>The default styles of CalendarItem doesn't depend on the value
+	 * of {@link #getSclass}. Rather, sclass is provided to
+	 * perform small adjustment, e.g., only changing the font size.
+	 * In other words, the default style is still applied if you change
+	 * the value of {@link #getSclass}, unless you override it.
+	 * To replace the default style completely, use
+	 * zclass instead.
+	 *
+	 * Note: never null
+	 *
+	 * @see #getZclass
+	 * @since 3.0.2
+	 */
+	public String getSclass();
+
 	/**
 	 * When it returns true, an end-user can't move the calendar item by mouse drag and drop in a browser.
 	 * Otherwise, an end-user can freely move the item.

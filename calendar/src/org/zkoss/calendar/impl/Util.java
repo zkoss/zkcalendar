@@ -171,6 +171,7 @@ public class Util {
 		json.put("beginDate", String.valueOf(getDSTTime(timezone, ce.getBeginDate())));
 		json.put("endDate", String.valueOf(getDSTTime(timezone ,ce.getEndDate())));
 		json.put("isLocked", String.valueOf(ce.isLocked()));
+		json.put("sclass", ce.getSclass());
 		json.put("zclass", ce.getZclass());
 		
 		sb.append(json.toString()).append(",");

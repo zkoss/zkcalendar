@@ -30,15 +30,19 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 	 */
 	@Deprecated
 	public DefaultCalendarItem(LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
-		this("", "", "", "", false, begin, end, zoneId);
+		this("", "", "", "", "", false, begin, end, zoneId);
 	}
 
 	/**
 	 * @deprecated since 3.0.2, please use {@link Builder} instead
 	 */
 	@Deprecated
-	public DefaultCalendarItem(String title, String content, String headerColor, String contentColor, boolean locked, LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
-		super(title, content, headerColor, contentColor, locked, begin, end);
+	public DefaultCalendarItem(String title, String content, boolean locked, LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
+		this(title, content, "", "", "", locked, begin, end, zoneId);
+	}
+
+	private DefaultCalendarItem(String title, String content, String headerColor, String contentColor, String sclass, boolean locked, LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
+		super(title, content, headerColor, contentColor, sclass, locked, begin, end);
 		if (zoneId == null)
 			throw new IllegalArgumentException("Must specify ZoneId");
 		this._zoneId = zoneId;
@@ -62,6 +66,7 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 		private String content = "";
 		private String headerColor = "";
 		private String contentColor = "";
+		private String sclass = "";
 		private boolean locked = false;
 
 		public Builder withBegin(LocalDateTime begin) {
@@ -99,13 +104,18 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 			return this;
 		}
 
+		public Builder withSclass(String sclass) {
+			this.sclass = sclass;
+			return this;
+		}
+
 		public Builder withLocked(boolean locked) {
 			this.locked = locked;
 			return this;
 		}
 
 		public DefaultCalendarItem build() {
-			return new DefaultCalendarItem(title, content, headerColor, contentColor, locked, begin, end, zoneId);
+			return new DefaultCalendarItem(title, content, headerColor, contentColor, sclass, locked, begin, end, zoneId);
 		}
 	}
 }

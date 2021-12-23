@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+zkcal88.zul
+
+		Purpose:
+		
+		Description:
+		
+		History:
+				Wed Dec 22 17:19:33 CST 2021, Created by leon
+
+Copyright (C) 2021 Potix Corporation. All Rights Reserved.
+
+-->
+<zk>
+	<label multiline="true">
+		1. you should see the both calendarItems with black title and red content (font).
+		2. you should see the title 09:30 - 11:30 with bolder and larger font style.
+	</label>
+	<style>
+		.myclass .z-calitem-header {
+			color: black;
+		}
+		.myclass .z-calitem-cnt {
+			color: red;
+		}
+		.custom .z-calitem-header {
+			font-size: 16px;
+			font-weight: 600;
+		}
+	</style>
+	<div apply="test.Cal88Controller">
+		<calendars id="calendars" height="600px" beginTime="8"/>
+	</div>
+</zk>
