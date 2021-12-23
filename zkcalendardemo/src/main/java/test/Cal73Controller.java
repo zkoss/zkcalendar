@@ -38,7 +38,11 @@ public class Cal73Controller extends SelectorComposer {
 		LocalDateTime start = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
 		LocalDateTime end = start.plusMinutes(120);
 		ZoneId zoneId = ZoneId.of("Europe/Paris");
-		DefaultCalendarItem event = new DefaultCalendarItem(start, end, zoneId);
+		DefaultCalendarItem event = new DefaultCalendarItem.Builder()
+				.withBegin(start)
+				.withEnd(end)
+				.withZoneId(zoneId)
+				.build();
 		calendarModel.add(event);
 
 		SimpleCalendarItem event2 = new SimpleCalendarItem();

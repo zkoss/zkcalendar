@@ -1,5 +1,6 @@
 calendar 3.0.2
 * Features:
+	ZKCAL-92: Add a builder for the immutable DefaultCalendarItem
 
 * Bugs:
 
