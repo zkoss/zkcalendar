@@ -33,20 +33,11 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	protected T _begin;
 	protected T _end;
 
+	@Deprecated
 	public AbstractCalendarItem(String title, String content, String headerColor, String contentColor, boolean locked, T begin, T end) {
 		this(title, content, headerColor, contentColor, "", locked, begin, end);
 	}
 
-	public AbstractCalendarItem(String title, String content, String headerColor, String contentColor, String sclass, boolean locked, T begin, T end) {
-		this._title = title;
-		this._content = content;
-		this._headerColor = headerColor;
-		this._contentColor = contentColor;
-		this._sclass = sclass;
-		this._locked = locked;
-		this._begin = begin;
-		this._end = end;
-	}
 	public AbstractCalendarItem(String title, String content, String style, String contentStyle, String headerStyle, boolean locked, T begin, T end) {
 		this._title = title;
 		this._content = content;
@@ -56,6 +47,10 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 		this._locked = locked;
 		this._begin = begin;
 		this._end = end;
+	}
+	public AbstractCalendarItem(String title, String content, String sclass, String style, String contentStyle, String headerStyle, boolean locked, T begin, T end) {
+		this(title, content, style, contentStyle, headerStyle, locked, begin, end);
+		this._sclass = sclass;
 	}
 
 	public Instant getBegin() {
