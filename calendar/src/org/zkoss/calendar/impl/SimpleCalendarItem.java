@@ -34,8 +34,13 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 		super("", "", "", "", false, null, null);
 	}
 
+	@Deprecated
 	public SimpleCalendarItem(String title, String content, String headerColor, String contentColor, boolean locked, Date begin, Date end) {
 		super(title, content, headerColor, contentColor, locked, begin, end);
+	}
+	
+	public SimpleCalendarItem(String title, String content, String style, String contentStyle, String headerStyle, boolean locked, Date begin, Date end) {
+		super(title, content, style, contentStyle, headerStyle, locked, begin, end);
 	}
 
 	@Override
@@ -60,19 +65,39 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 	}
 
 	public void setTitle(String title) {
-		_title = title;
+		this._title = title;
 	}
 
 	public void setContent(String content) {
-		_content = content;
+		this._content = content;
 	}
 
+	@Deprecated
+	/**
+	 * Use setHeaderStyle(String headerStyle) instead.
+	 */
 	public void setHeaderColor(String hcolor) {
-		_headerColor = hcolor;
+		this._headerColor = hcolor;
 	}
 
+	/**
+	 * Use setContentStyle(String contentStyle) instead.
+	 */
+	@Deprecated
 	public void setContentColor(String contentColor) {
-		_contentColor = contentColor;
+		this._contentColor = contentColor;
+	}
+	
+	public void setStyle(String style){
+		this._style = style;
+	}
+
+	public void setContentStyle(String contentStyle){
+		this._contentStyle = contentStyle;
+	}
+	
+	public void setHeaderStyle(String headerStyle){
+		this._headerStyle = headerStyle;
 	}
 
 	/** Sets the CSS class.

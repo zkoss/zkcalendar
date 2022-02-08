@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.calendar</groupId>
 	<artifactId>zkcalendar</artifactId>
-	<version>3.0.2.FL.20211223</version>
+	<version>3.0.3.FL.20220208</version>
 	<packaging>pom</packaging>
 	<name>The ZK Calendar Project</name>
 	<description>The ZK Calendar Project</description>

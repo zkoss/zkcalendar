@@ -79,18 +79,32 @@ public interface CalendarItem {
 	/**
 	 * Returns the color of the header in the calendar item.
 	 * Only allows the value being recognized by CSS. 
-	 * <p>
-	 * Note: never null
 	 */
+	@Deprecated
 	public String getHeaderColor();
 
 	/**
 	 * Returns the color of the content in the calendar item.
 	 * Only allows the value being recognized by CSS. 
-	 * <p>
-	 * Note: never null
 	 */
+	@Deprecated
 	public String getContentColor();
+
+	/**
+	 * Returns the CSS style
+	 */
+	
+	public String getStyle();
+	/**
+	 * Returns the CSS style applied to the content Node.
+	 */
+	
+	public String getContentStyle();
+	
+	/**
+	 * Returns the CSS style applied to the header node.
+	 */
+	public String getHeaderStyle();
 
 	/**
 	 * Returns the zclass of the calendar item.
@@ -121,4 +135,5 @@ public interface CalendarItem {
 	 * Otherwise, an end-user can freely move the item.
 	 */
 	public boolean isLocked();
+
 }

@@ -1,6 +1,6 @@
 {
   "name": "zkcalendar",
-  "version": "0.0.1",
+  "version": "3.0.3",
   "private": true,
   "dependencies": {
     "zkless-engine": "^1.1.6"

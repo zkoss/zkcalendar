@@ -30,7 +30,10 @@ calendar.Item = zk.$extends(zk.Widget, {
 		var zcls = this.getZclass(),
 			ce = this.item,
 			headerColor = ce.headerColor,
-			contentColor = ce.contentColor;
+			contentColor = ce.contentColor,
+			style = ce.style,
+			headerStyle = headerColor? ('background-color: ' + headerColor):'' + ce.headerStyle,
+			contentStyle = contentColor? ('background-color: ' + contentColor):'' + ce.contentStyle;
 		
 		this.params = {
 			// CSS ClassName
@@ -38,8 +41,9 @@ calendar.Item = zk.$extends(zk.Widget, {
 			inner: zcls + '-inner',
 			content: zcls + '-cnt',
 			text: zcls + '-text',
-			headerStyle: headerColor ? ' style="background:' + headerColor + '"' : '',
-			contentStyle: contentColor ? ' style="background:' + contentColor + '"' : ''
+			style: ' style="' + style + '"',
+			headerStyle: ' style="' + headerStyle + '"',
+			contentStyle: ' style="' + contentStyle + '"'
 		};
 		this.uuid = ce.id;
 	},
@@ -48,9 +52,13 @@ calendar.Item = zk.$extends(zk.Widget, {
 		var ce = this.item,
 			headerColor = ce.headerColor,
 			contentColor = ce.contentColor,
+			style = ce.style,
+			headerStyle = ce.headerStyle,
+			contentStyle = ce.contentStyle
 			p = this.params;
-		p.headerStyle = headerColor ? 'background:' + headerColor : '';
-		p.contentStyle = contentColor ? 'background:' + contentColor : '';
+		p.style = ' style="' + style + '"';
+		p.headerStyle = headerColor ? 'background:' + headerColor + ';' + headerStyle : headerStyle,
+		p.contentStyle = contentColor ? 'background:' + contentColor + ';' + contentStyle : contentStyle
 	},
 	
 	updateHeaderStyle_: function (headerStyle) {

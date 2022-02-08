@@ -20,6 +20,7 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 		var ce = this.item,
 			id = ce.id,
 			p = this.params,
+			style = p.style,
 			headerStyle = p.headerStyle,
 			contentStyle = p.contentStyle,
 			arrowStyle = p.arrowStyle,
@@ -36,7 +37,7 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 		if (isAfter)
 			out.push(' ' + p.right_arrow);
 
-		out.push('"', headerStyle, '>',
+		out.push('"', style, '>',
 				'<div class="', p.inner, '"', this.getInnerStyle_(), '>',
 				'<div id="', id, '-cnt" class="', p.content);
 
