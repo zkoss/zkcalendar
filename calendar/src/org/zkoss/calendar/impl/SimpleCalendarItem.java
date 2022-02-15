@@ -19,12 +19,13 @@ package org.zkoss.calendar.impl;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zkoss.calendar.api.CalendarItem;
-import org.zkoss.zk.ui.AbstractComponent;
-import org.zkoss.zk.ui.UiException;
+import org.zkoss.util.Maps;
 
 /**
  * A simple implementation of {@link CalendarItem}
@@ -82,10 +83,10 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 	 * Use setHeaderStyle(String headerStyle) instead.
 	 */
 	public void setHeaderColor(String hcolor) {
-		if(this._headerStyle != null && !"".equals(this._headerStyle)) {
-			log.warn("setting contentColor will overwrite existing contentStyle. setContentColor is deprecated and should be replaced by setting contentStyle");
-		}
-		this._headerStyle = "background-color: " + hcolor + ";";
+		Map styleMap = new HashMap<>();
+		Maps.parse(styleMap, this._headerStyle, ':', ';', (char)0);
+		styleMap.put("background-color", hcolor);
+		this._headerStyle = Maps.toString(styleMap, (char) 0, ';', ':');
 	}
 
 	/**
@@ -93,10 +94,10 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 	 */
 	@Deprecated
 	public void setContentColor(String contentColor) {
-		if(this._contentStyle != null && !"".equals(this._contentStyle)) {
-			log.warn("setting contentColor will overwrite existing contentStyle. setContentColor is deprecated and should be replaced by setting contentStyle");
-		}
-		this._contentStyle = "background-color: " + contentColor + ";";
+		Map styleMap = new HashMap<>();
+		Maps.parse(styleMap, this._contentStyle, ':', ';', (char)0);
+		styleMap.put("background-color", contentColor);
+		this._contentStyle= Maps.toString(styleMap, (char) 0, ';', ':');
 	}
 	
 	public void setStyle(String style){
