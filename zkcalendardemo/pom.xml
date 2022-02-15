@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.zkoss.calendar</groupId>
         <artifactId>zkcalendar</artifactId>
-        <version>3.0.3.FL.20220208</version>
+        <version>3.0.2.FL.20220208</version>
     </parent>
     <artifactId>zkcalendardemo</artifactId>
     <packaging>war</packaging>
@@ -55,6 +55,12 @@
             <artifactId>zkcharts</artifactId>
             <version>1.1.0</version>
         </dependency>
+		<dependency>
+		    <groupId>org.zkoss.theme</groupId>
+		    <artifactId>iceblue_c</artifactId>
+		    <version>${zk.version}</version>
+		</dependency>
+
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>

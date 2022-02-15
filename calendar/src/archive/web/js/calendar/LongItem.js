@@ -23,7 +23,6 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 			style = p.style,
 			headerStyle = p.headerStyle,
 			contentStyle = p.contentStyle,
-			arrowStyle = p.arrowStyle,
 			parent = this.parent,
 			isBefore = ce.zoneBd < parent.zoneBd,
 			isAfter = ce.zoneEd > parent.zoneEd,
@@ -94,27 +93,14 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 		this.$super('defineClassName_', arguments);
 		// CSS ClassName
 		var zcls = this.getZclass(),
-			p = this.params,
-			contentColor = this.item.contentColor;
-		
+			p = this.params;
 		p.left_arrow = zcls + '-left-arrow';
 		p.right_arrow = zcls + '-right-arrow';
-
-		p.arrowStyle = contentColor ?
-			' style="border-bottom-color:' + contentColor +
-			';border-top-color:' + contentColor + '"' : '';
 	},
 	
-	defineCss_: function () {
+	/*defineCss_: function () {
 		this.$super('defineCss_', arguments);
-		
-		var contentColor = this.item.contentColor,
-			p = this.params;
-		
-		p.arrowStyle = contentColor ?
-			' style="border-bottom-color:' + contentColor +
-			';border-top-color:' + contentColor + '"' : '';
-	},
+	},*/
 	
 	updateArrow_: function (needAdd, arrowCls) {
 		jq(this.$n('body')).toggleClass(arrowCls, needAdd);

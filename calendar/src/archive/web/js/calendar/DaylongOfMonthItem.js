@@ -133,22 +133,14 @@ calendar.DaylongOfMonthItem = zk.$extends(calendar.LongItem, {
 	
 	defineClassName_: function () {
 		this.$super('defineClassName_', arguments);
-		
-		var contentColor = this.item.contentColor;
-		
-		this.params.innerStyle = contentColor ? ' style="background:' + contentColor +
-					';border-left-color:' + contentColor +
-					';border-right-color:' + contentColor + '"' : '';
+		var contentStyle = this.item.contentStyle;
+		this.params.innerStyle = contentStyle;
 	},
 	
 	defineCss_: function () {
 		this.$super('defineCss_', arguments);
-		
-		var contentColor = this.item.contentColor;
-		
-		this.params.innerStyle = contentColor ? 'background:' + contentColor +
-					';border-left-color:' + contentColor +
-					';border-right-color:' + contentColor : '';
+		var contentStyle = this.item.contentStyle;
+		this.params.innerStyle = contentStyle;
 	},
 	
 	updateContentStyle_: function (contentStyle) {

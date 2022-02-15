@@ -29,11 +29,9 @@ calendar.Item = zk.$extends(zk.Widget, {
 	defineClassName_: function () {
 		var zcls = this.getZclass(),
 			ce = this.item,
-			headerColor = ce.headerColor,
-			contentColor = ce.contentColor,
 			style = ce.style,
-			headerStyle = headerColor? ('background-color: ' + headerColor):'' + ce.headerStyle,
-			contentStyle = contentColor? ('background-color: ' + contentColor):'' + ce.contentStyle;
+			headerStyle = ce.headerStyle,
+			contentStyle = ce.contentStyle;
 		
 		this.params = {
 			// CSS ClassName
@@ -50,15 +48,13 @@ calendar.Item = zk.$extends(zk.Widget, {
 	
 	defineCss_: function () {
 		var ce = this.item,
-			headerColor = ce.headerColor,
-			contentColor = ce.contentColor,
 			style = ce.style,
 			headerStyle = ce.headerStyle,
 			contentStyle = ce.contentStyle
 			p = this.params;
 		p.style = ' style="' + style + '"';
-		p.headerStyle = headerColor ? 'background:' + headerColor + ';' + headerStyle : headerStyle,
-		p.contentStyle = contentColor ? 'background:' + contentColor + ';' + contentStyle : contentStyle
+		p.headerStyle = headerStyle,
+		p.contentStyle = contentStyle
 	},
 	
 	updateHeaderStyle_: function (headerStyle) {

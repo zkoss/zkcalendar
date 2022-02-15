@@ -36,6 +36,7 @@
 				<combobox id="ppcolor" readonly="true" sclass="red" onCreate="self.selectedIndex = 0">
 					<attribute name="onSelect">
 						self.setSclass(self.getSelectedItem().getValue());
+						Clients.focus(ppcnt);
 					</attribute>
 					<comboitem sclass="red" label="Red" value="red"/>
 					<comboitem sclass="orange" label="Orange" value="orange"/>

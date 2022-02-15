@@ -20,7 +20,11 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zkoss.calendar.api.CalendarItem;
+import org.zkoss.zk.ui.AbstractComponent;
+import org.zkoss.zk.ui.UiException;
 
 /**
  * A simple implementation of {@link CalendarItem}
@@ -29,7 +33,8 @@ import org.zkoss.calendar.api.CalendarItem;
  */
 public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Serializable {
 	private static final long serialVersionUID = 20090316143135L;
-
+	private static final Logger log = LoggerFactory.getLogger(SimpleCalendarItem.class);
+	
 	public SimpleCalendarItem() {
 		super("", "", "", "", false, null, null);
 	}
@@ -77,7 +82,10 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 	 * Use setHeaderStyle(String headerStyle) instead.
 	 */
 	public void setHeaderColor(String hcolor) {
-		this._headerColor = hcolor;
+		if(this._headerStyle != null && !"".equals(this._headerStyle)) {
+			log.warn("setting contentColor will overwrite existing contentStyle. setContentColor is deprecated and should be replaced by setting contentStyle");
+		}
+		this._headerStyle = "background-color: " + hcolor + ";";
 	}
 
 	/**
@@ -85,7 +93,10 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 	 */
 	@Deprecated
 	public void setContentColor(String contentColor) {
-		this._contentColor = contentColor;
+		if(this._contentStyle != null && !"".equals(this._contentStyle)) {
+			log.warn("setting contentColor will overwrite existing contentStyle. setContentColor is deprecated and should be replaced by setting contentStyle");
+		}
+		this._contentStyle = "background-color: " + contentColor + ";";
 	}
 	
 	public void setStyle(String style){

@@ -18,10 +18,10 @@
 <!--		<value>zen</value>-->
 <!--	</library-property>-->
 	<!-- Specific calendar theme preferred, if value not match "iceblue", "wcag", "breeze", "dark" then no built-in theme will be apply. -->
-<!--	<library-property>-->
-<!--		<name>org.zkoss.calendar.theme.preferred</name>-->
-<!--		<value>iceblue</value>-->
-<!--	</library-property>-->
+	<library-property>
+		<name>org.zkoss.calendar.theme.preferred</name>
+		<value>iceblue</value>
+	</library-property>
 	<!--<language-config>-->
 		<!--<addon-uri>/WEB-INF/lang-addon.xml</addon-uri>-->
 	<!--</language-config>-->
@@ -30,4 +30,10 @@
 		<name>org.zkoss.zk.WPD.cache</name>
 		<value>false</value>
 	</library-property>
+	
+	<library-property>
+	    <name>org.zkoss.theme.preferred</name>
+	    <value>iceblue_c</value> or silvertail, atlantic, deepsea, gardensalad etc.
+	</library-property>
+	
 </zk>

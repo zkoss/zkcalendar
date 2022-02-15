@@ -23,8 +23,6 @@ import org.zkoss.calendar.api.CalendarItem;
 public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	protected String _title;
 	protected String _content;
-	protected String _headerColor;
-	protected String _contentColor;
 	protected String _sclass;
 	protected String _style;
 	protected String _contentStyle;
@@ -74,13 +72,15 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	}
 
 	@Override
+	@Deprecated
 	public String getHeaderColor() {
-		return _headerColor;
+		return _headerStyle;
 	}
 
 	@Override
+	@Deprecated
 	public String getContentColor() {
-		return _contentColor;
+		return _contentStyle;
 	}
 	
 	@Override
