@@ -86,9 +86,9 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 		Map styleMap = new HashMap<>();
 		Maps.parse(styleMap, this._headerStyle, ':', ';', (char)0);
 		styleMap.put("background-color", hcolor);
-		this._headerStyle = Maps.toString(styleMap, (char) 0, ';', ':');
+		this._headerStyle = Maps.toString(styleMap, (char) 0, ';', ':').replaceAll("\\\\ ", " ");
 	}
-
+	
 	/**
 	 * Use setContentStyle(String contentStyle) instead.
 	 */
@@ -97,7 +97,7 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 		Map styleMap = new HashMap<>();
 		Maps.parse(styleMap, this._contentStyle, ':', ';', (char)0);
 		styleMap.put("background-color", contentColor);
-		this._contentStyle= Maps.toString(styleMap, (char) 0, ';', ':');
+		this._contentStyle= Maps.toString(styleMap, (char) 0, ';', ':').replaceAll("\\\\ ", " ");
 	}
 	
 	public void setStyle(String style){
