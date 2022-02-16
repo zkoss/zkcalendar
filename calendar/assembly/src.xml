@@ -11,6 +11,12 @@
 			<directory>${project.basedir}</directory>
 			<excludes>
 				<exclude>${project.build.directory}/</exclude>
+				<exclude>./node/**</exclude>
+				<exclude>./node_modules/**</exclude>
+				<exclude>./.settings/**</exclude>
+				<exclude>./classpath</exclude>
+				<exclude>./.project</exclude>
+				<exclude>./package-lock.json</exclude>
 			</excludes>
 			<outputDirectory>/${project.artifactId}</outputDirectory>
 		</fileSet>
