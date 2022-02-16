@@ -1,7 +1,8 @@
-calendar 3.0.2
+calendar 3.1.0
 * Features:
 	ZKCAL-92: Add a builder for the immutable DefaultCalendarItem
 	ZKCAL-88: Provide sclass attribute for CalendarItem
+	ZKCAL-88: Provide style, contentStyle and headerStyle attributes for CalendarItem
 
 * Bugs:
 

@@ -16,6 +16,7 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.metainfo.ComponentInfo;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.*;
 import org.zkoss.zul.Timer;
@@ -27,7 +28,7 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 	private static final String HEADER_STYLE_GREEN = "background-color: #398E3C; color: #FFFFFF;";
 	private static final String HEADER_STYLE_BLUE = "background-color: #1876D2; color: #FFFFFF;";
 	private static final String HEADER_STYLE_TEAL = "background-color: #0397A7; color: #FFFFFF;";
-	private static final String CONTENT_STYLE_RED = "background-color: #F44336; color: #FFFFFF;";
+	private static final String CONTENT_STYLE_RED = "background-color: #F44336; color: #FFFFFF";
 	private static final String CONTENT_STYLE_TEAL = "background-color: #05BCD4; color: #FFFFFF;";
 	private static final String CONTENT_STYLE_BLUE = "background-color: #2196F3; color: #FFFFFF;";
 	private static final String CONTENT_STYLE_GREEN = "background-color: #4DAF50; color: #FFFFFF;";

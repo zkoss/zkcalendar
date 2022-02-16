@@ -26,7 +26,7 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 	private ZoneId _zoneId;
 
 	/**
-	 * @deprecated since 3.0.2, please use {@link Builder} instead
+	 * @deprecated since 3.1.0, please use {@link Builder} instead
 	 */
 	@Deprecated
 	public DefaultCalendarItem(LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
@@ -34,7 +34,7 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 	}
 
 	/**
-	 * @deprecated since 3.0.2, please use {@link Builder} instead
+	 * @deprecated since 3.1.0, please use {@link Builder} instead
 	 */
 	@Deprecated
 	public DefaultCalendarItem(String title, String content, boolean locked, LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
@@ -55,7 +55,7 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 
 	/**
 	 * The {@link Builder} for creating {@link DefaultCalendarItem}.
-	 * @since 3.0.2
+	 * @since 3.1.0
 	 */
 	public static class Builder {
 

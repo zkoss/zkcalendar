@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.calendar</groupId>
 	<artifactId>zkcalendar</artifactId>
-	<version>3.0.2.FL.20220208</version>
+	<version>3.1.0.FL.20220216</version>
 	<packaging>pom</packaging>
 	<name>The ZK Calendar Project</name>
 	<description>The ZK Calendar Project</description>
@@ -15,7 +15,7 @@
 	<properties>
 		<zk.version>9.6.1-Eval</zk.version>
 		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
-		<packname>3.0.2-FL-${maven.build.timestamp}</packname>
+		<packname>3.1.0-FL-${maven.build.timestamp}</packname>
 	</properties>
 	<licenses>
 		<license>

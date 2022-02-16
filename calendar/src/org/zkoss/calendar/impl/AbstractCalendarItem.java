@@ -12,8 +12,11 @@ Copyright (C) 2021 Potix Corporation. All Rights Reserved.
 package org.zkoss.calendar.impl;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.zkoss.calendar.api.CalendarItem;
+import org.zkoss.util.Maps;
 
 /**
  * A skeletal implementation for {@link CalendarItem}
@@ -74,13 +77,17 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	@Override
 	@Deprecated
 	public String getHeaderColor() {
-		return _headerStyle;
+		Map styleMap = new HashMap<>();
+		Maps.parse(styleMap, this._headerStyle, ':', ';', (char)0);
+		return (String) styleMap.get("background-color");
 	}
 
 	@Override
 	@Deprecated
 	public String getContentColor() {
-		return _contentStyle;
+		Map styleMap = new HashMap<>();
+		Maps.parse(styleMap, this._contentStyle, ':', ';', (char)0);
+		return (String) styleMap.get("background-color");
 	}
 	
 	@Override

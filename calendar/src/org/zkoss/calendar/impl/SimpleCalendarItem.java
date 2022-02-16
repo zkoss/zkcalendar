@@ -100,21 +100,33 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 		this._contentStyle= Maps.toString(styleMap, (char) 0, ';', ':').replaceAll("\\\\ ", " ");
 	}
 	
+	/** Sets the css style applied to the main Dom node of the calendar item.
+	 *
+	 * @since 3.1.0
+	 */
 	public void setStyle(String style){
 		this._style = style;
 	}
-
+	
+	/** Sets the css style applied to the content Dom node of the calendar item.
+	 *
+	 * @since 3.1.0
+	 */
 	public void setContentStyle(String contentStyle){
 		this._contentStyle = contentStyle;
 	}
 	
+	/** Sets the css style applied to the header Dom node of the calendar item.
+	 *
+	 * @since 3.1.0
+	 */
 	public void setHeaderStyle(String headerStyle){
 		this._headerStyle = headerStyle;
 	}
 
 	/** Sets the CSS class.
 	 *
-	 * @since 3.0.2
+	 * @since 3.1.0
 	 */
 	public void setSclass(String scalss) {
 		_sclass = scalss;
