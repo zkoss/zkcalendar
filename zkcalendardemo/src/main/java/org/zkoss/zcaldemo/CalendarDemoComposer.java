@@ -16,12 +16,23 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.metainfo.ComponentInfo;
+import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.GenericForwardComposer;
 import org.zkoss.zul.*;
 import org.zkoss.zul.Timer;
 
 public class CalendarDemoComposer extends GenericForwardComposer {
 	
+	private static final String HEADER_STYLE_RED = "background-color: #D32F2F; color: #FFFFFF;";
+	private static final String HEADER_STYLE_ORANGE = "background-color: #F57C00; color: #FFFFFF;";
+	private static final String HEADER_STYLE_GREEN = "background-color: #398E3C; color: #FFFFFF;";
+	private static final String HEADER_STYLE_BLUE = "background-color: #1876D2; color: #FFFFFF;";
+	private static final String HEADER_STYLE_TEAL = "background-color: #0397A7; color: #FFFFFF;";
+	private static final String CONTENT_STYLE_RED = "background-color: #F44336; color: #FFFFFF";
+	private static final String CONTENT_STYLE_TEAL = "background-color: #05BCD4; color: #FFFFFF;";
+	private static final String CONTENT_STYLE_BLUE = "background-color: #2196F3; color: #FFFFFF;";
+	private static final String CONTENT_STYLE_GREEN = "background-color: #4DAF50; color: #FFFFFF;";
+	private static final String CONTENT_STYLE_ORANGE = "background-color: #FF9800; color: #FFFFFF;";
 	private static final long serialVersionUID = 201011240904L;
 	private boolean hasPE;
 	private SimpleCalendarModel cm;
@@ -109,35 +120,35 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		String date3 = ++mod > 9 ?  year + "/" + mod + "" :  year + "/" + "0" + mod; 
 		String[][] evts = {
 			// Red Events	
-			{date1 + "/28 00:00", date1 + "/29 00:00", "#A32929", "#D96666", "ZK Jet Released"},
-			{date1 + "/04 02:00", date1 + "/05 03:00", "#A32929", "#D96666", "Experience ZK SpreadSheet Live Demo!"},	
-			{date2 + "/12 10:00", date2 + "/12 20:00", "#A32929", "#D96666", "SF 2009 CCA Open: Nominate ZK Now!"},	
-			{date2 + "/21 05:00", date2 + "/21 07:00", "#A32929", "#D96666", "New Features of ZK Spreadsheet 1.0.0 RC2"},	
-			{date2 + "/08 00:00", date2 + "/09 00:00", "#A32929", "#D96666", "ZK Spreadsheet 1.0.0 RC2 Released"},	
-			// Blue Events
-			{date1 + "/29 03:00", date2 + "/02 06:00", "#3467CE", "#668CD9", "ZK 3.6.1 Released"},	
-			{date2 + "/02 10:00", date2 + "/02 12:30", "#3467CE", "#668CD9", "New Feature of ZK 3.6.1"},	
-			{date2 + "/17 14:00", date2 + "/18 16:00", "#3467CE", "#668CD9", "Case Study - Mecatena"},	
-			{date2 + "/26 00:00", date2 + "/27 00:00", "#3467CE", "#668CD9", "Small talk: A Preview Of ZK Spreadsheet 1.0"},	
-			{date3 + "/01 14:30", date3 + "/01 17:30", "#3467CE", "#668CD9", "ZK Unit Testing Project - zunit"},
-			// Purple Events
-			{date1 + "/29 08:00", date2 + "/03 12:00", "#7A367A", "#B373B3", "ZK Studio 0.9.3 released"},
-			{date2 + "/07 08:00", date2 + "/07 12:00", "#7A367A", "#B373B3", "Tutorial : Reading from the DB with Netbeans and ZK"},	
-			{date2 + "/13 11:00", date2 + "/13 14:30", "#7A367A", "#B373B3", "Small talk - ZK Charts"},	
-			{date2 + "/16 14:00", date2 + "/18 16:00", "#7A367A", "#B373B3", "Style Guide for ZK 3.6 released !"},	
-			{date3 + "/02 12:00", date3 + "/02 17:00", "#7A367A", "#B373B3", "Small talk -- Simple Database Access From ZK"},
-			// Khaki Events
-			{date1 + "/03 00:00", date1 + "/04 00:00", "#88880E", "#BFBF4D", "ZK 3.6.0 Released !"},
-			{date2 + "/04 00:00", date2 + "/07 00:00", "#88880E", "#BFBF4D", "Sun Microsystems Recruiting"},
-			{date2 + "/13 05:00", date2 + "/13 07:00", "#88880E", "#BFBF4D", "How to Test ZK Application with Selenium"},
-			{date2 + "/24 19:30", date2 + "/24 20:00", "#88880E", "#BFBF4D", "ZK Alfresco Talk"},
-			{date3 + "/03 00:00", date3 + "/04 00:00", "#88880E", "#BFBF4D", "ZK selected as SourceForge.net Project of the Month"},
+			{date1 + "/28 00:00", date1 + "/29 00:00", "", HEADER_STYLE_RED,CONTENT_STYLE_RED, "ZK Jet Released"},
+			{date1 + "/04 02:00", date1 + "/05 03:00", "", HEADER_STYLE_RED,CONTENT_STYLE_RED, "Experience ZK SpreadSheet Live Demo!"},	
+			{date2 + "/12 10:00", date2 + "/12 20:00", "", HEADER_STYLE_RED,CONTENT_STYLE_RED, "SF 2009 CCA Open: Nominate ZK Now!"},	
+			{date2 + "/21 05:00", date2 + "/21 07:00", "", HEADER_STYLE_RED,CONTENT_STYLE_RED, "New Features of ZK Spreadsheet 1.0.0 RC2"},	
+			{date2 + "/08 00:00", date2 + "/09 00:00", "", HEADER_STYLE_RED,CONTENT_STYLE_RED, "ZK Spreadsheet 1.0.0 RC2 Released"},	
+			// Orange Events
+			{date1 + "/29 03:00", date2 + "/02 06:00", "", HEADER_STYLE_ORANGE,CONTENT_STYLE_ORANGE, "ZK 3.6.1 Released"},	
+			{date2 + "/02 10:00", date2 + "/02 12:30", "", HEADER_STYLE_ORANGE,CONTENT_STYLE_ORANGE, "New Feature of ZK 3.6.1"},	
+			{date2 + "/17 14:00", date2 + "/18 16:00", "", HEADER_STYLE_ORANGE,CONTENT_STYLE_ORANGE, "Case Study - Mecatena"},	
+			{date2 + "/26 00:00", date2 + "/27 00:00", "", HEADER_STYLE_ORANGE,CONTENT_STYLE_ORANGE, "Small talk: A Preview Of ZK Spreadsheet 1.0"},	
+			{date3 + "/01 14:30", date3 + "/01 17:30", "", HEADER_STYLE_ORANGE,CONTENT_STYLE_ORANGE, "ZK Unit Testing Project - zunit"},
 			// Green Events
-			{date1 + "/28 10:00", date1 + "/28 12:30", "#0D7813", "#4CB052", "ZK Mobile 0.8.10 Released"},
-			{date2 + "/03 00:00", date2 + "/03 05:30", "#0D7813", "#4CB052", "ZK Gmaps 2.0_11 released"},
-			{date2 + "/05 20:30", date2 + "/06 00:00", "#0D7813", "#4CB052", "Refresh with Five New ZK Themes!"},
-			{date2 + "/23 00:00", date2 + "/25 16:30", "#0D7813", "#4CB052", "ZK Roadmap 2009 Announced"},
-			{date3 + "/01 08:30", date3 + "/01 19:30", "#0D7813", "#4CB052", "Build Database CRUD Application in 6 Steps"}
+			{date1 + "/29 08:00", date2 + "/03 12:00", "", HEADER_STYLE_GREEN,CONTENT_STYLE_GREEN, "ZK Studio 0.9.3 released"},
+			{date2 + "/07 08:00", date2 + "/07 12:00", "", HEADER_STYLE_GREEN,CONTENT_STYLE_GREEN, "Tutorial : Reading from the DB with Netbeans and ZK"},	
+			{date2 + "/13 11:00", date2 + "/13 14:30", "", HEADER_STYLE_GREEN,CONTENT_STYLE_GREEN, "Small talk - ZK Charts"},	
+			{date2 + "/16 14:00", date2 + "/18 16:00", "", HEADER_STYLE_GREEN,CONTENT_STYLE_GREEN, "Style Guide for ZK 3.6 released !"},	
+			{date3 + "/02 12:00", date3 + "/02 17:00", "", HEADER_STYLE_GREEN,CONTENT_STYLE_GREEN, "Small talk -- Simple Database Access From ZK"},
+			// Blue Events
+			{date1 + "/03 00:00", date1 + "/04 00:00", "", HEADER_STYLE_BLUE,CONTENT_STYLE_BLUE, "ZK 3.6.0 Released !"},
+			{date2 + "/04 00:00", date2 + "/07 00:00", "", HEADER_STYLE_BLUE,CONTENT_STYLE_BLUE, "Sun Microsystems Recruiting"},
+			{date2 + "/13 05:00", date2 + "/13 07:00", "", HEADER_STYLE_BLUE,CONTENT_STYLE_BLUE, "How to Test ZK Application with Selenium"},
+			{date2 + "/24 19:30", date2 + "/24 20:00", "", HEADER_STYLE_BLUE,CONTENT_STYLE_BLUE, "ZK Alfresco Talk"},
+			{date3 + "/03 00:00", date3 + "/04 00:00", "", HEADER_STYLE_BLUE,CONTENT_STYLE_BLUE, "ZK selected as SourceForge.net Project of the Month"},
+			// Teal Events
+			{date1 + "/28 10:00", date1 + "/28 12:30", "", HEADER_STYLE_TEAL,HEADER_STYLE_TEAL, "ZK Mobile 0.8.10 Released"},
+			{date2 + "/03 00:00", date2 + "/03 05:30", "", HEADER_STYLE_TEAL,HEADER_STYLE_TEAL, "ZK Gmaps 2.0_11 released"},
+			{date2 + "/05 20:30", date2 + "/06 00:00", "", HEADER_STYLE_TEAL,HEADER_STYLE_TEAL, "Refresh with Five New ZK Themes!"},
+			{date2 + "/23 00:00", date2 + "/25 16:30", "", HEADER_STYLE_TEAL,HEADER_STYLE_TEAL, "ZK Roadmap 2009 Announced"},
+			{date3 + "/01 08:30", date3 + "/01 19:30", "", HEADER_STYLE_TEAL,HEADER_STYLE_TEAL, "Build Database CRUD Application in 6 Steps"}
 		};
 
 		// fill the events' data
@@ -151,10 +162,15 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
+			/* deprecated, use style instead*/
+			/*
 			sce.setHeaderColor(evts[i][2]);
 			sce.setContentColor(evts[i][3]);
-			//sce.setTitle("<script>alert(\"Title\");</script>"); //if any, otherwise, the time stamp is assumed.
-			sce.setContent(evts[i][4]);
+			*/
+			sce.setStyle(evts[i][2]);
+			sce.setHeaderStyle(evts[i][3]);
+			sce.setContentStyle(evts[i][4]);
+			sce.setContent(evts[i][5]);
 			cm.add(sce);
 		}
 		page.setAttribute("cm", cm);
@@ -163,27 +179,27 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 	private void syncModel() {
 		if (!hasPE) return;
 		List list = cm.get(calendars.getBeginDate(), calendars.getEndDate(), null);
-		double red = 0, blue = 0, green = 0, purple = 0, khaki = 0;
+		double red = 0, orange = 0, green = 0, blue= 0, teal = 0;
 		int size = list.size();
 		for (Iterator it = list.iterator(); it.hasNext();) {
-			String color = ((CalendarItem)it.next()).getContentColor();
-			if ("#D96666".equals(color))
+			String contentStyle = ((CalendarItem)it.next()).getContentStyle();
+			if (CONTENT_STYLE_RED.equals(contentStyle))
 				red += 1;
-			else if ("#668CD9".equals(color))
-				blue += 1;
-			else if ("#4CB052".equals(color))
+			else if (CONTENT_STYLE_ORANGE.equals(contentStyle))
+				orange += 1;
+			else if (CONTENT_STYLE_GREEN.equals(contentStyle))
 				green += 1;
-			else if ("#B373B3".equals(color))
-				purple += 1;
+			else if (CONTENT_STYLE_BLUE.equals(contentStyle))
+				blue += 1;
 			else
-				khaki += 1;
+				teal += 1;
 		}
 		 PieModel model = new SimplePieModel();
 		 model.setValue("Red Events", new Double(size > 0 ? (red/size)*100 : 0));
-		 model.setValue("Blue Events", new Double(size > 0 ? (blue/size)*100 : 0));
+		 model.setValue("Orange Events", new Double(size > 0 ? (orange/size)*100 : 0));
 		 model.setValue("Green Events", new Double(size > 0 ? (green/size)*100: 0));
-		 model.setValue("Khaki Events", new Double(size > 0 ? (khaki/size)*100: 0));
-		 model.setValue("Purple Events", new Double(size > 0 ? (purple/size)*100 : 0));
+		 model.setValue("Blue Events", new Double(size > 0 ? (blue/size)*100: 0));
+		 model.setValue("Teal Events", new Double(size > 0 ? (teal/size)*100 : 0));
 		 mychart.setModel(model);
 		 mychart.invalidate();
 	}
@@ -311,9 +327,31 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 			}
 		}
 		
-		String[] colors = ((String)createEvent$ppcolor.getSelectedItem().getValue()).split(",");
-		ce.setHeaderColor(colors[0]);
-		ce.setContentColor(colors[1]);
+		String selectedColor = ((String)createEvent$ppcolor.getSelectedItem().getValue());
+		switch (selectedColor) {
+		case "red":
+			ce.setContentStyle(CONTENT_STYLE_RED);
+			ce.setHeaderStyle(HEADER_STYLE_RED);
+			break;
+		case "orange":
+			ce.setContentStyle(CONTENT_STYLE_ORANGE);
+			ce.setHeaderStyle(HEADER_STYLE_ORANGE);
+			break;
+		case "green":
+			ce.setContentStyle(CONTENT_STYLE_GREEN);
+			ce.setHeaderStyle(HEADER_STYLE_GREEN);
+			break;
+		case "blue":
+			ce.setContentStyle(CONTENT_STYLE_BLUE);
+			ce.setHeaderStyle(HEADER_STYLE_BLUE);
+			break;
+		case "teal":
+			ce.setContentStyle(CONTENT_STYLE_TEAL);
+			ce.setHeaderStyle(HEADER_STYLE_TEAL);
+			break;
+		default:
+			break;
+		}
 		ce.setBeginDate(beginDate);
 		ce.setEndDate(endDate);
 		ce.setContent(createEvent$ppcnt.getValue());
@@ -374,33 +412,28 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		editEvent$ppbt.setVisible(!isAllday);
 		editEvent$ppet.setVisible(!isAllday);
 		editEvent$ppcnt.setValue(ce.getContent());
-		String colors = ce.getHeaderColor() + "," + ce.getContentColor();
+
 		int index = 0;
-		if ("#3467CE,#668CD9".equals(colors))
+		String contentStyle = ce.getContentStyle();
+		if (CONTENT_STYLE_RED.equals(contentStyle)) {
+			index = 0;
+			editEvent$ppcolor.setSclass("red");
+		}
+		else if (CONTENT_STYLE_ORANGE.equals(contentStyle)) {
 			index = 1;
-		else if ("#0D7813,#4CB052".equals(colors))
+			editEvent$ppcolor.setSclass("orange");
+		}
+		else if (CONTENT_STYLE_GREEN.equals(contentStyle)) {
 			index = 2;
-		else if ("#88880E,#BFBF4D".equals(colors))
+			editEvent$ppcolor.setSclass("green");
+		}
+		else if (CONTENT_STYLE_BLUE.equals(contentStyle)) {
 			index = 3;
-		else if ("#7A367A,#B373B3".equals(colors))
+			editEvent$ppcolor.setSclass("blue");
+		}
+		else {
 			index = 4;
-	
-		switch (index) {
-		case 0:
-			editEvent$ppcolor.setStyle("color:#D96666;font-weight: bold;");
-			break;
-		case 1:
-			editEvent$ppcolor.setStyle("color:#668CD9;font-weight: bold;");
-			break;
-		case 2:
-			editEvent$ppcolor.setStyle("color:#4CB052;font-weight: bold;");
-			break;
-		case 3:
-			editEvent$ppcolor.setStyle("color:#BFBF4D;font-weight: bold;");
-			break;
-		case 4:
-			editEvent$ppcolor.setStyle("color:#B373B3;font-weight: bold;");
-			break;
+			editEvent$ppcolor.setSclass("teal");
 		}
 		editEvent$ppcolor.setSelectedIndex(index);
 		editEvent.setVisible(true);
@@ -473,9 +506,31 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 			((org.zkoss.calendar.event.CalendarsEvent)editEvent.getAttribute("calevent")).clearGhost();
 			return;
 		}
-		String[] colors = ((String)editEvent$ppcolor.getSelectedItem().getValue()).split(",");
-		ce.setHeaderColor(colors[0]);
-		ce.setContentColor(colors[1]);
+		String selectedColor = ((String)editEvent$ppcolor.getSelectedItem().getValue());
+		switch (selectedColor) {
+		case "red":
+			ce.setContentStyle(CONTENT_STYLE_RED);
+			ce.setHeaderStyle(HEADER_STYLE_RED);
+			break;
+		case "orange":
+			ce.setContentStyle(CONTENT_STYLE_ORANGE);
+			ce.setHeaderStyle(HEADER_STYLE_ORANGE);
+			break;
+		case "green":
+			ce.setContentStyle(CONTENT_STYLE_GREEN);
+			ce.setHeaderStyle(HEADER_STYLE_GREEN);
+			break;
+		case "blue":
+			ce.setContentStyle(CONTENT_STYLE_BLUE);
+			ce.setHeaderStyle(HEADER_STYLE_BLUE);
+			break;
+		case "teal":
+			ce.setContentStyle(CONTENT_STYLE_TEAL);
+			ce.setHeaderStyle(HEADER_STYLE_TEAL);
+			break;
+		default:
+			break;
+		}
 		ce.setBeginDate(beginDate);
 		ce.setEndDate(endDate);
 		ce.setContent(editEvent$ppcnt.getValue());

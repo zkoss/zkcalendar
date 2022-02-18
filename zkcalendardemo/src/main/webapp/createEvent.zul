@@ -33,21 +33,16 @@
 			</row>
 			<row>
 				Color:
-				<combobox id="ppcolor" readonly="true" style="color:#D96666;font-weight: bold;" onCreate="self.selectedIndex = 0">
+				<combobox id="ppcolor" readonly="true" sclass="red" onCreate="self.selectedIndex = 0">
 					<attribute name="onSelect">
-						switch(self.getSelectedIndex()) {
-						case 0: self.style = "color:#D96666;font-weight: bold;"; break;
-						case 1: self.style = "color:#668CD9;font-weight: bold;"; break;
-						case 2: self.style = "color:#4CB052;font-weight: bold;"; break;
-						case 3: self.style = "color:#BFBF4D;font-weight: bold;"; break;
-						case 4: self.style = "color:#B373B3;font-weight: bold;"; break;
-						}
+						self.setSclass(self.getSelectedItem().getValue());
+						Clients.focus(ppcnt);
 					</attribute>
-					<comboitem sclass="red" label="Red" value="#A32929,#D96666"/>
-					<comboitem sclass="blue" label="Blue" value="#3467CE,#668CD9"/>
-					<comboitem sclass="green" label="Green" value="#0D7813,#4CB052"/>
-					<comboitem sclass="khaki" label="Khaki" value="#88880E,#BFBF4D"/>
-					<comboitem sclass="purple" label="Purple" value="#7A367A,#B373B3"/>
+					<comboitem sclass="red" label="Red" value="red"/>
+					<comboitem sclass="orange" label="Orange" value="orange"/>
+					<comboitem sclass="green" label="Green" value="green"/>
+					<comboitem sclass="blue" label="Blue" value="blue"/>
+					<comboitem sclass="teal" label="Teal" value="teal"/>
 				</combobox>
 			</row>
 			<row>

@@ -12,8 +12,11 @@ Copyright (C) 2021 Potix Corporation. All Rights Reserved.
 package org.zkoss.calendar.impl;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.zkoss.calendar.api.CalendarItem;
+import org.zkoss.util.Maps;
 
 /**
  * A skeletal implementation for {@link CalendarItem}
@@ -23,26 +26,32 @@ import org.zkoss.calendar.api.CalendarItem;
 public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	protected String _title;
 	protected String _content;
-	protected String _headerColor;
-	protected String _contentColor;
 	protected String _sclass;
+	protected String _style;
+	protected String _contentStyle;
+	protected String _headerStyle;
 	protected boolean _locked;
 	protected T _begin;
 	protected T _end;
 
+	@Deprecated
 	public AbstractCalendarItem(String title, String content, String headerColor, String contentColor, boolean locked, T begin, T end) {
 		this(title, content, headerColor, contentColor, "", locked, begin, end);
 	}
 
-	public AbstractCalendarItem(String title, String content, String headerColor, String contentColor, String sclass, boolean locked, T begin, T end) {
+	public AbstractCalendarItem(String title, String content, String style, String contentStyle, String headerStyle, boolean locked, T begin, T end) {
 		this._title = title;
 		this._content = content;
-		this._headerColor = headerColor;
-		this._contentColor = contentColor;
-		this._sclass = sclass;
+		this._style = style;
+		this._contentStyle = contentStyle;
+		this._headerStyle = headerStyle;
 		this._locked = locked;
 		this._begin = begin;
 		this._end = end;
+	}
+	public AbstractCalendarItem(String title, String content, String sclass, String style, String contentStyle, String headerStyle, boolean locked, T begin, T end) {
+		this(title, content, style, contentStyle, headerStyle, locked, begin, end);
+		this._sclass = sclass;
 	}
 
 	public Instant getBegin() {
@@ -66,15 +75,35 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	}
 
 	@Override
+	@Deprecated
 	public String getHeaderColor() {
-		return _headerColor;
+		Map styleMap = new HashMap<>();
+		Maps.parse(styleMap, this._headerStyle, ':', ';', (char)0);
+		return (String) styleMap.get("background-color");
 	}
 
 	@Override
+	@Deprecated
 	public String getContentColor() {
-		return _contentColor;
+		Map styleMap = new HashMap<>();
+		Maps.parse(styleMap, this._contentStyle, ':', ';', (char)0);
+		return (String) styleMap.get("background-color");
 	}
-
+	
+	@Override
+	public String getStyle() {
+		return _style;
+	}
+	
+	@Override
+	public String getContentStyle() {
+		return _contentStyle;
+	}
+	
+	@Override
+	public String getHeaderStyle() {
+		return _headerStyle;
+	}
 	@Override
 	public String getZclass() {
 		return "z-calitem";

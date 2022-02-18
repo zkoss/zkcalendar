@@ -3,13 +3,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.zkoss.calendar</groupId>
 	<artifactId>calendar</artifactId>
-	<version>3.0.2.FL.20211223</version>
-	<properties>
-		<zk.version>7.0.3</zk.version>
-		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
-	</properties>
+    <parent>
+        <groupId>org.zkoss.calendar</groupId>
+        <artifactId>zkcalendar</artifactId>
+        <version>${revision}</version>
+    </parent>
 	<packaging>jar</packaging>
 	<name>The ZK Calendars</name>
 	<url>https://www.zkoss.org/calendars</url>
@@ -123,7 +122,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
+				<version>3.2.0</version>
+			    <configuration>
+			        <skip>false</skip>
+			    </configuration>
 				<executions>
 					<execution>
 						<phase>package</phase>

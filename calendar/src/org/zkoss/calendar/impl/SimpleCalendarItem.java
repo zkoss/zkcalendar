@@ -19,8 +19,13 @@ package org.zkoss.calendar.impl;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zkoss.calendar.api.CalendarItem;
+import org.zkoss.util.Maps;
 
 /**
  * A simple implementation of {@link CalendarItem}
@@ -29,13 +34,19 @@ import org.zkoss.calendar.api.CalendarItem;
  */
 public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Serializable {
 	private static final long serialVersionUID = 20090316143135L;
-
+	private static final Logger log = LoggerFactory.getLogger(SimpleCalendarItem.class);
+	
 	public SimpleCalendarItem() {
 		super("", "", "", "", false, null, null);
 	}
 
+	@Deprecated
 	public SimpleCalendarItem(String title, String content, String headerColor, String contentColor, boolean locked, Date begin, Date end) {
 		super(title, content, headerColor, contentColor, locked, begin, end);
+	}
+	
+	public SimpleCalendarItem(String title, String content, String style, String contentStyle, String headerStyle, boolean locked, Date begin, Date end) {
+		super(title, content, style, contentStyle, headerStyle, locked, begin, end);
 	}
 
 	@Override
@@ -60,24 +71,62 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 	}
 
 	public void setTitle(String title) {
-		_title = title;
+		this._title = title;
 	}
 
 	public void setContent(String content) {
-		_content = content;
+		this._content = content;
 	}
 
+	@Deprecated
+	/**
+	 * Use setHeaderStyle(String headerStyle) instead.
+	 */
 	public void setHeaderColor(String hcolor) {
-		_headerColor = hcolor;
+		Map styleMap = new HashMap<>();
+		Maps.parse(styleMap, this._headerStyle, ':', ';', (char)0);
+		styleMap.put("background-color", hcolor);
+		this._headerStyle = Maps.toString(styleMap, (char) 0, ';', ':').replaceAll("\\\\ ", " ");
 	}
-
+	
+	/**
+	 * Use setContentStyle(String contentStyle) instead.
+	 */
+	@Deprecated
 	public void setContentColor(String contentColor) {
-		_contentColor = contentColor;
+		Map styleMap = new HashMap<>();
+		Maps.parse(styleMap, this._contentStyle, ':', ';', (char)0);
+		styleMap.put("background-color", contentColor);
+		this._contentStyle= Maps.toString(styleMap, (char) 0, ';', ':').replaceAll("\\\\ ", " ");
+	}
+	
+	/** Sets the css style applied to the main Dom node of the calendar item.
+	 *
+	 * @since 3.1.0
+	 */
+	public void setStyle(String style){
+		this._style = style;
+	}
+	
+	/** Sets the css style applied to the content Dom node of the calendar item.
+	 *
+	 * @since 3.1.0
+	 */
+	public void setContentStyle(String contentStyle){
+		this._contentStyle = contentStyle;
+	}
+	
+	/** Sets the css style applied to the header Dom node of the calendar item.
+	 *
+	 * @since 3.1.0
+	 */
+	public void setHeaderStyle(String headerStyle){
+		this._headerStyle = headerStyle;
 	}
 
 	/** Sets the CSS class.
 	 *
-	 * @since 3.0.2
+	 * @since 3.1.0
 	 */
 	public void setSclass(String scalss) {
 		_sclass = scalss;

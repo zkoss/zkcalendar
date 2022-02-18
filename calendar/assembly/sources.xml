@@ -11,9 +11,9 @@
 		<fileSet>
 			<directory>${project.basedir}/src/</directory>
 			<excludes>
-				<exclude>/archive/**</exclude>
+				<exclude>./archive/**</exclude>
 			</excludes>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory>./</outputDirectory>
 		</fileSet>
 	</fileSets>
 </assembly>

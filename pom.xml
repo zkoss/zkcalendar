@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.calendar</groupId>
 	<artifactId>zkcalendar</artifactId>
-	<version>3.0.2.FL.20211223</version>
+	<version>${revision}</version>
 	<packaging>pom</packaging>
 	<name>The ZK Calendar Project</name>
 	<description>The ZK Calendar Project</description>
@@ -13,10 +13,30 @@
 		<module>zkcalendardemo</module>
 	</modules>
 	<properties>
-		<zk.version>8.6.4.1-Eval</zk.version>
-		<maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
-		<packname>3.0.2-FL-${maven.build.timestamp}</packname>
+		<zk.version>9.6.1-Eval</zk.version>
+		<calendar.main.version>3.1.0</calendar.main.version>
 	</properties>
+	<profiles>
+	  <profile>
+	    <id>production</id>
+	    <activation>
+	      <activeByDefault>true</activeByDefault>
+	    </activation>
+	    <properties>
+    		<maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
+	    	<revision>${calendar.main.version}</revision>
+			<packname>${revision}</packname>
+    	</properties>
+	  </profile>
+	  <profile>
+	    <id>freshly</id>
+	    <properties>
+    		<maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
+	    	<revision>${calendar.main.version}.FL.${maven.build.timestamp}</revision>
+			<packname>${revision}</packname>
+	    </properties>
+	  </profile>
+	</profiles>
 	<licenses>
 		<license>
 			<name>GNU General Public License, Version 2.0</name>
@@ -55,5 +75,47 @@
 			<artifactId>zhtml</artifactId>
 			<version>${zk.version}</version>
 		</dependency>
+		<dependency>
+		    <groupId>org.zkoss.common</groupId>
+		    <artifactId>zweb-dsp</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-javadoc-plugin</artifactId>
+			    <version>3.2.0</version>
+			    <configuration>
+			        <skip>true</skip>
+			    </configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>1.2.7</version>
+				<configuration>
+					<updatePomFile>true</updatePomFile>
+					<flattenMode>resolveCiFriendliesOnly</flattenMode>
+				</configuration>
+				<executions>
+					<execution>
+						<id>flatten</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>flatten.clean</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

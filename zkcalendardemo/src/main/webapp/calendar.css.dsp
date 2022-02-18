@@ -149,22 +149,29 @@ ${z:setCSSCacheControl()}
 .blue, .red, .green, .purple, .khaki { <%-- for ZK 7 --%>
 	text-align: center !important;
 }
-.blue *, .red *, .green *, .purple *, .khaki * {
+.red.z-comboitem, .z-combobox-readonly.red>input, z-combobox.red>input {
+	background: #F44336!important;
 	color: white !important;
 	text-align: center;
 }
-.red {
-	background: #D96666!important;
+.orange.z-comboitem, .z-combobox-readonly.orange>input, z-combobox.orange>input {
+	background: #FF9800!important;
+	color: white !important;
+	text-align: center;
 }
-.blue {
-	background: #668CD9!important;
+.green.z-comboitem, .z-combobox-readonly.green>input, z-combobox.green>input {
+	background: #4DAF50!important;
+	color: white !important;
+	text-align: center;
 }
-.green {
-	background: #4CB052!important;
+.blue.z-comboitem, .z-combobox-readonly.blue>input, z-combobox.blue>input {
+	background: #2196F3!important;
+	color: white !important;
+	text-align: center;
 }
-.khaki {
-	background: #BFBF4D!important;
+.teal.z-comboitem, .z-combobox-readonly.teal>input, z-combobox.teal>input {
+	background: #05BCD4!important;
+	color: white !important;
+	text-align: center;
 }
-.purple {
-	background: #B373B3!important;
-}
+

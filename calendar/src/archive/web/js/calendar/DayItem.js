@@ -21,12 +21,13 @@ calendar.DayItem = zk.$extends(calendar.Item, {
 			p = this.params,
 			headerStyle = p.headerStyle,
 			contentStyle = p.contentStyle,
+			style = p.style,
 			resizer = p.resizer;
 		p._resizerCnt = '<div class="' + resizer + '" id="' + id + '-resizer"> ' +
 							'<div class="' + resizer + '-icon"></div></div>';
 		
 		out.push('<div', this.domAttrs_(), '>',
-				'<div id="', id, '-body" class="', p.body, '"', headerStyle, '>',
+				'<div id="', id, '-body" class="', p.body, '"', style, '>',
 				'<div class="', p.inner, '"', headerStyle, '>',
 				'<dl id="', id, '-inner"', contentStyle, '>',
 				'<dt id="', id, '-hd" class="', p.header, '"', headerStyle, '>', this.getItemTitle(ce), '</dt>',

@@ -165,8 +165,9 @@ public class Util {
 		json.put("id", calendars.getCalendarItemId(ce));
 		json.put("key", key);
 		json.put("title", calendars.isEscapeXML() ? escapeXML(title) : title); //ZKCAL-33: title should also escapeXML
-		json.put("headerColor", ce.getHeaderColor());
-		json.put("contentColor", ce.getContentColor());
+		json.put("style", ce.getStyle());
+		json.put("contentStyle", ce.getContentStyle());
+		json.put("headerStyle", ce.getHeaderStyle());
 		json.put("content", calendars.isEscapeXML() ? escapeXML(ce.getContent()): ce.getContent());
 		json.put("beginDate", String.valueOf(getDSTTime(timezone, ce.getBeginDate())));
 		json.put("endDate", String.valueOf(getDSTTime(timezone ,ce.getEndDate())));

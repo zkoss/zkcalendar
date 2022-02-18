@@ -11,18 +11,30 @@
 			<directory>${project.basedir}</directory>
 			<excludes>
 				<exclude>${project.build.directory}/</exclude>
+				<exclude>./node/**</exclude>
+				<exclude>./node_modules/**</exclude>
+				<exclude>./.settings/**</exclude>
+				<exclude>./.classpath</exclude>
+				<exclude>./.project</exclude>
+				<exclude>./package-lock.json</exclude>
+				<exclude>./.flattened-pom.xml</exclude>
 			</excludes>
-			<outputDirectory>/${project.artifactId}</outputDirectory>
+			<outputDirectory>./${project.artifactId}</outputDirectory>
 		</fileSet>
 	</fileSets>
 	<files>
 		<file>
-			<source>../zkdoc/COPYING</source>
-			<outputDirectory>doc</outputDirectory>
+			<source>./.flattened-pom.xml</source>
+			<outputDirectory>./</outputDirectory>
+			<destName>./pom.xml</destName>
 		</file>
 		<file>
 			<source>../zkdoc/release-note</source>
-			<outputDirectory>doc</outputDirectory>
+			<outputDirectory>./doc</outputDirectory>
+		</file>
+		<file>
+			<source>../zkdoc/release-note</source>
+			<outputDirectory>./doc</outputDirectory>
 		</file>
 	</files>
 </assembly>
