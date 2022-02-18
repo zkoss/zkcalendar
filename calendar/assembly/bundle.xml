@@ -8,20 +8,21 @@
 	<includeBaseDirectory>false</includeBaseDirectory>
 	<files>
 		<file>
-			<source>pom.xml</source>
-			<outputDirectory>/</outputDirectory>
+			<source>./.flattened-pom.xml</source>
+			<outputDirectory>./</outputDirectory>
+			<destName>./pom.xml</destName>
 		</file>
 		<file>
 			<source>${project.build.directory}/${project.artifactId}-${version}.jar</source>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory>./</outputDirectory>
 		</file>
 		<file>
 			<source>${project.build.directory}/${project.artifactId}-${version}-sources.jar</source>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory>./</outputDirectory>
 		</file>
 		<file>
 			<source>${project.build.directory}/${project.artifactId}-${version}-javadoc.jar</source>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory>./</outputDirectory>
 		</file>
 	</files>
 </assembly>

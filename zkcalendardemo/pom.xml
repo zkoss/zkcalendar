@@ -4,13 +4,16 @@
     <parent>
         <groupId>org.zkoss.calendar</groupId>
         <artifactId>zkcalendar</artifactId>
-        <version>3.1.0</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>zkcalendardemo</artifactId>
     <packaging>war</packaging>
     <name>The ZK Calendar Demo</name>
     <description>The ZK Calendar Demo</description>
     <url>https://www.zkoss.org/product/zkcalendar</url>
+    <properties>
+    	<calendar.plugin.version>${revision}</calendar.plugin.version>
+    </properties>
     <licenses>
         <license>
             <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
@@ -28,7 +31,7 @@
             <id>ZK EE Evaluation</id>
             <url>https://mavensync.zkoss.org/zk/ee-eval</url>
         </repository>
-        <repository>
+       <repository>
             <id>ZK EE</id>
             <url>https://maven.zkoss.org/repo/zk/ee</url>
         </repository>
@@ -48,7 +51,7 @@
         <dependency>
             <groupId>org.zkoss.calendar</groupId>
             <artifactId>calendar</artifactId>
-            <version>${project.version}</version>
+            <version>3.1.0.FL.20220217</version>
         </dependency>
         <dependency>
             <groupId>org.zkoss.chart</groupId>
@@ -87,6 +90,13 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<configuration>
+					<embedBuildProfileDependencies>true</embedBuildProfileDependencies>
+				</configuration>
+			</plugin>
         </plugins>
     </build>
 </project>
