@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.zkoss.calendar</groupId>
             <artifactId>calendar</artifactId>
-            <version>3.1.0.FL.20220217</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>org.zkoss.chart</groupId>

@@ -95,9 +95,9 @@ public class SimpleCalendarItem extends AbstractCalendarItem<Date> implements Se
 	@Deprecated
 	public void setContentColor(String contentColor) {
 		Map styleMap = new HashMap<>();
-		Maps.parse(styleMap, this._contentStyle, ':', ';', (char)0);
+		Maps.parse(styleMap, this._style, ':', ';', (char)0);
 		styleMap.put("background-color", contentColor);
-		this._contentStyle= Maps.toString(styleMap, (char) 0, ';', ':').replaceAll("\\\\ ", " ");
+		this._style= Maps.toString(styleMap, (char) 0, ';', ':').replaceAll("\\\\ ", " ");
 	}
 	
 	/** Sets the css style applied to the main Dom node of the calendar item.

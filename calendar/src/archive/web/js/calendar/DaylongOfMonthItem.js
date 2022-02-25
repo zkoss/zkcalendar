@@ -18,20 +18,13 @@ calendar.DaylongOfMonthItem = zk.$extends(calendar.LongItem, {
 		this.$supers('$init', arguments);
 		this.cloneNodes = [];
 	},
-	
 	getCornerStyle_: function () {
 		return this.params.contentStyle;
 	},
-	
-	getInnerStyle_: function () {
-		return this.params.innerStyle;
-	},
-		
 	domClass_: function (no) {
 		var scls = this.$supers('domClass_', arguments);
 		return scls + ' ' + this.getZclass() + '-daylong-month';
 	},
-	
 	getDays: function () {
 		var node = this.$n();
 			
@@ -133,14 +126,14 @@ calendar.DaylongOfMonthItem = zk.$extends(calendar.LongItem, {
 	
 	defineClassName_: function () {
 		this.$super('defineClassName_', arguments);
-		var contentStyle = this.item.contentStyle;
-		this.params.innerStyle = contentStyle;
+		var innerStyle = this.item.innertStyle;
+		this.params.innerStyle = innerStyle;
 	},
 	
 	defineCss_: function () {
 		this.$super('defineCss_', arguments);
-		var contentStyle = this.item.contentStyle;
-		this.params.innerStyle = contentStyle;
+		var innerStyle = this.item.style;
+		this.params.innerStyle = innerStyle;
 	},
 	
 	updateContentStyle_: function (contentStyle) {

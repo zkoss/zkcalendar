@@ -21,12 +21,10 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 			id = ce.id,
 			p = this.params,
 			style = p.style,
-			headerStyle = p.headerStyle,
 			contentStyle = p.contentStyle,
 			parent = this.parent,
 			isBefore = ce.zoneBd < parent.zoneBd,
-			isAfter = ce.zoneEd > parent.zoneEd,
-			cornerStyle = this.getCornerStyle_();
+			isAfter = ce.zoneEd > parent.zoneEd;
 		
 		out.push('<div', this.domAttrs_(), '>',
 				'<div id="', id, '-body" class="', p.body);
@@ -36,20 +34,18 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 		if (isAfter)
 			out.push(' ' + p.right_arrow);
 
-		out.push('"', style, '>',
-				'<div class="', p.inner, '"', this.getInnerStyle_(), '>',
-				'<div id="', id, '-cnt" class="', p.content);
-
-		out.push('"', contentStyle, '>');
-
-		out.push('<div class="', p.text, '">', ce.content, '</div></div></div></div>',
+		out.push('"','>',
+				'<div id="', id, '-inner"  class="', p.inner, '"', ' style="', style , '"', '>',
+				'<div id="', id, '-cnt" class="', p.content, '"', ' style="', contentStyle, '"', '>',
+				'<div class="', p.text, '">', ce.content, '</div></div></div></div>',
 				'</div>');
 	},
 	
 	update: function (updateLastModify) {
 		this.defineCss_();
 		
-		var cnt = jq(this.$n('cnt')),
+		var inner = jq(this.$n('inner')),
+			cnt = jq(this.$n('cnt')),
 			parent = this.parent,
 			ce = this.item,
 			p = this.params,
@@ -60,6 +56,8 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 		
 		if (this.updateContentStyle_)
 			this.updateContentStyle_(p.contentStyle);
+		
+		inner.attr('style', p.style);
 		
 		cnt.attr('class', p.content);
 		cnt.attr('style', p.contentStyle);

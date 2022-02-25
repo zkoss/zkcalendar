@@ -17,19 +17,21 @@ calendar.DayOfMonthItem = zk.$extends(calendar.Item, {
 	redraw: function (out) {
 		var ce = this.item,
 			id = ce.id,
-			headerColor = ce.headerColor,
-			innerStyle = headerColor ? ' style="background:' + headerColor + '"' : '',
 			zcls = this.getZclass(),
 			inner = zcls + '-inner',
 			header = zcls + '-header',
-			content = zcls + '-cnt';
+			content = zcls + '-cnt',
+			style = ce.style,
+			headerStyle = ce.headerStyle,
+			contentStyle = ce.contentStyle;
+
 
 		this.uuid = id;
 
 		out.push('<div', this.domAttrs_(), '>',
-				'<div id="', id, '-inner" class="', inner, '"', innerStyle, '>',
-				'<span id="', id, '-hd" class="', header, '">', this.getCntText(ce), '</span>',
-				'<span id="', id, '-cnt" class="', content, '">', ce.content, '</span></div></div>');
+				'<div id="', id, '-inner" class="', inner, '" style=" ', style ,'"','>',
+				'<span id="', id, '-hd" class="', header, '" style=" ', headerStyle ,'"','>', this.getCntText(ce), '</span>',
+				'<span id="', id, '-cnt" class="', content, '" style=" ', contentStyle ,'"','>', ce.content, '</span></div></div>');
 	},
 	
 	getCntText: function (ce) {
@@ -51,11 +53,14 @@ calendar.DayOfMonthItem = zk.$extends(calendar.Item, {
 			inner = jq(this.$n('inner')),
 			hd = jq(this.$n('hd')),
 			cnt = jq(this.$n('cnt')),
-			headerColor = ce.headerColor,
-			innerStyle = headerColor ? 'background:' + headerColor : '';
+			innerStyle = ce.style,
+			headerStyle = ce.headerStyle,
+			contentStyle = ce.contentStyle;
 
 		inner.attr('style', innerStyle);
-		hd.html(this.getCntText(ce) + '&nbsp;');
+		hd.attr('style', headerStyle);
+		cnt.attr('style', contentStyle);
+		hd.html(this.getCntText(ce));
 		cnt.html(ce.content);
 		
 		this.calculate_(updateLastModify);
