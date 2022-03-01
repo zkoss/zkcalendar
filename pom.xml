@@ -15,28 +15,11 @@
 	<properties>
 		<zk.version>9.6.1-Eval</zk.version>
 		<calendar.main.version>3.1.0</calendar.main.version>
+		<maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
+ 	<revision>${calendar.main.version}</revision>
+  <!--     	<revision>${calendar.main.version}.FL.${maven.build.timestamp}</revision> -->
+		<packname>${revision}</packname>
 	</properties>
-	<profiles>
-	  <profile>
-	    <id>production</id>
-	    <activation>
-	      <activeByDefault>true</activeByDefault>
-	    </activation>
-	    <properties>
-    		<maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
-	    	<revision>${calendar.main.version}</revision>
-			<packname>${revision}</packname>
-    	</properties>
-	  </profile>
-	  <profile>
-	    <id>freshly</id>
-	    <properties>
-    		<maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
-	    	<revision>${calendar.main.version}.FL.${maven.build.timestamp}</revision>
-			<packname>${revision}</packname>
-	    </properties>
-	  </profile>
-	</profiles>
 	<licenses>
 		<license>
 			<name>GNU General Public License, Version 2.0</name>
@@ -97,7 +80,8 @@
 				<version>1.2.7</version>
 				<configuration>
 					<updatePomFile>true</updatePomFile>
-					<flattenMode>resolveCiFriendliesOnly</flattenMode>
+					<flattenMode>ossrh</flattenMode>
+                    <flattenDependencyMode>all</flattenDependencyMode>
 				</configuration>
 				<executions>
 					<execution>

@@ -27,11 +27,11 @@ calendar.DayItem = zk.$extends(calendar.Item, {
 							'<div class="' + resizer + '-icon"></div></div>';
 		
 		out.push('<div', this.domAttrs_(), '>',
-				'<div id="', id, '-body" class="', p.body, '"', style, '>',
-				'<div class="', p.inner, '"', headerStyle, '>',
-				'<dl id="', id, '-inner"', contentStyle, '>',
-				'<dt id="', id, '-hd" class="', p.header, '"', headerStyle, '>', this.getItemTitle(ce), '</dt>',
-				'<dd id="', id, '-cnt" class="', p.content, '"', contentStyle, '>',
+				'<div id="', id, '-body" class="', p.body, '"','>',
+				'<div class="', p.inner, '"', '>',
+				'<dl id="', id, '-inner"', 'style="', style, '"','>',
+				'<dt id="', id, '-hd" class="', p.header, '"', 'style="', headerStyle,'"', '>', this.getItemTitle(ce), '</dt>',
+				'<dd id="', id, '-cnt" class="', p.content, '"', 'style="', contentStyle,'"', '>',
 				'<div class="', p.text, '">', ce.content, '</div></dd>');
 		// resizer
 		if (!ce.isLocked)
@@ -80,12 +80,13 @@ calendar.DayItem = zk.$extends(calendar.Item, {
 		
 		var ce = this.item,
 			p = this.params,
+			style = p.style;
 			contentStyle = p.contentStyle,
 			cnt = jq(this.$n('cnt'));
 
 		this.updateHeaderStyle_(p.headerStyle);
 		
-		jq(this.$n('inner')).attr('style', contentStyle);
+		jq(this.$n('inner')).attr('style', style);
 		cnt.attr('style', contentStyle);
 		cnt.children('.' + p.text).html(ce.content);
 		

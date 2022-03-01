@@ -39,9 +39,9 @@ calendar.Item = zk.$extends(zk.Widget, {
 			inner: zcls + '-inner',
 			content: zcls + '-cnt',
 			text: zcls + '-text',
-			style: ' style="' + style + '"',
-			headerStyle: ' style="' + headerStyle + '"',
-			contentStyle: ' style="' + contentStyle + '"'
+			style: style,
+			headerStyle: headerStyle,
+			contentStyle: contentStyle
 		};
 		this.uuid = ce.id;
 	},
@@ -52,17 +52,16 @@ calendar.Item = zk.$extends(zk.Widget, {
 			headerStyle = ce.headerStyle,
 			contentStyle = ce.contentStyle
 			p = this.params;
-		p.style = ' style="' + style + '"';
+		p.style = style;
 		p.headerStyle = headerStyle,
 		p.contentStyle = contentStyle
 	},
 	
 	updateHeaderStyle_: function (headerStyle) {
 		var node = jq(this.$n()),
-			body = jq(this.$n('body')),
+			body = jq(this.$n('hd')),
 			p = this.params;
 		body.attr('style', headerStyle);
-		body.children('.' + p.inner).attr('style', this.getInnerStyle_());
 	},
 		
 	getZclass: function () {
@@ -74,10 +73,6 @@ calendar.Item = zk.$extends(zk.Widget, {
 		return this.item.sclass;
 	},
 
-	getInnerStyle_: function () {
-		return this.params.headerStyle;
-	},
-	
 	calculate_: function (updateLastModify) {
 		var node = this.$n(),
 			item = this.item,

@@ -422,22 +422,19 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	background: @eventColor;
 }
 .z-calitem-header {
-	background: @eventColor;
+//	background: @eventColor;
 	font-size: @fontSizeL;
 	font-family: @fontFamilyC;
 	line-height: @fontSizeL + 4px;
-	color: @invertFontColor;
 	white-space: nowrap;
 	padding: 0 @basePadding;
 }
 .z-calitem-inner .z-calitem-cnt {
-	background: @eventColor;
 	font-size: @fontSizeL;
 	font-family: @fontFamilyC;
 	padding-left: @basePadding;
 	padding-right: @basePadding;
 	line-height: 20px;
-	color: @invertFontColor;
 }
 .z-calitem-resizer {
 	bottom: 2px;
@@ -516,21 +513,17 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	padding: 0 @basePadding;
 	line-height: 18px;
 }
-.z-calitem-month .z-calitem-inner {
+.z-calitem-month .z-calitem-inner, .z-calitem-daylong-month .z-calitem-inner{
 	background: @eventColor;
 	border-radius: @borderRadius;
 	overflow: hidden;
 }
 .z-calitem-month .z-calitem-header {
-	background: transparent;
-	color: @invertFontColor;
 	font-size: @fontSizeL;
 	font-family: @fontFamilyC;
 	white-space: nowrap;
 }
 .z-calitem-month .z-calitem-cnt {
-	background: transparent;
-	color: @invertFontColor;
 	font-size: @fontSizeL;
 	font-family: @fontFamilyC;
 	white-space: nowrap;

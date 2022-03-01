@@ -86,7 +86,7 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	@Deprecated
 	public String getContentColor() {
 		Map styleMap = new HashMap<>();
-		Maps.parse(styleMap, this._contentStyle, ':', ';', (char)0);
+		Maps.parse(styleMap, this._style, ':', ';', (char)0);
 		return (String) styleMap.get("background-color");
 	}
 	
