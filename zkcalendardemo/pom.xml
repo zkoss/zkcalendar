@@ -11,9 +11,6 @@
     <name>The ZK Calendar Demo</name>
     <description>The ZK Calendar Demo</description>
     <url>https://www.zkoss.org/product/zkcalendar</url>
-    <properties>
-    	<calendar.plugin.version>${revision}</calendar.plugin.version>
-    </properties>
     <licenses>
         <license>
             <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
@@ -51,7 +48,7 @@
         <dependency>
             <groupId>org.zkoss.calendar</groupId>
             <artifactId>calendar</artifactId>
-            <version>${revision}</version>
+           	<version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.zkoss.chart</groupId>
