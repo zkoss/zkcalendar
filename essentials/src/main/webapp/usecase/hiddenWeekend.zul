@@ -1,0 +1,21 @@
+<zk>
+    <div apply="org.zkoss.calendar.essentials.usecase.HiddenWeekendComposer"
+         height="100%">
+        <button id="previous" iconSclass="z-icon-arrow-left"/>
+        <button id="next" iconSclass="z-icon-arrow-right"/>
+        <calendars id="calendars" firstDayOfWeek="Sunday" model="${model}"
+                   mold="month"/>
+    </div>
+    <style>
+        <!--        .z-calendars-week-weekend,-->
+        /* with ZKCAL-95 */
+        .z-calendars-day-of-week:first-child,
+        .z-calendars-day-of-week:last-child,
+        .z-calendars-day-of-month-bg .z-calendars-week-weekend,
+        .z-calendars-month-date.z-calendars-week-weekend,
+        .z-calendars-month-date-evt:first-child,
+        .z-calendars-month-date-evt:last-child{
+            display: none;
+        }
+    </style>
+</zk>
