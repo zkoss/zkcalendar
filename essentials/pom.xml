@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.zkoss.calendar</groupId>
     <artifactId>essentials</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
     <packaging>war</packaging>
     <name>ZK Calendar Essentials</name>
     <properties>
-        <zk.version>9.5.0.2-Eval</zk.version>
+        <zk.version>9.6.1-Eval</zk.version>
     </properties>
     <description></description>
     <url>https://www.zkoss.org/product/zkcalendar</url>
@@ -50,6 +50,12 @@
             <groupId>org.zkoss.zk</groupId>
             <artifactId>zkmax</artifactId>
             <version>${zk.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.lowagie</groupId>
+                    <artifactId>itext</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
     <build>
