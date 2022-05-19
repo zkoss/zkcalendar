@@ -51,6 +51,17 @@
            	<version>${project.parent.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zkmax</artifactId>
+            <version>${zk.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.lowagie</groupId>
+                    <artifactId>itext</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.zkoss.chart</groupId>
             <artifactId>zkcharts</artifactId>
             <version>1.1.0</version>
