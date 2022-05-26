@@ -50,6 +50,26 @@
             <artifactId>calendar</artifactId>
            	<version>${project.parent.version}</version>
         </dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkmax</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zkplus</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.zkoss.zk</groupId>
+			<artifactId>zhtml</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.zkoss.common</groupId>
+		    <artifactId>zweb-dsp</artifactId>
+			<version>${zk.version}</version>
+		</dependency>
         <dependency>
             <groupId>org.zkoss.chart</groupId>
             <artifactId>zkcharts</artifactId>
@@ -93,6 +113,11 @@
 				<configuration>
 					<embedBuildProfileDependencies>true</embedBuildProfileDependencies>
 				</configuration>
+			</plugin>
+			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-war-plugin</artifactId>
+			    <version>3.3.1</version>
 			</plugin>
         </plugins>
     </build>
