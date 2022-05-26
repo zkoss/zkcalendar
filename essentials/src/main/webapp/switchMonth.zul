@@ -1,0 +1,5 @@
+<zk>
+    <button id="previous" label="Previous"/>
+    <button id="next" label="Next"/>
+    <calendars mold="month" apply="org.zkoss.calendar.essentials.SwitchMonthComposer"/>
+</zk>

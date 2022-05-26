@@ -88,7 +88,8 @@ public class ZKCalendarDemoComposer extends SelectorComposer<Borderlayout> {
 		page.setAttribute("hasPE", new Boolean(hasPE));
 		return super.doBeforeCompose(page, parent, compInfo);
 	}
-	
+
+	@Override
 	public void doAfterCompose(Borderlayout main) throws Exception {
 		super.doAfterCompose(main);
 		initCalendarModel(); // prepare model data
