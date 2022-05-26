@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.zkoss.calendar</groupId>
 	<artifactId>zkcalendar</artifactId>
@@ -16,8 +15,8 @@
 		<zk.version>9.6.1-Eval</zk.version>
 		<calendar.main.version>3.1.1</calendar.main.version>
 		<maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
- 	<revision>${calendar.main.version}</revision>
-  <!--     	<revision>${calendar.main.version}.FL.${maven.build.timestamp}</revision> -->
+		<revision>${calendar.main.version}</revision>
+		<!--     	<revision>${calendar.main.version}.FL.${maven.build.timestamp}</revision> -->
 		<packname>${revision}</packname>
 	</properties>
 	<licenses>
@@ -47,12 +46,12 @@
 	<build>
 		<plugins>
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-javadoc-plugin</artifactId>
-			    <version>3.2.0</version>
-			    <configuration>
-			        <skip>true</skip>
-			    </configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -61,7 +60,7 @@
 				<configuration>
 					<updatePomFile>true</updatePomFile>
 					<flattenMode>ossrh</flattenMode>
-                    <flattenDependencyMode>all</flattenDependencyMode>
+					<flattenDependencyMode>all</flattenDependencyMode>
 				</configuration>
 				<executions>
 					<execution>

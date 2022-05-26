@@ -1,3 +1,7 @@
+calendar 3.1.1
+* Bugs:
+	ZKCAL-99: Maven build includes unnecessary dependencies
+
 calendar 3.1.0
 * Features:
 	ZKCAL-92: Add a builder for the immutable DefaultCalendarItem
