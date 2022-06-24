@@ -25,14 +25,13 @@ public class DisplayComposer extends SelectorComposer {
     private void initModel() {
         CalendarItemGenerator.zoneId = calendars.getDefaultTimeZone().toZoneId();
         model = new SimpleCalendarModel(CalendarItemGenerator.generateList());
-        DefaultCalendarItem calendarItem = new DefaultCalendarItem("my title",
-                "my content",
-                null,
-                null,
-                false,
-                LocalDateTime.now().truncatedTo(ChronoUnit.HOURS),
-                LocalDateTime.now().truncatedTo(ChronoUnit.HOURS).plusHours(2),
-                calendars.getDefaultTimeZone().toZoneId());
+        DefaultCalendarItem calendarItem = new DefaultCalendarItem.Builder()
+                .withTitle("my title")
+                .withHeaderColor("my content")
+                .withBegin(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS))
+                .withEnd(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS).plusHours(2))
+                .withZoneId(calendars.getDefaultTimeZone().toZoneId())
+                .build();
         model.add(calendarItem);
     }
 }

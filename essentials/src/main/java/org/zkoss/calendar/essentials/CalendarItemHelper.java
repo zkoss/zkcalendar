@@ -3,9 +3,8 @@ package org.zkoss.calendar.essentials;
 import org.zkoss.calendar.impl.DefaultCalendarItem;
 
 import java.time.*;
-import java.util.Calendar;
 
-public class CalendarItemBuilder {
+public class CalendarItemHelper {
     private String title;
     private String content;
     private Instant begin;
@@ -15,11 +14,11 @@ public class CalendarItemBuilder {
     private boolean locked;
     private ZoneId zoneId = ZoneId.systemDefault();
 
-    public CalendarItemBuilder(){
+    public CalendarItemHelper(){
 
     }
 
-    public CalendarItemBuilder(DefaultCalendarItem item){
+    public CalendarItemHelper(DefaultCalendarItem item){
         title = item.getTitle();
         content = item.getContent();
         begin = item.getBegin();
@@ -29,51 +28,56 @@ public class CalendarItemBuilder {
         locked = item.isLocked();
     }
 
-    public CalendarItemBuilder setTitle(String title) {
+    public CalendarItemHelper setTitle(String title) {
         this.title = title;
         return this;
     }
 
-    public CalendarItemBuilder setContent(String content) {
+    public CalendarItemHelper setContent(String content) {
         this.content = content;
         return this;
     }
 
-    public CalendarItemBuilder setBegin(Instant begin) {
+    public CalendarItemHelper setBegin(Instant begin) {
         this.begin = begin;
         return this;
     }
 
-    public CalendarItemBuilder setEnd(Instant end) {
+    public CalendarItemHelper setEnd(Instant end) {
         this.end = end;
         return this;
     }
 
-    public CalendarItemBuilder setHeaderColor(String headerColor) {
+    public CalendarItemHelper setHeaderColor(String headerColor) {
         this.headerColor = headerColor;
         return this;
     }
 
-    public CalendarItemBuilder setContentColor(String contentColor) {
+    public CalendarItemHelper setContentColor(String contentColor) {
         this.contentColor = contentColor;
         return this;
     }
 
-    public CalendarItemBuilder setLocked(boolean locked) {
+    public CalendarItemHelper setLocked(boolean locked) {
         this.locked = locked;
         return this;
     }
 
-    public CalendarItemBuilder setZoneId(ZoneId zoneId) {
+    public CalendarItemHelper setZoneId(ZoneId zoneId) {
         this.zoneId = zoneId;
         return this;
     }
 
     public DefaultCalendarItem build(){
 
-        return new DefaultCalendarItem(title, content, headerColor, contentColor, locked,
-                LocalDateTime.ofInstant(begin, zoneId),
-                LocalDateTime.ofInstant(end, zoneId)
-                , zoneId);
+        return new DefaultCalendarItem.Builder()
+                .withTitle(title)
+                .withContent(content)
+                .withHeaderColor(headerColor)
+                .withContentColor(contentColor)
+                .withBegin(LocalDateTime.ofInstant(begin, zoneId))
+                .withEnd(LocalDateTime.ofInstant(end, zoneId))
+                .withZoneId(zoneId)
+                .build();
     }
 }

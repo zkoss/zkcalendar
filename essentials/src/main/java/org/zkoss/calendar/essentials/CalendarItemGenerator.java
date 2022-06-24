@@ -12,14 +12,13 @@ public class CalendarItemGenerator {
     static private Random random = new Random(System.currentTimeMillis());
 
     static public DefaultCalendarItem generate(LocalDateTime dateTime, String title){
-        DefaultCalendarItem item = new DefaultCalendarItem(title,
-                "auto-generated content at " + LocalDateTime.now(),
-                null,
-                null,
-                false,
-                dateTime,
-                dateTime.plusHours(2),
-                zoneId);
+        DefaultCalendarItem item =  new DefaultCalendarItem.Builder()
+                .withTitle(title)
+                .withContent("auto-generated content at " + LocalDateTime.now())
+                .withBegin(dateTime)
+                .withEnd(dateTime.plusHours(2))
+                .withZoneId(zoneId)
+                .build();
 
         return item;
     }

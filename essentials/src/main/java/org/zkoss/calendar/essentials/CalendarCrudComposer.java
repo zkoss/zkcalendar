@@ -76,7 +76,7 @@ public class CalendarCrudComposer extends SelectorComposer {
         selectedItem = (DefaultCalendarItem) event.getCalendarItem();
         model.remove(selectedItem);
 
-        DefaultCalendarItem movedItem = new CalendarItemBuilder(selectedItem)
+        DefaultCalendarItem movedItem = new CalendarItemHelper(selectedItem)
                 .setBegin(event.getBeginDate().toInstant())
                 .setEnd(event.getEndDate().toInstant())
                 .build();
@@ -104,7 +104,7 @@ public class CalendarCrudComposer extends SelectorComposer {
 
     @Listen(Events.ON_CLICK + " = button[label='Create']")
     public void create() {
-        DefaultCalendarItem item = new CalendarItemBuilder()
+        DefaultCalendarItem item = new CalendarItemHelper()
                 .setBegin(beginBox.getValue().toInstant())
                 .setEnd(endBox.getValue().toInstant())
                 .setTitle(titleBox.getValue())
@@ -119,7 +119,7 @@ public class CalendarCrudComposer extends SelectorComposer {
     public void update() {
         model.remove(selectedItem);
 
-        DefaultCalendarItem newItem = new CalendarItemBuilder(selectedItem)
+        DefaultCalendarItem newItem = new CalendarItemHelper(selectedItem)
                 .setBegin(beginBox.getValue().toInstant())
                 .setEnd(endBox.getValue().toInstant())
                 .setTitle(titleBox.getValue())
