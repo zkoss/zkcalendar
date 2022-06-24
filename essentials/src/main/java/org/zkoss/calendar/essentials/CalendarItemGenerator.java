@@ -14,7 +14,7 @@ public class CalendarItemGenerator {
     static public DefaultCalendarItem generate(LocalDateTime dateTime, String title){
         DefaultCalendarItem item =  new DefaultCalendarItem.Builder()
                 .withTitle(title)
-                .withContent("auto-generated content at " + LocalDateTime.now())
+                .withContent("auto-generated content at " + dateTime)
                 .withBegin(dateTime)
                 .withEnd(dateTime.plusHours(2))
                 .withZoneId(zoneId)
