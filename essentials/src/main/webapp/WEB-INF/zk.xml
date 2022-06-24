@@ -5,6 +5,11 @@
 	<client-config>
 		<debug-js>true</debug-js>
 	</client-config>
+<!-- https://www.zkoss.org/wiki/ZK_Developer%27s_Reference/Internationalization/Time_Zone -->
+<!--	<library-property>-->
+<!--		<name>org.zkoss.web.preferred.timeZone</name>-->
+<!--		<value>GMT+1</value>-->
+<!--	</library-property>-->
 	<!-- Specify calendar theme -->
 <!--	<library-property>-->
 <!--		<name>org.zkoss.calendar.theme.preferred</name>-->
