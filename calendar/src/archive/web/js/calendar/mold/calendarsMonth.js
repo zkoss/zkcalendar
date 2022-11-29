@@ -12,7 +12,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
 */
-function (out) {	
+(function (out) {
 	var uuid = this.uuid,
 		zcls = this.getZclass(),
 		toolbar = this.firstChild,
@@ -167,4 +167,4 @@ function (out) {
 	out.push('</div></div></div>',
 /***************************************************************************/
 			'</div></div></div>');
-}
+})
