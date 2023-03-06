@@ -34,7 +34,7 @@ public class DisplayTooltipComposer extends SelectorComposer {
         model = new SimpleCalendarModel(CalendarItemGenerator.generateList());
         DefaultCalendarItem calendarItem = new DefaultCalendarItem.Builder()
                 .withTitle("my title")
-                .withHeaderColor("my content")
+                .withContent("my content")
                 .withBegin(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS))
                 .withEnd(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS).plusHours(2))
                 .withZoneId(calendars.getDefaultTimeZone().toZoneId())

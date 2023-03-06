@@ -1,5 +1,5 @@
 <zk>
-    <calendars height="100%" width="100%" beginTime="8" apply="org.zkoss.calendar.essentials.DisplayTooltipComposer" readonly="true" mold="month"
+    <calendars height="100%" width="100%" beginTime="8" apply="org.zkoss.calendar.essentials.DisplayTooltipComposer"
                tooltip="tooltipPopup, position=after_pointer"/>
     <popup id="tooltipPopup">
         <label id="tooltipText"/>
