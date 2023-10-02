@@ -36,7 +36,7 @@ import org.zkoss.zk.ui.util.Clients;
  * The event is used for Calendars when user create/update/edit the calendar item.
  * <p> The event is able to stop or clear the dragging ghost from server to client,
  *  that is, when application developer doesn't invoke the {@link #stopClearGhost()},
- *  the dragging ghost will be cleared by default. Otherwise, application developer
+ *  the dragging ghost will be cleared by default. Otherwise, an application developer
  *  has to responsibly invoke the {@link #clearGhost()}.
  *  
  * @author jumperchen,jimmy
@@ -44,12 +44,33 @@ import org.zkoss.zk.ui.util.Clients;
 public class CalendarsEvent extends Event {
 	private static final long serialVersionUID = 20090331171731L;
 
+	/** This event is triggered when a user clicks an empty cell in the time cell. */
 	public static final String ON_ITEM_CREATE = "onItemCreate";
+
+	/** This event is triggered when a user clicks on an existing calendar item. */
 	public static final String ON_ITEM_EDIT = "onItemEdit";
+
+	/** This event is triggered when a user drags to change a calendar item's time span or drags to move the
+	 * item to a different date.
+	 */
 	public static final String ON_ITEM_UPDATE = "onItemUpdate";
+
+	/**
+	 * Calendars fires this event when you click when a user clicks on the date texts (TUE 10/3)
+	 * on the top of the component. Pass an {@link Event} when invoking an event listener.
+	 */
 	public static final String ON_DAY_CLICK = "onDayClick";
+
+	/**
+	 * Calendars fires this event when a user clicks the week number of the year on the left-hand side
+	 * when you set <code>weekOfYear="true"</code>. Pass an {@link Event} when invoking an event listener.
+	 */
 	public static final String ON_WEEK_CLICK = "onWeekClick";
-	//since 2.1.5
+
+	/**
+	 * It's fired when users hover a mouse on a calendar item. Listen to this event to show a tooltip for an item.
+	 * @since 2.1.5
+	 */
 	public static final String ON_ITEM_TOOLTIP = "onItemTooltip";
 	
 	private Date _beginDate;

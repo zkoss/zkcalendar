@@ -25,7 +25,10 @@ import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.api.CalendarModel;
 
 /**
- * Defines an event that encapsulates changes to a date range. 
+ * This class represents an event that encapsulates changes to a date range in a {@link CalendarModel}.
+ *
+ * The class allows listeners to react to changes in a {@link CalendarModel}  by providing details about what changed.
+ * It is used with the observer pattern to propagate {@link CalendarModel} updates to {@link CalendarDataListener}.
  * 
  * @author jumperchen,jimmy
  */
