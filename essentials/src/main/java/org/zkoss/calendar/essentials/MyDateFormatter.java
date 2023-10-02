@@ -15,6 +15,8 @@ public class MyDateFormatter extends SimpleDateFormatter {
         if (dateFormat == null) {
             dateFormat = DateTimeFormatter.ofPattern("EEE MM-d", locale);
         }
-        return "[" + date.format(dateFormat) + "]";
+        return "<div>" + date.format(dateFormat) + "</div> another";
     }
+
+
 }
