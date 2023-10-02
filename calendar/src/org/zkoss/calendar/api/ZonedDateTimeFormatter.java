@@ -6,7 +6,8 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * A date ({@link ZonedDateTime}) formatter is used to display the different date format in the calendar.
+ * A date ({@link ZonedDateTime}) formatter is used to generate a customized date format in the calendar.
+ * Allow to return HTML characters.
  * @author leon
  * @since 3.0.0
  *
