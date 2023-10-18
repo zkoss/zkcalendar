@@ -34,34 +34,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<sourceDirectory>${project.basedir}/src</sourceDirectory>
-		<resources>
-			<resource>
-				<directory>${project.basedir}/src/archive</directory>
-			</resource>
-		</resources>
 		<plugins>
-			<plugin><!-- Preserve the original JS source file as *.src.js to enable source maps in debugger -->
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
-					<execution>
-						<phase>process-resources</phase>
-						<configuration>
-							<target>
-								<copy todir="${project.build.outputDirectory}/web">
-									<fileset dir="${project.basedir}/src/archive/web"/>
-									<globmapper from="*.js" to="*.src.js"/>
-								</copy>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin><!-- Minimize the JS source files as *.js in the output directory -->
 				<groupId>com.github.blutorange</groupId>
 				<artifactId>closure-compiler-maven-plugin</artifactId>
@@ -75,7 +48,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<baseSourceDir>${basedir}/src/archive/web</baseSourceDir>
+					<baseSourceDir>src/main/resources/web</baseSourceDir>
 					<baseTargetDir>${project.build.outputDirectory}/web</baseTargetDir>
 					<includes>
 						<include>**/*.js</include>
@@ -89,7 +62,7 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.10.3</version>
+				<version>1.14.0</version>
 				<configuration>
 					<nodeVersion>v16.14.2</nodeVersion>
 					<workingDirectory>${project.basedir}</workingDirectory>
@@ -120,7 +93,7 @@
 							<!--only compile less file in theme folder-->
 							<arguments>
 								zklessc
-								--source ${project.basedir}/src/archive/web
+								--source ${project.basedir}/src/main/resources/web
 								--output ${project.build.outputDirectory}/web
 								--compress
 							</arguments>
@@ -146,7 +119,7 @@
 				<version>2.3.1</version>
 				<configuration>
 					<archive>
-						<manifestFile>${project.basedir}/src/archive/META-INF/MANIFEST.MF</manifestFile>
+						<manifestFile>${project.basedir}/src/main/resources/META-INF/MANIFEST.MF</manifestFile>
 					</archive>
 				</configuration>
 			</plugin>
