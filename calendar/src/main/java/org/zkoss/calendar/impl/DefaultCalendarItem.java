@@ -42,7 +42,7 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 	}
 
 	private DefaultCalendarItem(String title, String content, String headerColor, String contentColor, String sclass, boolean locked, LocalDateTime begin, LocalDateTime end, ZoneId zoneId) {
-		super(title, content, headerColor, contentColor, sclass, locked, begin, end);
+		super(title, content, sclass, "",  contentColor, headerColor, locked, begin, end);
 		if (zoneId == null)
 			throw new IllegalArgumentException("Must specify ZoneId");
 		this._zoneId = zoneId;
