@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zk>
+	<client-config>
+		<debug-js>true</debug-js>
+	</client-config>
+	<library-property>
+		<name>org.zkoss.calendar.theme.preferred</name>
+		<value>iceblue</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.zk.WPD.cache</name>
+		<value>false</value>
+	</library-property>
+</zk>
