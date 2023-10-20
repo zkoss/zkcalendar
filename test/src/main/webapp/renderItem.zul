@@ -2,5 +2,5 @@
     <button id="previous" label="Previous"/>
     <button id="next" label="Next"/>
 
-    <calendars id="cal2" apply="test.RenderItemsComposer" height="90%"/>
+    <calendars id="cal" apply="test.RenderItemsComposer" height="90%"/>
 </zk>

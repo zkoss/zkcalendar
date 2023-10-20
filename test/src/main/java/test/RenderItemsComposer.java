@@ -1,6 +1,7 @@
 package test;
 
 import org.zkoss.calendar.Calendars;
+import org.zkoss.calendar.event.CalendarsEvent;
 import org.zkoss.calendar.impl.DefaultCalendarItem;
 import org.zkoss.calendar.impl.SimpleCalendarModel;
 import org.zkoss.zk.ui.Component;
@@ -10,81 +11,164 @@ import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.select.annotation.Wire;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.ZoneId;
+import java.util.Date;
 
 public class RenderItemsComposer extends SelectorComposer {
 
-    public static final String CONTINUOUS = "continuous";
+    public static final String CONSECUTIVE = "consecutive";
     @Wire("calendars")
     private Calendars calendars;
     private SimpleCalendarModel model;
+    private ZoneId defaultZoneId;
+    private LocalDateTime day1;
+
     private void initModel() {
         model = new SimpleCalendarModel();
-        LocalDateTime todayHour = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
+        addSeparateItems();
+        add3consecutiveItems();
+        add3OverlappingItems();
+        add1Overlap2Items();
+        addConsecutiveOverlapping();
+    }
+
+    private void addSeparateItems() {
         DefaultCalendarItem nonOverlappedItem = new DefaultCalendarItem.Builder()
                 .withTitle("non overlapped")
                 .withContent("my content")
-                .withBegin(todayHour.withHour(0))
-                .withEnd(todayHour.withHour(1))
-                .withZoneId(calendars.getDefaultTimeZone().toZoneId())
-                .build();
-
-        DefaultCalendarItem calendarItem = new DefaultCalendarItem.Builder()
-                .withTitle("one hour item 1")
-                .withContent("my content")
-                .withBegin(todayHour.withHour(2))
-                .withEnd(todayHour.withHour(3))
-                .withZoneId(calendars.getDefaultTimeZone().toZoneId())
-                .withSclass(CONTINUOUS)
-                .build();
-        DefaultCalendarItem calendarItem2 = new DefaultCalendarItem.Builder()
-                .withTitle("one hour item 2")
-                .withContent("my content2")
-                .withBegin(todayHour.withHour(3))
-                .withEnd(todayHour.withHour(4))
-                .withSclass(CONTINUOUS)
-                .withZoneId(calendars.getDefaultTimeZone().toZoneId())
-                .build();
-        DefaultCalendarItem calendarItem3 = new DefaultCalendarItem.Builder()
-                .withTitle("one hour item 3")
-                .withContent("my content3")
-                .withBegin(todayHour.withHour(4))
-                .withEnd(todayHour.withHour(5))
-                .withSclass(CONTINUOUS)
-                .withZoneId(calendars.getDefaultTimeZone().toZoneId())
+                .withBegin(day1.withHour(0))
+                .withEnd(day1.withHour(1))
+                .withZoneId(defaultZoneId)
                 .build();
         model.add(nonOverlappedItem);
+    }
+
+    /* 1st and 2nd items are consecutive items
+    *  2nd and 3rd items are overlapping*/
+    private void addConsecutiveOverlapping() {
+        LocalDateTime day4 = day1.plusDays(3);
+        DefaultCalendarItem item1 = new DefaultCalendarItem.Builder()
+                .withBegin(day4.withHour(0))
+                .withEnd(day4.withHour(1))
+                .withZoneId(defaultZoneId)
+                .build();
+        DefaultCalendarItem item2 = new DefaultCalendarItem.Builder()
+                .withBegin(day4.withHour(1))
+                .withEnd(day4.withHour(2))
+                .withZoneId(defaultZoneId)
+                .build();
+        DefaultCalendarItem item3 = new DefaultCalendarItem.Builder()
+                .withBegin(day4.withHour(1))
+                .withEnd(day4.withHour(2))
+                .withZoneId(defaultZoneId)
+                .build();
+
+        model.add(item1);
+        model.add(item2);
+        model.add(item3);
+    }
+
+
+    private void add3consecutiveItems() {
+        LocalDateTime day5 = day1.plusDays(4);
+        DefaultCalendarItem calendarItem = new DefaultCalendarItem.Builder()
+                .withContent("1hour 1")
+                .withBegin(day5.withHour(2))
+                .withEnd(day5.withHour(3))
+                .withZoneId(defaultZoneId)
+                .withSclass(CONSECUTIVE)
+                .build();
+        DefaultCalendarItem calendarItem2 = new DefaultCalendarItem.Builder()
+                .withContent("1hour 2")
+                .withBegin(day5.withHour(3))
+                .withEnd(day5.withHour(4))
+                .withSclass(CONSECUTIVE)
+                .withZoneId(defaultZoneId)
+                .build();
+        DefaultCalendarItem calendarItem3 = new DefaultCalendarItem.Builder()
+                .withContent("1hour 3")
+                .withBegin(day5.withHour(4))
+                .withEnd(day5.withHour(5))
+                .withSclass(CONSECUTIVE)
+                .withZoneId(defaultZoneId)
+                .build();
         model.add(calendarItem);
+
         model.add(calendarItem2);
         model.add(calendarItem3);
+    }
 
+    private void add1Overlap2Items() {
+        //overlap 2 item in the middle
+        LocalDateTime day3 = day1.plusDays(2);
+        model.add(new DefaultCalendarItem.Builder()
+                .withBegin(day3.withHour(1))
+                .withEnd(day3.withHour(3))
+                .withSclass("2overlapping")
+                .withZoneId(defaultZoneId)
+                .build());
+        model.add(new DefaultCalendarItem.Builder()
+                .withBegin(day3.withHour(2))
+                .withEnd(day3.withHour(5))
+                .withSclass("2overlapping")
+                .withZoneId(defaultZoneId)
+                .build());
+        model.add(new DefaultCalendarItem.Builder()
+                .withBegin(day3.withHour(4))
+                .withEnd(day3.withHour(6))
+                .withSclass("2overlapping")
+                .withZoneId(defaultZoneId)
+                .build());
+    }
+
+    private void add3OverlappingItems() {
+        LocalDateTime day2 = day1.plusDays(1);
         DefaultCalendarItem overlappedItem1 = new DefaultCalendarItem.Builder()
-                .withTitle("overlapped 6-8")
-                .withContent("my content3")
-                .withBegin(todayHour.withHour(6))
-                .withEnd(todayHour.withHour(8))
-                .withZoneId(calendars.getDefaultTimeZone().toZoneId())
+                .withBegin(day2.withHour(1))
+                .withEnd(day2.withHour(4))
+                .withZoneId(defaultZoneId)
+                .withSclass("3overlapping")
                 .build();
         DefaultCalendarItem overlappedItem2 = new DefaultCalendarItem.Builder()
-                .withTitle("overlapped 7-8")
-                .withContent("my content3")
-                .withBegin(todayHour.withHour(7))
-                .withEnd(todayHour.withHour(8))
-                .withZoneId(calendars.getDefaultTimeZone().toZoneId())
+                .withBegin(day2.withHour(2))
+                .withEnd(day2.withHour(4))
+                .withZoneId(defaultZoneId)
+                .withSclass("3overlapping")
+                .build();
+        DefaultCalendarItem overlappedItem3 = new DefaultCalendarItem.Builder()
+                .withBegin(day2.withHour(3))
+                .withEnd(day2.withHour(4))
+                .withZoneId(defaultZoneId)
+                .withSclass("3overlapping")
                 .build();
 
         model.add(overlappedItem1);
         model.add(overlappedItem2);
-
+        model.add(overlappedItem3);
     }
 
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
+        defaultZoneId = calendars.getDefaultTimeZone().toZoneId();
+        day1 = LocalDateTime.of(2023, 1, 1, 0, 0);
+        calendars.setCurrentDate(Date.from(day1.atZone(defaultZoneId).toInstant()));
         initModel();
         calendars.setModel(model);
     }
 
+    private DefaultCalendarItem selectedItem;
+    @Listen(CalendarsEvent.ON_ITEM_UPDATE + " = calendars")
+    public void move(CalendarsEvent event) {
+        selectedItem = (DefaultCalendarItem) event.getCalendarItem();
+        model.remove(selectedItem);
+
+        DefaultCalendarItem movedItem = new CalendarItemHelper(selectedItem)
+                .setBegin(event.getBeginDate().toInstant())
+                .setEnd(event.getEndDate().toInstant())
+                .build();
+        model.add(movedItem);
+    }
 
     @Listen(Events.ON_CLICK + " = #previous")
     public void previous(){
