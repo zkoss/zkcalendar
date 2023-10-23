@@ -1383,7 +1383,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 		return dur2 ? d1 - d : d - d1;
 	},
-	
+
 	fixPosition: function () {
 		var cnt = this.$n('cnt'),
 			row = this.cntRows,
@@ -1392,14 +1392,21 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			hourCount = this._et - this._bt,
 			timeslots = this._timeslots,
 			slotCount = hourCount * this._timeslots;
-		
+
 		for (var i = 0, j = this._daySpace.length; i < j; i++) {
 			var list = this._daySpace[i];
 			if (!list.length) continue;
-			var calItemsOneDay = []; //index of timeslot, each element stores .calitem DOM object
+			var calItemsOneDay = [];
 			for (var n = slotCount; n--;)
 				calItemsOneDay[n] = [];
-
+			/*  position .calitem according to timeslot into a 2d array
+                Item A's timeslot index 5 ~ 7
+                Item B's timeslot index 6 ~ 8
+                data[5] = [A]
+                data[6] = [A, B]
+                data[7] = [A, B]
+                data[8] = [B]
+             */
 			for (var k = 0, l = list.length; k < l; k++) {
 				var ce = list[k],
 					childWidget = zk.Widget.$(ce),
@@ -1410,13 +1417,13 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					isCrossDay = ed.getDate() != bd.getDate();
 				jq(target).append(ce);
 				ce.style.visibility = '';
-				
+
 				ce._bd = bd;
 				ce._ed = ed;
 				// cross day
 				if (isCrossDay)
 					ed = new Date(ed.getTime() - 1000);
-				
+
 				// fix hgh
 				var bi = this.getTimeIndex(bd),
 					ei = this.getTimeIndex(ed),
@@ -1424,7 +1431,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					timeslots = this._timeslots,
 					bdHeightOffs = 0,
 					edHeightOffs = 0;
-					
+
 				if (bi) {
 					var bdTimeslot = _getHightOffsPercent(bd, timeslots);
 					bdHeightOffs = bdTimeslot ? perHgh * bdTimeslot : 0;
@@ -1435,14 +1442,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					if (isCrossDay)//ZKCAL-29
 						ed = new Date(ed.getTime() + 1000);
 				}
-				
+
 				ce._bi = bi;
 				ce._ei = ei;
 				ce.style.top = jq.px(top + bdHeightOffs);
 				_setItemWgtHeight(this, ce, ce.id, ((ei - bi) * perHgh) - bdHeightOffs + edHeightOffs);
 
 				if (bi < 0) continue;
-				
+
 				// width info
 				for (var n = 0; bi <= ei && bi < slotCount;) {
 					var tmp = calItemsOneDay[bi++];
@@ -1455,47 +1462,66 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					tmp[n] = ce;
 				}
 			}
-			
+
 			this.clearGhost();
-			
-			// fix width
+
 			var childWidget = list[list.length - 1],
 				target = weekDay[childWidget._preOffset].firstChild;
-				
+
 			for (var ce = target.firstChild; ce; ce = ce.nextSibling) {
 				var	beginDate = ce._bd,
 					beginIndex = ce._bi,
 					endIndex = ce._ei,
-					maxSize = 0,
-					tmp = {};
-					
+					maxOverlappingItemCount = 0,
+					checkedItems = {}; // item ID been checked
+
 				if (beginIndex < 0) continue;
-				// check items overlapped
-				for (var m = beginIndex; m <= endIndex && m < slotCount; m++) {
-					var len = calItemsOneDay[m].length;
-					if (maxSize < len)
-						maxSize = len;
-					for (var n = 0; n < len; n++) {
-						if (!calItemsOneDay[m][n] || tmp[calItemsOneDay[m][n].id])
+				// count max overlapping items
+				for (var slotIndex = beginIndex; slotIndex <= endIndex && slotIndex < slotCount; slotIndex++) {
+					let nItemOneSlot = calItemsOneDay[slotIndex].length; // >1 means there is overlapping items
+					let overlappingItemCount = 1 < nItemOneSlot ? nItemOneSlot : 1;
+					if (nItemOneSlot <=0 ){ continue; }
+					for (let n = 0; n < nItemOneSlot; n++) {
+						if (!calItemsOneDay[slotIndex][n]){
+							overlappingItemCount--;
 							continue;
-						tmp[calItemsOneDay[m][n].id] = 1;
-						var ei2 = calItemsOneDay[m][n]._ei;
+						}
+						if (checkedItems[calItemsOneDay[slotIndex][n].id]){
+							continue;
+						}
+						//when an item's end time equals to another one's start time, treat these items as non-overlapped items
+						if (ce.zoneEd.getTime() === calItemsOneDay[slotIndex][n].zoneBd.getTime() ||
+							ce.zoneBd.getTime() === calItemsOneDay[slotIndex][n].zoneEd.getTime()){
+							overlappingItemCount--;
+							continue;
+						}
+						checkedItems[calItemsOneDay[slotIndex][n].id] = 1;
+						var ei2 = calItemsOneDay[slotIndex][n]._ei;
 						if (endIndex < ei2)
 							endIndex = ei2;
 					}
+					maxOverlappingItemCount = maxOverlappingItemCount > overlappingItemCount? maxOverlappingItemCount : overlappingItemCount;
 				}
-				var len = maxSize ? maxSize : 1,
+				var len = maxOverlappingItemCount ? maxOverlappingItemCount : 1,
 					width = 100 / len,
 					index = calItemsOneDay[beginIndex].indexOf(ce);
-				if (index == maxSize - 1)
+				let nEmptyPosition = calItemsOneDay[beginIndex].length > maxOverlappingItemCount;
+				index = nEmptyPosition > 0 ? index - nEmptyPosition : index;
+
+				if (!this.$class.isOverlapping(maxOverlappingItemCount) || index == maxOverlappingItemCount - 1)
 					ce.style.width = width + '%';
 				else
 					ce.style.width = (width * 1.7) + '%';
-				ce.style.left = width * index + '%';
-				
+
+				if (this.$class.isOverlapping(maxOverlappingItemCount) && index > 0){
+					ce.style.left = width * index + '%';
+				}else{
+					ce.style.left = '';
+				}
+
 				var fce = ce.previousSibling,
 					moved = false;
-				
+
 				// adjust the order
 				while (fce) {
 					if (calItemsOneDay[fce._bi].indexOf(fce) > index) {
@@ -1752,6 +1778,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		faker.style.width = '100%';
 		faker.style.left = '0px';
 		jq(faker).addClass(widget.getZclass() + '-evt-ghost');
-	}
+	},
+
+	isOverlapping(overlappingCount){
+		return overlappingCount > 1;
+	},
 });
 })();
