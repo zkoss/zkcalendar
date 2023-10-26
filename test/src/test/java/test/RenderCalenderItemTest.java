@@ -95,6 +95,14 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
         }
     }
 
+    @Test //ZKCAL-116
+    public void renderSclass(){
+        connect(TEST_ZUL);
+        JQuery item = jq(".separate");
+        assertEquals(true, item.exists());
+        assertEquals(true, item.eq(0).attr("class").contains("z-calitem"));
+    }
+
     //TODO add drag items tests
 
 }

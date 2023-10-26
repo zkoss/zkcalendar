@@ -38,6 +38,7 @@ public class RenderItemsComposer extends SelectorComposer {
                 .withContent("my content")
                 .withBegin(day1.withHour(0))
                 .withEnd(day1.withHour(1))
+                .withSclass("separate")
                 .withZoneId(defaultZoneId)
                 .build();
         model.add(nonOverlappedItem);
