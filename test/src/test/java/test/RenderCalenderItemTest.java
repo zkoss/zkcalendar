@@ -106,16 +106,20 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
 
 
     /**
-     * an instant item, same begin and end time, should have the same height as half hour item, 1 time slot height
+     * All items shorter than half hour shall have the same height as half hour item, 1 time slot height
+     * an instant item, same begin and end time.
      */
-    @Test //ZKCAL-117
-    public void instantItem(){
+    @Test
+    public void shortIntervalItem(){
         connect(TEST_ZUL);
         JQuery halfHourItem = jq(".half-hour");
         assertEquals(HALF_HOUR_HEIGHT, halfHourItem.eq(0).height());
+        //ZKCAL-117
         JQuery instantItem = jq(".instant");
         assertEquals(HALF_HOUR_HEIGHT, instantItem.eq(0).height());
 
+        JQuery tenMinuteItem = jq(".10minute");
+        assertEquals(HALF_HOUR_HEIGHT, tenMinuteItem.eq(0).height());
     }
     //TODO add drag items tests
 

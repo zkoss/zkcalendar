@@ -30,10 +30,10 @@ public class RenderItemsComposer extends SelectorComposer {
         add3OverlappingItems();
         add1Overlap2Items();
         addConsecutiveOverlapping();
-        addInstantItem();
+        addShortIntervalItem();
     }
 
-    private void addInstantItem() {
+    private void addShortIntervalItem() {
         LocalDateTime day6 = day1.plusDays(5);
         DefaultCalendarItem instantItem = new DefaultCalendarItem.Builder()
                 .withBegin(day6)
@@ -41,14 +41,23 @@ public class RenderItemsComposer extends SelectorComposer {
                 .withSclass("instant")
                 .withZoneId(defaultZoneId)
                 .build();
+        model.add(instantItem);
         DefaultCalendarItem halfHourItem = new DefaultCalendarItem.Builder()
                 .withBegin(day6)
                 .withEnd(day6.plusMinutes(30))
                 .withZoneId(defaultZoneId)
                 .withSclass("half-hour")
                 .build();
-        model.add(instantItem);
         model.add(halfHourItem);
+
+        DefaultCalendarItem tenMinuteItem = new DefaultCalendarItem.Builder()
+                .withBegin(day6.plusHours(2))
+                .withEnd(day6.plusHours(2).plusMinutes(10))
+                .withZoneId(defaultZoneId)
+                .withSclass("10minute")
+                .build();
+        model.add(tenMinuteItem);
+
     }
 
     private void addNonOverlappingItems() {
