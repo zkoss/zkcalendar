@@ -3,12 +3,25 @@
 	<client-config>
 		<debug-js>true</debug-js>
 	</client-config>
+	<!-- disable various caches -->
 	<library-property>
-		<name>org.zkoss.calendar.theme.preferred</name>
-		<value>iceblue</value>
+		<name>org.zkoss.zk.ZUML.cache </name>
+		<value>false</value>
 	</library-property>
 	<library-property>
 		<name>org.zkoss.zk.WPD.cache</name>
+		<value>false</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.zk.WCS.cache</name>
+		<value>false</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.web.classWebResource.cache</name>
+		<value>false</value>
+	</library-property>
+	<library-property>
+		<name>org.zkoss.util.label.cache</name>
 		<value>false</value>
 	</library-property>
 </zk>
