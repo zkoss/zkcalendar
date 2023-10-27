@@ -121,6 +121,22 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
         JQuery tenMinuteItem = jq(".10minute");
         assertEquals(HALF_HOUR_HEIGHT, tenMinuteItem.eq(0).height());
     }
-    //TODO add drag items tests
 
+    /**
+     *  an instant item overlaps an half-hour item
+     */
+    @Test //ZKCAL-118
+    public void instantOverlapping(){
+        connect(TEST_ZUL);
+        JQuery halfHourItem = jq(".half-hour");
+        assertEquals("85%", halfHourItem.get(0).get("style.width"));
+        assertEquals("", halfHourItem.get(0).get("style.left"));
+
+        JQuery instantItem = jq(".instant");
+        assertEquals("50%", instantItem.get(0).get("style.width"));
+        assertEquals("50%", instantItem.get(0).get("style.left"));
+
+    }
+
+    //TODO add drag items tests
 }
