@@ -170,16 +170,17 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	position: absolute;
 	width: 100%;
 }
+/* line for 1 hour and dash line for half hour */
 .z-calendars-hour-sep {
 	// ZKCAL-46: use content-box instead of border-box in ZK7
 	box-sizing: content-box;
 	-moz-box-sizing: content-box;
 	-webkit-box-sizing: content-box;
-	height: 30px;
+	height: @halfHourHeight;
 	border-bottom: 1px dashed @separatorColor;
 	border-top: 1px solid @separatorColor;
-	line-height: 30px;
-	margin-bottom: 30px;
+	line-height: @halfHourHeight;
+	margin-bottom: @halfHourHeight;
 	font-size: 30px;
 
 	&:first-child {
@@ -420,6 +421,7 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 }
 .z-calitem-inner dl {
 	background: @eventColor;
+	min-height: @halfHourHeight - 1px; /* items shorter than half an hour still have minimal height */
 }
 .z-calitem-header {
 //	background: @eventColor;

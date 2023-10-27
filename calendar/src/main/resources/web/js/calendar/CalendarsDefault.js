@@ -21,18 +21,20 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		return bdTimeslot / timeslotTime;
 	}
 	
-	function _setItemWgtHeight(wgt, node, id, height) {
-		var body = jq(node).find('#' + id + '-body')[0],
+	function _setItemWgtHeight(calendarWidget, calitem, id, height) {
+		var body = jq(calitem).find('#' + id + '-body')[0],
 			inner = body.firstChild.firstChild;
 		
-		for (var child = jq(node).children()[0]; child; child = child.nextSibling) {
-			if (wgt.isLegalChild(child))
+		for (var child = jq(calitem).children()[0]; child; child = child.nextSibling) {
+			if (calendarWidget.isLegalChild(child))
 				height -= child.offsetHeight;
 		}
 		height = zk(body).revisedHeight(height);
 		height = zk(body.firstChild).revisedHeight(height);
 		height = zk(inner).revisedHeight(height - 2);
-		inner.style.height = jq.px(height);
+		if (height > calendarWidget.$class.HALF_HOUR_HEIGHT){
+			inner.style.height = jq.px(height);
+		}
 	}
 
 	function _getSlotCount(bd, ed, timeslots) {
@@ -1783,5 +1785,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	isOverlapping(overlappingCount){
 		return overlappingCount > 1;
 	},
+	HALF_HOUR_HEIGHT: 30, //the same in _variable.less
 });
 })();
