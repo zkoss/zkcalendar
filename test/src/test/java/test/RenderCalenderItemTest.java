@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 public class RenderCalenderItemTest extends WebDriverTestCase {
 
     public static final String TEST_ZUL = "renderItem.zul";
+    public static final int HALF_HOUR_HEIGHT = 31;
 
     static {
         System.setProperty("zkWebdriverContextPath", "/test/");
@@ -103,6 +104,19 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
         assertEquals(true, item.eq(0).attr("class").contains("z-calitem"));
     }
 
+
+    /**
+     * an instant item, same begin and end time, should have the same height as half hour item, 1 time slot height
+     */
+    @Test //ZKCAL-117
+    public void instantItem(){
+        connect(TEST_ZUL);
+        JQuery halfHourItem = jq(".half-hour");
+        assertEquals(HALF_HOUR_HEIGHT, halfHourItem.eq(0).height());
+        JQuery instantItem = jq(".instant");
+        assertEquals(HALF_HOUR_HEIGHT, instantItem.eq(0).height());
+
+    }
     //TODO add drag items tests
 
 }
