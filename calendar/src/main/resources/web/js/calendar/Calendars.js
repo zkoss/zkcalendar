@@ -186,17 +186,14 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 	
 	createChildrenWidget_: function () {
 		this.cleanItemAry_();
-		//append all item be widget children
+		//append all items as calendar children
 		for (var i = 0, j = this._items.length; i < j; i++) {
-			var items = this._items[i];
-			for (var k = 0, l = items.length; k < l; k++) {
-				var item = this.processItemData_(items[k]);
-				//over range
-				//Bug ZKCAL-36: should check if event endDate and view begin Date are equal
-				if (item.zoneBd >= this.zoneEd || item.zoneEd <= this.zoneBd)
-					continue;
-				
-				this.processChildrenWidget_(_isExceedOneDay(this, item), item);
+			var oneDayItems = this._items[i];
+			for (var k = 0, l = oneDayItems.length; k < l; k++) {
+				var item = this.processItemData_(oneDayItems[k]);
+				if (item.zoneBd >= this.zoneBd && item.zoneEd <= this.zoneEd){
+					this.processChildrenWidget_(_isExceedOneDay(this, item), item);
+				}
 			}
 		}
 	},
