@@ -1,11 +1,16 @@
 package test;
 
-import org.junit.jupiter.api.Test;
+import org.junit.BeforeClass;
+import org.junit.jupiter.api.*;
+import org.openqa.selenium.WebDriver;
 import org.zkoss.test.webdriver.WebDriverTestCase;
 import org.zkoss.test.webdriver.ztl.JQuery;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * item rendering in the default mold.
+ */
 public class RenderCalenderItemTest extends WebDriverTestCase {
 
     public static final String TEST_ZUL = "renderItem.zul";
@@ -15,12 +20,25 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
         System.setProperty("zkWebdriverContextPath", "/test/");
     }
 
+    static private WebDriver staticDriver;
+
+
+    @BeforeAll
+    public void init(){
+        connect(TEST_ZUL);
+        staticDriver = this.driver;
+    }
+
+    @BeforeEach
+    public void initDriver(){
+        this.driver = staticDriver;
+    }
+
     /**
      * non-overlapping item has 100% width, no shifting
      */
     @Test
     public void nonOverlapping() {
-        connect(TEST_ZUL);
         JQuery separateItems = jq(".z-calendars-week-day").eq(0).find(".z-calitem");
         String width = separateItems.get(0).get("style.width");
         assertEquals("100%", width);
@@ -34,8 +52,6 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
      */
     @Test
     public void test3Overlapping() {
-        connect(TEST_ZUL);
-        // a bug that I can't set sclass in calendaritem
         JQuery items = jq(".z-calendars-week-day").eq(1).find(".z-calitem");
         assertEquals(3, items.length());
 
@@ -51,7 +67,6 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
      */
     @Test
     public void oneItemOverlapOther2() {
-        connect(TEST_ZUL);
         JQuery items = jq(".z-calendars-week-day").eq(2).find(".z-calitem");
         assertEquals(3, items.length());
 
@@ -69,7 +84,6 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
      */
     @Test
     public void consecutiveAndOverlappingTime(){
-        connect(TEST_ZUL);
         JQuery items = jq(".z-calendars-week-day").eq(3).find(".z-calitem");
         assertEquals(3, items.length());
         assertEquals("100%", items.get(0).get("style.width"));
@@ -87,7 +101,6 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
      */
     @Test
     public void consecutiveItemsNotOverlapping() {
-        connect(TEST_ZUL);
         JQuery consecutiveItems = jq(".z-calendars-week-day").eq(4).find(".z-calitem");
         assertEquals(3, consecutiveItems.length());
         for (int i = 0; i < consecutiveItems.length(); i++) {
@@ -98,7 +111,6 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
 
     @Test //ZKCAL-116
     public void renderSclass(){
-        connect(TEST_ZUL);
         JQuery item = jq(".separate");
         assertEquals(true, item.exists());
         assertEquals(true, item.eq(0).attr("class").contains("z-calitem"));
@@ -111,7 +123,6 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
      */
     @Test
     public void shortIntervalItem(){
-        connect(TEST_ZUL);
         JQuery halfHourItem = jq(".half-hour");
         assertEquals(HALF_HOUR_HEIGHT, halfHourItem.eq(0).height());
         //ZKCAL-117
@@ -127,7 +138,6 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
      */
     @Test //ZKCAL-118
     public void instantOverlapping(){
-        connect(TEST_ZUL);
         JQuery halfHourItem = jq(".half-hour");
         assertEquals("85%", halfHourItem.get(0).get("style.width"));
         assertEquals("", halfHourItem.get(0).get("style.left"));
@@ -136,6 +146,20 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
         assertEquals("50%", instantItem.get(0).get("style.width"));
         assertEquals("50%", instantItem.get(0).get("style.left"));
 
+    }
+
+    protected void reloadPage() {
+        driver.navigate().refresh();
+    }
+
+    @AfterEach
+    public void stop() {
+        //don't quit, reuse the webdriver
+    }
+
+    @AfterAll
+    public void clean(){
+        driver.quit();
     }
 
     //TODO add drag items tests
