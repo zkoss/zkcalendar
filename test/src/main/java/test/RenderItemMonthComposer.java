@@ -62,8 +62,15 @@ public class RenderItemMonthComposer extends SelectorComposer {
                 .withZoneId(calendars.getDefaultTimeZone().toZoneId())
                 .withSclass("instant")
                 .build();
-
         model.add(start0End0);
+
+        DefaultCalendarItem start3End3 = new DefaultCalendarItem.Builder()
+                .withBegin(day1.plusHours(3))
+                .withEnd(day1.plusHours(3))
+                .withZoneId(calendars.getDefaultTimeZone().toZoneId())
+                .withSclass("instant")
+                .build();
+        model.add(start3End3);
 
         DefaultCalendarItem itemOnSameDay = new DefaultCalendarItem.Builder()
                 .withBegin(day1.plusHours(1))
