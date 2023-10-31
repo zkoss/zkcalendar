@@ -7,15 +7,10 @@ import org.zkoss.test.webdriver.ztl.JQuery;
 
 import static org.junit.Assert.assertEquals;
 
-public class RenderItemMonthTest extends WebDriverTestCase {
-
-    public static final String TEST_ZUL = "renderItemMonth.zul";
-
+public class RenderItemMonthTest extends CalendarTestBase {
     static {
-        System.setProperty("zkWebdriverContextPath", "/test/");
+        TEST_ZUL = "renderItemMonth.zul";
     }
-
-    static private WebDriver staticDriver;
 
 
     @Test //ZKCAL-114
@@ -40,26 +35,5 @@ public class RenderItemMonthTest extends WebDriverTestCase {
         assertEquals("01:00", thirdRow.find(".z-calitem-header").get(0).get("textContent"));
         JQuery fourthRow = firstWeekBody.find("tr").eq(3);
         assertEquals("03:00", fourthRow.find(".z-calitem-header").get(0).get("textContent"));
-    }
-
-    @BeforeAll
-    public void init(){
-        connect(TEST_ZUL);
-        staticDriver = this.driver;
-    }
-
-    @BeforeEach
-    public void initDriver(){
-        this.driver = staticDriver;
-    }
-
-    @AfterEach
-    public void stop() {
-        //don't quit, reuse the webdriver
-    }
-
-    @AfterAll
-    public void clean(){
-        driver.quit();
     }
 }

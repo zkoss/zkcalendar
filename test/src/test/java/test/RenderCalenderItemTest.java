@@ -11,28 +11,13 @@ import static org.junit.Assert.assertEquals;
 /**
  * item rendering in the default mold.
  */
-public class RenderCalenderItemTest extends WebDriverTestCase {
-
-    public static final String TEST_ZUL = "renderItem.zul";
+public class RenderCalenderItemTest extends CalendarTestBase {
     public static final int HALF_HOUR_HEIGHT = 31;
 
     static {
-        System.setProperty("zkWebdriverContextPath", "/test/");
+            TEST_ZUL = "renderItem.zul";
     }
 
-    static private WebDriver staticDriver;
-
-
-    @BeforeAll
-    public void init(){
-        connect(TEST_ZUL);
-        staticDriver = this.driver;
-    }
-
-    @BeforeEach
-    public void initDriver(){
-        this.driver = staticDriver;
-    }
 
     /**
      * non-overlapping item has 100% width, no shifting
@@ -156,20 +141,6 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
         assertEquals("50%", instantItem.get(0).get("style.width"));
         assertEquals("50%", instantItem.get(0).get("style.left"));
 
-    }
-
-    protected void reloadPage() {
-        driver.navigate().refresh();
-    }
-
-    @AfterEach
-    public void stop() {
-        //don't quit, reuse the webdriver
-    }
-
-    @AfterAll
-    public void clean(){
-        driver.quit();
     }
 
     //TODO add drag items tests
