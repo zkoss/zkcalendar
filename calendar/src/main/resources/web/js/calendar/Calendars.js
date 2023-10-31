@@ -328,18 +328,36 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			zcls = this.getZclass();
 		jq(element).bind('mouseover', function (evt) {
 			var target = evt.target;
-			if (target.tagName == 'SPAN')
+			if (widget.isHoveringEffectElement(target))
 				jq(target).addClass(zcls + '-day-over');
 		}).bind('mouseout', function (evt) {
 			var target = evt.target;
-			if (target.tagName == 'SPAN')
+			if (widget.isHoveringEffectElement(target))
 				jq(target).removeClass(zcls + '-day-over');
 		}).bind('click', function (evt) {
 			var target = evt.target;
-			if (target.tagName == 'SPAN')
-				widget.fire('onDayClick',{data:[target.time]});
+			if (widget.isWeekDateHeader(target)) { //default mold
+				// Access the timedata at .z-calendars-day-of-week-cnt element added in bind_()
+				var time = target.closest('.z-calendars-day-of-week')
+					.querySelector('.z-calendars-day-of-week-cnt').time;
+				widget.fire('onDayClick', {data: [time]});
+			} else  if (widget.isMonthDate(target)) { //month mold
+				// Access the timedata added in bind_()
+				var time = target.time;
+				widget.fire('onDayClick', {data: [time]});
+			}
 			evt.stop();
 		});
+	},
+	isHoveringEffectElement: function (element){
+		return this.isWeekDateHeader(element) || this.isMonthDate(element);
+	},
+	isWeekDateHeader: function(target){ //default mold
+		var regex = /day-of-week/;
+		return regex.test(target.className);
+	},
+	isMonthDate: function(target){ //month mold
+		return target.classList.contains(this.getZclass() + '-month-date-cnt');
 	},
 	//ZKCAL-48: support tooltip
 	doTooltipOver_: function (evt) {
@@ -824,6 +842,6 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			};
 			dg._zinfo = dg._zpos1 = dg._zpos = dg._zrope = dg._zdim = dg._zdur = dg._zevt = null;
 		}
-	}
+	},
 });
 })();
