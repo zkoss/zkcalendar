@@ -21,8 +21,9 @@ public class RenderItemMonthTest extends WebDriverTestCase {
         connect(TEST_ZUL);
         //fail to finish loading for a js error
         assertEquals(0 , jq(".z-loading").length());
-        JQuery item = jq(".z-calendars-day-of-month-body").eq(3).find("tr").eq(2).find(".z-calitem");
-        assertEquals(1, item.length());
+        JQuery sameBeginEndTimeItem = jq(".z-calendars-day-of-month-body").eq(3).find("tr").eq(1).find(".z-calitem");
+        assertEquals(1, sameBeginEndTimeItem.length());
+        assertEquals("00:00",  sameBeginEndTimeItem.find(".z-calitem-header").get(0).get("textContent"));
     }
 
 }
