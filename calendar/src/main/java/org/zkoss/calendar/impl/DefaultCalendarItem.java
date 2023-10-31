@@ -68,6 +68,8 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 		private String contentColor = "";
 		private String sclass = "";
 		private boolean locked = false;
+		private String headerStyle = "";
+		private String contentStyle = "";
 
 		public Builder withBegin(LocalDateTime begin) {
 			this.begin = begin;
@@ -94,15 +96,28 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 			return this;
 		}
 
+		/**
+		 * set background color
+		 * @param headerColor CSS accepted color code
+		 * @deprecated use {@link #withSclass(String)} and CSS instead.
+		 */
+		@Deprecated
 		public Builder withHeaderColor(String headerColor) {
-			this.headerColor = headerColor;
+			this.headerColor = "background-color:"+headerColor;
 			return this;
 		}
 
+		/**
+		 * set background color
+		 * @param contentColor CSS accepted color code
+		 * @deprecated use {@link #withSclass(String)} and CSS instead.
+		 */
+		@Deprecated
 		public Builder withContentColor(String contentColor) {
-			this.contentColor = contentColor;
+			this.contentColor = "background-color:"+contentColor;
 			return this;
 		}
+
 
 		public Builder withSclass(String sclass) {
 			this.sclass = sclass;
