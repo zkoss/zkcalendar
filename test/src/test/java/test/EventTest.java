@@ -15,14 +15,15 @@ public class EventTest extends CalendarTestBase{
             TEST_ZUL = "event.zul";
     }
 
-    @Test
+    @Test //ZKCAL-103
     public void onDayClick() {
         JQuery jan1 = jq(".z-calendars-day-of-week-inner .z-calendars-day-of-week-cnt").eq(0);
         click(jan1);
         waitResponse();
-        JQuery dayHeader = jq(".z-calendars-day-header");
+        JQuery dayInWeek = jq(".z-calendars-day-of-week");
         //switch to 1 day
-        assertEquals(1, dayHeader.length());
-        assertEquals("1/1", dayHeader.find(".z-calendars-day-of-week-fmt").get(0).get("textContent"));
+        assertEquals(1, dayInWeek.length());
+        assertEquals("1/1", dayInWeek.find(".z-calendars-day-of-week-fmt").get(0).get("textContent"));
+    }
     }
 }
