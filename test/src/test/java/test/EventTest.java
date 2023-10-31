@@ -25,5 +25,12 @@ public class EventTest extends CalendarTestBase{
         assertEquals(1, dayInWeek.length());
         assertEquals("1/1", dayInWeek.find(".z-calendars-day-of-week-fmt").get(0).get("textContent"));
     }
+
+    @Test
+    public void dayHoverEffect(){
+        JQuery jan1 = jq(".z-calendars-day-of-week-inner").eq(0);
+        getActions().moveToElement(toElement(jan1)).pause(20).perform();
+        JQuery jan1Content = jq(".z-calendars-day-of-week-inner .z-calendars-day-of-week-fmt").eq(0);
+        assertEquals(true, jan1Content.hasClass("z-calendars-day-over"));
     }
 }
