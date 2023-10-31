@@ -46,6 +46,16 @@ public class RenderCalenderItemTest extends WebDriverTestCase {
         assertEquals("", left);
     }
 
+    @Test
+    public void headerContentColor(){
+        JQuery coloredItem = jq(".z-calendars-week-day").eq(0).find(".colored");
+        JQuery header = coloredItem.find(".z-calitem-header");
+        String blue = "rgb(0, 0, 255)";
+        assertEquals(blue, header.eq(0).css("background-color"));
+        JQuery content = coloredItem.find(".z-calitem-cnt");
+        String yellow = "rgb(255, 255, 0)";
+        assertEquals(yellow, content.eq(0).css("background-color"));
+    }
 
     /**
      * 3 items overlap each other

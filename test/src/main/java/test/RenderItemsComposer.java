@@ -70,6 +70,18 @@ public class RenderItemsComposer extends SelectorComposer {
                 .withZoneId(defaultZoneId)
                 .build();
         model.add(nonOverlappedItem);
+
+        DefaultCalendarItem colorItem = new DefaultCalendarItem.Builder()
+                .withTitle("blue")
+                .withContent("yellow")
+                .withBegin(day1.withHour(2))
+                .withEnd(day1.withHour(4))
+                .withHeaderColor("blue")
+                .withContentColor("yellow")
+                .withSclass("colored")
+                .withZoneId(defaultZoneId)
+                .build();
+        model.add(colorItem);
     }
 
     /* 1st and 2nd items are consecutive items

@@ -20,7 +20,6 @@ public class RenderItemMonthComposer extends SelectorComposer {
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-//        day1 = LocalDateTime.of(2023, 1, 1, 0, 0);
         day1 = LocalDateTime.of(2023, 1, 1, 0, 0);
         calendars.setCurrentDate(Date.from(day1.atZone(calendars.getDefaultTimeZone().toZoneId()).toInstant()));
         model = new SimpleCalendarModel();
