@@ -179,21 +179,21 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * @param rc a RenderContext encapsulates the information needed for Calendars.
 	 */
 	public List<CalendarItem> get(Date beginDate, Date endDate, RenderContext rc) {
-		List<CalendarItem> list = new LinkedList<CalendarItem>();
-		long begin = beginDate.getTime();
-		long end = endDate.getTime();
+		List<CalendarItem> matchingItems = new LinkedList<CalendarItem>();
+		long rangeBeginTime = beginDate.getTime();
+		long rangeEndTime = endDate.getTime();
 		
 		for (Iterator<CalendarItem> it = _list.iterator(); it.hasNext();) {
-			CalendarItem ce = (CalendarItem) it.next();
-			long b = ce.getBeginDate().getTime();
-			long e = ce.getEndDate().getTime();
+			CalendarItem item = (CalendarItem) it.next();
+			long itemBeginTime = item.getBeginDate().getTime();
+			long itemEndTime = item.getEndDate().getTime();
 
-			if (e <= begin || b >= end)
-				continue;
+			if ( itemBeginTime >= rangeBeginTime  &&  itemEndTime <= rangeEndTime) {
+				matchingItems.add(item);
+			}
 
-			list.add(ce);
-		}		
-		return list;
+		}
+		return matchingItems;
 	}
 
 }

@@ -122,9 +122,9 @@ calendar.Item = zk.$extends(zk.Widget, {
 			bd = time.bd;
 			ed = time.ed;
 		}
-		node.upperBoundBd = this._setBoundDate(bd);
+		node.upperBoundBd = this._setBoundDate(bd); // earliest
 		if (this._isDayItem()) return;
-		node.lowerBoundEd = this._setBoundDate(ed, true);
+		node.lowerBoundEd = this._setBoundDate(ed, true); // latest
 	},
 	
 	_isDayItem: function () {
@@ -137,14 +137,13 @@ calendar.Item = zk.$extends(zk.Widget, {
 	_getOffset: function (time) {
 		return calUtil.getPeriod(time.end, time.start);
 	},
-		
+
 	_setBoundDate: function (date, isAddOneDay) {
-		var result = new Date(date);
-		if (date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds() != 0) {
-			if (isAddOneDay)
-				result = calUtil.addDay(date, 1);
-			result.setHours(0,0,0,0);
+		var boundDate = new Date(date);
+		boundDate.setHours(0,0,0,0);
+		if (isAddOneDay){
+			boundDate = calUtil.addDay(boundDate, 1);
 		}
-		return result;
+		return boundDate;
 	}
 });
