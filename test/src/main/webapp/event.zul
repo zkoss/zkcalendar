@@ -1,0 +1,3 @@
+<zk>
+    <calendars id="cal" apply="test.EventComposer" height="90%"/>
+</zk>
