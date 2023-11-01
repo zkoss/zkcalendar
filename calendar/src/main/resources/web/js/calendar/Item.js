@@ -74,37 +74,40 @@ calendar.Item = zk.$extends(zk.Widget, {
 	},
 
 	calculate_: function (updateLastModify) {
-		var node = this.$n(),
+		var itemNode = this.$n(),
 			item = this.item,
-			parent = this.parent,
-			bd = item.zoneBd,
-			ed = item.zoneEd,
-			inMon = parent.mon;
+			calendarWidget = this.parent,
+			beginDate = item.zoneBd,
+			endDate = item.zoneEd,
+			inMon = calendarWidget.mon;
 		
 		if (inMon)
-			node.startWeek = item.startWeek;
+			itemNode.startWeek = item.startWeek;
 		
-		var time = inMon ? node.startWeek : parent;
+		var time = inMon ? itemNode.startWeek : calendarWidget;
 
-		node.zoneBd = bd;
-		node.zoneEd = ed;
+		itemNode.zoneBd = beginDate;
+		itemNode.zoneEd = endDate;
 		
-		this._createBoundTime(node, bd, ed);
+		this._createBoundTime(itemNode, beginDate, endDate);
 		
 		//_afterOffset could be calculated using bound time after processing clone node
 		if (this.processCloneNode_)
-			this.processCloneNode_(node);
+			this.processCloneNode_(itemNode);
 		
-		node._preOffset = item._preOffset;
-		//if an item is longer or equal to one day in one day view, no need to render any empty cell after it, no need to set _afterOffset
-		if (this._isDayItem() || this.className=='calendar.DaylongItem' ) return;
+		itemNode._preOffset = item._preOffset;
+		if (this._isDayItem())
+			return;
+		//should put the code after this line into DayLongItem.calculate_()
+		/* _afterOffset, the number of spacer needed after the over-1-day item.
+		 * e.g. an item spans 3 days, day1 ~ day3, so its _afterOffset is 4, 7 days a week.
+		 */
+		itemNode._afterOffset = this.cloneCount ? 0 :
+								this._getOffset({start: itemNode.lowerBoundEd, end: time.zoneEd});
 
-		node._afterOffset = this.cloneCount ? 0 :
-								this._getOffset({start: node.lowerBoundEd, end: time.zoneEd});
-		
-		node._days = item._days = this.getDays();
+		itemNode._days = item._days = this.getDays();
 		if (updateLastModify)
-			node._lastModify = new Date().getTime();
+			itemNode._lastModify = new Date().getTime();
 	},
 	
 	isBeginTimeChange: function (item) {

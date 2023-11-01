@@ -12,6 +12,10 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
  */
+/**
+ * an item whose duration is longer than 1 day.
+ * @see calendar.Calendars._isExceedOneDay()
+ */
 calendar.DaylongItem = zk.$extends(calendar.LongItem, {
 	
 	getCornerStyle_: function () {

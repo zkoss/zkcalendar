@@ -12,6 +12,10 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 This program is distributed under GPL Version 3.0 in the hope that
 it will be useful, but WITHOUT ANY WARRANTY.
  */
+/**
+ * an item whose duration is shorter than 1 day.
+ * @see calendar.Calendars._isExceedOneDay()
+ */
 calendar.DayItem = zk.$extends(calendar.Item, {
 	redraw: function (out) {
 		this.defineClassName_();
