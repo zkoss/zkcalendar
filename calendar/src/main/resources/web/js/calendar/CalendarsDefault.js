@@ -726,7 +726,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					this.drawItem_(offset, zcls + '-daylong-evt', tr, ce);
 				}
 				ce.style.visibility = '';//recover moving event
-				if (k == l - 1) {//last
+				if (k == l - 1 //last, put a spacer
+					&& this.getDays()>1) { //1-day view, no need spacer
 					var html = '';
 					for (var n = childWgt._afterOffset; n--;)
 						html += '<td class="' + zcls + '-daylong-evt">&nbsp;</td>';
@@ -1784,22 +1785,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 	isOverlapping(overlappingCount){
 		return overlappingCount > 1;
-	},
-	isTimeOverlapping(item1, item2){
-		const begin1 = item1.zoneBd.getTime();
-		const end1 = item1.zoneEd.getTime();
-		const begin2 = item2.zoneBd.getTime();
-		const end2 = item2.zoneEd.getTime();
-		// Check all overlap cases
-		return (
-			// item1 inside item2
-			(begin2 >= begin1 && begin2 < end1) ||
-			// item2 inside item1
-			(begin1 >= begin2 && begin1 < end2) ||
-			// Overlap at ends
-			(begin1 <= begin2 && end1 > begin2) ||
-			(begin2 <= begin1 && end2 > begin1)
-		);
 	},
 	HALF_HOUR_HEIGHT: 30, //the same in _variable.less
 });

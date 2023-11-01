@@ -191,7 +191,8 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			var oneDayItems = this._items[i];
 			for (var k = 0, l = oneDayItems.length; k < l; k++) {
 				var item = this.processItemData_(oneDayItems[k]);
-				if (item.zoneBd >= this.zoneBd && item.zoneEd <= this.zoneEd){
+				// if (item.zoneBd <= this.zoneEd && item.zoneEd >= this.zoneBd){
+				if (this.$class.isTimeOverlapping(item, this)){
 					this.processChildrenWidget_(_isExceedOneDay(this, item), item);
 				}
 			}
@@ -842,6 +843,22 @@ calendar.Calendars = zk.$extends(zul.Widget, {
 			};
 			dg._zinfo = dg._zpos1 = dg._zpos = dg._zrope = dg._zdim = dg._zdur = dg._zevt = null;
 		}
+	},
+	isTimeOverlapping(item1, item2){
+		const begin1 = item1.zoneBd.getTime();
+		const end1 = item1.zoneEd.getTime();
+		const begin2 = item2.zoneBd.getTime();
+		const end2 = item2.zoneEd.getTime();
+		// Check all overlap cases
+		return (
+			// item1 inside item2
+			(begin2 >= begin1 && begin2 < end1) ||
+			// item2 inside item1
+			(begin1 >= begin2 && begin1 < end2) ||
+			// Overlap at ends
+			(begin1 <= begin2 && end1 > begin2) ||
+			(begin2 <= begin1 && end2 > begin1)
+		);
 	},
 });
 })();

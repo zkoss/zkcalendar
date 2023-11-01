@@ -172,23 +172,18 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 		return _list.size();
 	}
 	/**
-	 * Returns the list that must be a list of {@link CalendarItem} type.
-	 * 
+	 * Retrieves a list of {@link CalendarItem} that overlap with the specified time range.
+	 *
 	 * @param beginDate the begin date
 	 * @param endDate the end date
 	 * @param rc a RenderContext encapsulates the information needed for Calendars.
 	 */
 	public List<CalendarItem> get(Date beginDate, Date endDate, RenderContext rc) {
 		List<CalendarItem> matchingItems = new LinkedList<CalendarItem>();
-		long rangeBeginTime = beginDate.getTime();
-		long rangeEndTime = endDate.getTime();
-		
-		for (Iterator<CalendarItem> it = _list.iterator(); it.hasNext();) {
-			CalendarItem item = (CalendarItem) it.next();
-			long itemBeginTime = item.getBeginDate().getTime();
-			long itemEndTime = item.getEndDate().getTime();
 
-			if ( itemBeginTime >= rangeBeginTime  &&  itemEndTime <= rangeEndTime) {
+		for (Iterator<CalendarItem> it = _list.iterator(); it.hasNext();) {
+			CalendarItem item = it.next();
+			if ( isTimeOverlapping(item.getBeginDate(), item.getEndDate(), beginDate, endDate)) {
 				matchingItems.add(item);
 			}
 
@@ -196,4 +191,15 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 		return matchingItems;
 	}
 
+	public static boolean isTimeOverlapping(Date begin1, Date end1, Date begin2, Date end2) {
+		long beginTime1 = begin1.getTime();
+		long endTime1 = end1.getTime();
+		long beginTime2 = begin2.getTime();
+		long endTime2 = end2.getTime();
+
+		return (beginTime2 >= beginTime1 && beginTime2 < endTime1) || // item1 inside item2
+				(beginTime1 >= beginTime2 && beginTime1 < endTime2) || // item2 inside item1
+				(beginTime1 <= beginTime2 && endTime1 > beginTime2) || // Overlap at ends
+				(beginTime2 <= beginTime1 && endTime2 > beginTime1);
+	}
 }

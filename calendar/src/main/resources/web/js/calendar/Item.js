@@ -96,9 +96,9 @@ calendar.Item = zk.$extends(zk.Widget, {
 			this.processCloneNode_(node);
 		
 		node._preOffset = item._preOffset;
-		
-		if (this._isDayItem()) return;
-		
+		//if an item is longer or equal to one day in one day view, no need to render any empty cell after it, no need to set _afterOffset
+		if (this._isDayItem() || this.className=='calendar.DaylongItem' ) return;
+
 		node._afterOffset = this.cloneCount ? 0 :
 								this._getOffset({start: node.lowerBoundEd, end: time.zoneEd});
 		
