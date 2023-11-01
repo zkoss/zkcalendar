@@ -140,8 +140,16 @@ public class RenderCalenderItemTest extends CalendarTestBase {
         JQuery instantItem = jq(".instant");
         assertEquals("50%", instantItem.get(0).get("style.width"));
         assertEquals("50%", instantItem.get(0).get("style.left"));
-
     }
 
-    //TODO add drag items tests
+    @Test
+    public void spanMultipleDaysItem(){
+        JQuery dayLongContentRow = jq(".z-calendars-daylong-cnt tr:first-child");
+        JQuery span3daysItem = dayLongContentRow.find("td:nth-child(1)").eq(0);
+        assertEquals("3", span3daysItem.attr("colspan"));
+
+        JQuery span2daysItem = dayLongContentRow.find("td:nth-child(4)").eq(0);
+        assertEquals("2", span2daysItem.attr("colspan"));
+    }
+
 }

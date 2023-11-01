@@ -17,6 +17,9 @@ public class CalendarTestBase extends WebDriverTestCase {
     }
     static protected WebDriver staticDriver;
 
+    protected void reloadPage() {
+        driver.navigate().refresh();
+    }
     @BeforeAll
     public void init(){
         connect(TEST_ZUL);

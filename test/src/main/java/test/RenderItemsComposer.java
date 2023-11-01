@@ -5,6 +5,7 @@ import org.zkoss.calendar.event.CalendarsEvent;
 import org.zkoss.calendar.impl.DefaultCalendarItem;
 import org.zkoss.calendar.impl.SimpleCalendarModel;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
@@ -31,6 +32,31 @@ public class RenderItemsComposer extends SelectorComposer {
         add1Overlap2Items();
         addConsecutiveOverlapping();
         addShortIntervalItem();
+        addDaySpanItem();
+    }
+
+    private void addDaySpanItem() {
+        LocalDateTime day6 = day1.plusDays(5);
+        DefaultCalendarItem span2Item = new DefaultCalendarItem.Builder()
+                .withTitle("span 2 days")
+                .withContent("span 2 days")
+                .withBegin(day6)
+                .withEnd(day6.plusDays(1).plusHours(2))
+                .withContentColor("blue")
+                .withSclass("span2")
+                .withZoneId(defaultZoneId)
+                .build();
+        model.add(span2Item);
+        DefaultCalendarItem span3Item = new DefaultCalendarItem.Builder()
+                .withTitle("span 3 days")
+                .withContent("span 3 days")
+                .withBegin(day1)
+                .withEnd(day1.plusDays(2).plusHours(8))
+                .withContentColor("red")
+                .withSclass("span3")
+                .withZoneId(defaultZoneId)
+                .build();
+        model.add(span3Item);
     }
 
     private void addShortIntervalItem() {
@@ -219,5 +245,12 @@ public class RenderItemsComposer extends SelectorComposer {
     @Listen(Events.ON_CLICK + " = #next")
     public void next(){
         calendars.nextPage();
+    }
+
+    @Listen(CalendarsEvent.ON_DAY_CLICK + "=calendars")
+    public void toOneDayView(Event event){
+        Date clickedDate = (Date) event.getData();
+        calendars.setDays(1);
+        calendars.setCurrentDate(clickedDate);
     }
 }
