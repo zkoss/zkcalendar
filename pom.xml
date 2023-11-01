@@ -13,7 +13,7 @@
 	</modules>
 	<properties>
 		<zk.version>9.6.1-Eval</zk.version>
-		<calendar.main.version>3.2.0-SNAPSHOT</calendar.main.version>
+		<calendar.main.version>3.1.2</calendar.main.version>
 		<maven.build.timestamp.format>yyyyMMdd</maven.build.timestamp.format>
 		<revision>${calendar.main.version}</revision>
 		<!--     	<revision>${calendar.main.version}.FL.${maven.build.timestamp}</revision> -->
