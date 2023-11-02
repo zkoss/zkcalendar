@@ -79,12 +79,12 @@ calendar.Item = zk.$extends(zk.Widget, {
 			parent = this.parent,
 			bd = item.zoneBd,
 			ed = item.zoneEd,
-			inMon = parent.mon;
+			inMonthMold = parent.inMonthMode;
 		
-		if (inMon)
+		if (inMonthMold)
 			node.startWeek = item.startWeek;
 		
-		var time = inMon ? node.startWeek : parent;
+		var time = inMonthMold ? node.startWeek : parent;
 
 		node.zoneBd = bd;
 		node.zoneEd = ed;
