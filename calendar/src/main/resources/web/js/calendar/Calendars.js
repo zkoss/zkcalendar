@@ -14,6 +14,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
  */
 (function() {
 	calendar.Calendars = zk.$extends(zul.Widget, {
+		/**
+		 * "More..." popup container template 
+		 */
 		ppTemplate: ['<div id="%1-pp" class="%2" style="position:absolute; top:0;left:0;">',
 			'<div class="%2-body"><div class="%2-inner">',
 			'<div class="%2-header"><div id="%1-ppc" class="%2-close"></div><div id="%1-pphd" class="%2-header-cnt"></div></div>',
@@ -22,14 +25,26 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			'</div>'
 		].join(''),
 
+		/**
+		 * "More..." popup item template
+		 */
 		itemTemplate: ['<div id="%1" class="%2 %3-more-faker">',
 			'<div class="%2-body %3-arrow" %5><div class="%2-inner" %8>',
 			'<div class="%2-cnt" %6><div class="%2-text">%4</div></div>',
 			'</div></div>',
 			'</div>'
 		].join(''),
+		/**
+		 *  ???
+		 */
 		blockTemplate: '<div id="%1-tempblock"></div>',
+		/**
+		 * Rope container (container for floating blue drag-n-drop area)
+		 */
 		ropeTemplate: '<div id="%1-rope" class="%2-month-dd">',
+		/**
+		 * Rope cell (cell for floating blue drag-n-drop area)
+		 */
 		ddRopeTemplate: '<div class="%1-dd-rope"></div>',
 
 		$define: {
@@ -455,6 +470,12 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			this.$supers('doTooltipOut_', arguments);
 		},
 
+		/**
+		 * Add a new item to daylong items
+		 * 
+		 * @param {JSON} itemsData JSON array of CalendarsItem from server 
+		 * @returns 
+		 */
 		setAddDayItem: function(itemsData) {
 			var itemDataArray = jq.evalJSON(itemsData);
 			if (!itemDataArray.length)
@@ -484,9 +505,16 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			this.reAlignItems_(wasChanged);
 		},
 
+		/**
+		 * modify daylong items
+		 * 
+		 * @param {JSON} itemsData JSON array of CalendarsItem from server 
+		 * @returns 
+		 */
 		setModifyDayItem: function(itemsData) {
 			itemDataArray = jq.evalJSON(itemsData);
-			if (!itemDataArray.length) return;
+			if (!itemDataArray.length)
+				return;
 			this.clearGhost();
 
 			var wasChanged = {
@@ -555,6 +583,12 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			this.reAlignItems_(wasChanged);
 		},
 
+		/**
+		 * remove daylong items
+		 * 
+		 * @param {JSON} itemsData JSON array of CalendarsItem from server 
+		 * @returns 
+		 */
 		setRemoveDayItem: function(itemsData) {
 			var itemDataArray = jq.evalJSON(itemsData);
 			if (!itemDataArray.length) return;
@@ -626,44 +660,47 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		 * Adjust rope position
 		 * Rope is the container used for drag-n-drop item create
 		 * 
-		 * @param {Array} infos 
-		 * @param {DomElement} n Rope Div (.z-calendars-dd-rope)
+		 * @param {Array[{left,width}]} infos Array of items {{int} left, {int} width}, left offset, width of cells in rope (1 cell per displayed day)
+		 * @param {DomElement} ropeDiv Rope Div (.z-calendars-dd-rope)
 		 * @param {int} cols clicked column index
 		 * @param {int} rows clicked row index
-		 * @param {*} offs offset values of UI elements  ['l': content offset left, 't': content offset top, 'w': content width, 'h': content height, 's': number of zInfo (columns)]
-		 * @param {*} dim target cell dimensions ['w': width, 'h': height, 'hs': Array of offsetHeight per row]
-		 * @param {*} dur 
+		 * @param {Array} offsets offset values of UI elements  ['l': content offset left, 't': content offset top, 'w': content width, 'h': content height, 's': number of zInfo (columns)]
+		 * @param {Array} dimensions target cell dimensions ['w': width, 'h': height, 'hs': Array of offsetHeight per row]
+		 * @param {*} dur  ???
 		 * @returns 
 		 */
-		fixRope_: function(infos, n, cols, rows, offs, dim, dur) {
-			if (!n || !offs || !dim) return;
+		fixRope_: function(infos, ropeDiv, colsIndex, rowsIndex, offsets, dimensions, dur) {
+			if (!ropeDiv || !offsets || !dimensions) return;
 
-			n.style.top = jq.px(dim.hs[rows] * rows + offs.t);
-			n.style.left = jq.px(infos[cols].l + offs.l);
-			n.style.height = jq.px(dim.hs[rows]);
+			ropeDiv.style.top = jq.px(dimensions.hs[rowsIndex] * rowsIndex + offsets.top);
+			ropeDiv.style.left = jq.px(infos[colsIndex].left + offsets.left);
+			ropeDiv.style.height = jq.px(dimensions.hs[rowsIndex]);
 
 			if (!dur)
-				n.style.width = jq.px(dim.w);
+				ropeDiv.style.width = jq.px(dimensions.w);
 			else {
-				var i = offs.s - cols;
+				var i = offsets.size - colsIndex;
 				if (dur < i)
 					i = dur;
 
 				var w = 0;
 				for (var len = 0; len < i; len++)
-					w += infos[cols + len].w;
+					w += infos[colsIndex + len].width;
 
-				n.style.width = jq.px(w);
+				ropeDiv.style.width = jq.px(w);
 				dur -= i;
 
-				if (dur && ++rows < dim.hs.length)
-					this.fixRope_(infos, n.nextSibling, 0, rows, offs, dim, dur);
+				if (dur && ++rowsIndex < dimensions.hs.length)
+					this.fixRope_(infos, ropeDiv.nextSibling, 0, rowsIndex, offsets, dimensions, dur);
 				else
-					for (var e = n.nextSibling; e; e = e.nextSibling)
+					for (var e = ropeDiv.nextSibling; e; e = e.nextSibling)
 						e.style.cssText = '';
 			}
 		},
 
+		/**
+		 * remove drag ghost
+		 */
 		clearGhost: function() {
 			if (this.$n()) {
 				if (this._ghost[this.uuid])
@@ -674,6 +711,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			}
 		},
 
+		/**
+		 * close popups if any
+		 */
 		closeFloats: function() {
 			if (this._pp) {
 				jq(document.body)
@@ -684,21 +724,35 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			}
 		},
 
+		/**
+		 * Handle popup click events
+		 * 
+		 * @param {domEvent} evt 
+		 */
 		onPopupClick: function(evt) {
 			var childWidget = zk.$(evt.target);
 			if (childWidget.$instanceof(calendar.Item)) {
-				var p = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
+				var mousePosition = {x: Math.round(evt.pageX), y: Math.round(evt.pageY)}; //ZKCAL-42: sometimes it returns float number in IE 10
 				this.fire('onItemEdit', {
-					data: [childWidget.uuid, p[0], p[1], jq.innerWidth(), jq.innerHeight()]
+					data: [childWidget.uuid, mousePosition.x, mousePosition.y, jq.innerWidth(), jq.innerHeight()]
 				});
 				evt.stop();
 			}
 		},
 
-		isLegalChild: function(n) {
-			if (!n.id.endsWith('-body'))
-				return n;
+		/**
+		 * true if domNode is not the calendar body element
+		 * 
+		 * @param {DomElement} domNode 
+		 * @returns Boolean legalChild
+		 */
+		isLegalChild: function(domNode) {
+			return (!domNode.id.endsWith('-body'));
 		},
+		/**
+		 * restore visibility to dragged event domNode on response
+		 * dragged event domNode is hidden while dragged
+		 */
 		onResponse: function() {
 			if (this._restoreCE) {
 				this._restoreCE.style.visibility = '';
@@ -707,73 +761,88 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		}
 
 	}, {
-		_ignoredrag: function(dg, p, evt) {
-			if (zk.processing) return true;
-			var widget = dg.control,
-				p = widget.params;
+		/**
+		 * Check if target is available for start drag
+		 * 
+		 * @param {zk.Draggable} draggable target draggable object
+		 * @param {Array[0: x, 1: y]} mousePosition mouse click position (not used), array contains x at position 0, y at position 1
+		 * @param {MouseEvent} evt Original mouse event 
+		 * @returns 
+		 */
+		_ignoredrag: function(draggable, mousePosition, evt) {
+			if (zk.processing)
+				return true;
+			var widget = draggable.control,
+				params = widget.params;
 
 			widget.clearGhost();
-			var n = evt.domTarget,
-				targetWidget = zk.$(n);
-			if (widget.mon && n.tagName == 'SPAN' &&
-				jq(n)
+			var targetNode = evt.domTarget,
+				targetWidget = zk.$(targetNode),
+				inMonthMold = widget.mon;
+			if (inMonthMold && targetNode.tagName == 'SPAN' &&
+				jq(targetNode)
 				.hasClass(widget.getZclass() + '-month-date-cnt'))
 				return true;
-			if (n.nodeType == 1 && jq(n)
-				.hasClass(p._fakerMoreCls) && !jq(n)
-				.hasClass(p._fakerNoMoreCls) ||
+			if (targetNode.nodeType == 1 && jq(targetNode)
+				.hasClass(params._fakerMoreCls) && !jq(targetNode)
+				.hasClass(params._fakerNoMoreCls) ||
 				(targetWidget.$instanceof(calendar.Item) &&
-					(!n.parentNode || targetWidget.item.isLocked)))
+					(!targetNode.parentNode || targetWidget.item.isLocked)))
 				return true;
 			return false;
 		},
 
-		_ghostdrag: function(dg, ofs, evt) {
-			var cnt = dg.node,
-				widget = dg.control,
+		/**
+		 * Create draggable ghost object from rope or from existing calendar item
+		 *  
+		 * @param {zk.Draggable} draggable target draggable object
+		 * @param {Array[0: x, 1: y]} offets body container scroll offsets, array contains x at position 0, y at position 1, not used
+		 * @param {MouseEvent} evt Original mouse event 
+		 * @returns 
+		 */
+		_ghostdrag: function(draggable, offsets, evt) {
+			var contentNode = draggable.node,
+				widget = draggable.control,
 				uuid = widget.uuid,
 				zcls = widget.getZclass(),
 				inMonthMold = widget.mon,
 				dataObj = widget.getDragDataObj_(),
 				targetWidget = zk.$(evt.domEvent),
-				ce = targetWidget.$instanceof(calendar.Item) ? targetWidget.$n() : null,
-				hs = [];
-			jq(document.body)
-				.prepend(dataObj.getRope(widget, cnt, hs));
-			var row = dataObj.getRow(cnt),
+				calendarItemNode = targetWidget.$instanceof(calendar.Item) ? targetWidget.$n() : null,
+				heighsPerRow = [];
+			jq(document.body).prepend(dataObj.getRope(widget, contentNode, heighsPerRow));
+			var row = dataObj.getRow(contentNode),
 				width = row.offsetWidth,
-				p = [evt.pageX, evt.pageY];
-			dg._zinfo = [];
-			for (var left = 0, n = row; n; left += n.offsetWidth, n = n.nextSibling)
-				dg._zinfo.push({
-					l: left,
-					w: n.offsetWidth
+				mousePosition = {x: evt.pageX, y: evt.pageY};
+			draggable._zinfo = [];
+
+			for (var left = 0, currentRow = row; currentRow; left += currentRow.offsetWidth, currentRow = currentRow.nextSibling)
+				draggable._zinfo.push({
+					left: left,
+					width: currentRow.offsetWidth
 				});
 
-			dg._zoffs = zk(inMonthMold ? cnt : dg.handle)
-				.revisedOffset();
-			dg._zoffs = {
-				l: dg._zoffs[0],
-				t: dg._zoffs[1],
-				w: dg.handle.offsetWidth,
-				h: dg.handle.offsetHeight,
-				s: dg._zinfo.length
+			draggableOffsets = zk(inMonthMold ? contentNode : draggable.handle).revisedOffset();
+			draggable._zoffs = {
+				left: draggableOffsets[0],
+				top: draggableOffsets[1],
+				width: draggable.handle.offsetWidth,
+				height: draggable.handle.offsetHeight,
+				size: draggable._zinfo.length
 			};
 
-			if (ce) {
-				var faker = ce.cloneNode(true),
-					h = ce.offsetHeight;
+			if (calendarItemNode) {
+				var faker = calendarItemNode.cloneNode(true),
+					h = calendarItemNode.offsetHeight;
 				faker.id = uuid + '-dd';
-				jq(faker)
-					.addClass(zcls + '-evt-faker-dd');
+				jq(faker).addClass(zcls + '-evt-faker-dd');
 
 				faker.style.width = jq.px(width);
 				faker.style.height = jq.px(h);
-				faker.style.left = jq.px(p[0] - (width / 2));
-				faker.style.top = jq.px(p[1] + h);
+				faker.style.left = jq.px(mousePosition.x - (width / 2));
+				faker.style.top = jq.px(mousePosition.y + h);
 
-				jq(ce)
-					.addClass(zcls + '-evt-dd');
+				jq(calendarItemNode).addClass(zcls + '-evt-dd');
 
 				if (inMonthMold) {
 					var cloneNodes = targetWidget.cloneNodes;
@@ -783,29 +852,28 @@ it will be useful, but WITHOUT ANY WARRANTY.
 							.addClass(zcls + '-evt-dd');
 				}
 
-				jq(document.body.firstChild)
-					.before(jq(faker));
-				dg.node = jq('#' + uuid + '-dd')[0];
+				jq(document.body.firstChild).before(jq(faker));
+				draggable.node = jq('#' + uuid + '-dd')[0];
 
-				dg._zdur = calendar.Calendars._getItemPeriod(targetWidget.item);
-				dg._zevt = ce;
+				draggable._zdur = calendar.Calendars._getItemPeriod(targetWidget.item);
+				draggable._zevt = calendarItemNode;
 			}
 
-			dg._zdim = {
+			draggable._zdim = {
 				w: width,
-				h: hs[0],
-				hs: hs
+				h: heighsPerRow[0],
+				hs: heighsPerRow
 			};
-			dg._zrope = jq('#' + widget.uuid + '-rope')[0];
+			draggable._zrope = jq('#' + widget.uuid + '-rope')[0];
 
-			var cols = dataObj.getCols(p, dg),
-				rows = dataObj.getRows(p, dg);
+			var cols = dataObj.getCols(mousePosition, draggable),
+				rows = dataObj.getRows(mousePosition, draggable);
 
-			dg._zpos = [cols, rows];
+				draggable._zpos = [cols, rows];
 
 			// fix rope
-			widget.fixRope_(dg._zinfo, dg._zrope.firstChild, cols, rows, dg._zoffs, dg._zdim, dg._zdur);
-			return dg.node;
+			widget.fixRope_(draggable._zinfo, draggable._zrope.firstChild, cols, rows, draggable._zoffs, draggable._zdim, draggable._zdur);
+			return draggable.node;
 		},
 
 		_drawdrag: function(dg, p, evt) {
@@ -815,10 +883,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 					h = node.offsetHeight,
 					x = evt.pageX - (w / 2),
 					y = evt.pageY - h,
-					x1 = dg._zoffs.l,
-					y1 = dg._zoffs.t,
-					w1 = dg._zoffs.w,
-					h1 = dg._zoffs.h;
+					x1 = dg._zoffs.left,
+					y1 = dg._zoffs.top,
+					w1 = dg._zoffs.width,
+					h1 = dg._zoffs.height;
 				if (x < x1)
 					x = x1;
 				else if (x + w > x1 + w1)
@@ -837,10 +905,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			var widget = dg.control,
 				x = p[0],
 				y = p[1],
-				x1 = dg._zoffs.l,
-				y1 = dg._zoffs.t,
-				w1 = dg._zoffs.w,
-				h1 = dg._zoffs.h;
+				x1 = dg._zoffs.left,
+				y1 = dg._zoffs.top,
+				w1 = dg._zoffs.width,
+				h1 = dg._zoffs.height;
 			if (x < x1)
 				x = x1;
 			else if (x > x1 + w1)
@@ -861,25 +929,25 @@ it will be useful, but WITHOUT ANY WARRANTY.
 
 			if (rows == size)
 				--rows;
-			if (cols == dg._zoffs.s)
-				cols = dg._zoffs.s - 1;
+			if (cols == dg._zoffs.size)
+				cols = dg._zoffs.size - 1;
 
 			if (!dg._zevt) {
 				var c = dg._zpos[0],
 					r = dg._zpos[1],
-					b = dg._zoffs.s * r + c,
-					e = dg._zoffs.s * rows + cols;
+					b = dg._zoffs.size * r + c,
+					e = dg._zoffs.size * rows + cols;
 
 				dur = (b < e ? e - b : b - e) + 1;
 				cols = b < e ? c : cols;
 				rows = b < e ? r : rows;
 
 			} else {
-				var total = dg._zoffs.s * size,
-					count = dg._zoffs.s * rows + cols + dur;
+				var total = dg._zoffs.size * size,
+					count = dg._zoffs.size * rows + cols + dur;
 
 				if (total < count)
-					dur = total - (dg._zoffs.s * rows + cols);
+					dur = total - (dg._zoffs.size * rows + cols);
 			}
 			if (!dg._zpos1 || dg._zpos1[2] != dur || dg._zpos1[0] != cols || dg._zpos1[1] != rows) {
 				dg._zpos1 = [cols, rows, dur];

@@ -159,9 +159,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			ph = widget.perHeight,
 			x = evt.pageX,
 			y = evt.pageY,
-			y1 = dg._zoffs.t,
-			cIndex = dg._zoffs.s,
-			begin = dg._zoffs.b,
+			y1 = dg._zoffs.top,
+			cIndex = dg._zoffs.size,
+			begin = dg._zoffs.beginIndex,
 			timeslots = widget._timeslots;
 			
 		widget._dragItems[cnt.id]._zrz = false;
@@ -210,9 +210,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		dg._zrzoffs = height;
 
 		// begin index
-		dg._zoffs.bi = r;
+		dg._zoffs.beginIndex = r;
 		// end index
-		dg._zoffs.ei = r + timeslots;
+		dg._zoffs.endIndex = r + timeslots;
 
 		inner.style.height = jq.px((ph * timeslots) - height);
 		dg._zhd = inner.firstChild;
@@ -224,11 +224,11 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			cnt = dg.handle,
 			zoffs = dg._zoffs,
 			y = evt.pageY,
-			y1 = zoffs.t,
-			h1 = zoffs.h,
+			y1 = zoffs.top,
+			h1 = zoffs.height,
 			ph = zoffs.ph,
-			b = zoffs.bi,
-			e = zoffs.ei;
+			b = zoffs.beginIndex,
+			e = zoffs.endIndex;
 		
 		if (y < y1)
 			y = y1;
@@ -256,7 +256,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	
 	function _createDragEndghost(dg) {
 		var widget = dg.control,
-			hgh = dg._zoffs.ph;
+			hgh = dg._zoffs.perWidgetHeight;
 			
 		dg._zdata = {
 			rows: dg.node.offsetTop / hgh,
@@ -293,9 +293,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			cnt = dg.handle,
 			zoffs = dg._zoffs,
 			y = evt.pageY,
-			y1 = zoffs.t,
-			h1 = zoffs.h,
-			ph = zoffs.ph,
+			y1 = zoffs.top,
+			h1 = zoffs.height,
+			ph = zoffs.perWidgetHeight,
 			ce = dg._zevt;
 		
 		if (y + ph > y1 + h1)
@@ -309,7 +309,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 
 		if (height < 0) {
 			height = ph - dg._zrzoffs;
-			r = dg._zoffs.bi + 1;
+			r = dg._zoffs.beginIndex + 1;
 		}
 		if (dg._zecnt.offsetHeight != height) {
 			dg._zecnt.style.height = jq.px(height);
@@ -319,12 +319,12 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		// Update header
 		r += widget.beginIndex;
 		dg._zhd.innerHTML =
-			widget._dateTime[zoffs.bi * widget._slotOffs] + ' - ' +
+			widget._dateTime[zoffs.beginIndex * widget._slotOffs] + ' - ' +
 				widget._dateTime[r * widget._slotOffs];
 	}
 	
 	function _resizeDragEndghost(dg) {
-		dg._zdata.dur = Math.round((dg.node.offsetHeight - dg._zevt.offsetHeight) / dg._zoffs.ph);
+		dg._zdata.dur = Math.round((dg.node.offsetHeight - dg._zevt.offsetHeight) / dg._zoffs.perWidgetHeight);
 	}
 	
 	function _resizeDragEnd(dg, evt) {
@@ -367,7 +367,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			et = widget._et,
 			timeslots = widget._timeslots,
 			timeslotTime = 60 / timeslots,
-			ph = dg._zoffs.ph,
+			perWidgetHeight = dg._zoffs.perWidgetHeight,
 			isOverBeginTime = bd.getHours() < bt,
 			isOverEndTime = edHour > et || (edHour == et && ed.getMinutes() > 0);
 			
@@ -375,7 +375,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		if (isOverBeginTime || isOverEndTime) {
 			var minutes = (ed - bd) / 60000,
 				id = faker.id;
-			_setItemWgtHeight(widget, faker, targetWgt.uuid,(minutes / 60 * timeslots * ph));
+			_setItemWgtHeight(widget, faker, targetWgt.uuid,(minutes / 60 * timeslots * perWidgetHeight));
 			
 			if (isOverEndTime)
 				dg._overIndex = _getSlotCount(et, ed, timeslots);
@@ -383,35 +383,34 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			if (isOverBeginTime)
 				dg._overIndex = _getSlotCount(bd, bt, timeslots);
 		}
-		dg._zdelta = ce.offsetTop - (evt.pageY + dg.handle.scrollTop - dg._zoffs.t);
+		dg._zdelta = ce.offsetTop - (evt.pageY + dg.handle.scrollTop - dg._zoffs.top);
 	}
 	
 	function _updateDragging(dg, evt) {
 		var widget = dg.control,
 			faker = dg.node,
-			zoffs = dg._zoffs,
 			h = dg.node.offsetHeight,
 			x = evt.pageX,
 			y = evt.pageY,
-			y1 = zoffs.t,
+			y1 = dg._zoffs.top,
 			cnt = dg.handle,
 			zdelta = dg._zdelta,
-			cIndex = dg._zoffs.s,
+			cellIndex = dg._zoffs.size,
 			lefts = cnt._lefts,
 			cells = dg._zcells,
-			begin = zoffs.b,
-			ph = zoffs.ph,
-			th = zoffs.th;
+			begin = dg._zoffs.beginIndex,
+			perWidgetHeight = dg._zoffs.perWidgetHeight,
+			totalHeight = dg._zoffs.totalHeight;
 		
-		for (; cIndex--;)
-			if (lefts[cIndex] <= x)
+		for (; cellIndex--;)
+			if (lefts[cellIndex] <= x)
 				break;
 	
-		if (cIndex < 0)
-			cIndex = 0;
+		if (cellIndex < 0)
+		cellIndex = 0;
 	
-		if (cells[begin + cIndex].firstChild != faker.parentNode) {
-			cells[begin + cIndex].firstChild.appendChild(faker);
+		if (cells[begin + cellIndex].firstChild != faker.parentNode) {
+			cells[begin + cellIndex].firstChild.appendChild(faker);
 			if (!dg._zchanged) widget.$class._resetPosition(faker, widget);
 			dg._zchanged = true;
 		}
@@ -419,13 +418,13 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		if (y + zdelta + cnt.scrollTop - y1 < 0)
 			y = 0 - cnt.scrollTop - zdelta + y1;
 		
-		if (y + zdelta + h + cnt.scrollTop - y1 >= th)
-			y = (th - h - cnt.scrollTop) + y1 - zdelta;
+		if (y + zdelta + h + cnt.scrollTop - y1 >= totalHeight)
+			y = (totalHeight - h - cnt.scrollTop) + y1 - zdelta;
 	
 		var r = y + zdelta + 5 + cnt.scrollTop - y1;
-		r = Math.floor(r / (ph));
-		if (faker.offsetTop != r * ph) {
-			faker.style.top = jq.px(r * ph);
+		r = Math.floor(r / (perWidgetHeight));
+		if (faker.offsetTop != r * perWidgetHeight) {
+			faker.style.top = jq.px(r * perWidgetHeight);
 			if (!dg._zchanged) widget.$class._resetPosition(faker, widget);
 			dg._zchanged = true;
 		}
@@ -433,7 +432,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		// Update header
 		dg._zhd.innerHTML =
 			widget._dateTime[(r + widget.beginIndex) * widget._slotOffs] + ' - ' +
-				widget._dateTime[(r + zoffs.ei + dg._overIndex) * widget._slotOffs];
+				widget._dateTime[(r + dg._zoffs.endIndex + dg._overIndex) * widget._slotOffs];
 	}
 	
 	function _updateDragEndghost(dg) {
@@ -442,7 +441,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		
 		gostNode.parent = jq(gostNode.parentNode);
 		dg._zdata = {
-			rows: (ce.offsetTop - gostNode.offsetTop) / dg._zoffs.ph,
+			rows: (ce.offsetTop - gostNode.offsetTop) / dg._zoffs.perWidgetHeight,
 			cols: ce.parentNode.parentNode.cellIndex -
 					gostNode.parentNode.parentNode.cellIndex,
 			ghostNode: gostNode
@@ -452,7 +451,6 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	function _updateDragEnd(dg, evt) {
 		var widget = dg.control,
 			cols = dg._zdata.cols,
-			perHgh = dg._zoffs.ph,
 			rows = dg._zdata.rows,
 			ce = dg._zevt;
 		if (cols || rows) {
@@ -906,8 +904,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				getRow: function (cnt) {
 					return cnt.firstChild.firstChild.lastChild.firstChild;
 				},
-				getCols: function (p, dg) {
-					return Math.floor((p[0] - dg._zoffs.l) / dg._zdim.w);
+				/**
+				 * 
+				 * @param {Object} mousePosition {x,y}
+				 * @param {zk.DnD.Draggable} draggable 
+				 * @returns 
+				 */
+				getCols: function (mousePosition, draggable) {
+					return Math.floor((mousePosition.x - draggable._zoffs.left) / draggable._zdim.w);
 				},
 				getRows: function () {
 					return 0;
@@ -1643,15 +1647,15 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			widget = dg.control,
 			ts = widget.ts,
 			cells = widget.cntRows.cells,
-			ph = widget.perHeight;
+			perWidgetHeight = widget.perHeight;
 		dg._zcells = cells;
 		dg._zoffs = {
-			t: zk(cnt).revisedOffset()[1],
-			h: cnt.offsetHeight,
-			s: cells.length - ts, // the size of the event column
-			b: ts, // begin index
-			ph: ph, // per height
-			th: cells[ts].firstChild.offsetHeight // total height
+			top: zk(cnt).revisedOffset()[1],
+			height: cnt.offsetHeight,
+			size: cells.length - ts, // the size of the event column
+			beginIndex: ts, // begin index
+			perWidgetHeight: perWidgetHeight, // per height
+			totalHeight: cells[ts].firstChild.offsetHeight // total height
 		};
 		if (!ce) _createDragStart(dg, evt);
 		else {
@@ -1685,9 +1689,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			else _updateDragStart(dg, evt, ce, faker);
 			
 			// begin index
-			dg._zoffs.bi = beginIndex + Math.floor(ce.offsetTop / ph);
+			dg._zoffs.beginIndex = beginIndex + Math.floor(ce.offsetTop / ph);
 			// end index
-			dg._zoffs.ei = beginIndex + Math.ceil(ce.offsetHeight / ph);
+			dg._zoffs.endIndex = beginIndex + Math.ceil(ce.offsetHeight / ph);
 		}
 		return dg.node;
 	},

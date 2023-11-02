@@ -484,14 +484,20 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				getRow: function (cnt) {
 					return cnt.firstChild.firstChild.rows[0].firstChild;
 				},
-				getCols: function (p, dg) {
-					return Math.floor((p[0] - dg._zoffs.l) / dg._zdim.w);
+				/**
+				 * 
+				 * @param {Object} mousePosition {x,y}
+				 * @param {zk.DnD.Draggable} draggable 
+				 * @returns 
+				 */
+				getCols: function (mousePosition, draggable) {
+					return Math.floor((mousePosition.x - draggable._zoffs.left) / draggable._zdim.w);
 				},
-				getRows: function (p, dg) {
-					return Math.floor((p[1] - dg._zoffs.t)/dg._zdim.h);
+				getRows: function (mousePosition, draggable) {
+					return Math.floor((mousePosition.y - draggable._zoffs.top)/draggable._zdim.h);
 				},
-				getDur: function (dg) {
-					return (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]);
+				getDur: function (draggable) {
+					return (draggable._zoffs.size * draggable._zpos1[1] + draggable._zpos1[0]);
 				},
 				getNewDate: function (widget, dg) {
 					var c = dg._zpos[0],
@@ -500,7 +506,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 						r1 = dg._zpos1[1],
 						c2 = c < c1 ? c : c1,
 						r2 = r < r1 ? r : r1,
-						offs = dg._zoffs.s * r2 + c2,
+						offs = dg._zoffs.size * r2 + c2,
 						bd = new Date(widget.zoneBd);
 	
 					bd.setDate(bd.getDate() + offs);
