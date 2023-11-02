@@ -160,6 +160,15 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		},
 
 		/**
+		 * Clean calendar children
+		 * Implemented in CalendarsDefault and CalendarsMonth
+		 */
+
+		cleanItemArray_: function(){
+			//does nothing by default, replace in extended class
+		},
+
+		/**
 		 * Create matching widgets for CalendarItems based on mold
 		 * 
 		 * @param {Boolean} isExceedOneDay item is longer than one day
@@ -208,7 +217,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				// compare with all daylong event in row and find space
 				for (var eventIndex = 0; eventIndex < row.length; eventIndex++) {
 					foundSpace = false;
-					var existingEvent = rowSpace[eventIndex],
+					var existingEvent = row[eventIndex],
 						preBd = existingEvent.upperBoundBd,
 						preEd = existingEvent.lowerBoundEd;
 
@@ -222,10 +231,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 
 			if (foundSpace) {
 				/* have space, add to current row */
-				rowSpace.push(node);
+				row.push(node);
 			}
 			/* no space found in existing row, create new row with this item as content */
-			else list.push([node]);
+			else rows.push([node]);
 		},
 
 		/**
@@ -276,15 +285,16 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				jq(this.$n())
 					.bind('click', this.proxy(this.clearGhost));
 				if (!inMonthMold) {
-					jq(this.$n('cnt'))
+					var contentNode = this.$n('cnt');
+					jq(contentNode)
 						.bind('click', function(evt) {
 							if (!zk.dragging && !zk.processing) {
 								widget.clearGhost();
-								widget.onClick(cnt, evt);
+								widget.onClick(contentNode, evt);
 							} else
 								evt.stop();
 						});
-					this._dragItems[cnt.id] = new zk.Draggable(this, cnt, {
+					this._dragItems[contentNode.id] = new zk.Draggable(this, contentNode, {
 						starteffect: widget.closeFloats,
 						endeffect: cls._endDaydrag,
 						ghosting: cls._ghostDaydrag,
@@ -304,8 +314,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				if (!inMonthMold) {
 					jq(this.$n('cnt'))
 						.unbind('click');
-					if (this._dragItems[cnt.id]) {
-						this._dragItems[cnt.id].destroy();
+					if (this._dragItems[contentNode.id]) {
+						this._dragItems[contentNode.id].destroy();
 					}
 				}
 			}
@@ -574,9 +584,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		 */
 		dateSorting_: function(calendarItemDomNode1, calendarItemDomNode2) {
 			var compareStartTime;
-			if (compareStartTime = this.$class._compareStartTime(calendarItemDomNode1, calendarItemDomNode2))
+			if (compareStartTime = calendar.Calendars._compareStartTime(calendarItemDomNode1, calendarItemDomNode2))
 				return compareStartTime;
-			return this.$class._compareDays(calendarItemDomNode1, calendarItemDomNode2);
+			return calendar.Calendars._compareDays(calendarItemDomNode1, calendarItemDomNode2);
 		},
 
 		/**
@@ -777,7 +787,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 					.before(jq(faker));
 				dg.node = jq('#' + uuid + '-dd')[0];
 
-				dg._zdur = this.$class._getItemPeriod(targetWidget.item);
+				dg._zdur = calendar.Calendars._getItemPeriod(targetWidget.item);
 				dg._zevt = ce;
 			}
 
@@ -922,7 +932,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 						ed.setFullYear(bd.getFullYear());
 						ed.setDate(1);
 						ed.setMonth(bd.getMonth());
-						ed.setDate(bd.getDate() + this.$class._getItemPeriod(item) - (this.$class._isZeroTime(ed) ? 0 : 1));
+						ed.setDate(bd.getDate() + calendar.Calendars._getItemPeriod(item) - (calendar.Calendars._isZeroTime(ed) ? 0 : 1));
 						widget.fire('onItemUpdate', {
 							data: [
 								dg._zevt.id,

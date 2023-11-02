@@ -448,7 +448,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}
 	},
 	
-	cleanItemAry_: function () {
+	cleanItemArray_: function () {
 		this._itemKey = {};
 		this._itemWeekSet = [];
 	},

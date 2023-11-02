@@ -866,7 +866,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		}
 	},
 
-	cleanItemAry_: function () {
+	cleanItemArray_: function () {
 		this._itemKey = {};
 		this._daylongItems = [];
 		this._dayItems = [];
