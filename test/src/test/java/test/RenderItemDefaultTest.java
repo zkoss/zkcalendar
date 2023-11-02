@@ -1,9 +1,6 @@
 package test;
 
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.WebDriver;
-import org.zkoss.test.webdriver.WebDriverTestCase;
 import org.zkoss.test.webdriver.ztl.JQuery;
 
 import static org.junit.Assert.assertEquals;
@@ -11,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * item rendering in the default mold.
  */
-public class RenderCalenderItemTest extends CalendarTestBase {
+public class RenderItemDefaultTest extends CalendarTestBase {
     public static final int HALF_HOUR_HEIGHT = 31;
 
     static {
