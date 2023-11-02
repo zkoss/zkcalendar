@@ -216,8 +216,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		/**
 		 * find empty slot in the daylong grid (must have empty columns on all days of rendered calendar item)
 		 *  
-		 * @param {*} rows from calendars._daylongSpace, contains currently displayed daylong calItem div elements
-		 * @param {*} node calItem div element, has some extra attributes containing calendar item data
+		 * @param {Array} rows from calendars._daylongSpace, contains currently displayed daylong calItem div elements
+		 * @param {DomElement} node calItem div element, has some extra attributes containing calendar item data
 		 */
 		putInDaylongSpace_: function(rows, node) {
 			var itemBeginDate = node.upperBoundBd,
@@ -287,15 +287,15 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			//ZKCAL-38: bind and unbind click event separately based on enable
 			if (enable) {
 				/* Enable edit mode, activate listeners */
-				this.bindDayLongListener();
+				this.bindDayLongListener(daylong);
 				this._dragItems[daylong.id] = new zk.Draggable(this, daylong, {
 					starteffect: widget.closeFloats,
-					endeffect: cls._enddrag,
-					ghosting: cls._ghostdrag,
-					endghosting: cls._endghostdrag,
-					change: cls._changedrag,
-					draw: cls._drawdrag,
-					ignoredrag: cls._ignoredrag
+					endeffect: cls._endDrag,
+					ghosting: cls._ghostDrag,
+					endghosting: cls._endGhostDrag,
+					change: cls._changeDrag,
+					draw: cls._drawDrag,
+					ignoredrag: cls._ignoreDrag
 				});
 				jq(this.$n())
 					.bind('click', this.proxy(this.clearGhost));
@@ -321,7 +321,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				}
 			} else {
 				/* disable edit mode, remove listeners */
-				this.unbindDayLongListener();
+				this.unbindDayLongListener(daylong);
 				if (this._dragItems[daylong.id])
 					this._dragItems[daylong.id].destroy();
 				jq(this.$n())
@@ -341,9 +341,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		 * @param {DomElement} targetElement 
 		 */
 		bindDayLongListener: function(targetElement) {
+			var widget = this,
+				inMonthMold = this.mon;
 			jq(targetElement)
 				.bind('click', function(evt) {
-					var widget = this;
 					if (!zk.dragging && !zk.processing) {
 						widget.clearGhost();
 						widget[inMonthMold ? 'onClick' : 'onDaylongClick'](targetElement, evt);
@@ -771,7 +772,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		 * @param {MouseEvent} evt Original mouse event 
 		 * @returns 
 		 */
-		_ignoredrag: function(draggable, mousePosition, evt) {
+		_ignoreDrag: function(draggable, mousePosition, evt) {
 			if (zk.processing)
 				return true;
 			var widget = draggable.control,
@@ -802,7 +803,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		 * @param {MouseEvent} evt Original mouse event 
 		 * @returns 
 		 */
-		_ghostdrag: function(draggable, offsets, evt) {
+		_ghostDrag: function(draggable, offsets, evt) {
 			var contentNode = draggable.node,
 				widget = draggable.control,
 				uuid = widget.uuid,
@@ -886,7 +887,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		 * @param {Object{x,y}} mousePosition {x,y}
 		 * @param {domEvent} evt 
 		 */
-		_drawdrag: function(draggable, mousePosition, evt) {
+		_drawDrag: function(draggable, mousePosition, evt) {
 			var node = draggable.node;
 			if (node.id.endsWith('-dd')) {
 				var nodeWidth = node.offsetWidth,
@@ -929,7 +930,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		 * @param {Array[x,y]} mousePosition [0:x, 1:y] from zk updateDrag
 		 * @param {domEvent} evt 
 		 */
-		_changedrag: function(draggable, mousePosition, evt) {
+		_changeDrag: function(draggable, mousePosition, evt) {
 			var widget = draggable.control,
 				eventLeft = mousePosition[0],
 				eventTop = mousePosition[1],
@@ -983,7 +984,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			}
 		},
 
-		_endghostdrag: function(draggable, origin) {
+		_endGhostDrag: function(draggable, origin) {
 			// target is Calendar's event
 			draggable.node = draggable.handle;
 		},
@@ -995,7 +996,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		 * @param {DomEvent} evt 
 		 */
 
-		_enddrag: function(draggable, evt) {
+		_endDrag: function(draggable, evt) {
 			var widget = draggable.control,
 				cnt = draggable.node,
 				draggedItem = widget._dragItems[cnt.id],

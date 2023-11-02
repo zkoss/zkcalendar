@@ -250,7 +250,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		//clean all rows exclusive blank row
 		daylongRows.children().not(':last-child').remove();
 		
-		// append all rows
+		// append all rows from bottom to top
 		for (var i = this._daylongSpace.length; i--;) {
 			daylongRows.prepend('<tr></tr>');
 			var rowSpace = this._daylongSpace[i],
@@ -468,14 +468,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					return dg._lastDraggedPosition.cols;
 				},
 				getNewDate: function (widget, draggable) {
-					var colsIndex = draggable._zposistion.x,
+					var colsIndex = draggable._zposition.x,
 						draggedColsIndex = draggable._lastDraggedPosition.cols,
 						offs = colsIndex < draggedColsIndex ? colsIndex : draggedColsIndex,
 						beginDate = new Date(widget.zoneBd),
 						endDate = new Date(widget.zoneBd);
 					
 					beginDate.setDate(beginDate.getDate() + offs);
-					endDate.setDate(beginDate.getDate() + dg._lastDraggedPosition.draggedDuration);
+					endDate.setDate(beginDate.getDate() + draggable._lastDraggedPosition.draggedDuration);
 					return {beginDate: beginDate, endDate: endDate};
 				}
 			};
@@ -622,15 +622,15 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				zinfo.push({l: left, w: n.offsetWidth});
 
 			var zoffs = {
-				l: offs[0],
-				t: offs[1],
-				w: daylong.offsetWidth,
-				h: daylong.offsetHeight,
-				s: zinfo.length
+				left: offs[0],
+				top: offs[1],
+				width: daylong.offsetWidth,
+				height: daylong.offsetHeight,
+				size: zinfo.length
 			};
 
 			widget.fixRope_(zinfo, jq('#' + widget.uuid + '-rope')[0].firstChild, cols,
-				0, zoffs, {w: width, h: daylong.offsetHeight, hs: [daylong.offsetHeight]}, 1);
+				0, zoffs, {width: width, height: daylong.offsetHeight, heighsPerRow: [daylong.offsetHeight]}, 1);
 
 			var ed = new Date(bd);
 			ed = calUtil.addDay(ed, 1);

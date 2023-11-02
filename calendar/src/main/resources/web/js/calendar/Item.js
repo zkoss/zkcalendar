@@ -118,16 +118,16 @@ calendar.Item = zk.$extends(zk.Widget, {
 		return this.$n().zoneEd.getTime() != item.zoneEd.getTime();
 	},
 
-	_createBoundTime: function (node, bd, ed) {
+	_createBoundTime: function (calendarItemNode, beginDate, endDate) {
 		//have findBoundTime_ function
 		if (this.findBoundTime_) {
-			var time = this.findBoundTime_(bd, ed);
-			bd = time.bd;
-			ed = time.ed;
+			var time = this.findBoundTime_(beginDate, endDate);
+			beginDate = time.beginDate;
+			endDate = time.endDate;
 		}
-		node.upperBoundBd = this._setBoundDate(bd); // earliest
+		calendarItemNode.upperBoundBd = this._setBoundDate(beginDate); // earliest
 		if (this._isDayItem()) return;
-		node.lowerBoundEd = this._setBoundDate(ed, true); // latest
+		calendarItemNode.lowerBoundEd = this._setBoundDate(endDate, true); // latest
 	},
 	
 	_isDayItem: function () {
@@ -143,9 +143,11 @@ calendar.Item = zk.$extends(zk.Widget, {
 
 	_setBoundDate: function (date, isAddOneDay) {
 		var boundDate = new Date(date);
-		boundDate.setHours(0,0,0,0);
-		if (isAddOneDay){
-			boundDate = calUtil.addDay(boundDate, 1);
+		if (date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds() != 0) {
+			boundDate.setHours(0,0,0,0);
+			if (isAddOneDay){
+				boundDate = calUtil.addDay(boundDate, 1);
+			}
 		}
 		return boundDate;
 	}
