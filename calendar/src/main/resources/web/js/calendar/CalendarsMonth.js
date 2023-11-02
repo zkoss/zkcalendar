@@ -491,29 +491,29 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				 * @returns 
 				 */
 				getCols: function (mousePosition, draggable) {
-					return Math.floor((mousePosition.x - draggable._zoffs.left) / draggable._zdim.w);
+					return Math.floor((mousePosition.x - draggable._zoffs.left) / draggable._zdimensions.width);
 				},
 				getRows: function (mousePosition, draggable) {
-					return Math.floor((mousePosition.y - draggable._zoffs.top)/draggable._zdim.h);
+					return Math.floor((mousePosition.y - draggable._zoffs.top)/draggable._zdimensions.height);
 				},
 				getDur: function (draggable) {
-					return (draggable._zoffs.size * draggable._zpos1[1] + draggable._zpos1[0]);
+					return (draggable._zoffs.size * draggable._lastDraggedPosition.rows + draggable._lastDraggedPosition.cols);
 				},
-				getNewDate: function (widget, dg) {
-					var c = dg._zpos[0],
-						r = dg._zpos[1],
-						c1 = dg._zpos1[0],
-						r1 = dg._zpos1[1],
-						c2 = c < c1 ? c : c1,
-						r2 = r < r1 ? r : r1,
-						offs = dg._zoffs.size * r2 + c2,
-						bd = new Date(widget.zoneBd);
+				getNewDate: function (widget, draggable) {
+					var draggedCols = draggable._zposition.x,
+						draggedRows = draggable._zposition.y,
+						lastDraggedCols = draggable._lastDraggedPosition.cols,
+						lastDraggedRows = draggable._lastDraggedPosition.rows,
+						finalCols = draggedCols < lastDraggedCols ? draggedCols : lastDraggedCols,
+						finalRows = draggedRows < lastDraggedRows ? draggedRows : lastDraggedRows,
+						cellIndex = draggable._zoffs.size * finalRows + finalCols,
+					beginDate = new Date(widget.zoneBd);
 	
-					bd.setDate(bd.getDate() + offs);
+					beginDate.setDate(beginDate.getDate() + cellIndex);
 					
-					var ed = new Date(bd);
-					ed.setDate(ed.getDate() + dg._zpos1[2]);
-					return {bd: bd, ed: ed};
+					var endDate = new Date(beginDate);
+					endDate.setDate(endDate.getDate() + draggable._lastDraggedPosition.draggedDuration);
+					return {beginDate: beginDate, endDate: endDate};
 				}
 			};
 		return this._dragDataObj;

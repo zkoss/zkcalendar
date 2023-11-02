@@ -94,7 +94,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 					}
 				}
 			}
-			this._dragItems = this._ghost = this._itemKey = this.params = this._restoreCE = null;
+			this._dragItems = this._ghost = this._itemKey = this.params = this._restoreCalendarItemNode = null;
 			this.$supers('unbind_', arguments);
 		},
 
@@ -662,39 +662,41 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		 * 
 		 * @param {Array[{left,width}]} infos Array of items {{int} left, {int} width}, left offset, width of cells in rope (1 cell per displayed day)
 		 * @param {DomElement} ropeDiv Rope Div (.z-calendars-dd-rope)
-		 * @param {int} cols clicked column index
-		 * @param {int} rows clicked row index
+		 * @param {int} colsIndex clicked column index
+		 * @param {int} rowsIndex clicked row index
 		 * @param {Array} offsets offset values of UI elements  ['l': content offset left, 't': content offset top, 'w': content width, 'h': content height, 's': number of zInfo (columns)]
-		 * @param {Array} dimensions target cell dimensions ['w': width, 'h': height, 'hs': Array of offsetHeight per row]
-		 * @param {*} dur  ???
+		 * @param {Array} dimensions target cell dimensions ['width': width, 'height': height, 'heighsPerRow': Array of offsetHeight per row]
+		 * @param {int} duration duration to display
 		 * @returns 
 		 */
-		fixRope_: function(infos, ropeDiv, colsIndex, rowsIndex, offsets, dimensions, dur) {
+		fixRope_: function(infos, ropeDiv, colsIndex, rowsIndex, offsets, dimensions, duration) {
 			if (!ropeDiv || !offsets || !dimensions) return;
 
-			ropeDiv.style.top = jq.px(dimensions.hs[rowsIndex] * rowsIndex + offsets.top);
+			ropeDiv.style.top = jq.px(dimensions.heighsPerRow[rowsIndex] * rowsIndex + offsets.top);
 			ropeDiv.style.left = jq.px(infos[colsIndex].left + offsets.left);
-			ropeDiv.style.height = jq.px(dimensions.hs[rowsIndex]);
+			ropeDiv.style.height = jq.px(dimensions.heighsPerRow[rowsIndex]);
 
-			if (!dur)
-				ropeDiv.style.width = jq.px(dimensions.w);
+			if (!duration)
+				ropeDiv.style.width = jq.px(dimensions.width);
 			else {
-				var i = offsets.size - colsIndex;
-				if (dur < i)
-					i = dur;
+				var indexesOnCurrentRow = offsets.size - colsIndex;
+				if (duration < indexesOnCurrentRow)
+					indexesOnCurrentRow = duration;
 
-				var w = 0;
-				for (var len = 0; len < i; len++)
-					w += infos[colsIndex + len].width;
+				var totalWidth = 0;
+				for (var displayedCellsLengthOnCurrentRow = 0; displayedCellsLengthOnCurrentRow < indexesOnCurrentRow; displayedCellsLengthOnCurrentRow++)
+					totalWidth += infos[colsIndex + displayedCellsLengthOnCurrentRow].width;
 
-				ropeDiv.style.width = jq.px(w);
-				dur -= i;
+				ropeDiv.style.width = jq.px(totalWidth);
+				duration -= indexesOnCurrentRow;
 
-				if (dur && ++rowsIndex < dimensions.hs.length)
-					this.fixRope_(infos, ropeDiv.nextSibling, 0, rowsIndex, offsets, dimensions, dur);
+				/* if duration left to display, move to next row and continue display */
+				if (duration && ++rowsIndex < dimensions.heighsPerRow.length)
+					this.fixRope_(infos, ropeDiv.nextSibling, 0, rowsIndex, offsets, dimensions, duration);
 				else
-					for (var e = ropeDiv.nextSibling; e; e = e.nextSibling)
-						e.style.cssText = '';
+				/* else remove existing styles from every other rows*/
+					for (var elementToClear = ropeDiv.nextSibling; elementToClear; elementToClear = elementToClear.nextSibling)
+						jq(elementToClear).attr('style', '');
 			}
 		},
 
@@ -754,9 +756,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		 * dragged event domNode is hidden while dragged
 		 */
 		onResponse: function() {
-			if (this._restoreCE) {
-				this._restoreCE.style.visibility = '';
-				this._restoreCE = null;
+			if (this._restoreCalendarItemNode) {
+				this._restoreCalendarItemNode.style.visibility = '';
+				this._restoreCalendarItemNode = null;
 			}
 		}
 
@@ -831,16 +833,17 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				size: draggable._zinfo.length
 			};
 
+			/* if dragging an existing item */
 			if (calendarItemNode) {
 				var faker = calendarItemNode.cloneNode(true),
-					h = calendarItemNode.offsetHeight;
+					itemHeight = calendarItemNode.offsetHeight;
 				faker.id = uuid + '-dd';
 				jq(faker).addClass(zcls + '-evt-faker-dd');
 
 				faker.style.width = jq.px(width);
-				faker.style.height = jq.px(h);
+				faker.style.height = jq.px(itemHeight);
 				faker.style.left = jq.px(mousePosition.x - (width / 2));
-				faker.style.top = jq.px(mousePosition.y + h);
+				faker.style.top = jq.px(mousePosition.y + itemHeight);
 
 				jq(calendarItemNode).addClass(zcls + '-evt-dd');
 
@@ -855,178 +858,211 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				jq(document.body.firstChild).before(jq(faker));
 				draggable.node = jq('#' + uuid + '-dd')[0];
 
-				draggable._zdur = calendar.Calendars._getItemPeriod(targetWidget.item);
-				draggable._zevt = calendarItemNode;
+				draggable._zdraggedDuration = calendar.Calendars._getItemPeriod(targetWidget.item);
+				draggable._zcalendarItemNode = calendarItemNode;
 			}
 
-			draggable._zdim = {
-				w: width,
-				h: heighsPerRow[0],
-				hs: heighsPerRow
+			draggable._zdimensions = {
+				width: width,
+				height: heighsPerRow[0],
+				heighsPerRow: heighsPerRow
 			};
 			draggable._zrope = jq('#' + widget.uuid + '-rope')[0];
 
-			var cols = dataObj.getCols(mousePosition, draggable),
-				rows = dataObj.getRows(mousePosition, draggable);
+			var colsIndex = dataObj.getCols(mousePosition, draggable),
+				rowsIndex = dataObj.getRows(mousePosition, draggable);
 
-				draggable._zpos = [cols, rows];
+				draggable._zposition = {x: colsIndex, y: rowsIndex};
 
 			// fix rope
-			widget.fixRope_(draggable._zinfo, draggable._zrope.firstChild, cols, rows, draggable._zoffs, draggable._zdim, draggable._zdur);
+			widget.fixRope_(draggable._zinfo, draggable._zrope.firstChild, colsIndex, rowsIndex, draggable._zoffs, draggable._zdimensions, draggable._zdraggedDuration);
 			return draggable.node;
 		},
 
-		_drawdrag: function(dg, p, evt) {
-			var node = dg.node;
+		/**
+		 * draw dragged existing calendar items nodes
+		 * 
+		 * @param {zk.DnD.Draggable} draggable 
+		 * @param {Object{x,y}} mousePosition {x,y}
+		 * @param {domEvent} evt 
+		 */
+		_drawdrag: function(draggable, mousePosition, evt) {
+			var node = draggable.node;
 			if (node.id.endsWith('-dd')) {
-				var w = node.offsetWidth,
-					h = node.offsetHeight,
-					x = evt.pageX - (w / 2),
-					y = evt.pageY - h,
-					x1 = dg._zoffs.left,
-					y1 = dg._zoffs.top,
-					w1 = dg._zoffs.width,
-					h1 = dg._zoffs.height;
-				if (x < x1)
-					x = x1;
-				else if (x + w > x1 + w1)
-					x = x1 + w1 - w;
+				var nodeWidth = node.offsetWidth,
+					nodeHeight = node.offsetHeight,
+					nodeLeft = evt.pageX - (nodeWidth / 2),
+					nodeTop = evt.pageY - nodeHeight,
+					draggedLeft = draggable._zoffs.left,
+					draggedTop = draggable._zoffs.top,
+					draggedWidth = draggable._zoffs.width,
+					draggedHeight = draggable._zoffs.height;
+				/*
+					left calculattion:
+					If dragged further right than current position, move to dragged cell left position
 
-				if (y < y1)
-					y = y1;
-				else if (y + h > y1 + h1)
-					y = y1 + h1 - h;
-				node.style.left = jq.px(x);
-				node.style.top = jq.px(y);
+					If dragged further left than original position, move to dragged cell position, offset by the difference of size between the dragged cell and the original element
+				*/
+				if (nodeLeft < draggedLeft)
+					nodeLeft = draggedLeft;
+				else if (nodeLeft + nodeWidth > draggedLeft + draggedWidth)
+					nodeLeft = draggedLeft + draggedWidth - nodeWidth;
+
+				/*
+					top calculation, same logic as left
+				*/
+				if (nodeTop < draggedTop)
+				nodeTop = draggedTop;
+				else if (nodeTop + nodeHeight > draggedTop + draggedHeight)
+					nodeTop = draggedTop + draggedHeight - nodeHeight;
+
+				
+				node.style.left = jq.px(nodeLeft);
+				node.style.top = jq.px(nodeTop);
 			}
 		},
 
-		_changedrag: function(dg, p, evt) {
-			var widget = dg.control,
-				x = p[0],
-				y = p[1],
-				x1 = dg._zoffs.left,
-				y1 = dg._zoffs.top,
-				w1 = dg._zoffs.width,
-				h1 = dg._zoffs.height;
-			if (x < x1)
-				x = x1;
-			else if (x > x1 + w1)
-				x = x1 + w1;
+		/**
+		 * redraw dragged existing calendar items nodes
+		 * 
+		 * @param {zk.DnD.Draggable} draggable 
+		 * @param {Array[x,y]} mousePosition [0:x, 1:y] from zk updateDrag
+		 * @param {domEvent} evt 
+		 */
+		_changedrag: function(draggable, mousePosition, evt) {
+			var widget = draggable.control,
+				eventLeft = mousePosition[0],
+				eventTop = mousePosition[1],
+				draggedLeft = draggable._zoffs.left,
+				draggedTop = draggable._zoffs.top,
+				draggedWidth = draggable._zoffs.width,
+				draggedHeight = draggable._zoffs.height;
+			if (eventLeft < draggedLeft)
+			eventLeft = draggedLeft;
+			else if (eventLeft > draggedLeft + draggedWidth)
+			eventLeft = draggedLeft + draggedWidth;
 
-			if (y < y1)
-				y = y1;
-			else if (y > y1 + h1)
-				y = y1 + h1;
+			if (eventTop < draggedTop)
+			eventTop = draggedTop;
+			else if (eventTop > draggedTop + draggedHeight)
+			eventTop = draggedTop + draggedHeight;
 
-			x -= x1;
-			y -= y1;
+			eventLeft -= draggedLeft;
+			eventTop -= draggedTop;
 
-			var cols = Math.floor(x / dg._zdim.w),
-				rows = Math.floor(y / dg._zdim.h),
-				dur = dg._zdur,
-				size = dg._zrope.childNodes.length;
+			var cols = Math.floor(eventLeft / draggable._zdimensions.width),
+				rows = Math.floor(eventTop / draggable._zdimensions.height),
+				draggedDuration = draggable._zdraggedDuration,
+				draggedSize = draggable._zrope.childNodes.length;
 
-			if (rows == size)
+			if (rows == draggedSize)
 				--rows;
-			if (cols == dg._zoffs.size)
-				cols = dg._zoffs.size - 1;
+			if (cols == draggable._zoffs.size)
+				cols = draggable._zoffs.size - 1;
 
-			if (!dg._zevt) {
-				var c = dg._zpos[0],
-					r = dg._zpos[1],
-					b = dg._zoffs.size * r + c,
-					e = dg._zoffs.size * rows + cols;
+			if (!draggable._zcalendarItemNode) {
+				var colsIndex = draggable._zposition.x,
+					rowsIndex = draggable._zposition.y,
+					cellIndex = draggable._zoffs.size * rowsIndex + colsIndex,
+					maxCellIndex = draggable._zoffs.size * rows + cols;
 
-				dur = (b < e ? e - b : b - e) + 1;
-				cols = b < e ? c : cols;
-				rows = b < e ? r : rows;
+				draggedDuration = (cellIndex < maxCellIndex ? maxCellIndex - cellIndex : cellIndex - maxCellIndex) + 1;
+				cols = cellIndex < maxCellIndex ? colsIndex : cols;
+				rows = cellIndex < maxCellIndex ? rowsIndex : rows;
 
 			} else {
-				var total = dg._zoffs.size * size,
-					count = dg._zoffs.size * rows + cols + dur;
+				var total = draggable._zoffs.size * draggedSize,
+					count = draggable._zoffs.size * rows + cols + draggedDuration;
 
 				if (total < count)
-					dur = total - (dg._zoffs.size * rows + cols);
+				draggedDuration = total - (draggable._zoffs.size * rows + cols);
 			}
-			if (!dg._zpos1 || dg._zpos1[2] != dur || dg._zpos1[0] != cols || dg._zpos1[1] != rows) {
-				dg._zpos1 = [cols, rows, dur];
-				widget.fixRope_(dg._zinfo, dg._zrope.firstChild, cols, rows, dg._zoffs, dg._zdim, dur);
+			if (!draggable._lastDraggedPosition || draggable._lastDraggedPosition.draggedDuration != draggedDuration || draggable._lastDraggedPosition.cols != cols || draggable._lastDraggedPosition.rows != rows) {
+				draggable._lastDraggedPosition ={cols: cols, rows: rows, draggedDuration: draggedDuration};
+				widget.fixRope_(draggable._zinfo, draggable._zrope.firstChild, cols, rows, draggable._zoffs, draggable._zdimensions, draggedDuration);
 			}
 		},
 
-		_endghostdrag: function(dg, origin) {
+		_endghostdrag: function(draggable, origin) {
 			// target is Calendar's event
-			dg.node = dg.handle;
+			draggable.node = draggable.handle;
 		},
 
-		_enddrag: function(dg, evt) {
-			var widget = dg.control,
-				cnt = dg.node,
-				dg = widget._dragItems[cnt.id],
-				p = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
-			if (dg) {
-				var ce, dataObj = widget.getDragDataObj_();
-				if (dg._zevt) {
+		/**
+		 * Send updates once drag is released
+		 * 
+		 * @param {zk.DnD.Draggable} draggable 
+		 * @param {DomEvent} evt 
+		 */
+
+		_enddrag: function(draggable, evt) {
+			var widget = draggable.control,
+				cnt = draggable.node,
+				draggedItem = widget._dragItems[cnt.id],
+				mousePosition = {x: Math.round(evt.pageX), y:Math.round(evt.pageY)}; //ZKCAL-42: sometimes it returns float number in IE 10
+			if (draggedItem) {
+				var calendarItemNode,
+				draggedItemData = widget.getDragDataObj_();
+				if (draggedItem._zcalendarItemNode) {
 					var zcls = widget.getZclass(),
-						targetWidget = zk.$(dg._zevt),
-						item = targetWidget.item,
-						bd = new Date(widget.zoneBd),
-						ebd = new Date(item.zoneBd),
-						ddClass = zcls + '-evt-dd',
+						targetWidget = zk.$(draggedItem._zcalendarItemNode),
+						calendarItemData = targetWidget.item,
+						beginDate = new Date(widget.zoneBd),
+						targetBeginDate = new Date(calendarItemData.zoneBd),
+						dragDropClass = zcls + '-evt-dd',
 						inMonthMold = widget.mon;
-					bd = calUtil.addDay(bd, dataObj.getDur(dg));
-					ebd.setFullYear(bd.getFullYear());
-					ebd.setDate(1);
-					ebd.setMonth(bd.getMonth());
-					ebd.setDate(bd.getDate());
+					beginDate = calUtil.addDay(beginDate, draggedItemData.getDur(draggedItem));
+					targetBeginDate.setFullYear(beginDate.getFullYear());
+					targetBeginDate.setDate(1);
+					targetBeginDate.setMonth(beginDate.getMonth());
+					targetBeginDate.setDate(beginDate.getDate());
 
 					jq(targetWidget.$n())
-						.removeClass(ddClass);
+						.removeClass(dragDropClass);
 
 					if (inMonthMold) {
 						var cloneNodes = targetWidget.cloneNodes;
 						if (cloneNodes)
 							for (var n = cloneNodes.length; n--;)
 								jq(cloneNodes[n])
-								.removeClass(ddClass);
+								.removeClass(dragDropClass);
 					}
 
-					if (!calUtil.isTheSameDay(ebd, item.zoneBd)) {
-						ce = dg._zevt;
-						ce.style.visibility = 'hidden';
+					if (!calUtil.isTheSameDay(targetBeginDate, calendarItemData.zoneBd)) {
+						calendarItemNode = draggedItem._zcalendarItemNode;
+						calendarItemNode.style.visibility = 'hidden';
 
-						var ed = new Date(item.zoneEd);
-						ed.setFullYear(bd.getFullYear());
-						ed.setDate(1);
-						ed.setMonth(bd.getMonth());
-						ed.setDate(bd.getDate() + calendar.Calendars._getItemPeriod(item) - (calendar.Calendars._isZeroTime(ed) ? 0 : 1));
+						var endDate = new Date(calendarItemData.zoneEd);
+						endDate.setFullYear(beginDate.getFullYear());
+						endDate.setDate(1);
+						endDate.setMonth(beginDate.getMonth());
+						endDate.setDate(beginDate.getDate() + calendar.Calendars._getItemPeriod(calendarItemData) - (calendar.Calendars._isZeroTime(endDate) ? 0 : 1));
 						widget.fire('onItemUpdate', {
 							data: [
-								dg._zevt.id,
-								widget.fixTimeZoneFromClient(ebd),
-								widget.fixTimeZoneFromClient(ed),
-								p[0],
-								p[1],
+								draggedItem._zcalendarItemNode.id,
+								widget.fixTimeZoneFromClient(targetBeginDate),
+								widget.fixTimeZoneFromClient(endDate),
+								mousePosition.x,
+								mousePosition.y,
 								jq.innerWidth(),
 								jq.innerHeight()
 							]
 						});
-						widget._restoreCE = ce; //ZKCAL-39: should store calendar item
+						widget._restoreCalendarItemNode = calendarItemNode; //ZKCAL-39: should store calendar item
 					}
 					jq('#' + widget.uuid + '-rope')
 						.remove();
 					jq('#' + widget.uuid + '-dd')
 						.remove();
 				} else {
-					var newData = dataObj.getNewDate(widget, dg);
+					var newData = draggedItemData.getNewDate(widget, draggedItem);
 
 					widget.fire('onItemCreate', {
 						data: [
-							widget.fixTimeZoneFromClient(newData.bd),
-							widget.fixTimeZoneFromClient(newData.ed),
-							p[0],
-							p[1],
+							widget.fixTimeZoneFromClient(newData.beginDate),
+							widget.fixTimeZoneFromClient(newData.endDate),
+							mousePosition.x,
+							mousePosition.y,
 							jq.innerWidth(),
 							jq.innerHeight()
 						]
@@ -1038,14 +1074,20 @@ it will be useful, but WITHOUT ANY WARRANTY.
 						.remove();
 					delete widget._ghost[widget.uuid];
 				};
-				dg._zinfo = dg._zpos1 = dg._zpos = dg._zrope = dg._zdim = dg._zdur = dg._zevt = null;
+				draggedItem._zinfo = draggedItem._lastDraggedPosition = draggedItem._zposition = draggedItem._zrope = draggedItem._zdimensions = draggedItem._zdraggedDuration = draggedItem._zcalendarItemNode = null;
 			}
 		},
-		isTimeOverlapping(item1, item2) {
-			const begin1 = item1.zoneBd.getTime();
-			const end1 = item1.zoneEd.getTime();
-			const begin2 = item2.zoneBd.getTime();
-			const end2 = item2.zoneEd.getTime();
+		/**
+		 * 
+		 * @param {CalendarItemData} calendarItemData1 
+		 * @param {CalendarItemData} calendarItemData1 
+		 * @returns 
+		 */
+		isTimeOverlapping(calendarItemData1, calendarItemData2) {
+			const begin1 = calendarItemData1.zoneBd.getTime();
+			const end1 = calendarItemData1.zoneEd.getTime();
+			const begin2 = calendarItemData2.zoneBd.getTime();
+			const end2 = calendarItemData2.zoneEd.getTime();
 			// Check all overlap cases
 			return (
 				// item1 inside item2
@@ -1057,63 +1099,81 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				(begin2 <= begin1 && end2 > begin1)
 			);
 		},
-		_compareDays: function(x, y) {
-			var xDays = x._days,
-				yDays = y._days;
-			if (xDays > yDays)
+		/**
+		 * Compare the dates of 2 calendarItems Dom nodes
+		 * 
+		 * @param {DomElement} calendarItemDomNode1 
+		 * @param {DomElement} calendarItemDomNode1 
+		 * @returns 1 > 2: 1, 1 == 2: 0, 1 < 2: -1
+		 */
+		_compareDays: function(calendarItemDomNode1, calendarItemDomNode2) {
+			var days1 = calendarItemDomNode1._days,
+				days2 = calendarItemDomNode2._days;
+			if (days1 > days2)
 				return 1;
-			else if (xDays == yDays) {
-				var xlastModify = x._lastModify,
-					ylastModify = y._lastModify;
+			else if (days1 == days2) {
+				var lastModify1 = calendarItemDomNode1._lastModify,
+					lastModify2 = calendarItemDomNode2._lastModify;
 
-				if (xlastModify > ylastModify)
+				if (lastModify1 > lastModify2)
 					return 1;
-				else if (xlastModify == ylastModify)
+				else if (lastModify1 == lastModify2)
 					return 0;
 				return -1;
 			}
 			return -1;
 		},
-		_compareStartTime: function(x, y) {
-			var isDaylongMonX = zk.$(x)
-				.className == 'calendar.DaylongOfMonthItem',
-				isDaylongMonY = zk.$(y)
-				.className == 'calendar.DaylongOfMonthItem',
-				xBd = isDaylongMonX ?
-				Math.min(x.upperBoundBd.getTime(), x.zoneBd.getTime()) :
-				x.zoneBd.getTime(),
-				yBd = isDaylongMonY ?
-				Math.min(y.upperBoundBd.getTime(), y.zoneBd.getTime()) :
-				y.zoneBd.getTime(),
-				xEd = x.zoneEd.getTime(),
-				yEd = y.zoneEd.getTime();
+		/**
+		 * sort two calendarItem Dom elements by start time.
+		 * If same start, order by end time too
+		 * 
+		 * @param {DomElement} calendarItemDomNode1 
+		 * @param {DomElement} calendarItemDomNode2 
+		 * @returns 
+		 */
+		_compareStartTime: function(calendarItemDomNode1, calendarItemDomNode2) {
+				beginDate1 = (zk.$(calendarItemDomNode1) instanceof calendar.DaylongOfMonthItem) ?
+					Math.min(calendarItemDomNode1.upperBoundBd.getTime(), calendarItemDomNode1.zoneBd.getTime()) :
+					calendarItemDomNode1.zoneBd.getTime(),
+				beginDate2 = (zk.$(calendarItemDomNode2) instanceof calendar.DaylongOfMonthItem) ?
+					Math.min(calendarItemDomNode2.upperBoundBd.getTime(), calendarItemDomNode2.zoneBd.getTime()) :
+					calendarItemDomNode2.zoneBd.getTime(),
+				endDate1 = calendarItemDomNode1.zoneEd.getTime(),
+				endDate2 = calendarItemDomNode2.zoneEd.getTime();
 
-			if (xBd < yBd)
+			if (beginDate1 < beginDate2)
 				return -1;
-			else if (xBd == yBd) {
-				if (xEd < yEd)
+			else if (beginDate1 == beginDate2) {
+				if (endDate1 < endDate2)
 					return 1;
-				else if (xEd == yEd)
+				else if (endDate1 == endDate2)
 					return 0;
 				return -1;
 			}
 			return 1;
 		},
-		_getItemPeriod: function(ce) {
-			var bd = new Date(ce.zoneBd),
-				ed = new Date(ce.zoneEd);
+		/**
+		 * calculate the duration of an item in days
+		 * If end date is exactly midnight, set end date to 23:59:59:000 instead
+		 * 
+		 * @param {CalendarItemData} CalendarItemData 
+		 * @returns {Number} duration of the item in days
+		 */
+		_getItemPeriod: function(CalendarItemData) {
+			var beginDate = new Date(CalendarItemData.zoneBd),
+				endDate = new Date(CalendarItemData.zoneEd);
 
-			if (this._isZeroTime(ed))
-				ed = new Date(ed.getTime() - 1000);
+			if (this._isZeroTime(endDate))
+			endDate = new Date(endDate.getTime() - 1000);
 
-			bd.setHours(0, 0, 0, 0);
-			ed.setHours(23, 59, 59, 0);
+			beginDate.setHours(0, 0, 0, 0);
+			endDate.setHours(23, 59, 59, 0);
 
-			return Math.ceil((ed - bd) / calUtil.DAYTIME);
+			return Math.ceil((endDate - beginDate) / calUtil.DAYTIME);
 		},
 
 		/**
-		 * Returns true if the item is larger than one full
+		 * Returns true if the item is larger than one full day
 		 * 
 		 * @param {calendar.Calendars} wgt 
 		 * @param {CalendarItem as object} calendarItem 
@@ -1137,6 +1197,12 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				(calUtil.getPeriodDoubleValue(itemEndDate, itemBeginDate) >= 1 && calUtil.getPeriodDoubleValue(itemEndDate, wgt.zoneBd) >= 1))
 				return true;
 		},
+		/**
+		 * check if a date's time is set exactly at midnight
+		 * 
+		 * @param {Date} date 
+		 * @returns true if date's time is set at midnight (00:00:00:000)
+		 */
 		_isZeroTime: function(date) {
 			return (date.getHours() + date.getMinutes() +
 				date.getSeconds() + date.getMilliseconds() == 0);
