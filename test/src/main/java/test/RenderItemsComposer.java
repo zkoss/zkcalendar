@@ -57,6 +57,16 @@ public class RenderItemsComposer extends SelectorComposer {
                 .withZoneId(defaultZoneId)
                 .build();
         model.add(span3Item);
+
+        LocalDateTime day7 = day1.plusDays(6);
+        DefaultCalendarItem spanOverWeekendItem = new DefaultCalendarItem.Builder()
+                .withContent("span over weekend")
+                .withBegin(day7)
+                .withEnd(day7.plusDays(3).plusHours(8))
+                .withContentColor("orange")
+                .withZoneId(defaultZoneId)
+                .build();
+        model.add(spanOverWeekendItem);
     }
 
     private void addShortIntervalItem() {

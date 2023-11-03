@@ -149,4 +149,17 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals("2", span2daysItem.attr("colspan"));
     }
 
+    @Test
+    public void spanOverWeekend(){
+        JQuery dayLongContentRow = jq(".z-calendars-daylong-cnt tr:nth-child(2)");
+        JQuery dayCells = dayLongContentRow.find("td");
+        assertEquals(7, dayCells.length());
+        JQuery seventhCell = dayLongContentRow.find("td:nth-child(7)").eq(0);
+        assertEquals("1", seventhCell.attr("colspan"));
+        JQuery overWeekendItem = seventhCell.find(".z-calitem");
+        assertEquals(1, overWeekendItem.length());
+        assertEquals("span over weekend", overWeekendItem.text());
+
+    }
+
 }
