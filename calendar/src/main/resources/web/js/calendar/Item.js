@@ -142,11 +142,12 @@ calendar.Item = zk.$extends(zk.Widget, {
 	},
 
 	_setBoundDate: function (date, isAddOneDay) {
-		var boundDate = new Date(date);
-		boundDate.setHours(0,0,0,0);
-		if (isAddOneDay){
-			boundDate = calUtil.addDay(boundDate, 1);
+		var result = new Date(date);
+		if (date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds() != 0) {
+			if (isAddOneDay)
+				result = calUtil.addDay(date, 1);
+			result.setHours(0,0,0,0);
 		}
-		return boundDate;
+		return result;
 	}
 });
