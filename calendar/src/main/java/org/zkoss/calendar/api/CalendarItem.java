@@ -30,7 +30,6 @@ import java.util.Date;
 public interface CalendarItem {
 	/**
 	 * Returns the beginning date of the calendar item.
-	 * <p>
 	 * @deprecated since 3.0.0
 	 */
 	@Deprecated
@@ -40,14 +39,12 @@ public interface CalendarItem {
 
 	/**
 	 * Returns the beginning date of the calendar item in Instant.
-	 * <p>
 	 * @since 3.0.0
 	 */
 	public Instant getBegin();
 
 	/**
 	 * Returns the end date of the calendar item. (exclusive)
-	 * <p>
 	 * @deprecated since 3.0.0
 	 */
 	@Deprecated
@@ -57,7 +54,6 @@ public interface CalendarItem {
 
 	/**
 	 * Returns the beginning date of the calendar item in Instant.
-	 * <p>
 	 * @since 3.0.0
 	 */
 	public Instant getEnd();
@@ -115,7 +111,6 @@ public interface CalendarItem {
 
 	/**
 	 * Returns the zclass of the calendar item.
-	 * <p>
 	 * @since 3.1.0
 	 */
 	public String getZclass();
