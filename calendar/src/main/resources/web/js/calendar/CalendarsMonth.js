@@ -51,7 +51,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		zones: function () {
 			this._zones = jq.evalJSON(this._zones);
 			this._zonesOffset = jq.evalJSON(this.zonesOffset);
-			this.ts = this._zones.length;
+			this._zones.length = this._zones.length;
 			for (var i = this._zonesOffset.length; i--;)
 				this._zonesOffset[i] = zk.parseInt(this._zonesOffset[i]);
 							
@@ -481,8 +481,8 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					html.push('</div>');
 					return html.join('');
 				},
-				getRow: function (cnt) {
-					return cnt.firstChild.firstChild.rows[0].firstChild;
+				getRow: function (draggable) {
+					return draggable.node.firstChild.firstChild.rows[0].firstChild;
 				},
 				/**
 				 * 
@@ -637,9 +637,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 		widget.clearGhost();
 		if (!widget._pp) {
-			jq(document.body).append(widget.ppTemplate.replace(new RegExp("%([1-2])", "g"), function (match, index) {
-					return index < 2 ? uuid : 'z-calpp-month';
-			}));
+			jq(document.body).append(widget.getPopupTemplate(uuid,'z-calpp-month'));
 			widget._pp = pp = jq('#' + widget.uuid + '-pp')[0];
 			jq(document.body).bind('click', widget.proxy(widget.unMoreClick));
 			table = jq('#' + widget.uuid + '-ppcnt')[0];
@@ -647,7 +645,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			if (!widget._readonly)
 				jq(pp).bind('click', widget.proxy(widget.onPopupClick));
 		} else {
-			if (widget._pp.ci == ci) {
+			if (widget._pp.cellIndex == ci) {
 				// ignore onItemCreate
 				evt.stop();
 				return;
@@ -658,7 +656,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			pp = widget._pp;
 		}
 
-		pp.ci = ci;
+		pp.cellIndex = ci;
 
 		var date = cell.parentNode.parentNode.firstChild.cells[ci].firstChild,
 			targetDate = new Date(date.time);
@@ -673,12 +671,12 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}
 
 		var offs = zk(row.lastChild.rows[0].cells[ci]).revisedOffset(),
-			csz = cell.parentNode.cells.length,
+		cellCount = cell.parentNode.cells.length,
 			single = cell.offsetWidth,
 			wd = single * 3 * 0.9;
 
 		if (ci > 0)
-			if (csz != ci + 1)
+			if (cellCount != ci + 1)
 				pp.style.left = jq.px(offs[0] - (wd - single) / 2);
 			else
 				pp.style.left = jq.px(offs[0] - (wd - single));

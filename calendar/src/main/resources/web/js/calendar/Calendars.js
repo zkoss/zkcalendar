@@ -814,15 +814,15 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				calendarItemNode = targetWidget.$instanceof(calendar.Item) ? targetWidget.$n() : null,
 				heighsPerRow = [];
 			jq(document.body).prepend(dataObj.getRope(widget, contentNode, heighsPerRow));
-			var row = dataObj.getRow(contentNode),
-				width = row.offsetWidth,
+			var rowFirstCell = dataObj.getRow(draggable),
+				width = rowFirstCell.offsetWidth,
 				mousePosition = {x: evt.pageX, y: evt.pageY};
 			draggable._zinfo = [];
 
-			for (var left = 0, currentRow = row; currentRow; left += currentRow.offsetWidth, currentRow = currentRow.nextSibling)
+			for (var left = 0, currentRowCell = rowFirstCell; currentRowCell; left += currentRowCell.offsetWidth, currentRowCell = currentRowCell.nextSibling)
 				draggable._zinfo.push({
 					left: left,
-					width: currentRow.offsetWidth
+					width: currentRowCell.offsetWidth
 				});
 
 			draggableOffsets = zk(inMonthMold ? contentNode : draggable.handle).revisedOffset();
