@@ -33,6 +33,12 @@ public abstract class AbstractCalendarItem<T> implements CalendarItem {
 	protected boolean _locked;
 	protected T _begin;
 	protected T _end;
+	
+	/**
+	 * Unused constructor, used for serialization / deserialization
+	 */
+	public AbstractCalendarItem() {
+	}
 
 	@Deprecated
 	public AbstractCalendarItem(String title, String content, String headerColor, String contentColor, boolean locked, T begin, T end) {
