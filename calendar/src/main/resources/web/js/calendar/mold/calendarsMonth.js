@@ -17,7 +17,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		zcls = this.getZclass(),
 		toolbar = this.firstChild,
 		bdTime = this.zoneBd.getTime(),
-		current = new Date(),
+		newDate = new Date(),
+		current = this._currentDate || newDate,
 		weekend = [-1, -1];
 	
 	// CSS ClassName
@@ -124,7 +125,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			if (weekend[0] == i || weekend[1] == i)
 				out.push(' ', week_weekend);
 		
-			if (calUtil.isTheSameDay(current, tempBd))
+			if (calUtil.isTheSameDay(newDate, tempBd))
 				out.push(' ', week_today);
 
 			if (curMonth != tempBd.getMonth())
@@ -147,7 +148,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			if (weekend[0] == i || weekend[1] == i)
 				out.push(' ', week_weekend);
 
-			if (calUtil.isTheSameDay(current, bd))//today
+			if (calUtil.isTheSameDay(newDate, bd))//today
 				out.push(' ', week_today);
 		
 
