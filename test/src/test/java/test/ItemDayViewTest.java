@@ -31,7 +31,7 @@ public class ItemDayViewTest extends CalendarTestBase {
 
         click(jq("$next")); //jan 7, next day
         waitResponse();
-        assertEquals(2, dayLongItems.length());
+        assertEquals(3, dayLongItems.length());
         assertEquals(1, firstDayLongItem.length());
         assertEquals(0, jq(".z-calendars-week-day-cnt .z-calitem").length());
     }
