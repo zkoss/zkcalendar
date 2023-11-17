@@ -127,9 +127,13 @@ calendar.Item = zk.$extends(zk.Widget, {
 		}
 		node.upperBoundBd = this._setBoundDate(bd); // earliest
 		if (this._isDayItem()) return;
-		node.lowerBoundEd = this._setBoundDate(ed, true); // latest
+		if (calUtil.isTheSameDay(bd, ed)){
+			node.lowerBoundEd = calUtil.addDay(new Date(ed), 1);
+		}else{
+			node.lowerBoundEd = this._setBoundDate(ed, true); // latest
+		}
 	},
-	
+
 	_isDayItem: function () {
 //		zk.log(this.$instanceof(calendarDayEvent));
 		if (!this._isDayEvt)
