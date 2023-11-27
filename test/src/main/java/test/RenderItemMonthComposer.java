@@ -26,6 +26,19 @@ public class RenderItemMonthComposer extends SelectorComposer {
         calendars.setModel(model);
         addSameBeginEndTime();
         addDaySpanItems();
+        addOverWeekendItems();
+    }
+
+    private void addOverWeekendItems() {
+        LocalDateTime day13 = day1.plusDays(12).plusHours(8);
+        DefaultCalendarItem overWeekend = new DefaultCalendarItem.Builder()
+                .withBegin(day13)
+                .withEnd(day13.plusDays(2))
+                .withZoneId(calendars.getDefaultTimeZone().toZoneId())
+                .withContent("over a weekend")
+                .withSclass("over-weekend")
+                .build();
+        model.add(overWeekend);
     }
 
     private void addDaySpanItems() {

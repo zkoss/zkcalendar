@@ -1,3 +1,4 @@
 <zk>
     <calendars mold="month" apply="test.RenderItemMonthComposer" height="90%"/>
+    <script src="test-helper.js"/>
 </zk>
