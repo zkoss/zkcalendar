@@ -44,4 +44,11 @@ public class CalendarTestBase extends WebDriverTestCase {
     public void clean(){
         driver.quit();
     }
+
+
+    /* localhost testing can have smaller time value to reduce testing time, */
+    @Override
+    protected int getSpeed() {
+        return 50;
+    }
 }
