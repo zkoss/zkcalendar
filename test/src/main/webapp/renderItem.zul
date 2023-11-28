@@ -1,6 +1,7 @@
 <zk>
     <button id="previous" label="Previous"/>
     <button id="next" label="Next"/>
-
+    <button id="monthMold" label="Month"/>
+    <button id="defaultMold" label="Default"/>
     <calendars id="cal" apply="test.RenderItemsComposer" height="90%"/>
 </zk>

@@ -263,4 +263,14 @@ public class RenderItemsComposer extends SelectorComposer {
         calendars.setDays(1);
         calendars.setCurrentDate(clickedDate);
     }
+
+    @Listen("onClick = #monthMold")
+    public void toMonthMold(){
+        calendars.setMold("month");
+    }
+
+    @Listen("onClick = #defaultMold")
+    public void toDefaultMold(){
+        calendars.setMold("default");
+    }
 }
