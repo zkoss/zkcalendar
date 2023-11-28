@@ -72,7 +72,9 @@ function resetVersion(){
 }
 
 function writeVersionProperties() {
-    echo "version=$NEW_VERSION" > version.properties
+    echo "project=calendar" > version.properties
+    echo "version=$NEW_VERSION" >> version.properties
+    echo "maven=ce" >> version.properties
     echo "Created version.properties with version $NEW_VERSION"
 }
 
