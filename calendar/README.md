@@ -2,6 +2,9 @@
 Those who tends to develop this component should read and maintain this doc.
 
 # Build 
+## jenkins job
+http://jenkins3/job/ZK%20Calendar%20Release/
+
 ## FL
 1. use FL version
 in parent pom.xml, use FL version pattern 
