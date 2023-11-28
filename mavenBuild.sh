@@ -17,12 +17,12 @@ function printUsage() {
     echo "Usage: $0 [official|freshly]"
 }
 
-# Function to print the edition
+
 function printEdition() {
     echo "=== Build $edition ==="
 }
 
-# Function to validate and set the edition
+
 function setEdition() {
     local input=$1
     case $input in
@@ -40,29 +40,27 @@ function setEdition() {
 }
 
 
-
-
-function setReleaseVersion(){
+function setReleaseVersion() {
     STAMP=$(date +%Y%m%d)
-    Build_POM="pom.xml"
-    VERSION=`sed -nre 's:^.*<calendar.version>(.*)</calendar.version>.*$:\1:p' ${Build_POM}`
+    BUILD_POM="pom.xml"
+    VERSION=`sed -nre 's:^.*<calendar.version>(.*)</calendar.version>.*$:\1:p' ${BUILD_POM}`
     VERSION=(${VERSION[@]})
     VERSION=${VERSION[0]}
     NEW_VERSION=${VERSION%-SNAPSHOT}
 
     if [ "freshly" = "$edition" ] ; then
-      echo "=== Build $NEW_VERSION.FL.$STAMP ===="
-      sed -i "/version>/,/<\//s/>$VERSION.*<\//>$NEW_VERSION.FL.$STAMP<\//" ${Build_POM}
-      echo "$1 pom.xml"
-      grep -n --color=auto $NEW_VERSION.FL.$STAMP ${Build_POM}
-
+        NEW_VERSION="$NEW_VERSION.FL.$STAMP"
+        echo "=== Build $NEW_VERSION ===="
+        sed -i "s/<calendar.version>$VERSION<\/calendar.version>/<calendar.version>$NEW_VERSION<\/calendar.version>/" ${BUILD_POM}
     else
-      echo "=== Build $NEW_VERSION ===="
-      sed -i "/version>/,/<\//s/>$VERSION.*<\//>$NEW_VERSION<\//" calenars/pom.xml
-      echo "$1 pom.xml"
-      grep -n --color=auto $NEW_VERSION ${Build_POM}
+        echo "=== Build $NEW_VERSION ===="
+        sed -i "s/<calendar.version>$VERSION<\/calendar.version>/<calendar.version>$NEW_VERSION<\/calendar.version>/" ${BUILD_POM}
     fi
+
+    echo "$1 pom.xml"
+    grep -n --color=auto $NEW_VERSION ${BUILD_POM}
 }
+
 
 function resetVersion(){
     ## reset version to original version
@@ -73,7 +71,6 @@ function resetVersion(){
     fi
 }
 
-# Main script execution
 set -e # exit immediately if any command within the script exits with a non-zero status
 setEdition $1
 printEdition
