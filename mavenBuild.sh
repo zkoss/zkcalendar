@@ -71,9 +71,14 @@ function resetVersion(){
     fi
 }
 
+function writeVersionProperties() {
+    echo "version=$NEW_VERSION" > version.properties
+    echo "Created version.properties with version $NEW_VERSION"
+}
+
 set -e # exit immediately if any command within the script exits with a non-zero status
 setEdition $1
 printEdition
 setReleaseVersion
 buildBundle
-
+writeVersionProperties

@@ -3,7 +3,20 @@
 # Variables
 RELEASE_VAULT="/media/potix/rd"
 PROJECT_RELEASE_PATH="/calendar/releases"
-VERSION=$1
+
+
+function setVersionFromProperties() {
+    if [ -f "version.properties" ]; then
+        VERSION=$(grep -oP 'version=\K.*' version.properties)
+        if [ -z "$VERSION" ]; then
+            echo "Error: Version not found in version.properties."
+            exit 1
+        fi
+    else
+        echo "Error: version.properties file does not exist."
+        exit 1
+    fi
+}
 
 
 function checkDirectory() {
@@ -34,5 +47,7 @@ function copyBundleJar() {
     fi
 }
 
+
+setVersionFromProperties
 checkDirectory
 copyBundleJar
