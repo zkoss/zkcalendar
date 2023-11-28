@@ -17,6 +17,10 @@ public class CalendarTestBase extends WebDriverTestCase {
     }
     static protected WebDriver staticDriver;
 
+    static protected String calendarSclass(String subCssClass) {
+        return ".z-calendars-"+subCssClass;
+    }
+
     protected void reloadPage() {
         driver.navigate().refresh();
     }
