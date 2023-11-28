@@ -5,7 +5,7 @@
 # Usage:
 # see printUsage()
 
-goals='clean package'
+goals='clean compile package'
 
 # build a maven bundle file
 function buildBundle(){
@@ -71,12 +71,14 @@ function resetVersion(){
     fi
 }
 
+
 function writeVersionProperties() {
     echo "project=calendar" > version.properties
     echo "version=$NEW_VERSION" >> version.properties
     echo "maven=ce" >> version.properties
     echo "Created version.properties with version $NEW_VERSION"
 }
+
 
 set -e # exit immediately if any command within the script exits with a non-zero status
 setEdition $1
