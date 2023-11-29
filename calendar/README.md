@@ -1,26 +1,15 @@
 # Development Note
 Those who tends to develop this component should read and maintain this doc.
 
-# Build 
+# Build and publish to CE repository
 ## jenkins job
-http://jenkins3/job/ZK%20Calendar%20Release/
+[ZKCalendarRelease](http://jenkins3/job/ZK%20Calendar%20Release/)
 
-## FL
-1. use FL version
-in parent pom.xml, use FL version pattern 
-```xml
-		<calendar.main.version>3.1.2</calendar.main.version>
-		<revision>${calendar.main.version}.FL.${maven.build.timestamp}</revision>
-```
-2. run `mvn clean package` to produce a bundle jar
-3. upload to the fileserver `/potix/rd/calendar/release/[FL-version]/maven/*-bundle.jar`
+## Local build
+run `mavenBuild.sh`
 
-# publish to Maven repository
+## publish to Maven repository
 run [PBFUM](http://jenkins2/jenkins2/view/All/job/PBFUM/)
-
-## Parameters
-* project: `calendar`
-* version: `FL-version`
 
 
 # LESS
