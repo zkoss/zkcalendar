@@ -1,6 +1,6 @@
 package test;
 
-import org.junit.Test;
+import org.junit.*;
 import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.impl.*;
 
@@ -57,5 +57,10 @@ public class SerializationTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void fail(){
+        Assert.assertEquals("no error", "on purpose error");
     }
 }
