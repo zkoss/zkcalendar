@@ -1,6 +1,10 @@
 #!/bin/bash
+# send the following file to file server
+# maven/calendar-[VERSION]-bundle.jar
+# bin/zk-calendar-src-[VERSION].zip
+# bin/zk-calendar-bin-[VERSION].zip
 
-# Variables
+
 RELEASE_VAULT="/media/potix/rd"
 PROJECT_RELEASE_PATH="/calendar/releases"
 
@@ -19,11 +23,13 @@ function setVersionFromProperties() {
 }
 
 
-function checkDirectory() {
-    local targetDir=$RELEASE_VAULT$PROJECT_RELEASE_PATH/$VERSION/maven
-    if [ ! -d "$targetDir" ]; then
-        createDirectory "$targetDir"
-    fi
+# if specified folder doesn't exist, if create it
+function checkTargetDirectory() {
+    for dir in "$@"; do
+        if [ ! -d "$dir" ]; then
+            createDirectory "$dir"
+        fi
+    done
 }
 
 
@@ -37,6 +43,24 @@ function createDirectory() {
 function copyBundleJar() {
     local sourceFile="calendar/target/calendar-$VERSION-bundle.jar"
     local targetDir=$RELEASE_VAULT$PROJECT_RELEASE_PATH/$VERSION/maven
+    copyFile "$sourceFile" "$targetDir"
+}
+
+
+
+function copyZip() {
+    local sourceZip="calendar/target/zk-calendar-src-$VERSION.zip"
+    local binaryZip="calendar/target/zk-calendar-bin-$VERSION.zip"
+    local targetDir=$RELEASE_VAULT$PROJECT_RELEASE_PATH/$VERSION/bin
+
+    copyFile "$sourceZip" "$targetDir"
+    copyFile "$binaryZip" "$targetDir"
+}
+
+
+function copyFile() {
+    local sourceFile=$1
+    local targetDir=$2
 
     if [ -f "$sourceFile" ]; then
         echo "Copying $sourceFile to $targetDir"
@@ -49,5 +73,6 @@ function copyBundleJar() {
 
 
 setVersionFromProperties
-checkDirectory
+checkTargetDirectory "$RELEASE_VAULT$PROJECT_RELEASE_PATH/$VERSION/maven" "$RELEASE_VAULT$PROJECT_RELEASE_PATH/$VERSION/bin"
 copyBundleJar
+copyZip

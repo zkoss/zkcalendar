@@ -2,7 +2,7 @@
 Those who tends to develop this component should read and maintain this doc.
 
 # Build and publish to CE repository
-## jenkins job
+## Jenkins build job
 [ZKCalendarRelease](http://jenkins3/job/ZK%20Calendar%20Release/)
 
 ## Local build
@@ -26,3 +26,14 @@ so we can look for bug in the future.
 * write clear component specification that unit test aims to test
 * we run multiple test cases on one zul because `connect()` is time-consuming. Avoid connecting a zul in each test case can reduce testing time to 10%.
 So it reuses web driver on purpose.
+
+
+# The process of release a freshly version
+1. Run [Build Job](#jenkins-build-job)
+
+
+# The process of release an official version
+1. update `/zkdoc/release-note` from https://tracker.zkoss.org/projects/ZKCAL?selectedItem=com.atlassian.jira.jira-projects-plugin%3Arelease-page&status=released-unreleased -> click specific version -> Release Notes
+2. change to official version (without `-SNAPSHOT`) with `bin/upVer.sh {version}-SNAPSHOT {version}` (modify {version} to the released version)
+3. commit the above changes and set version **tag** with git
+5. Run [Build Job](#jenkins-build-job) with official version
