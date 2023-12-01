@@ -61,14 +61,7 @@ else
   grep -n --color=auto $newVersion $1/pom.xml
 fi
 
-for d in */; do
-    upVer $d
-done
-
-# Update poi/build.gradle
-if [ -f poi/build.gradle ] ; then
-  echo "poi/build.gradle"
-  find ./poi/build.gradle -exec sed -i "
-  s/version = '$oldVersion.*'/version = '$newVersion'/g
-  " {} \; -exec grep -n --color=auto $newVersion {} \;
-fi
+upVer "calendar"
+upVer "essentials"
+upVer "test"
+upVer "zkcalendardemo"
