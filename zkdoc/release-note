@@ -1,3 +1,21 @@
+3.1.2
+
+* Bug:
+[ZKCAL-103] - onDayClick event is not fired
+[ZKCAL-104] - AbstractCalendarItem have no arg constructor, fails to deserialize
+[ZKCAL-105] - calendarsMonth use new Date() instead of current date when drawing from mold
+[ZKCAL-109] - the hovering effect of texts day-of-week is gone
+[ZKCAL-111] - Remove border-radius if the item is continued to a different row
+[ZKCAL-113] - doesn't render consecutive calendar Items in full width and non-shifted
+[ZKCAL-114] - a calendar item starts at 00:00 and end at 00:00 causes a js error
+[ZKCAL-116] - CalendarItem's sclass is not rendered in a browser
+[ZKCAL-117] - an item with the same begin time and end time is invisible
+[ZKCAL-118] - an instant item covers another half-hour item at the same begin time
+[ZKCAL-119] - an item starts and ends with 00:00 is not rendered on 1/1
+[ZKCAL-120] - set content color and header color doesn't work as expected
+[ZKCAL-121] - an item that spans 2 days, its width doesn't equal to the day column width in one-day view
+
+
 calendar 3.1.1
 * Bugs:
 	ZKCAL-99: Maven build includes unnecessary dependencies
