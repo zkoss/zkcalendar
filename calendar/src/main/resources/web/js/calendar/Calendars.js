@@ -24,6 +24,22 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			'</div></div>',
 			'</div>'
 		].join(''),
+		/**
+		 * "More..." popup container template 
+		 * 
+		 * @param {string} domId 
+		 * @param {string} domClass 
+		 * @returns 
+		 */
+		getPopupTemplate(domId, domClass){
+			return [`<div id="${domId}-pp" class="${domClass}" style="position:absolute; top:0;left:0;">`,
+				`<div class="${domClass}-body"><div class="${domClass}-inner">`,
+				`<div class="${domClass}-header"><div id="${domId}-ppc" class="${domClass}-close"></div><div id="${domId}-pphd" class="${domClass}-header-cnt"></div></div>`,
+				`<div class="${domClass}-cnt"><div class="${domClass}-evts"><table id="${domId}-ppcnt" class="${domClass}-evt-cnt" cellpadding="0" cellspacing="0"><tbody></tbody></table></div></div>`,
+				'</div></div>',
+				'</div>'
+			].join('')
+		},
 
 		/**
 		 * "More..." popup item template

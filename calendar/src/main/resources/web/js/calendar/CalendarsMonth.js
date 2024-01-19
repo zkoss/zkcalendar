@@ -672,14 +672,14 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 		var offs = zk(row.lastChild.rows[0].cells[ci]).revisedOffset(),
 		cellCount = cell.parentNode.cells.length,
-			single = cell.offsetWidth,
-			wd = single * 3 * 0.9;
+			cellWidth = cell.offsetWidth,
+			wd = cellWidth * 3 * 0.9;
 
 		if (ci > 0)
 			if (cellCount != ci + 1)
-				pp.style.left = jq.px(offs[0] - (wd - single) / 2);
+				pp.style.left = jq.px(offs[0] - (wd - cellWidth) / 2);
 			else
-				pp.style.left = jq.px(offs[0] - (wd - single));
+				pp.style.left = jq.px(offs[0] - (wd - cellWidth));
 		else pp.style.left = jq.px(offs[0]);
 
 		pp.style.top = jq.px(offs[1]);

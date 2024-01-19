@@ -338,7 +338,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			timeZonesLenght = this._zones.length,
 			captionByTimeOfDay = this._captionByTimeOfDay;
 		
-		_updateHourColSize(this);
+		this._updateHourColSize(this);
 		
 		if (this._updateTimeZoneColSize())
 			opts = {ignoreFirstCol: false};
@@ -798,7 +798,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			uuid = calendarsWidget.uuid,
 			cellIndex = clickedCell.cellIndex,
 			pp,
-			table = calendarsWidget.$n("ppcnt");
+			table;
 		
 		calendarsWidget.clearGhost();
 		if (!calendarsWidget._pp) {
@@ -815,7 +815,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				evt.stop();
 				return;
 			}
-
+			table = calendarsWidget.$n("ppcnt");
 			for (var rowIndex = table.rows.length; rowIndex--;)
 				jq(table.rows[0]).remove();
 			pp = calendarsWidget._pp;
@@ -848,80 +848,92 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		//filling data
 		var evts = calendarsWidget._itemsData[cellIndex],
 			oneDay = calUtil.DAYTIME,
-			bd = calendarsWidget.zoneBd;
-			ed = new Date(bd);
-		ed = calUtil.addDay(ed, 1);
+			beginDate = calendarsWidget.zoneBd;
+			endDate = new Date(beginDate);
+		endDate = calUtil.addDay(endDate, 1);
 			
-		for (var i = evts.length; i--;) {
-			var tr = table.insertRow(0),
-				cr = tr.insertCell(0),
-				cm = tr.insertCell(0),
-				cl = tr.insertCell(0),
-				ce = evts[i],
-				item = zk.Widget.$(ce).item,
-				hc = item.headerColor,
-				cc = item.contentColor,
-				zcls = item.zclass;
+		for (var eventIndex = evts.length; eventIndex--;) {
+			var eventTrElement = table.insertRow(0),
+				cellRight = eventTrElement.insertCell(0),
+				cellMiddle = eventTrElement.insertCell(0),
+				cellLeft = eventTrElement.insertCell(0),
+				currentEvent = evts[eventIndex],
+				calendarItemData = zk.Widget.$(currentEvent).item,
+				headerColor = calendarItemData.headerColor,
+				contentColor = calendarItemData.contentColor,
+				itemZclass = calendarItemData.zclass;
 				
-			ce._bd = ce._bd || item.zoneBd;
-			ce._ed = ce._ed || item.zoneEd;
-			cl.className = 'z-calpp-evt-l';
-			if (bd.getTime() + (oneDay * cellIndex) - ce._bd.getTime() >= 1000) {
-				var info = [
-						ce.id + '-fl',
-						zcls,
-						zcls + '-left',
-						ce._bd.getMonth() + 1 + '/' + ce._bd.getDate(),
-						hc ? ' style="background:' + hc + '"' : '',
-						cc ? ' style="background:' + cc + '"' : '',
-						cc ? ' style="border-bottom-color:' + cc + ';border-top-color:' + cc + '"' : '',
-						cc ? ' style="background:' + cc + '"' : '',
-					];
-				cl.innerHTML = calendarsWidget.itemTemplate.replace(new RegExp("%([1-8])", "g"), function (match, index) {
-					return info[index - 1];
-				});
+			currentEvent._bd = currentEvent._bd || calendarItemData.zoneBd;
+			currentEvent._ed = currentEvent._ed || calendarItemData.zoneEd;
+			cellLeft.className = 'z-calpp-evt-l';
+			if (beginDate.getTime() + (oneDay * cellIndex) - currentEvent._bd.getTime() >= 1000) {
+				/** marked %i legacy info object for easier read
+				* %1 elementId
+				* %2 elementClass
+				* %3 elementSubClass
+				* %4 itemText
+				* %5 bodyAttributes
+				* %6 contentAttributes
+				* %7 ! removed ! - wasn't used in itemTemplate
+				* %8 bodyInnerAttributes
+				 */
+				cellLeft.innerHTML = calendarsWidget.getItemTemplate(
+					currentEvent.id + '-fl', //%1 elementId
+					itemZclass,//%2 elementClass
+					itemZclass + '-left', //%3 elementSubClass
+					currentEvent._bd.getMonth() + 1 + '/' + currentEvent._bd.getDate(),//%4 itemText
+					headerColor ? ' style="background:' + headerColor + '"' : '',//%5 bodyAttributes
+					contentColor ? ' style="background:' + contentColor + '"' : '',//%6 contentAttributes
+					contentColor ? ' style="background:' + contentColor + '"' : ''//%8 bodyInnerAttributes
+				);
 			} else
-				cl.innerHTML = '';
+				cellLeft.innerHTML = '';
 		
-			cm.className = 'z-calpp-evt-m';
+			cellMiddle.className = 'z-calpp-evt-m';
 			
-			var faker = ce.cloneNode(true);
+			var faker = currentEvent.cloneNode(true);
 			jq(faker).addClass('z-calpp-evt-faker');
-			cm.appendChild(faker);
+			cellMiddle.appendChild(faker);
 
-			cr.className = 'z-calpp-evt-r';
-			if (ce._ed.getTime() - (ed.getTime() + (oneDay * cellIndex)) >= 1000) {
-				var d = new Date(ce._ed.getTime() - 1000),
-					info = [
-						ce.id + '-fr',
-						zcls,
-						zcls + '-right',
-						d.getMonth() + 1 + '/' + d.getDate(),
-						hc ? ' style="background:' + hc + '"' : '',
-						cc ? ' style="background:' + cc + '"' : '',
-						cc ? ' style="border-bottom-color:' + cc + ';border-top-color:' + cc + '"' : '',
-						cc ? ' style="background:' + cc + '"' : ''
-					];
-				cr.innerHTML = calendarsWidget.itemTemplate.replace(new RegExp("%([1-8])", "g"), function (match, index) {
-					return info[index - 1];
-				});
+			cellRight.className = 'z-calpp-evt-r';
+			if (currentEvent._ed.getTime() - (endDate.getTime() + (oneDay * cellIndex)) >= 1000) {
+				var d = new Date(currentEvent._ed.getTime() - 1000);
+				
+				/** marked %i legacy info object for easier read
+				* %1 elementId
+				* %2 elementClass
+				* %3 elementSubClass
+				* %4 itemText
+				* %5 bodyAttributes
+				* %6 contentAttributes
+				* %7 ! removed ! - wasn't used in itemTemplate
+				* %8 bodyInnerAttributes
+				 */
+				cellRight.innerHTML = calendarsWidget.getItemTemplate(
+					currentEvent.id + '-fr', //%1 elementId
+					itemZclass, //%2 elementClass
+					itemZclass + '-right', //%3 elementSubClass
+					d.getMonth() + 1 + '/' + d.getDate(), //%4 itemText
+					headerColor ? ' style="background:' + headerColor + '"' : '',//%5 bodyAttributes
+					contentColor ? ' style="background:' + contentColor + '"' : '', //%6 contentAttributes
+					contentColor ? ' style="background:' + contentColor + '"' : ''); //%8 bodyInnerAttributes
 			} else
-				cr.innerHTML = '';
+				cellRight.innerHTML = '';
 		}
 		zk(pp).cleanVisibility();
 		evt.stop();
 	},
 		
-	onDrop_: function (drag, evt) {
+	onDrop_: function (draggable, evt) {
 		var target = evt.domTarget,
 			time = new Date(this.zoneBd),
-			data = zk.copy({dragged: drag.control}, evt.data),
-			ce;
+			calendarItemData = zk.copy({dragged: draggable.control}, evt.data),
+			calendarItem;
 		
-		if ((ce = zk.Widget.$(target)) &&
-			ce.className != 'calendar.CalendarsDefault') {
-			data.ce = ce.item.id;
-			target = ce.$n().parentNode;
+		if ((calendarItem = zk.Widget.$(target)) &&
+			calendarItem.className != 'calendar.CalendarsDefault') {
+				calendarItemData.ce = calendarItem.item.id;
+			target = calendarItem.$n().parentNode;
 		}
 		
 		if (jq.nodeName(target, 'td') &&
@@ -931,14 +943,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			target = target.parentNode;
 			time.setDate(time.getDate() + target.cellIndex - this._zones.length);
 			
-			var cnt = this.$n('cnt'),
-				offs = zk(cnt).revisedOffset(),
-				rows = Math.floor((evt.pageY + cnt.scrollTop - offs[1]) / this.perHeight)
+			var contentNode = this.$n('cnt'),
+				offs = zk(contentNode).revisedOffset(),
+				rows = Math.floor((evt.pageY + contentNode.scrollTop - offs[1]) / this.perHeight)
 					+ this.beginIndex;
 			time.setMinutes(time.getMinutes() + rows * 60 / this._timeslots);
 		} else return;
-		data.time = this.fixTimeZoneFromClient(time);
-		this.fire('onDrop', data, null, zk.Widget.auDelay);
+		calendarItemData.time = this.fixTimeZoneFromClient(time);
+		this.fire('onDrop', calendarItemData, null, zk.Widget.auDelay);
 	},
 			
 	unMoreClick: function (evt) {
@@ -946,9 +958,9 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			this.closeFloats();
 	},
 	
-	fireCalEvent: function (bd, ed, evt, id) {
+	fireCalEvent: function (beginDate, endDate, evt, id) {
 		var uuid = this.uuid;
-		if (bd.getMinutes() == ed.getMinutes() && bd.getHours() == ed.getHours()) {
+		if (beginDate.getMinutes() == endDate.getMinutes() && beginDate.getHours() == endDate.getHours()) {
 			jq.alert('The DST begin time and end time cannot be equal', {icon: 'ERROR'});
 			jq('#' + uuid + '-dd').remove();
 			delete this._ghost[uuid];
@@ -956,14 +968,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				jq(id, zk)[0].style.visibility = '';
 		} else {
 			//ZKCAL-50: add event on DST start day
-			var zoneBd = this.zoneBd,
-				DST = zoneBd.getHours() == 23 ? 1 : 0;
-			bd.setHours(bd.getHours() + (bd.getTime() == zoneBd.getTime() ? DST * 2 : DST));
-			ed.setHours(ed.getHours() + DST);
+			var zoneBegingDate = this.zoneBd,
+				DST = zoneBegingDate.getHours() == 23 ? 1 : 0;
+			beginDate.setHours(beginDate.getHours() + (beginDate.getTime() == zoneBegingDate.getTime() ? DST * 2 : DST));
+			endDate.setHours(endDate.getHours() + DST);
 			var widget = this,
 				data = [
-					this.fixTimeZoneFromClient(bd),
-					this.fixTimeZoneFromClient(ed),
+					this.fixTimeZoneFromClient(beginDate),
+					this.fixTimeZoneFromClient(endDate),
 					evt.pageX,
 					evt.pageY,
 					jq.innerWidth(),
@@ -997,32 +1009,30 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		return Math.min(index, maxAvailableTimeslotIndex);
 	},
 	
-	_getTimeOffset: function (d, dur, dur2) {
-		var d1 = new Date(d),
-			index = dur2 ? dur2 : this.getTimeIndex(d) + dur,
+	_getTimeOffset: function (date, duration, duration2) {
+		var clonedDate = new Date(date),
+			index = duration2 ? duration2 : this.getTimeIndex(date) + duration,
 			timeslots = this._timeslots;
 
-		d1.setHours(this._bt + Math.floor(index / timeslots), (index % timeslots) * (60 / timeslots), 0, 0);
-		d.setMilliseconds(0);
+		clonedDate.setHours(this._bt + Math.floor(index / timeslots), (index % timeslots) * (60 / timeslots), 0, 0);
+		date.setMilliseconds(0);
 
-		return dur2 ? d1 - d : d - d1;
+		return duration2 ? clonedDate - date : date - clonedDate;
 	},
 
 	fixPosition: function () {
-		var cnt = this.$n('cnt'),
-			row = this.cntRows,
-			perHgh = this.perHeight,
+		var perRowHeight = this.perHeight,
 			weekDay = this.weekDay,
 			hourCount = this._et - this._bt,
 			timeslots = this._timeslots,
 			slotCount = hourCount * this._timeslots;
 
-		for (var i = 0, j = this._daySpace.length; i < j; i++) {
-			var list = this._daySpace[i];
-			if (!list.length) continue;
+		for (var daySpaceIndex = 0; daySpaceIndex < this._daySpace.length; daySpaceIndex++) {
+			var calItemlist = this._daySpace[daySpaceIndex];
+			if (!calItemlist.length) continue;
 			var calItemsOneDay = [];
-			for (var n = slotCount; n--;)
-				calItemsOneDay[n] = [];
+			for (var timeSlotIndex = slotCount; timeSlotIndex--;)
+				calItemsOneDay[timeSlotIndex] = [];
 			/*  position .calitem according to timeslot into a 2D-array
                 Item A's timeslot index 5 ~ 7
                 Item B's timeslot index 6 ~ 8
@@ -1031,66 +1041,66 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
                 calItemsOneDay[7] = [A, B]
                 calItemsOneDay[8] = [B]
              */
-			for (var k = 0, l = list.length; k < l; k++) {
-				var ce = list[k],
-					childWidget = zk.Widget.$(ce),
-					target = weekDay[ce._preOffset].firstChild,
-					item = childWidget.item,
-					bd = new Date(item.zoneBd),
-					ed = new Date(item.zoneEd),
-					isCrossDay = ed.getDate() != bd.getDate();
-				jq(target).append(ce);
-				ce.style.visibility = '';
+			for (var calItemIndex = 0; calItemIndex < calItemlist.length; calItemIndex++) {
+				var calendarItemNode = calItemlist[calItemIndex],
+					calendarItemWidget = zk.Widget.$(calendarItemNode),
+					target = weekDay[calendarItemNode._preOffset].firstChild,
+					calendarItemData = calendarItemWidget.item,
+					beginDate = new Date(calendarItemData.zoneBd),
+					endDate = new Date(calendarItemData.zoneEd),
+					isCrossDay = endDate.getDate() != beginDate.getDate();
+				jq(target).append(calendarItemNode);
+				calendarItemNode.style.visibility = '';
 
-				ce._bd = bd;
-				ce._ed = ed;
+				calendarItemNode._bd = beginDate;
+				calendarItemNode._ed = endDate;
 				// cross day
 				if (isCrossDay)
-					ed = new Date(ed.getTime() - 1000);
+					endDate = new Date(ed.getTime() - 1000);
 
 				// fix hgh
-				var bi = this.getTimeIndex(bd),
-					ei = this.getTimeIndex(ed),
-					top = bi * perHgh,
+				var beginTimeIndex = this.getTimeIndex(beginDate),
+					endTimeIndex = this.getTimeIndex(endDate),
+					top = beginTimeIndex * perRowHeight,
 					timeslots = this._timeslots,
-					bdHeightOffs = 0,
-					edHeightOffs = 0;
+					beginDateHeightOffs = 0,
+					endDateHeightOffs = 0;
 
-				if (bi) {
-					var bdTimeslot = this.$class._getHightOffsPercent(bd, timeslots);
-					bdHeightOffs = bdTimeslot ? perHgh * bdTimeslot : 0;
+				if (beginTimeIndex) {
+					var beginDateTimeslot = this.$class._getHightOffsPercent(beginDate, timeslots);
+					beginDateHeightOffs = beginDateTimeslot ? perRowHeight * beginDateTimeslot : 0;
 				}
-				if (ei) {
-					var edTimeslot = this.$class._getHightOffsPercent(ed, timeslots);
-					edHeightOffs = edTimeslot ? perHgh * edTimeslot : 0;
+				if (endTimeIndex) {
+					var endDateTimeslot = this.$class._getHightOffsPercent(endDate, timeslots);
+					endDateHeightOffs = endDateTimeslot ? perRowHeight * endDateTimeslot : 0;
 					if (isCrossDay)//ZKCAL-29
-						ed = new Date(ed.getTime() + 1000);
+						endDate = new Date(endDate.getTime() + 1000);
 				}
 
-				ce._bi = bi;
-				ce._ei = ei;
-				ce.style.top = jq.px(top + bdHeightOffs);
-				this.$class._setItemWgtHeight(this, ce, ce.id, ((ei - bi) * perHgh) - bdHeightOffs + edHeightOffs);
+				calendarItemNode._bi = beginTimeIndex;
+				calendarItemNode._ei = endTimeIndex;
+				calendarItemNode.style.top = jq.px(top + beginDateHeightOffs);
+				this.$class._setItemWgtHeight(this, calendarItemNode, calendarItemNode.id, ((endTimeIndex - beginTimeIndex) * perRowHeight) - beginDateHeightOffs + endDateHeightOffs);
 
-				if (bi < 0) continue;
+				if (beginIndex < 0) continue;
 
 				// width info
-				for (var n = 0; bi <= ei && bi < slotCount;) {
-					var tmp = calItemsOneDay[bi++];
-					if (tmp[n]) {
+				for (var timeIndex = 0; beginTimeIndex <= endTimeIndex && beginTimeIndex < slotCount;) {
+					var tmp = calItemsOneDay[beginTimeIndex++];
+					if (tmp[timeIndex]) {
 						for (;;) {
-							if (!tmp[++n])
+							if (!tmp[++timeIndex])
 								break;
 						}
 					}
-					tmp[n] = ce;
+					tmp[timeIndex] = calendarItemNode;
 				}
 			}
 
 			this.clearGhost();
 
-			var childWidget = list[list.length - 1],
-				target = weekDay[childWidget._preOffset].firstChild;
+			var calendarItemWidget = calItemlist[calItemlist.length - 1],
+				target = weekDay[calendarItemWidget._preOffset].firstChild;
 
 			for (var currentItem = target.firstChild; currentItem; currentItem = currentItem.nextSibling) {
 				var	beginDate = currentItem._bd,
@@ -1105,8 +1115,8 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 					let nItemOneSlot = calItemsOneDay[slotIndex].length; // >1 means there is overlapping items
 					let overlappingItemCount = 1 < nItemOneSlot ? nItemOneSlot : 1;
 					if (nItemOneSlot <=0 ){ continue; }
-					for (let n = 0; n < nItemOneSlot; n++) {
-						let sameSlotItem = calItemsOneDay[slotIndex][n]; //another item in the same timeslot
+					for (let slotItemIndex = 0; slotItemIndex < nItemOneSlot; slotItemIndex++) {
+						let sameSlotItem = calItemsOneDay[slotIndex][slotItemIndex]; //another item in the same timeslot
 						if (!sameSlotItem){ //empty slot
 							overlappingItemCount--;
 							continue;
@@ -1120,14 +1130,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 							continue;
 						}
 						checkedItems[sameSlotItem.id] = 1;
-						var ei2 = sameSlotItem._ei;
-						if (endIndex < ei2)
-							endIndex = ei2;
+						var endIndex2 = sameSlotItem._ei;
+						if (endIndex < endIndex2)
+							endIndex = endIndex2;
 					}
 					maxOverlappingItemCount = maxOverlappingItemCount > overlappingItemCount? maxOverlappingItemCount : overlappingItemCount;
 				}
-				var len = maxOverlappingItemCount ? maxOverlappingItemCount : 1,
-					width = 100 / len,
+				var concurentItemCount = maxOverlappingItemCount ? maxOverlappingItemCount : 1,
+					width = 100 / concurentItemCount,
 					index = calItemsOneDay[beginIndex].indexOf(currentItem);
 				let nEmptyPosition = calItemsOneDay[beginIndex].length > maxOverlappingItemCount;
 				index = nEmptyPosition > 0 ? index - nEmptyPosition : index;
@@ -1164,14 +1174,17 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		}
 	},
 		
-	beforeSize: zk.ie6_ ? function (cmp) {
+	beforeSize: function () {
+		if(zk.ie6_){
+			return false;
+		}
 		var inner = this.$n('inner');
 		inner.style.height = '0px';
 		inner.lastChild.style.height = '0px';
-	} : function () {return false;},
+	},
 	
 	onSize: _zkf = function () {
-			this._updateCntHeight();
+		this._updateCntHeight();
 		if (!this.perHeight) {
 			this.perHeight = this.cntRows.firstChild.firstChild.offsetHeight / this._timeslots;
 			this.createChildrenWidget_();
@@ -1182,65 +1195,67 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			a.style.left = jq.px((a.parentNode.offsetWidth * this._zones.length - a.offsetWidth) - 5);
 		}
 		
-		var cmp = this.$n(),
-			hgh = cmp.offsetHeight;
+		var calendarDomNode = this.$n(),
+			calendarHeight = calendarDomNode.offsetHeight;
 		this.clearGhost();
-		if (!hgh) return;
+		if (!calendarHeight) return;
 			
-		var inner = this.$n('inner'),
-			cnt = this.$n('cnt'),
-			cntHeight = zk(inner.parentNode).padBorderHeight() +
-						zk(inner).padBorderHeight() +
-						zk(cnt).padBorderHeight() +
-						jq(cnt).find('.z-calendars-week-cnt').outerHeight() +
-						jq(inner).find('.z-calendars-week-header').height(),
+		var innerNode = this.$n('inner'),
+			contentNode = this.$n('cnt'),
+			cntHeight = zk(innerNode.parentNode).padBorderHeight() +
+						zk(innerNode).padBorderHeight() +
+						zk(contentNode).padBorderHeight() +
+						jq(contentNode).find('.z-calendars-week-cnt').outerHeight() +
+						jq(innerNode).find('.z-calendars-week-header').height(),
 			row = this.cntRows;
-		for (var child = cmp.firstChild; child; child = child.nextSibling) {
+		for (var child = calendarDomNode.firstChild; child; child = child.nextSibling) {
 			if (this.isLegalChild(child))
-				hgh -= child.offsetHeight;
+				calendarHeight -= child.offsetHeight;
 		}
 		
-		if (hgh > cntHeight)
-			hgh = cntHeight;
+		if (calendarHeight > cntHeight)
+			calendarHeight = cntHeight;
 		
-		hgh = zk(inner.parentNode).revisedHeight(hgh);
-		hgh = zk(inner).revisedHeight(hgh);
-		inner.style.height = jq.px0(hgh);
-		hgh -= inner.firstChild.offsetHeight;
-		hgh = zk(inner.lastChild).revisedHeight(hgh);
-		inner.lastChild.style.height = jq.px(hgh);
+		calendarHeight = zk(innerNode.parentNode).revisedHeight(calendarHeight);
+		calendarHeight = zk(innerNode).revisedHeight(calendarHeight);
+		innerNode.style.height = jq.px0(calendarHeight);
+		calendarHeight -= innerNode.firstChild.offsetHeight;
+		calendarHeight = zk(innerNode.lastChild).revisedHeight(calendarHeight);
+		innerNode.lastChild.style.height = jq.px(calendarHeight);
 
 		// sync scrollTop
-		cnt.scrollTop = this._scrollInfo[cmp.id];
+		contentNode.scrollTop = this._scrollInfo[calendarDomNode.id];
 
-		var offs = zk(cnt).revisedOffset(),
+
+		var offs = zk(contentNode).revisedOffset(),
+			contentOffsetLeft = offs[0],
 			cells = row.cells,
 			lefts = [];
-		for (var s = this._zones.length, l = offs[0], n = cells[0]; n; n = n.nextSibling) {
-			l += n.offsetWidth;
-			if (--s <= 0)
-				lefts.push(l);
+		for (var reverseZoneIndex = this._zones.length, currentLeft = contentOffsetLeft, currentCell = cells[0]; currentCell; currentCell = currentCell.nextSibling) {
+			currentLeft += currentCell.offsetWidth;
+			if (--reverseZoneIndex <= 0)
+				lefts.push(currentLeft);
 		}
-		cnt._lefts = lefts;
+		contentNode._lefts = lefts;
 		//Fix ZKCAL-55: Problems with horizontal scrollbar
 		//get the initial offset left value
-		this._initLeft = offs[0];
+		this._initLeft = contentOffsetLeft;
 
 		this.closeFloats();
 
 		// scrollbar width
-		var width = cnt.offsetWidth - cnt.firstChild.offsetWidth,
-			table = cnt.previousSibling.firstChild;
+		var width = contentNode.offsetWidth - contentNode.firstChild.offsetWidth,
+			table = contentNode.previousSibling.firstChild;
 		table.rows[0].lastChild.style.width = jq.px(zk(table.rows[1].firstChild).revisedWidth(width));
 	},
 
 	_updateCntHeight: function() {
 		var $cnt = jq(this.$n('cnt')),
 			timeslots = this._timeslots,
-			hourCount = this._et - this._bt,
+			hourCount = this._et - this._bt, //end time minus begin time
 			$firstSlot = $cnt.find('.z-calendars-hour-sep')[0], //fine tune if user customize height by CSS
 			slotHeight = $firstSlot ?
-				($firstSlot.offsetHeight + zk($firstSlot).sumStyles('tb', jq.margins) + 1) : 46,
+				($firstSlot.offsetHeight + zk($firstSlot).sumStyles('tb', jq.margins) + 1) : 46, //default slot height 46px?
 			totalHeight = hourCount * slotHeight * timeslots / 2;
 		$cnt.find('.z-calendars-week-cnt').height(totalHeight);
 		jq(this.cntRows).find('.z-calendars-week-day-cnt').height(totalHeight).css('margin-bottom', -totalHeight);
@@ -1353,101 +1368,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		
 	onShow: _zkf
 },{
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1636,10 +1556,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 	_getHightOffsPercent: function(date, timeslots) {
 		var timeslotTime = 60 / timeslots,
-			bdTimeslot = date.getMinutes() % timeslotTime;
+			beginDateTimeslot = date.getMinutes() % timeslotTime;
 		
-		if (!bdTimeslot) return 0;
-		return bdTimeslot / timeslotTime;
+		if (!beginDateTimeslot) return 0;
+		return beginDateTimeslot / timeslotTime;
 	},
 	
 	_setItemWgtHeight: function(calendarWidget, calitem, id, height) {
@@ -1976,7 +1896,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				timeslotTime = 60 / timeslots,
 				bd = new Date(ce._bd),
 				ed = new Date(ce._ed),
-				bdTimeslot = widget.$class._getHightOffsPercent(bd, timeslots),
+				beginDateTimeslot = widget.$class._getHightOffsPercent(bd, timeslots),
 				edOffset = ed.getTimezoneOffset(),
 				bt = widget._bt,
 				et = widget._et,
