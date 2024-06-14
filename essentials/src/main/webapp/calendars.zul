@@ -1,3 +1,5 @@
 <zk>
-    <calendars/>
+    <calendars>
+        <toolbar><toolbarbutton label="allow toolbar as a child only"/></toolbar>
+    </calendars>
 </zk>
