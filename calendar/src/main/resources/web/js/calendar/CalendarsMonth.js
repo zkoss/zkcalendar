@@ -128,7 +128,9 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		this.title = this.woyCnt = this.allDayTitle = this.weekRows = null;
 		this.$supers('unbind_', arguments);
 	},
-	
+	/** create 2D array to store all calendar item elements.
+	 * the 1st dimension is week index ( 0~4), the 2nd dimension is day index (0~6).
+	 */
 	_createItemsData: function (isAddClkEvt) {
 		var cnt = this.$n('cnt'),
 			rdata = [];
