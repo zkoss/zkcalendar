@@ -32,6 +32,9 @@ calUtil = {
 				date1.getMonth() == date2.getMonth() &&
 				date1.getDate() == date2.getDate());
 	},
+	isLessThan30Min: function (beginDate, endDate) {
+		return (Math.abs(endDate - beginDate) <= 1800000);
+	},
 	addDay: function (date, days) {
 		var result = new Date(date),
 			tzOffset1 = date.getTimezoneOffset(),

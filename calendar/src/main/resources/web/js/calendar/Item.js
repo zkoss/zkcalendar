@@ -127,7 +127,7 @@ calendar.Item = zk.$extends(zk.Widget, {
 		}
 		node.upperBoundBd = this._setBoundDate(bd); // earliest
 		if (this._isDayItem()) return;
-		if (calUtil.isTheSameDay(bd, ed)){
+		if (calUtil.isLessThan30Min(bd, ed)){
 			node.lowerBoundEd = calUtil.addDay(new Date(ed), 1);
 		}else{
 			node.lowerBoundEd = this._setBoundDate(ed, true); // latest
