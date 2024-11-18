@@ -64,6 +64,12 @@ public class RenderItemMonthTest extends CalendarTestBase {
         assertTrue(isCssRuleApplied(toElement(segment2.find(".z-calitem-inner").get(0)), ".z-calitem-body" + LEFT_ARROW + " .z-calitem-inner", "border-bottom-left-radius", "0px"));
     }
 
+    @Test
+    public void endAfter1200(){
+        JQuery item = jq(".end-after-12");
+        assertEquals(1, item.length());
+    }
+
     public boolean isCssRuleApplied(WebElement element, String selector, String property, String value) {
         return (Boolean)((JavascriptExecutor) this.driver).executeScript("return isCssRuleApplied(arguments[0], arguments[1], arguments[2], arguments[3]);",
                 element, selector, property, value);

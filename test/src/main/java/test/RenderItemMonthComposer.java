@@ -27,6 +27,7 @@ public class RenderItemMonthComposer extends SelectorComposer {
         addSameBeginEndTime();
         addDaySpanItems();
         addOverWeekendItems();
+        addEndtimeAfter1200();
     }
 
     private void addOverWeekendItems() {
@@ -106,5 +107,19 @@ public class RenderItemMonthComposer extends SelectorComposer {
                 .withZoneId(calendars.getDefaultTimeZone().toZoneId())
                 .build();
         model.add(itemOnSameDay2);
+    }
+
+    // ZKCAL-124 endtime at any minute later than 12:00 will cause the problem
+    private void addEndtimeAfter1200(){
+        LocalDateTime day = LocalDateTime.of(2023, 1, 5, 11, 0);
+        LocalDateTime endTime = LocalDateTime.of(2023, 1, 5, 13, 01);
+        DefaultCalendarItem problemItem = new DefaultCalendarItem.Builder()
+                .withBegin(day)
+                .withEnd(endTime)
+                .withZoneId(calendars.getDefaultTimeZone().toZoneId())
+                .withContent("end after 12:00")
+                .withSclass("end-after-12")
+                .build();
+        model.add(problemItem);
     }
 }
