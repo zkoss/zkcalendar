@@ -1,6 +1,6 @@
 package test;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.impl.*;
 

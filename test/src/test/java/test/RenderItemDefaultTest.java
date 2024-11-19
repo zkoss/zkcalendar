@@ -1,9 +1,9 @@
 package test;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.zkoss.test.webdriver.ztl.JQuery;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * item rendering in the default mold.
@@ -161,5 +161,4 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals("span over weekend", overWeekendItem.text());
 
     }
-
 }

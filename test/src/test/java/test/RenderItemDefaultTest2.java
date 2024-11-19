@@ -3,14 +3,13 @@ package test;
 import org.junit.jupiter.api.Test;
 import org.zkoss.test.webdriver.ztl.JQuery;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MoldTest extends CalendarTestBase{
+public class RenderItemDefaultTest2 extends CalendarTestBase{
 
     static {
         TEST_ZUL = "renderItem.zul";
     }
-
 
     /* when change to month mold, calendars should render the month date upon the current date */
     @Test //ZKCAL-105
@@ -32,5 +31,4 @@ public class MoldTest extends CalendarTestBase{
         //3/1 ~ 3/4 are date-off
         assertEquals(4, jq(calendarSclass("day-of-month-bg")).eq(4).find(calendarSclass("month-date-off")).length());
     }
-
 }

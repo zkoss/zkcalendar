@@ -3,7 +3,7 @@ package test;
 import org.junit.jupiter.api.Test;
 import org.zkoss.test.webdriver.ztl.JQuery;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * item rendering in one day view. The test cases interact with components, need to reload test page before testing.

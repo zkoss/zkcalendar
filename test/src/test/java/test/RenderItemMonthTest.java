@@ -1,11 +1,10 @@
 package test;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
-import org.zkoss.test.webdriver.WebDriverTestCase;
-import org.zkoss.test.webdriver.ztl.*;
+import org.zkoss.test.webdriver.ztl.JQuery;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RenderItemMonthTest extends CalendarTestBase {
 

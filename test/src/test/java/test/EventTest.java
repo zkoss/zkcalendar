@@ -1,11 +1,9 @@
 package test;
 
-import org.junit.jupiter.api.*;
-import org.openqa.selenium.WebDriver;
-import org.zkoss.test.webdriver.WebDriverTestCase;
+import org.junit.jupiter.api.Test;
 import org.zkoss.test.webdriver.ztl.JQuery;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * test supported events
