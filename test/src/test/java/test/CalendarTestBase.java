@@ -38,6 +38,7 @@ public class CalendarTestBase extends WebDriverTestCase {
     @AfterEach
     public void stop() {
         //don't quit, reuse the webdriver
+        assertNoAnyError(); //each test case doesn't need to check js error
     }
 
     @AfterAll

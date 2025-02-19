@@ -1,6 +1,6 @@
 package test;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.zkoss.test.webdriver.ztl.JQuery;
 
@@ -16,8 +16,6 @@ public class RenderItemMonthTest extends CalendarTestBase {
 
     @Test //ZKCAL-114
     public void instantItemCauseNoError() {
-        //if it finishes loading for a js error, no z-loading exists
-        assertEquals(0 , jq(".z-loading").length());
         JQuery sameBeginEndTimeItem = jq(".z-calendars-day-of-month-body").eq(3).find("tr").eq(1).find(".z-calitem");
         assertEquals(1, sameBeginEndTimeItem.length());
         assertEquals("00:00",  sameBeginEndTimeItem.find(".z-calitem-header").get(0).get("textContent"));
@@ -63,7 +61,7 @@ public class RenderItemMonthTest extends CalendarTestBase {
         assertTrue(isCssRuleApplied(toElement(segment2.find(".z-calitem-inner").get(0)), ".z-calitem-body" + LEFT_ARROW + " .z-calitem-inner", "border-bottom-left-radius", "0px"));
     }
 
-    @Test
+    @Test //ZKCAL-124
     public void endAfter1200(){
         JQuery item = jq(".end-after-12");
         assertEquals(1, item.length());
@@ -73,4 +71,5 @@ public class RenderItemMonthTest extends CalendarTestBase {
         return (Boolean)((JavascriptExecutor) this.driver).executeScript("return isCssRuleApplied(arguments[0], arguments[1], arguments[2], arguments[3]);",
                 element, selector, property, value);
     }
+
 }
