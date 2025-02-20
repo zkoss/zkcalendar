@@ -15,8 +15,8 @@
     <packaging>war</packaging>
     <properties>
         <jetty.version>10.0.15</jetty.version> <!-- align with zk-webdriver -->
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>org.zkoss.test</groupId>
             <artifactId>zk-webdriver</artifactId>
-            <version>1.4.23.0.1</version>
+            <version>1.4.27.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
