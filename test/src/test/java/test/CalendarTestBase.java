@@ -14,6 +14,7 @@ public class CalendarTestBase extends WebDriverTestCase {
     static String TEST_ZUL;
     static {
         System.setProperty("zkWebdriverContextPath", "/test/");
+        System.setProperty("zkWebdriverTestURLPackage", "test");
     }
     static protected WebDriver staticDriver;
 
