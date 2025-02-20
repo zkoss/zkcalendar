@@ -79,12 +79,12 @@ calendar.Item = zk.$extends(zk.Widget, {
 			calendarWidget = this.parent,
 			beginDate = item.zoneBd,
 			endDate = item.zoneEd,
-			inMon = calendarWidget.mon;
+			inMonthMold = calendarWidget.mon;
 		
-		if (inMon)
+		if (inMonthMold)
 			itemNode.startWeek = item.startWeek;
 		
-		var time = inMon ? itemNode.startWeek : calendarWidget;
+		var time = inMonthMold ? itemNode.startWeek : calendarWidget;
 
 		itemNode.zoneBd = beginDate;
 		itemNode.zoneEd = endDate;
@@ -118,19 +118,19 @@ calendar.Item = zk.$extends(zk.Widget, {
 		return this.$n().zoneEd.getTime() != item.zoneEd.getTime();
 	},
 
-	_createBoundTime: function (node, bd, ed) {
+	_createBoundTime: function (calendarItemNode, beginDate, endDate) {
 		//have findBoundTime_ function
 		if (this.findBoundTime_) {
-			var time = this.findBoundTime_(bd, ed);
-			bd = time.bd;
-			ed = time.ed;
+			var time = this.findBoundTime_(beginDate, endDate);
+			beginDate = time.beginDate;
+			endDate = time.endDate;
 		}
-		node.upperBoundBd = this._setBoundDate(bd); // earliest
+		calendarItemNode.upperBoundBd = this._setBoundDate(beginDate); // earliest
 		if (this._isDayItem()) return;
-		if (calUtil.isLessThan30Min(bd, ed)){
-			node.lowerBoundEd = calUtil.addDay(new Date(ed), 1);
+		if (calUtil.isLessThan30Min(beginDate, endDate)){
+			calendarItemNode.lowerBoundEd = calUtil.addDay(new Date(endDate), 1);
 		}else{
-			node.lowerBoundEd = this._setBoundDate(ed, true); // latest
+			calendarItemNode.lowerBoundEd = this._setBoundDate(endDate, true); // latest
 		}
 	},
 
@@ -146,12 +146,13 @@ calendar.Item = zk.$extends(zk.Widget, {
 	},
 
 	_setBoundDate: function (date, isAddOneDay) {
-		var result = new Date(date);
+		var boundDate = new Date(date);
 		if (date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds() != 0) {
-			if (isAddOneDay)
-				result = calUtil.addDay(date, 1);
-			result.setHours(0,0,0,0);
+			boundDate.setHours(0,0,0,0);
+			if (isAddOneDay){
+				boundDate = calUtil.addDay(boundDate, 1);
+			}
 		}
-		return result;
+		return boundDate;
 	}
 });

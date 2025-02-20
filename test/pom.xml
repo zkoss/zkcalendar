@@ -23,7 +23,7 @@
         <dependency>
             <groupId>org.zkoss.calendar</groupId>
             <artifactId>calendar</artifactId>
-            <version>${project.version}</version>
+            <version>${calendar.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

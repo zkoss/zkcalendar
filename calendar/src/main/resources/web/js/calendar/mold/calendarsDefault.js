@@ -38,6 +38,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 
 		week_body			= zcls + "-week-body",
 		week_cnt			= zcls + "-week-cnt",
+		week_cnt_row		= zcls + "-week-cnt-row",
 		week_day 			= zcls + "-week-day",
 		week_today  		= zcls + "-week-today",
 		week_day_cnt 		= week_day + "-cnt",
@@ -55,8 +56,10 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		daylong_body   		= daylong + "-body",
 		daylong_inner  		= daylong + "-inner",
 		daylong_cnt   		= daylong + "-cnt",
+		daylong_tbody  		= daylong + "-tbody",
 		daylong_evt    		= daylong + "-evt",
 		daylong_more   		= daylong + "-more",
+		daylong_morerows	= daylong + "-morerows",
 		daylong_end    		= daylong + "-end",
 
 		hour 		 		= zcls + "-hour",
@@ -130,8 +133,8 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			'<td class="', daylong_body, '" colspan="', days, '">',
 			'<div id="', uuid, '-daylong" class="', daylong_inner, '">',
 			'<table class="', daylong_cnt, '" cellpadding="0" cellspacing="0">',
-			'<tbody>',
-			'<tr>');
+			'<tbody id="',uuid,'-daylong-tbody">',
+			'<tr id="',uuid,'-daylong-morerows" class="', daylong_morerows, '">');
 	for (var j = 0; j < days; ++j)
 		out.push('<td class="', daylong_evt, ' ', daylong_more, '">&nbsp;</td>');
 
@@ -172,7 +175,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 	out.push('</div></div></td></tr>',
 	
 /*************** column ******************/	
-			'<tr>');
+			'<tr id="',uuid,'-cnt-rows">');
 
 /*************** time zone and hours column ******************/
 	current.setMinutes(0);

@@ -69,22 +69,30 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 		this.calculate_(updateLastModify);
 	},
 	
-	findBoundTime_: function (bd, ed) {
-		var parent = this.parent,
-			pbd = parent.zoneBd,
-			ped = parent.zoneEd;
+	/**
+	 * returns a date pair based on the provided dates input, but bounded into the currently displayed timeframe
+	 * (will truncate the dates to fit in the provided calendar displayed start and end dates range)
+	 * 
+	 * @param {Date} beginDate 
+	 * @param {Date} endDate 
+	 * @returns {beginDate, endDate}
+	 */
+	findBoundTime_: function (beginDate, endDate) {
+		var calendarWidget = this.parent,
+			calendarBeginDate = calendarWidget.zoneBd,
+			calendarEndDate = calendarWidget.zoneEd;
 		
-		if (bd < pbd)
-			bd = new Date(pbd);
+		if (beginDate < calendarBeginDate)
+		beginDate = new Date(calendarBeginDate);
 			
-		if (ed > ped)
-			ed = new Date(ped);
+		if (endDate > calendarEndDate)
+			endDate = new Date(calendarEndDate);
 		
 		//end equals calendar begin, Bug ZKCAL-32: should check to seconds
-		if (ed.getHours() == 0 && ed.getMinutes() == 0 && ed.getSeconds() == 0 && calUtil.isTheSameDay(ed, pbd))
-			ed = calUtil.addDay(ed, 1);
+		if (endDate.getHours() == 0 && endDate.getMinutes() == 0 && endDate.getSeconds() == 0 && calUtil.isTheSameDay(endDate, calendarBeginDate))
+			endDate = calUtil.addDay(endDate, 1);
 			
-		return {bd: bd, ed: ed};
+		return {beginDate: beginDate, endDate: endDate};
 	},
 	
 	defineClassName_: function () {
