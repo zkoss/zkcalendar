@@ -7,7 +7,10 @@ public enum CssClassNames {
     TIMEZONE(CALENDAR.className + "-timezone"),
     HOUR_OF_DAY(CALENDAR.className + "-hour-of-day"),
     WEEK_DAY(CALENDAR.className + "-week-day"),
-    WEEK_WEEKEND(CALENDAR.className + "-week-weekend");
+    WEEK_WEEKEND(CALENDAR.className + "-week-weekend"),
+    DAYLONG_EVT(CALENDAR.className + "-daylong-evt"),
+    WEEK_BODY(CALENDAR.className + "-week-body"),
+    HOUR_SEPARATOR(CALENDAR.className + "-hour-sep");
 
     private final String className;
 

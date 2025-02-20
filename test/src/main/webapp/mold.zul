@@ -1,0 +1,6 @@
+<zk>
+    <nodom apply="test.MoldComposer">
+    <button id="monthMold" label="Month" onClick='cal.setMold("month")'/>
+    <calendars id="cal" height="90%"/>
+    </nodom>
+</zk>
