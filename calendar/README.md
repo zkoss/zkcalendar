@@ -3,7 +3,7 @@ Those who tends to develop this component should read and maintain this doc.
 
 # Build and publish to CE repository
 ## Jenkins build job
-[ZKCalendarRelease](http://jenkins3/job/ZK%20Calendar%20Release/)
+[ZKCalendarRelease](https://jenkins3.pxinternal.com/job/ZKCalendarRelease/)
 
 ## Local build
 run `mavenBuild.sh`
@@ -14,9 +14,6 @@ run [PBFUM](http://jenkins2/jenkins2/view/All/job/PBFUM/)
 
 # LESS
 after modifying any .less file, run maven `compile` to compile it to .dsp
-
-
-
 
 
 # The process of release a freshly version
