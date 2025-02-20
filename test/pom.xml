@@ -14,7 +14,7 @@
     <name>Calendar Test</name>
     <packaging>war</packaging>
     <properties>
-        <jetty.version>10.0.23</jetty.version>
+        <jetty.version>10.0.15</jetty.version> <!-- align with zk-webdriver -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
