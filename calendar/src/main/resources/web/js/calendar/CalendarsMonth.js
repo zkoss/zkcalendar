@@ -51,7 +51,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		zones: function () {
 			this._zones = jq.evalJSON(this._zones);
 			this._zonesOffset = jq.evalJSON(this.zonesOffset);
-			this.ts = this._zones.length;
+			this._zones.length = this._zones.length;
 			for (var i = this._zonesOffset.length; i--;)
 				this._zonesOffset[i] = zk.parseInt(this._zonesOffset[i]);
 							
@@ -450,7 +450,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}
 	},
 	
-	cleanItemAry_: function () {
+	cleanItemArray_: function () {
 		this._itemKey = {};
 		this._itemWeekSet = [];
 	},
@@ -483,33 +483,39 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					html.push('</div>');
 					return html.join('');
 				},
-				getRow: function (cnt) {
-					return cnt.firstChild.firstChild.rows[0].firstChild;
+				getRow: function (draggable) {
+					return draggable.node.firstChild.firstChild.rows[0].firstChild;
 				},
-				getCols: function (p, dg) {
-					return Math.floor((p[0] - dg._zoffs.l) / dg._zdim.w);
+				/**
+				 * 
+				 * @param {Object} mousePosition {x,y}
+				 * @param {zk.DnD.Draggable} draggable 
+				 * @returns 
+				 */
+				getCols: function (mousePosition, draggable) {
+					return Math.floor((mousePosition.x - draggable._zoffs.left) / draggable._zdimensions.width);
 				},
-				getRows: function (p, dg) {
-					return Math.floor((p[1] - dg._zoffs.t)/dg._zdim.h);
+				getRows: function (mousePosition, draggable) {
+					return Math.floor((mousePosition.y - draggable._zoffs.top)/draggable._zdimensions.height);
 				},
-				getDur: function (dg) {
-					return (dg._zoffs.s * dg._zpos1[1] + dg._zpos1[0]);
+				getDur: function (draggable) {
+					return (draggable._zoffs.size * draggable._lastDraggedPosition.rows + draggable._lastDraggedPosition.cols);
 				},
-				getNewDate: function (widget, dg) {
-					var c = dg._zpos[0],
-						r = dg._zpos[1],
-						c1 = dg._zpos1[0],
-						r1 = dg._zpos1[1],
-						c2 = c < c1 ? c : c1,
-						r2 = r < r1 ? r : r1,
-						offs = dg._zoffs.s * r2 + c2,
-						bd = new Date(widget.zoneBd);
+				getNewDate: function (widget, draggable) {
+					var draggedCols = draggable._zposition.x,
+						draggedRows = draggable._zposition.y,
+						lastDraggedCols = draggable._lastDraggedPosition.cols,
+						lastDraggedRows = draggable._lastDraggedPosition.rows,
+						finalCols = draggedCols < lastDraggedCols ? draggedCols : lastDraggedCols,
+						finalRows = draggedRows < lastDraggedRows ? draggedRows : lastDraggedRows,
+						cellIndex = draggable._zoffs.size * finalRows + finalCols,
+					beginDate = new Date(widget.zoneBd);
 	
-					bd.setDate(bd.getDate() + offs);
+					beginDate.setDate(beginDate.getDate() + cellIndex);
 					
-					var ed = new Date(bd);
-					ed.setDate(ed.getDate() + dg._zpos1[2]);
-					return {bd: bd, ed: ed};
+					var endDate = new Date(beginDate);
+					endDate.setDate(endDate.getDate() + draggable._lastDraggedPosition.draggedDuration);
+					return {beginDate: beginDate, endDate: endDate};
 				}
 			};
 		return this._dragDataObj;
@@ -633,9 +639,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 		widget.clearGhost();
 		if (!widget._pp) {
-			jq(document.body).append(widget.ppTemplate.replace(new RegExp("%([1-2])", "g"), function (match, index) {
-					return index < 2 ? uuid : 'z-calpp-month';
-			}));
+			jq(document.body).append(widget.getPopupTemplate(uuid,'z-calpp-month'));
 			widget._pp = pp = jq('#' + widget.uuid + '-pp')[0];
 			jq(document.body).bind('click', widget.proxy(widget.unMoreClick));
 			table = jq('#' + widget.uuid + '-ppcnt')[0];
@@ -643,7 +647,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			if (!widget._readonly)
 				jq(pp).bind('click', widget.proxy(widget.onPopupClick));
 		} else {
-			if (widget._pp.ci == ci) {
+			if (widget._pp.cellIndex == ci) {
 				// ignore onItemCreate
 				evt.stop();
 				return;
@@ -654,7 +658,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			pp = widget._pp;
 		}
 
-		pp.ci = ci;
+		pp.cellIndex = ci;
 
 		var date = cell.parentNode.parentNode.firstChild.cells[ci].firstChild,
 			targetDate = new Date(date.time);
@@ -669,15 +673,15 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}
 
 		var offs = zk(row.lastChild.rows[0].cells[ci]).revisedOffset(),
-			csz = cell.parentNode.cells.length,
-			single = cell.offsetWidth,
-			wd = single * 3 * 0.9;
+		cellCount = cell.parentNode.cells.length,
+			cellWidth = cell.offsetWidth,
+			wd = cellWidth * 3 * 0.9;
 
 		if (ci > 0)
-			if (csz != ci + 1)
-				pp.style.left = jq.px(offs[0] - (wd - single) / 2);
+			if (cellCount != ci + 1)
+				pp.style.left = jq.px(offs[0] - (wd - cellWidth) / 2);
 			else
-				pp.style.left = jq.px(offs[0] - (wd - single));
+				pp.style.left = jq.px(offs[0] - (wd - cellWidth));
 		else pp.style.left = jq.px(offs[0]);
 
 		pp.style.top = jq.px(offs[1]);
