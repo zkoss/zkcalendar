@@ -300,6 +300,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				cls = this.$class;
 			// a trick for dragdrop.js
 			daylong._skipped = enable;
+			var contentNode = this.$n('cnt');
 			//ZKCAL-38: bind and unbind click event separately based on enable
 			if (enable) {
 				/* Enable edit mode, activate listeners */
@@ -316,7 +317,6 @@ it will be useful, but WITHOUT ANY WARRANTY.
 				jq(this.$n())
 					.bind('click', this.proxy(this.clearGhost));
 				if (!inMonthMold) {
-					var contentNode = this.$n('cnt');
 					jq(contentNode)
 						.bind('click', function(evt) {
 							if (!zk.dragging && !zk.processing) {
