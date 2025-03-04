@@ -128,35 +128,35 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		this.title = this.woyCnt = this.allDayTitle = this.weekRows = null;
 		this.$supers('unbind_', arguments);
 	},
-	/** create 2D array to store all calendar item elements.
-	 * the 1st dimension is week index ( 0~4), the 2nd dimension is day index (0~6).
+	/** return a 3D array that stores calendar items elements for each week.
+	 * weeklyCalendarItems[weekIndex][dayIndex][itemIndex]
 	 */
 	_createItemsData: function (isAddClkEvt) {
-		var cnt = this.$n('cnt'),
-			rdata = [];
-		for (var ri = 0, n = cnt.firstChild; n; n = n.nextSibling, ri++) {
-			var table = n.lastChild,
-				rows = table.rows,
+		var monthBodyEl = this.$n('cnt');
+		var weeklyCalendarItems = [];
+		for (var weekIndex = 0, monthWeekEl = monthBodyEl.firstChild; monthWeekEl; monthWeekEl = monthWeekEl.nextSibling, weekIndex++) {
+			var calendarItemsTable = monthWeekEl.lastChild,
+				rows = calendarItemsTable.rows,
 				len = rows.length,
-				data = [];
+				oneWeekCalendarItems = [];
 
 			for (var i = 0, c = 7; c--; i++)
-				data[i] = [];
+				oneWeekCalendarItems[i] = [];
 
 			for (var i = 1; i < len; i++) {
-				for (var k = 0, z = 0, cells = rows[i].cells; z + k < 7; k++) {
+				for (var k = 0, z = 0, cells = rows[i].cells; z + k < cells.length; k++) {
 					if (cells[k].firstChild.id)
-						data[k + z].push(cells[k].firstChild);
+						oneWeekCalendarItems[k + z].push(cells[k].firstChild);
 					var cols = cells[k].colSpan;
 					while (--cols > 0)
-						data[k + ++z].push(cells[k].firstChild);
+						oneWeekCalendarItems[k + ++z].push(cells[k].firstChild);
 				}
 			}
-			rdata[ri] = data;
+			weeklyCalendarItems[weekIndex] = oneWeekCalendarItems;
 			if (!isAddClkEvt) continue;
 			this.addDayClickEvent_(jq(rows[0]).children().find('span'));
 		}
-		return rdata;
+		return weeklyCalendarItems;
 	},
 		
 	_createWeekSet: function (ed) {
