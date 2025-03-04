@@ -7,7 +7,7 @@ import org.zkoss.test.webdriver.ztl.JQuery;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RenderItemMonthTest extends CalendarTestBase {
-
+    public static final int ITEM_HEIGHT_MONTH_MOLD = 20;
 
     static {
         TEST_ZUL = "renderItemMonth.zul";
@@ -65,6 +65,13 @@ public class RenderItemMonthTest extends CalendarTestBase {
     public void endAfter1200(){
         JQuery item = jq(".end-after-12");
         assertEquals(1, item.length());
+    }
+
+    @Test //ZKCAL-127
+    public void zkcal127(){
+        JQuery item = jq(".zkcal-127");
+        assertEquals(1, item.length());
+        assertEquals(ITEM_HEIGHT_MONTH_MOLD, item.height());
     }
 
     public boolean isCssRuleApplied(WebElement element, String selector, String property, String value) {

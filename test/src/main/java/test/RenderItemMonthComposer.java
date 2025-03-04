@@ -3,6 +3,7 @@ package test;
 import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.impl.DefaultCalendarItem;
 import org.zkoss.calendar.impl.SimpleCalendarModel;
+import org.zkoss.util.TimeZones;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Wire;
@@ -28,6 +29,7 @@ public class RenderItemMonthComposer extends SelectorComposer {
         addDaySpanItems();
         addOverWeekendItems();
         addEndtimeAfter1200();
+        addZkcal127Item();
     }
 
     private void addOverWeekendItems() {
@@ -121,5 +123,18 @@ public class RenderItemMonthComposer extends SelectorComposer {
                 .withSclass("end-after-12")
                 .build();
         model.add(problemItem);
+    }
+
+    private void addZkcal127Item() {
+        LocalDateTime start = LocalDateTime.of(2023, 1, 6, 13, 30);
+        LocalDateTime end = LocalDateTime.of(2023, 1, 6, 14, 0);
+        DefaultCalendarItem item = new DefaultCalendarItem.Builder()
+                .withBegin(start)
+                .withEnd(end)
+                .withZoneId(TimeZones.getCurrent().toZoneId())
+                .withContent("ZKCAL-127")
+                .withSclass("zkcal-127")
+                .build();
+        model.add(item);
     }
 }
