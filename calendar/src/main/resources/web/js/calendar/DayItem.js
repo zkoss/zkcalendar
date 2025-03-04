@@ -27,8 +27,7 @@ calendar.DayItem = zk.$extends(calendar.Item, {
 			contentStyle = p.contentStyle,
 			style = p.style,
 			resizer = p.resizer;
-		p._resizerCnt = '<div class="' + resizer + '" id="' + id + '-resizer"> ' +
-							'<div class="' + resizer + '-icon"></div></div>';
+		this.resizerHTML = this.$class.resizerTemplate(id, resizer);
 		
 		out.push('<div', this.domAttrs_(), '>',
 				'<div id="', id, '-body" class="', p.body, '"','>',
@@ -39,7 +38,7 @@ calendar.DayItem = zk.$extends(calendar.Item, {
 				'<div class="', p.text, '">', ce.content, '</div></dd>');
 		// resizer
 		if (!ce.isLocked)
-			out.push(p._resizerCnt);
+			out.push(this.resizerHTML);
 			
 		out.push('</dl>',
 			'</div></div></div>');
@@ -109,7 +108,7 @@ calendar.DayItem = zk.$extends(calendar.Item, {
 		
 		if (!this.item.isLocked) {
 			if (!hasResizer)
-				jq(inner).append(p._resizerCnt);
+				jq(inner).append(this.resizerHTML);
 		} else if (hasResizer)
 			jq(target).remove();
 	},
@@ -129,4 +128,10 @@ calendar.DayItem = zk.$extends(calendar.Item, {
 		this.$super('updateHeaderStyle_', arguments);
 		jq(this.$n('hd')).attr('style', headerStyle);
 	}
+},{
+	resizerTemplate: function(id, resizer) {
+	return`<div class="${resizer}" id="${id}-resizer">
+			  <div class="${resizer}-icon"></div>
+			</div>`;
+}
 });
