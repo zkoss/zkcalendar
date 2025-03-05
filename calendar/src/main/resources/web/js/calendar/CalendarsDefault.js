@@ -581,6 +581,23 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			timeslots = widget._timeslots,
 			timeslotTime = 60 / timeslots;
 
+		this.renderNewItemDragGhost(widget, cells, timezonesLength, columnIndex, rows, heighsPerRow, timeslotTime);
+
+		var beginDate = new Date(widget.zoneBd);
+		beginDate.setDate(beginDate.getDate() + columnIndex);
+		beginDate.setMilliseconds(0);// clean
+		beginDate.setMinutes(beginDate.getMinutes() + rows * timeslotTime);
+		var endDate = new Date(beginDate);
+		endDate.setMinutes(endDate.getMinutes() + this.getNewItemTimeSlots_() * timeslotTime);
+		//ZKCAL-50: available to click on DST day start from 01:00
+		if (beginDate.getTime() == endDate.getTime() && rows == timeslots) {
+			beginDate.setHours(beginDate.getHours() + 1);
+			endDate.setHours(endDate.getHours() + 2);
+		}
+		widget.fireCalEvent(beginDate, endDate, evt);
+	},
+
+	renderNewItemDragGhost: function (widget, cells, timezonesLength, columnIndex, rows, heighsPerRow, timeslotTime) {
 		/* cells[timezonesLength + columnIndex].firstChild is the column for the target day in the calendar content */
 		/* create drag ghost from template and temporarily adds it as part of the same column */
 		jq(cells[timezonesLength + columnIndex].firstChild).prepend(
@@ -611,19 +628,6 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		draggedGhostHeight += zk(inner).padBorderHeight();
 		draggedGhostHeight += 2;
 		inner.style.height = jq.px((heighsPerRow * itemTimeSlot) - draggedGhostHeight);
-
-		var beginDate = new Date(widget.zoneBd);
-		beginDate.setDate(beginDate.getDate() + columnIndex);
-		beginDate.setMilliseconds(0);// clean
-		beginDate.setMinutes(beginDate.getMinutes() + rows * timeslotTime);
-		var endDate = new Date(beginDate);
-		endDate.setMinutes(endDate.getMinutes() + itemTimeSlot * timeslotTime);
-		//ZKCAL-50: available to click on DST day start from 01:00
-		if (beginDate.getTime() == endDate.getTime() && rows == timeslots) {
-			beginDate.setHours(beginDate.getHours() + 1);
-			endDate.setHours(endDate.getHours() + 2);
-		}
-		widget.fireCalEvent(beginDate, endDate, evt);
 	},
 	updateColumnIndex: function(contentNode, mousePosition, offsets, columnIndex) {
 		for (; columnIndex--;) {
