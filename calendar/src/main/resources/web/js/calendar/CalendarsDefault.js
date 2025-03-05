@@ -570,7 +570,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	isClickExistingItem: function (item) {
 		return !!item;
 	},
-	clickToCreateItem: function (calendarWidget, contentNode, mousePosition, evt) {
+	clickToCreateItem: function (calendarWidget, contentNode, mousePosition, event) {
 		var timezonesLength = calendarWidget._zones.length,
 			cells = calendarWidget.cntRows.cells,
 			offsets = zk(contentNode).revisedOffset(),
@@ -583,16 +583,18 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 
 		this.renderNewItemDragGhost(calendarWidget, cells, timezonesLength, columnIndex, rowIndex, heightPerRow, timeslotTime);
 
-		var beginDate = this.calculateNewItemBeginDate(calendarWidget, columnIndex, rowIndex, timeslotTime);
+		var beginDate = this.calculateNewItemBeginDate(event, columnIndex, rowIndex, timeslotTime);
 		var endDate = this.calculateNewItemEndDate(beginDate, timeslots, rowIndex, timeslotTime);
-		calendarWidget.fireCalEvent(beginDate, endDate, evt);
+		calendarWidget.fireCalEvent(beginDate, endDate, event);
 	},
-
-	calculateNewItemBeginDate: function (widget, columnIndex, rows, timeslotTime) {
-		var beginDate = new Date(widget.zoneBd);
+	/**
+	 * @param event for future customization requirement
+ 	 */
+	calculateNewItemBeginDate: function (event, columnIndex, rowIndex, timeslotTime) {
+		var beginDate = new Date(this.zoneBd);
 		beginDate.setDate(beginDate.getDate() + columnIndex);
 		beginDate.setMilliseconds(0);// clean
-		beginDate.setMinutes(beginDate.getMinutes() + rows * timeslotTime);
+		beginDate.setMinutes(beginDate.getMinutes() + rowIndex * timeslotTime);
 		return beginDate;
 	},
 
