@@ -1,3 +1,6 @@
 <zk>
-    <calendars id="cal" apply="test.EventComposer" height="90%"/>
+    <nodom apply="test.EventComposer">
+        <label id="firedEvent" sclass="firedEvent"/>
+        <calendars id="cal"  height="90%"/>
+    </nodom>
 </zk>

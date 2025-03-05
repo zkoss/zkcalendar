@@ -53,4 +53,10 @@ public class CalendarTestBase extends WebDriverTestCase {
     protected int getSpeed() {
         return 50;
     }
+
+    /* remove comment for debug*/
+//    @Override
+//    protected boolean isHeadless() {
+//        return false;
+//    }
 }
