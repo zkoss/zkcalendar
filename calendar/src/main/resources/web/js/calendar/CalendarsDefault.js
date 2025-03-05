@@ -575,20 +575,11 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			cells = widget.cntRows.cells,
 			offsets = zk(contentNode).revisedOffset(),
 			heighsPerRow = widget.perHeight;
-		columnIndex = cells.length - timezonesLength,
-			rows = Math.floor((mousePosition.y + contentNode.scrollTop - offsets[1]) / heighsPerRow),
+		var columnIndex = cells.length - timezonesLength;
+		columnIndex = this.updateColumnIndex(contentNode, mousePosition, offsets, columnIndex);
+		var rows = Math.floor((mousePosition.y + contentNode.scrollTop - offsets[1]) / heighsPerRow),
 			timeslots = widget._timeslots,
 			timeslotTime = 60 / timeslots;
-
-		for (; columnIndex--;) {
-			//Fix ZKCAL-55: Problems with horizontal scrollbar
-			//should consider cnt offset position if it is wrapped by a scrollable container
-			if (contentNode._lefts[columnIndex] <= (mousePosition.x - offsets[0] + this._initLeft))
-				break;
-		}
-
-		if (columnIndex < 0)
-			columnIndex = 0;
 
 		/* cells[timezonesLength + columnIndex].firstChild is the column for the target day in the calendar content */
 		/* create drag ghost from template and temporarily adds it as part of the same column */
@@ -633,6 +624,17 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			endDate.setHours(endDate.getHours() + 2);
 		}
 		widget.fireCalEvent(beginDate, endDate, evt);
+	},
+	updateColumnIndex: function(contentNode, mousePosition, offsets, columnIndex) {
+		for (; columnIndex--;) {
+			//Fix ZKCAL-55: Problems with horizontal scrollbar
+			//should consider cnt offset position if it is wrapped by a scrollable container
+			if (contentNode._lefts[columnIndex] <= (mousePosition.x - offsets[0] + this._initLeft))
+				break;
+		}
+		if (columnIndex < 0)
+			columnIndex = 0;
+		return columnIndex;
 	},
 	//Feature ZKCAL-51: override to define default item time duration
 	getNewItemTimeSlots_: function () {
