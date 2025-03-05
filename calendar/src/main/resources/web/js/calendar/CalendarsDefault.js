@@ -570,23 +570,33 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	isClickExistingItem: function (item) {
 		return !!item;
 	},
-	clickToCreateItem: function (widget, contentNode, mousePosition, evt) {
-		var timezonesLength = widget._zones.length,
-			cells = widget.cntRows.cells,
+	clickToCreateItem: function (calendarWidget, contentNode, mousePosition, evt) {
+		var timezonesLength = calendarWidget._zones.length,
+			cells = calendarWidget.cntRows.cells,
 			offsets = zk(contentNode).revisedOffset(),
-			heighsPerRow = widget.perHeight;
+			heightPerRow = calendarWidget.perHeight;
 		var columnIndex = cells.length - timezonesLength;
 		columnIndex = this.updateColumnIndex(contentNode, mousePosition, offsets, columnIndex);
-		var rows = Math.floor((mousePosition.y + contentNode.scrollTop - offsets[1]) / heighsPerRow),
-			timeslots = widget._timeslots,
+		var rowIndex = Math.floor((mousePosition.y + contentNode.scrollTop - offsets[1]) / heightPerRow),
+			timeslots = calendarWidget._timeslots,
 			timeslotTime = 60 / timeslots;
 
-		this.renderNewItemDragGhost(widget, cells, timezonesLength, columnIndex, rows, heighsPerRow, timeslotTime);
+		this.renderNewItemDragGhost(calendarWidget, cells, timezonesLength, columnIndex, rowIndex, heightPerRow, timeslotTime);
 
+		var beginDate = this.calculateNewItemBeginDate(calendarWidget, columnIndex, rowIndex, timeslotTime);
+		var endDate = this.calculateNewItemEndDate(beginDate, timeslots, rowIndex, timeslotTime);
+		calendarWidget.fireCalEvent(beginDate, endDate, evt);
+	},
+
+	calculateNewItemBeginDate: function (widget, columnIndex, rows, timeslotTime) {
 		var beginDate = new Date(widget.zoneBd);
 		beginDate.setDate(beginDate.getDate() + columnIndex);
 		beginDate.setMilliseconds(0);// clean
 		beginDate.setMinutes(beginDate.getMinutes() + rows * timeslotTime);
+		return beginDate;
+	},
+
+	calculateNewItemEndDate: function(beginDate, timeslots, rows, timeslotTime) {
 		var endDate = new Date(beginDate);
 		endDate.setMinutes(endDate.getMinutes() + this.getNewItemTimeSlots_() * timeslotTime);
 		//ZKCAL-50: available to click on DST day start from 01:00
@@ -594,7 +604,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			beginDate.setHours(beginDate.getHours() + 1);
 			endDate.setHours(endDate.getHours() + 2);
 		}
-		widget.fireCalEvent(beginDate, endDate, evt);
+		return endDate;
 	},
 
 	renderNewItemDragGhost: function (widget, cells, timezonesLength, columnIndex, rows, heighsPerRow, timeslotTime) {
