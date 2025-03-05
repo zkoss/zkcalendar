@@ -551,88 +551,89 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	 * @returns 
 	 */
 	onClick: function (contentNode, evt) {
-		var widget = zk.Widget.$(contentNode),
+		var calendarWidget = zk.Widget.$(contentNode),
 			mousePosition = {x:Math.round(evt.pageX), y:Math.round(evt.pageY)}; //ZKCAL-42: sometimes it returns float number in IE 10
 
 		/* returns if clicking time zone or not body */
 		if (!contentNode._lefts || mousePosition.x <= contentNode._lefts[0]) return;
 
-		/* null if click in empty space */
 		var calendarItemData = zk.Widget.$(evt.target).item;
-		
-		if (calendarItemData) {
-			/* clicking on existing event */
-			widget.fire('onItemEdit', {
+		if (this.isClickExistingItem(calendarItemData)) {
+			calendarWidget.fire('onItemEdit', {
 				data: [calendarItemData.id,mousePosition.x,mousePosition.y, jq.innerWidth(),jq.innerHeight()]});
 		} else {
-			/* clicking in empty space */
-			var timezonesLength = widget._zones.length,
-				cells = widget.cntRows.cells,
-				offsets = zk(contentNode).revisedOffset(),
-				heighsPerRow = widget.perHeight;
-				columnIndex = cells.length - timezonesLength,
-				rows = Math.floor((mousePosition.y + contentNode.scrollTop - offsets[1]) / heighsPerRow),
-				timeslots = widget._timeslots,
-				timeslotTime = 60 / timeslots;
-
-			for (; columnIndex--;) {
-				//Fix ZKCAL-55: Problems with horizontal scrollbar
-				//should consider cnt offset position if it is wrapped by a scrollable container
-				if (contentNode._lefts[columnIndex] <= (mousePosition.x - offsets[0] + this._initLeft))
-					break;
-			}
-
-			if (columnIndex < 0)
-			columnIndex = 0;
-
-			/* cells[timezonesLength + columnIndex].firstChild is the column for the target day in the calendar content */
-			/* create drag ghost from template and temporarily adds it as part of the same column */
-			jq(cells[timezonesLength + columnIndex].firstChild).prepend(
-				this.getDragAndDropTemplate(widget.uuid + '-dd', 'z-calitem')
-			);
-
-			var draggedGhost = jq('#' + widget.uuid + '-dd')[0];
-			jq(draggedGhost).addClass(widget.getZclass() + '-evt-ghost');
-
-			draggedGhost.style.top = jq.px(rows * heighsPerRow);
-
-			var draggedGhostBody = jq('#' + widget.uuid + '-dd-body')[0],
-				draggedGhostHeight = 0,
-				inner = draggedGhostBody.firstChild.firstChild;
-			rows += widget.beginIndex;
-			var beginIndex = rows * widget._slotOffs,
-				itemTimeSlot = this.getNewItemTimeSlots_();
-				endIndex = beginIndex + (itemTimeSlot * timeslotTime / 5);
-			inner.firstChild.innerHTML = widget.getDateTime(beginIndex, 5) + ' - ' + widget.getDateTime(endIndex, 5);
-
-			for (var child = jq(draggedGhost).children().get(0);child;child = child.nextSibling) {
-				if (this.isLegalChild(child))
-				draggedGhostHeight += child.offsetHeight;
-			}
-
-			draggedGhostHeight += zk(draggedGhostBody).padBorderHeight();
-			draggedGhostHeight += zk(draggedGhostBody.firstChild).padBorderHeight();
-			draggedGhostHeight += zk(inner).padBorderHeight();
-			draggedGhostHeight += 2;
-			inner.style.height = jq.px((heighsPerRow * itemTimeSlot) - draggedGhostHeight);
-
-			var beginDate = new Date(widget.zoneBd);
-			beginDate.setDate(beginDate.getDate() + columnIndex);
-			beginDate.setMilliseconds(0);// clean
-			beginDate.setMinutes(beginDate.getMinutes() + rows * timeslotTime);
-			var endDate = new Date(beginDate);
-			endDate.setMinutes(endDate.getMinutes() + itemTimeSlot * timeslotTime);
-			//ZKCAL-50: available to click on DST day start from 01:00
-			if (beginDate.getTime() == endDate.getTime() && rows == timeslots) {
-				beginDate.setHours(beginDate.getHours() + 1);
-				endDate.setHours(endDate.getHours() + 2);
-			}
-			widget.fireCalEvent(beginDate, endDate, evt);
+			this.clickToCreateItem(calendarWidget, contentNode, mousePosition, evt);
 		}
-		widget.closeFloats();
+		calendarWidget.closeFloats();
 		evt.stop();
 	},
-	
+	isClickExistingItem: function (item) {
+		return !!item;
+	},
+	clickToCreateItem: function (widget, contentNode, mousePosition, evt) {
+		var timezonesLength = widget._zones.length,
+			cells = widget.cntRows.cells,
+			offsets = zk(contentNode).revisedOffset(),
+			heighsPerRow = widget.perHeight;
+		columnIndex = cells.length - timezonesLength,
+			rows = Math.floor((mousePosition.y + contentNode.scrollTop - offsets[1]) / heighsPerRow),
+			timeslots = widget._timeslots,
+			timeslotTime = 60 / timeslots;
+
+		for (; columnIndex--;) {
+			//Fix ZKCAL-55: Problems with horizontal scrollbar
+			//should consider cnt offset position if it is wrapped by a scrollable container
+			if (contentNode._lefts[columnIndex] <= (mousePosition.x - offsets[0] + this._initLeft))
+				break;
+		}
+
+		if (columnIndex < 0)
+			columnIndex = 0;
+
+		/* cells[timezonesLength + columnIndex].firstChild is the column for the target day in the calendar content */
+		/* create drag ghost from template and temporarily adds it as part of the same column */
+		jq(cells[timezonesLength + columnIndex].firstChild).prepend(
+			this.getDragAndDropTemplate(widget.uuid + '-dd', 'z-calitem')
+		);
+
+		var draggedGhost = jq('#' + widget.uuid + '-dd')[0];
+		jq(draggedGhost).addClass(widget.getZclass() + '-evt-ghost');
+
+		draggedGhost.style.top = jq.px(rows * heighsPerRow);
+
+		var draggedGhostBody = jq('#' + widget.uuid + '-dd-body')[0],
+			draggedGhostHeight = 0,
+			inner = draggedGhostBody.firstChild.firstChild;
+		rows += widget.beginIndex;
+		var beginIndex = rows * widget._slotOffs,
+			itemTimeSlot = this.getNewItemTimeSlots_();
+		endIndex = beginIndex + (itemTimeSlot * timeslotTime / 5);
+		inner.firstChild.innerHTML = widget.getDateTime(beginIndex, 5) + ' - ' + widget.getDateTime(endIndex, 5);
+
+		for (var child = jq(draggedGhost).children().get(0);child;child = child.nextSibling) {
+			if (this.isLegalChild(child))
+				draggedGhostHeight += child.offsetHeight;
+		}
+
+		draggedGhostHeight += zk(draggedGhostBody).padBorderHeight();
+		draggedGhostHeight += zk(draggedGhostBody.firstChild).padBorderHeight();
+		draggedGhostHeight += zk(inner).padBorderHeight();
+		draggedGhostHeight += 2;
+		inner.style.height = jq.px((heighsPerRow * itemTimeSlot) - draggedGhostHeight);
+
+		var beginDate = new Date(widget.zoneBd);
+		beginDate.setDate(beginDate.getDate() + columnIndex);
+		beginDate.setMilliseconds(0);// clean
+		beginDate.setMinutes(beginDate.getMinutes() + rows * timeslotTime);
+		var endDate = new Date(beginDate);
+		endDate.setMinutes(endDate.getMinutes() + itemTimeSlot * timeslotTime);
+		//ZKCAL-50: available to click on DST day start from 01:00
+		if (beginDate.getTime() == endDate.getTime() && rows == timeslots) {
+			beginDate.setHours(beginDate.getHours() + 1);
+			endDate.setHours(endDate.getHours() + 2);
+		}
+		widget.fireCalEvent(beginDate, endDate, evt);
+	},
 	//Feature ZKCAL-51: override to define default item time duration
 	getNewItemTimeSlots_: function () {
 		return this._timeslots;
