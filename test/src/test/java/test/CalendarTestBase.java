@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.zkoss.test.webdriver.WebDriverTestCase;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Reuse web driver to avoid connecting a test page for each test case, reduce test case running time.
  */
@@ -21,6 +23,18 @@ public class CalendarTestBase extends WebDriverTestCase {
     static protected String calendarSclass(String subCssClass) {
         return ".z-calendars-"+subCssClass;
     }
+    public enum Size{
+        HOUR_HEIGHT(30);
+        private final int value;
+
+        Size(int value) {
+            this.value = value;
+        }
+
+        public int value() {
+            return value;
+        }
+    }
 
     protected void reloadPage() {
         driver.navigate().refresh();
@@ -29,6 +43,7 @@ public class CalendarTestBase extends WebDriverTestCase {
     public void init(){
         connect(TEST_ZUL);
         staticDriver = this.driver;
+        driver.manage().timeouts().setScriptTimeout(3000, TimeUnit.SECONDS);
     }
 
     @BeforeEach
