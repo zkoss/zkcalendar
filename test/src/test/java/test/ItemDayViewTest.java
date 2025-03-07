@@ -63,11 +63,12 @@ public class ItemDayViewTest extends CalendarTestBase {
     @Test
     public void enlargeItemToOverlap() {
         reloadPage();
-        JQuery separateItems = jq(".z-calendars-week-day").eq(0).find(".z-calitem");
-        getActions().dragAndDrop(toElement(separateItems.find(".z-calitem-resizer")), toElement(separateItems.get(1))).perform();
+        JQuery separateItem = jq(".z-calendars-week-day").eq(0).find(".separate");
+        JQuery colorItem = jq(".colored").eq(0);
+        getActions().dragAndDrop(toElement(separateItem.find(".z-calitem-resizer")), toElement(colorItem)).perform();
         waitResponse();
-        assertEquals("85%", separateItems.get(0).get("style.width"));
-        assertEquals("50%", separateItems.get(1).get("style.width"));
+        assertEquals("85%", separateItem.get(0).get("style.width"));
+        assertEquals("50%", colorItem.get(0).get("style.width"));
     }
 
     //TODO add drag items tests
