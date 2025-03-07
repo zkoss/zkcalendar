@@ -3,5 +3,6 @@
     <button id="next" label="Next"/>
     <button id="monthMold" label="Month"/>
     <button id="defaultMold" label="Default"/>
+    <button id="modelUpdateSimple" label="modelUpdateSimple"/>
     <calendars id="cal" apply="test.RenderItemsComposer" height="90%"/>
 </zk>
