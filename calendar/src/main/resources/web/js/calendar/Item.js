@@ -154,5 +154,13 @@ calendar.Item = zk.$extends(zk.Widget, {
 			}
 		}
 		return boundDate;
+	},
+	isSclassChanged: function(updatedItem){
+		return this.getSclass() != updatedItem.sclass;
+	},
+	redrawSclass: function(updatedItem){
+		if (this.$n()){
+			this.$n().className = this.domClass_();
+		}
 	}
 });

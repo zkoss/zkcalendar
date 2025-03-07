@@ -523,10 +523,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		},
 
 		/**
-		 * modify daylong items
+		 * modify day items
 		 * 
 		 * @param {JSON} itemsData JSON array of CalendarsItem from server 
-		 * @returns 
 		 */
 		setModifyDayItem: function(itemsData) {
 			itemDataArray = jq.evalJSON(itemsData);
@@ -545,46 +544,47 @@ it will be useful, but WITHOUT ANY WARRANTY.
 					inMonthMold = this.mon,
 					isBeginTimeChange = false,
 					isEndTimeChange = false, // ZKCAL-83: should maintain _itemWeekSet
-					item = this.processItemData_(itemData);
+					updatedItem = this.processItemData_(itemData);
 
 				//Bug ZKCAL-47: childWidget may not in the range and has beem removed.
 				if (!childWidget) {
-					if (item.zoneBd > this.zoneEd || item.zoneEd < this.zoneBd) {
+					if (updatedItem.zoneBd > this.zoneEd || updatedItem.zoneEd < this.zoneBd) {
 						//if item still not in the range, skip
 						continue;
 					} else {
 						//if item is in the range, create childWidget.
-						this.processChildrenWidget_(this.$class._isExceedOneDay(this, item), item);
-						childWidget = zk.$(item.id);
+						this.processChildrenWidget_(this.$class._isExceedOneDay(this, updatedItem), updatedItem);
+						childWidget = zk.$(updatedItem.id);
 					}
 				}
 
 				if (inMonthMold &&
-					((isBeginTimeChange = childWidget.isBeginTimeChange(item)) || (isEndTimeChange = childWidget.isEndTimeChange(item))))
+					((isBeginTimeChange = childWidget.isBeginTimeChange(updatedItem)) || (isEndTimeChange = childWidget.isEndTimeChange(updatedItem))))
 					this.removeNodeInArray_(childWidget);
 
 				//over range
-				if (item.zoneBd > this.zoneEd || item.zoneEd < this.zoneBd) {
+				if (updatedItem.zoneBd > this.zoneEd || updatedItem.zoneEd < this.zoneBd) {
 					if (!inMonthMold)
 						this.removeNodeInArray_(childWidget, wasChanged);
 					this.removeChild(childWidget);
 					continue;
 				}
 
-				var isExceedOneDay = this.$class._isExceedOneDay(this, item),
+				var isExceedOneDay = this.$class._isExceedOneDay(this, updatedItem),
 					clsName = childWidget.className,
 					isDayItem = inMonthMold ? clsName == 'calendar.DayOfMonthItem' : clsName == 'calendar.DayItem',
 					isChangeEvent = isExceedOneDay ? isDayItem : !isDayItem;
+				var isSclassChanged = childWidget.isSclassChanged(updatedItem);
 
 				if (isChangeEvent) {
 					if (!inMonthMold)
 						this[isDayItem ? '_dayItems' : '_daylongItems'].$remove(childWidget.$n());
 					this.removeNodeInArray_(childWidget, wasChanged); // ZKCAL-83: should maintain _itemWeekSet
 					this.removeChild(childWidget);
-					this.processChildrenWidget_(isExceedOneDay, item);
+					this.processChildrenWidget_(isExceedOneDay, updatedItem);
 					wasChanged.day = wasChanged.daylong = true;
 				} else {
-					childWidget.item = item;
+					childWidget.item = updatedItem;
 					childWidget.update(isBeginTimeChange);
 
 					if (inMonthMold) {
@@ -594,6 +594,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 					} else {
 						wasChanged[isExceedOneDay ? 'daylong' : 'day'] = true;
 					}
+				}
+				if (isSclassChanged){
+					childWidget.redrawSclass();
 				}
 			}
 
