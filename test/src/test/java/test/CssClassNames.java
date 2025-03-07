@@ -10,7 +10,12 @@ public enum CssClassNames {
     WEEK_WEEKEND(CALENDAR.className + "-week-weekend"),
     DAYLONG_EVT(CALENDAR.className + "-daylong-evt"),
     WEEK_BODY(CALENDAR.className + "-week-body"),
-    HOUR_SEPARATOR(CALENDAR.className + "-hour-sep");
+    HOUR_SEPARATOR(CALENDAR.className + "-hour-sep"),
+
+    ITEM("z-calitem"),
+    ITEM_GHOST(CALENDAR.className + "-evt-ghost"),
+    ITEM_HEADER(ITEM.className + "-header"),
+    ITEM_CONTENT(ITEM.className + "-cnt");
 
     private final String className;
 

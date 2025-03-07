@@ -2,8 +2,7 @@ package test;
 
 import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.event.CalendarsEvent;
-import org.zkoss.calendar.impl.DefaultCalendarItem;
-import org.zkoss.calendar.impl.SimpleCalendarModel;
+import org.zkoss.calendar.impl.*;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.Events;
@@ -23,6 +22,7 @@ public class RenderItemsComposer extends SelectorComposer {
     private SimpleCalendarModel model;
     private ZoneId defaultZoneId;
     private LocalDateTime day1;
+    private SimpleCalendarItem modelUpdateSimpleItem;
 
     private void initModel() {
         model = new SimpleCalendarModel();
@@ -33,6 +33,7 @@ public class RenderItemsComposer extends SelectorComposer {
         addConsecutiveOverlapping();
         addShortIntervalItem();
         addDaySpanItem();
+        addModelUpdateSimpleItem();
     }
 
     private void addDaySpanItem() {
@@ -272,5 +273,34 @@ public class RenderItemsComposer extends SelectorComposer {
     @Listen("onClick = #defaultMold")
     public void toDefaultMold(){
         calendars.setMold("default");
+    }
+
+    public static final String SIMPLE_CLASS_INITIAL = "simple-class-initial";
+    public static final String SIMPLE_CLASS_UPDATE = "simple-class-update";
+
+    private void addModelUpdateSimpleItem() {
+        modelUpdateSimpleItem = new SimpleCalendarItem("simple title",
+                "simple content", "font-size:18px",
+                "color:blue", "color:green",
+                false,
+                Date.from(day1.plusHours(5).atZone(defaultZoneId).toInstant()),
+                Date.from(day1.plusHours(6).atZone(defaultZoneId).toInstant())
+        );
+        modelUpdateSimpleItem.setSclass(SIMPLE_CLASS_INITIAL);
+        model.add(modelUpdateSimpleItem);
+    }
+
+    /** update an item's all properties ZKCAL-128 */
+    @Listen("onClick = #modelUpdateSimple")
+    public void updateItemInModel(){
+        modelUpdateSimpleItem.setBegin(Date.from(day1.plusHours(6).atZone(defaultZoneId).toInstant()));
+        modelUpdateSimpleItem.setEnd(Date.from(day1.plusHours(7).atZone(defaultZoneId).toInstant()));
+        modelUpdateSimpleItem.setTitle("title updated");
+        modelUpdateSimpleItem.setContent("content updated");
+        modelUpdateSimpleItem.setHeaderStyle("color:pink");
+        modelUpdateSimpleItem.setContentStyle("color:red");
+        modelUpdateSimpleItem.setStyle("font-style: italic");
+        modelUpdateSimpleItem.setSclass(SIMPLE_CLASS_UPDATE);
+        model.update(modelUpdateSimpleItem);
     }
 }

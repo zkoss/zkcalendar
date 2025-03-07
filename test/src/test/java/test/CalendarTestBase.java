@@ -24,7 +24,8 @@ public class CalendarTestBase extends WebDriverTestCase {
         return ".z-calendars-"+subCssClass;
     }
     public enum Size{
-        HOUR_HEIGHT(30);
+        HALF_HOUR_HEIGHT(30),
+        BORDER(1);
         private final int value;
 
         Size(int value) {
@@ -33,6 +34,11 @@ public class CalendarTestBase extends WebDriverTestCase {
 
         public int value() {
             return value;
+        }
+        /** full item height contains top + bottom border */
+        static public int itemHeight(int nHour){
+            return nHour * 2 * HALF_HOUR_HEIGHT.value
+                    + BORDER.value * 2 ;
         }
     }
 

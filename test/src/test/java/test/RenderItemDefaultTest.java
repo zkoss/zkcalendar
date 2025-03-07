@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zkoss.test.webdriver.ztl.JQuery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static test.RenderItemsComposer.*;
 
 /**
  * item rendering in the default mold.
@@ -159,6 +160,40 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         JQuery overWeekendItem = seventhCell.find(".z-calitem");
         assertEquals(1, overWeekendItem.length());
         assertEquals("span over weekend", overWeekendItem.text());
-
     }
+
+    @Test //ZKCAL-128
+    public void simpleItemUpdate(){
+        //check initial state
+        //begin date
+        JQuery day1 = jq(CssClassNames.WEEK_DAY.selector()).eq(0);
+        JQuery simpleItem = day1.find("."+ SIMPLE_CLASS_INITIAL);
+        assertEquals("310px", simpleItem.css("top")); //begin time
+        assertEquals(Size.itemHeight(1) , simpleItem.height()); // end time
+
+        assertEquals("18px", simpleItem.find("dl").css("font-size"));
+        JQuery header = simpleItem.find(CssClassNames.ITEM_HEADER.selector());
+        assertEquals("rgb(0, 128, 0)", header.css("color"));
+        assertEquals("simple title", header.text());
+        JQuery content = simpleItem.find(CssClassNames.ITEM_CONTENT.selector());
+        assertEquals("rgb(0, 0, 255)", content.css("color"));
+        assertEquals("simple content", content.text());
+
+        click(jq("$modelUpdateSimple"));
+        waitResponse();
+        //check updated state
+        simpleItem = day1.find("."+ SIMPLE_CLASS_UPDATE);
+        assertEquals(true, simpleItem.exists());
+        assertEquals("372px", simpleItem.css("top")); //begin time
+        assertEquals(Size.itemHeight(1) , simpleItem.height()); // end time
+
+        assertEquals("italic", simpleItem.find("dl").css("font-style"));
+        header = simpleItem.find(CssClassNames.ITEM_HEADER.selector());
+        assertEquals("rgb(255, 192, 203)", header.css("color"));
+        assertEquals("title updated", header.text());
+        content = simpleItem.find(CssClassNames.ITEM_CONTENT.selector());
+        assertEquals("rgb(255, 0, 0)", content.css("color"));
+        assertEquals("content updated", content.text());
+    }
+
 }
