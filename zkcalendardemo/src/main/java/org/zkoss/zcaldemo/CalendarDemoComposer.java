@@ -22,7 +22,7 @@ import org.zkoss.zul.*;
 import org.zkoss.zul.Timer;
 
 public class CalendarDemoComposer extends GenericForwardComposer {
-	
+
 	private static final String STYLE_RED = "background-color: #F44336; color: #FFFFFF";
 	private static final String STYLE_ORANGE = "background-color: #FF9800; color: #FFFFFF;";
 	private static final String STYLE_GREEN = "background-color: #4DAF50; color: #FFFFFF;";
@@ -39,6 +39,8 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 	private static final String CONTENT_STYLE_BLUE = "text-transform: uppercase;";
 	private static final String CONTENT_STYLE_TEAL = "text-decoration: underline;";
 	private static final long serialVersionUID = 201011240904L;
+	public static final int EDIT_WINDOW_HEIGHT = 290;
+	public static final int EDIT_WINDOW_WIDTH = 410;
 	private boolean hasPE;
 	private SimpleCalendarModel cm;
 	private Calendars calendars;
@@ -221,10 +223,10 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		int top = evt.getY();
 		int timeslots = calendars.getTimeslots();
 		int timeslotTime = 60 / timeslots;
-		if (top + 245 > evt.getDesktopHeight())
-			top = evt.getDesktopHeight() - 245;
-		if (left + 410 > evt.getDesktopWidth())
-			left = evt.getDesktopWidth() - 410;
+		if (top + EDIT_WINDOW_HEIGHT > evt.getDesktopHeight())
+			top = evt.getDesktopHeight() - EDIT_WINDOW_HEIGHT;
+		if (left + EDIT_WINDOW_WIDTH > evt.getDesktopWidth())
+			left = evt.getDesktopWidth() - EDIT_WINDOW_WIDTH;
 		createEvent.setLeft(left + "px");
 		createEvent.setTop(top + "px");
 		SimpleDateFormat create_sdf = new SimpleDateFormat("HH:mm");
@@ -386,46 +388,39 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 
 	public void onItemEdit$calendars(ForwardEvent event) {
 		CalendarsEvent evt = (CalendarsEvent) event.getOrigin();
-		
-		int left = evt.getX();
-		int top = evt.getY();
-		if (top + 245 > evt.getDesktopHeight())
-			top = evt.getDesktopHeight() - 245;
-		if (left + 410 > evt.getDesktopWidth())
-			left = evt.getDesktopWidth() - 410;
-		
+
+		determineEditWindowPosition(evt);
+
 		TimeZone tz = calendars.getDefaultTimeZone();
-		
-		editEvent.setLeft(left + "px");
-		editEvent.setTop(top + "px");
-		CalendarItem ce = evt.getCalendarItem();
+
+		CalendarItem item = evt.getCalendarItem();
 		SimpleDateFormat edit_sdf = new SimpleDateFormat("HH:mm");
 		edit_sdf.setTimeZone(tz);
 		Calendar calendar = Calendar.getInstance(org.zkoss.util.Locales
 				.getCurrent());
-		String[] times = edit_sdf.format(ce.getBeginDate()).split(":");
+		String[] times = edit_sdf.format(item.getBeginDate()).split(":");
 		int hours = Integer.parseInt(times[0]);
 		int mins = Integer.parseInt(times[1]);
 		int bdTimeSum = hours + mins;
 		editEvent$ppbt.setSelectedIndex(hours*12 + mins/5);
-		times = edit_sdf.format(ce.getEndDate()).split(":");
+		times = edit_sdf.format(item.getEndDate()).split(":");
 		hours = Integer.parseInt(times[0]);
 		mins = Integer.parseInt(times[1]);
 		int edTimeSum = hours + mins;
 		editEvent$ppet.setSelectedIndex(hours*12 + mins/5);
 		boolean isAllday = (bdTimeSum + edTimeSum) == 0;
 		editEvent$ppbegin.setTimeZone(tz);
-		editEvent$ppbegin.setValue(ce.getBeginDate());
+		editEvent$ppbegin.setValue(item.getBeginDate());
 		editEvent$ppend.setTimeZone(tz);
-		editEvent$ppend.setValue(ce.getEndDate());
+		editEvent$ppend.setValue(item.getEndDate());
 		editEvent$ppallDay.setChecked(isAllday);
-		editEvent$pplocked.setChecked(ce.isLocked());
+		editEvent$pplocked.setChecked(item.isLocked());
 		editEvent$ppbt.setVisible(!isAllday);
 		editEvent$ppet.setVisible(!isAllday);
-		editEvent$ppcnt.setValue(ce.getContent());
+		editEvent$ppcnt.setValue(item.getContent());
 
 		int index = 0;
-		String style = ce.getStyle();
+		String style = item.getStyle();
 		if (STYLE_RED.equals(style)) {
 			index = 0;
 			editEvent$ppcolor.setSclass("red");
@@ -450,9 +445,20 @@ public class CalendarDemoComposer extends GenericForwardComposer {
 		editEvent.setVisible(true);
 	
 		// store for the edit marco component.
-		editEvent.setAttribute("ce", ce);
+		editEvent.setAttribute("item", item);
 	}
-	
+
+	private void determineEditWindowPosition(CalendarsEvent evt) {
+		int left = evt.getX();
+		int top = evt.getY();
+		if (top + EDIT_WINDOW_HEIGHT > evt.getDesktopHeight())
+			top = evt.getDesktopHeight() - EDIT_WINDOW_HEIGHT;
+		if (left + EDIT_WINDOW_WIDTH > evt.getDesktopWidth())
+			left = evt.getDesktopWidth() - EDIT_WINDOW_WIDTH;
+		editEvent.setLeft(left + "px");
+		editEvent.setTop(top + "px");
+	}
+
 	public void onClose$editEvent(ForwardEvent event) {
 		event.getOrigin().stopPropagation();
 		editEvent.setVisible(false);

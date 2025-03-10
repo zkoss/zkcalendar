@@ -22,7 +22,7 @@ graph TD
     I --> I1[td.z-calendars-daylong-body]
     I1 --> I2[div.z-calendars-daylong-inner]
     I2 --> I3[table.z-calendars-daylong-cnt]
-    I3 --> I4[td.z-calendars-daylong-evt x7]
+    I3 --> I4[td.z-calendars-daylong-evt x7 <br> the items span equal or over 1 day]
 
     F --> J[table.z-calendars-week-cnt]
     J --> K[tr timezone]
@@ -40,14 +40,18 @@ graph TD
     L --> L3[td.z-calendars-week-day x7]
     L3 --> L4[div.z-calendars-week-day-cnt]
 
-    classDef default fill:#f9f9f9,stroke:#333,stroke-width:1px,color:black;
-    classDef header fill:#E3F2FD,stroke:#333,stroke-width:1px;
-    classDef daylong fill:#F1F8E9,stroke:#333,stroke-width:1px;
-    classDef hourGrid fill:#FCE4EC,stroke:#333,stroke-width:1px;
-    classDef content fill:#FFF8E1,stroke:#333,stroke-width:1px;
+    classDef default fill:white,stroke:#333,stroke-width:1px,color:black;
+    classDef weekHeader fill:blue,stroke:#333,stroke-width:1px;
+    classDef header fill:lightblue,stroke:#333,stroke-width:1px;
+    classDef daylong fill:Aqua,stroke:#333,stroke-width:1px;
+    classDef hourGrid fill:lightgreen,stroke:#333,stroke-width:1px;
+    classDef week fill:green;
+    classDef content fill:lime,stroke:#333,stroke-width:1px;
 
     class A,B,C,D default;
-    class E,G,H,H1,H2,H3,H2A,H2B,H2C,H2D header;
+    class E,G weekHeader;
+    class H,H1,H2,H3,H2A,H2B,H2C,H2D header;
     class I,I1,I2,I3,I4 daylong;
     class K,K1,K2,K3,K4,K5 hourGrid;
+    class F,J week;
     class L,L1,L2,L3,L4 content;
