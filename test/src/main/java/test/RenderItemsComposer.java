@@ -161,7 +161,7 @@ public class RenderItemsComposer extends SelectorComposer {
         model.add(item3);
     }
 
-
+    //ZKCAL-113
     private void add3consecutiveItems() {
         LocalDateTime day5 = day1.plusDays(4);
         DefaultCalendarItem calendarItem = new DefaultCalendarItem.Builder()

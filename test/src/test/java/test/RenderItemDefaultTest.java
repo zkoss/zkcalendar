@@ -30,7 +30,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals("", left);
     }
 
-    @Test
+    @Test //ZKCAL-120
     public void headerContentColor(){
         JQuery coloredItem = jq(".z-calendars-week-day").eq(0).find(".colored");
         JQuery header = coloredItem.find(".z-calitem-header");
@@ -103,6 +103,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
     }
 
     /**
+     * ZKCAL-113. ZKCAL-90.
      * item 1's and item 2's time interval are consecutive. e.g. 1:00~2:00, 2:00~3:00
      * Render these 2 items in non-overlapping way. Don't shrink their width and shift to right.
      */

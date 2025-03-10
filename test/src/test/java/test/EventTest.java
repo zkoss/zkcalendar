@@ -27,7 +27,7 @@ public class EventTest extends CalendarTestBase{
         reloadPage(); //revert the page back to initial state, so other tests don't need to reload
     }
 
-    @Test
+    @Test //ZKCAL-109
     public void dayHoverEffect(){
         JQuery jan1 = jq(".z-calendars-day-of-week-inner").eq(0);
         getActions().moveToElement(toElement(jan1)).pause(20).perform();

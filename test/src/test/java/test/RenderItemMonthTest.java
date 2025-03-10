@@ -21,7 +21,7 @@ public class RenderItemMonthTest extends CalendarTestBase {
         assertEquals("00:00",  sameBeginEndTimeItem.find(".z-calitem-header").get(0).get("textContent"));
     }
 
-    @Test
+    @Test //ZKCAL-114
     public void itemsOnSameDay(){
         JQuery firstWeekBody = jq(".z-calendars-day-of-month-body").eq(0);
         //first row contains month header
@@ -61,7 +61,7 @@ public class RenderItemMonthTest extends CalendarTestBase {
         assertTrue(isCssRuleApplied(toElement(segment2.find(".z-calitem-inner").get(0)), ".z-calitem-body" + LEFT_ARROW + " .z-calitem-inner", "border-bottom-left-radius", "0px"));
     }
 
-    @Test //ZKCAL-124
+    @Test //ZKCAL-124 ZKCAL-123 ZKCAL-125
     public void endAfter1200(){
         JQuery item = jq(".end-after-12");
         assertEquals(1, item.length());
