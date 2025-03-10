@@ -1,11 +1,11 @@
 package test;
 
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.JavascriptExecutor;
 import org.zkoss.test.webdriver.ztl.*;
 
-import java.time.Duration;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static test.CssClassNames.*;
 
 /**
  * test supported events
@@ -54,12 +54,30 @@ public class EventTest extends CalendarTestBase{
 
         JQuery itemGhost = jq(ITEM_GHOST.selector());
         assertTrue(itemGhost.exists());
-        assertEquals(Size.HOUR_HEIGHT.value() * 2, itemGhost.height());
+        assertEquals(Size.HALF_HOUR_HEIGHT.value() * 2, itemGhost.height());
 
         JQuery itemHeader = itemGhost.find(ITEM_HEADER.selector());
         System.out.println(itemHeader.html());
         assertEquals("00:00 - 01:00", itemHeader.text());
     }
+
+    /**
+     * click to create and drag to enlarge ghost
+     */
+    @Test
+    public void dragToEnlargeNewItemGhost() {
+        JQuery item = jq(".separate.z-calitem").eq(0);
+        int itemHeight = item.height();
+        clickAt(item, item.width(), -itemHeight/2);
+        JQuery itemGhost = jq(ITEM_GHOST.selector());
+        getActions().moveToElement(toElement(itemGhost), 0, (-itemHeight/2)+20)
+                .clickAndHold()
+                .moveByOffset(0, itemHeight / 2)
+                .moveByOffset(0, itemHeight*2)
+                .release().perform();
+        assertEquals(Size.itemHeight(2), itemGhost.height());
+    }
+
     @Test
     public void editItemEvent(){
         JQuery item = jq(".separate.z-calitem").eq(0);
@@ -69,14 +87,21 @@ public class EventTest extends CalendarTestBase{
         assertEquals("onItemEdit non overlapped null null", firedEventLabel.text());
     }
 
-    //dragdropTo() doesn't work on calendar item, but overlapped window works
-    public void updateItem(){
-        JQuery item = jq(".separate.z-calitem").eq(0);
-        assertTrue(item.exists());
-        dragdropTo(item,0 ,0, item.width(), -(item.height()/2)); //drag right to the next day
+    @Test
+    public void dragItemToTomorrow(){
         waitResponse();
-        JQuery firedEventLabel = jq(".firedEvent").eq(0);
-        assertEquals("onItemUpdate non overlapped Mon Jan 02 00:00:00 CST 2023 Mon Jan 02 01:00:00 CST 2023", firedEventLabel.text());
+        String targetItemSelector = ".separate.z-calitem";
+        JQuery item = jq(targetItemSelector).eq(0);
+        assertTrue(item.exists());
+        int width = item.width();
+        getActions().clickAndHold(toElement(item))
+                .moveByOffset(width/2, 0) //need to move the cursor half distance once for 2 times, move the whole width once doesn't drag an item successfully
+                .moveByOffset(width/2, 0).release().perform();
+        assertTrue(jq(targetItemSelector+ITEM_GHOST.selector()).exists());
+        waitResponse();
+        JQuery day2 = jq(WEEK_DAY.selector()).eq(1);
+        assertTrue(day2.find(targetItemSelector).exists());
+        reloadPage();
     }
 
 }
