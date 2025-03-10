@@ -28,7 +28,7 @@ import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.util.Maps;
 
 /**
- * A simple implementation of {@link CalendarItem}
+ * A simple implementation of {@link CalendarItem}. Calling setters doesn't actually update a {@link CalendarItem} in a browser, you need to call {@link SimpleCalendarModel#update(CalendarItem)} after you modify an item.
  * @author jumperchen
  * @see AbstractCalendarItem
  */

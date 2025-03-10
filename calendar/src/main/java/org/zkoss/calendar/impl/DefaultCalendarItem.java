@@ -11,13 +11,16 @@ Copyright (C) 2021 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.calendar.impl;
 
+import org.zkoss.calendar.api.CalendarItem;
+
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 /**
- * An immutable implementation of {@link AbstractCalendarItem} using LocalDateTime and ZoneId.
+ * We provide this implementation to support Java new Date API: {@link LocalDateTime}. Because you cannot modify a {@link CalendarItem} in a browser by changing its data, it doesn't provide any setter methods. It avoids to mislead you that setters can change a {@link CalendarItem}'s status in a browser.
+ * To update an {@link CalendarItem}, you need to {@link SimpleCalendarModel#remove(CalendarItem)} an old item and {@link SimpleCalendarModel#add(CalendarItem)} new item.
  * @author leon
  * @since since 3.0.0
  */
