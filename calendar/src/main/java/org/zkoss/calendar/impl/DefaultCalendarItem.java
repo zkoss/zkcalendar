@@ -74,6 +74,28 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 		private String headerStyle = "";
 		private String contentStyle = "";
 
+		/**
+		 * Initialize builder with values from an existing DefaultCalendarItem
+		 * @param item the existing DefaultCalendarItem to copy values from
+		 * @return a Builder initialized with the existing item's values
+		 * @since 3.1.3
+		 */
+		public static Builder from(DefaultCalendarItem item) {
+			Builder builder = new Builder();
+			builder.begin = LocalDateTime.ofInstant(item.getBegin(), item._zoneId);
+			builder.end = LocalDateTime.ofInstant(item.getEnd(), item._zoneId);
+			builder.zoneId = item._zoneId;
+			builder.title = item.getTitle();
+			builder.content = item.getContent();
+			builder.headerColor = item.getHeaderColor();
+			builder.contentColor = item.getContentColor();
+			builder.headerStyle = item.getHeaderStyle();
+			builder.contentColor = item.getContentStyle();
+			builder.sclass = item.getSclass();
+			builder.locked = item.isLocked();
+			return builder;
+		}
+
 		public Builder withBegin(LocalDateTime begin) {
 			this.begin = begin;
 			return this;
@@ -102,7 +124,7 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 		/**
 		 * set background color
 		 * @param headerColor CSS accepted color code
-		 * @deprecated use {@link #withSclass(String)} and CSS instead.
+		 * @deprecated use {@link #withHeaderColor(String)} instead.
 		 */
 		@Deprecated
 		public Builder withHeaderColor(String headerColor) {
@@ -113,7 +135,7 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 		/**
 		 * set background color
 		 * @param contentColor CSS accepted color code
-		 * @deprecated use {@link #withSclass(String)} and CSS instead.
+		 * @deprecated use {@link #withContent(String)} instead.
 		 */
 		@Deprecated
 		public Builder withContentColor(String contentColor) {
@@ -122,6 +144,12 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 		}
 
 
+		/**
+		 * This is useful to apply a predefined style on a set of {@link DefaultCalendarItem}
+		 * @param sclass
+		 * @see #withHeaderStyle(String) 
+		 * @see #withContentStyle(String)
+		 */
 		public Builder withSclass(String sclass) {
 			this.sclass = sclass;
 			return this;
@@ -132,8 +160,32 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 			return this;
 		}
 
+		/**
+		 * Set the CSS style for the header. This method is useful for applying dynamic styles to specific calendar items without affecting other items or creating a CSS class. The component renders the specified style into an item's inline style (the highest priority).
+		 * This method overrides the value set by {@link #withHeaderColor(String)}, if you set both.
+		 * @param headerStyle CSS style string
+		 * @since 3.1.3
+		 */
+		public Builder withHeaderStyle(String headerStyle) {
+		    this.headerStyle = headerStyle;
+		    return this;
+		}
+
+		/**
+		 * Set the CSS style for the content. This method overrides the value set by {@link #withContentColor(String)} (String)}
+		 * @param contentStyle CSS style string
+		 * @see #withHeaderStyle(String)       
+		 * @since 3.1.3
+		 */
+		public Builder withContentStyle(String contentStyle) {
+		    this.contentStyle = contentStyle;
+		    return this;
+		}
+
 		public DefaultCalendarItem build() {
-			return new DefaultCalendarItem(title, content, headerColor, contentColor, sclass, locked, begin, end, zoneId);
+			String finalHeaderStyle = headerStyle.isEmpty() ? headerColor : headerStyle;
+			String finalContentStyle = contentStyle.isEmpty() ? contentColor : contentStyle;
+			return new DefaultCalendarItem(title, content, finalHeaderStyle, finalContentStyle, sclass, locked, begin, end, zoneId);
 		}
 	}
 }
