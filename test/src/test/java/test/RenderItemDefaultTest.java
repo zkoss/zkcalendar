@@ -1,9 +1,10 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import org.zkoss.test.webdriver.ztl.JQuery;
+import org.zkoss.test.webdriver.ztl.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static test.CssClassNames.*;
 import static test.RenderItemsComposer.*;
 
 /**
@@ -38,6 +39,19 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         JQuery content = coloredItem.find(".z-calitem-cnt");
         String yellow = "rgb(255, 255, 0)";
         assertEquals(yellow, content.eq(0).css("background-color"));
+    }
+
+    @Test //ZKCAL-130
+    public void headerContentStyle(){
+        JQuery styledItem = jq(".z-calendars-week-day").eq(5).find(".styled");
+
+        Element header = styledItem.find(ITEM_HEADER.selector()).toElement();
+        assertEquals("italic", header.get("style['font-style']"));
+        assertEquals("red", header.get("style['color']"));
+
+        Element content = styledItem.find(ITEM_CONTENT.selector()).toElement();
+        assertEquals("20px", content.get("style['font-size']"));
+        assertEquals("lightgreen", content.get("style['color']"));
     }
 
     /**
@@ -172,7 +186,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals(Size.itemHeight(1) , simpleItem.height()); // end time
 
         assertEquals("18px", simpleItem.find("dl").css("font-size"));
-        JQuery header = simpleItem.find(CssClassNames.ITEM_HEADER.selector());
+        JQuery header = simpleItem.find(ITEM_HEADER.selector());
         assertEquals("rgb(0, 128, 0)", header.css("color"));
         assertEquals("simple title", header.text());
         JQuery content = simpleItem.find(CssClassNames.ITEM_CONTENT.selector());
@@ -188,7 +202,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals(Size.itemHeight(1) , simpleItem.height()); // end time
 
         assertEquals("italic", simpleItem.find("dl").css("font-style"));
-        header = simpleItem.find(CssClassNames.ITEM_HEADER.selector());
+        header = simpleItem.find(ITEM_HEADER.selector());
         assertEquals("rgb(255, 192, 203)", header.css("color"));
         assertEquals("title updated", header.text());
         content = simpleItem.find(CssClassNames.ITEM_CONTENT.selector());

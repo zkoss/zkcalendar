@@ -34,6 +34,21 @@ public class RenderItemsComposer extends SelectorComposer {
         addShortIntervalItem();
         addDaySpanItem();
         addModelUpdateSimpleItem();
+        addHeaderContentStyle();
+    }
+
+    private void addHeaderContentStyle() { //ZKCAL-130
+        LocalDateTime day6 = day1.plusDays(5);
+        DefaultCalendarItem styleItem = new DefaultCalendarItem.Builder()
+                .withZoneId(defaultZoneId)
+                .withBegin(day6.plusHours(4))
+                .withEnd(day6.plusHours(5))
+                .withSclass("styled")
+                .withContent("header content style")
+                .withHeaderStyle("font-style: italic; color:red")
+                .withContentStyle("font-size: 20px; color:lightgreen")
+                .build();
+        model.add(styleItem);
     }
 
     private void addDaySpanItem() {
