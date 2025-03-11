@@ -104,4 +104,44 @@ public class EventTest extends CalendarTestBase{
         reloadPage();
     }
 
+    @Test
+    public void dropOnItem(){
+        JQuery dragElement = jq(".dragElement");
+        getActions().dragAndDrop(toElement(dragElement), toElement(jq(".colored"))).release().perform();
+        waitResponse();
+        JQuery firedEventLabel = jq(".firedEvent").eq(0);
+        assertEquals("blue Sun Jan 01 03:00:00 CST 2023", firedEventLabel.text());
+    }
+
+    @Test
+    public void dropOnCalendar(){
+        JQuery dragElement = jq(".dragElement");
+        getActions().dragAndDropBy(toElement(dragElement), 0, Size.HALF_HOUR_HEIGHT.value()*20).release().perform();
+        waitResponse();
+        JQuery firedEventLabel = jq(".firedEvent").eq(0);
+        assertTrue(firedEventLabel.text().startsWith("non-item"));
+        assertTrue(firedEventLabel.text().contains("Sun Jan 01"));
+    }
+
+    /** it doesn't fire onDrop event */
+    @Test
+    public void dropOnDayOfWeekHeader(){
+        dropOnItem();
+        JQuery dragElement = jq(".dragElement");
+        getActions().dragAndDrop(toElement(dragElement), toElement(jq(DAY_OF_WEEK.selector()).eq(0))).release().perform();
+        waitResponse();
+        JQuery firedEventLabel = jq(".firedEvent").eq(0);
+        assertEquals("blue Sun Jan 01 03:00:00 CST 2023", firedEventLabel.text());
+    }
+
+    @Test
+    public void dropOnDayLongArea(){
+        JQuery dragElement = jq(".dragElement");
+        getActions().dragAndDrop(toElement(dragElement), toElement(jq(DAYLONG_EVT.selector()).eq(0))).release().perform();
+        waitResponse();
+        JQuery firedEventLabel = jq(".firedEvent").eq(0);
+        assertTrue(firedEventLabel.text().startsWith("non-item"));
+        assertTrue(firedEventLabel.text().contains("Sun Jan 01"));
+    }
+
 }

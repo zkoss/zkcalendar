@@ -2,7 +2,7 @@ package test;
 
 import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.api.CalendarItem;
-import org.zkoss.calendar.event.CalendarsEvent;
+import org.zkoss.calendar.event.*;
 import org.zkoss.calendar.impl.DefaultCalendarItem;
 import org.zkoss.calendar.impl.SimpleCalendarModel;
 import org.zkoss.zk.ui.Component;
@@ -106,4 +106,11 @@ public class EventComposer extends SelectorComposer {
         firedEvent.setValue(eventContent);
     }
 
+    @Listen("onDrop = calendars")
+    public void handleDrop(CalendarDropEvent event){
+        String eventContent = String.format("%s %s",
+                Optional.ofNullable(event.getCalendarEvent()).map(CalendarItem::getTitle).orElse("non-item"),
+                event.getDate());
+        firedEvent.setValue(eventContent);
+    }
 }
