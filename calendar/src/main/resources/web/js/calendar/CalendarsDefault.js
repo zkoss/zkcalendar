@@ -944,34 +944,42 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	},
 		
 	onDrop_: function (draggable, evt) {
-		var target = evt.domTarget,
-			time = new Date(this.zoneBd),
-			calendarItemData = zk.copy({dragged: draggable.control}, evt.data),
-			calendarItem;
+		let target = evt.domTarget,
+			targetWidget = zk.Widget.$(target),
+			calendarItemData = zk.copy({dragged: draggable.control}, evt.data);
 		
-		if ((calendarItem = zk.Widget.$(target)) &&
-			calendarItem.className != 'calendar.CalendarsDefault') {
-				calendarItemData.ce = calendarItem.item.id;
-			target = calendarItem.$n().parentNode;
+		if (this.$class.isCalendarItem(targetWidget)){
+			calendarItemData.ce = targetWidget.item.id;
+			target = targetWidget.$n().parentNode;
 		}
 		
+		let time = this.locateDroppedDateTime(target, evt);
+		if (!time){
+			//if users drop on a place that cannot determine the date, ignore it
+			return;
+		}
+		calendarItemData.time = this.fixTimeZoneFromClient(time);
+		this.fire('onDrop', calendarItemData, null, zk.Widget.auDelay);
+	},
+	locateDroppedDateTime: function(target, evt){
+		let time = new Date(this.zoneBd);
 		if (jq.nodeName(target, 'td') &&
 			jq(target.offsetParent).hasClass('z-calendars-daylong-cnt')) {
 			time.setDate(time.getDate() + target.cellIndex);
+			return time;
 		} else if (jq(target).hasClass('z-calendars-week-day-cnt')) {
 			target = target.parentNode;
 			time.setDate(time.getDate() + target.cellIndex - this._zones.length);
-			
+
 			var contentNode = this.$n('cnt'),
 				offs = zk(contentNode).revisedOffset(),
 				rows = Math.floor((evt.pageY + contentNode.scrollTop - offs[1]) / this.perHeight)
 					+ this.beginIndex;
 			time.setMinutes(time.getMinutes() + rows * 60 / this._timeslots);
-		} else return;
-		calendarItemData.time = this.fixTimeZoneFromClient(time);
-		this.fire('onDrop', calendarItemData, null, zk.Widget.auDelay);
+			return time;
+		}
+		return null;
 	},
-			
 	unMoreClick: function (evt) {
 		if (!zUtl.isAncestor(this._pp, evt.currentTarget))
 			this.closeFloats();
@@ -1946,6 +1954,12 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			jq('#' + widget.uuid + '-dd').remove();
 			ce.style.visibility = '';
 		}
+	},
+	/**
+	 * Checks if the given widget is DayItem or DaylongItem
+	 */
+	isCalendarItem: function(widget){
+		return widget?.widgetName.endsWith('item') || false;
 	},
 	HALF_HOUR_HEIGHT: 30, //the same in _variable.less
 });
