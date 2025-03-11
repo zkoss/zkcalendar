@@ -942,43 +942,58 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		zk(pp).cleanVisibility();
 		evt.stop();
 	},
-		
 	onDrop_: function (draggable, evt) {
-		let target = evt.domTarget,
-			targetWidget = zk.Widget.$(target),
-			calendarItemData = zk.copy({dragged: draggable.control}, evt.data);
-		
-		if (this.$class.isCalendarItem(targetWidget)){
-			calendarItemData.ce = targetWidget.item.id;
-			target = targetWidget.$n().parentNode;
-		}
-		
-		let time = this.locateDroppedDateTime(target, evt);
+		let itemId = this.locateCalendarItemId(evt);
+		let time = this.locateDroppedDateTime(evt);
 		if (!time){
 			//if users drop on a place that cannot determine the date, ignore it
 			return;
 		}
-		calendarItemData.time = this.fixTimeZoneFromClient(time);
-		this.fire('onDrop', calendarItemData, null, zk.Widget.auDelay);
+		this.fire('onDrop', this.constructCalendarItemDropData(draggable, evt, itemId, time), null, zk.Widget.auDelay);
 	},
-	locateDroppedDateTime: function(target, evt){
-		let time = new Date(this.zoneBd);
-		if (jq.nodeName(target, 'td') &&
-			jq(target.offsetParent).hasClass('z-calendars-daylong-cnt')) {
-			time.setDate(time.getDate() + target.cellIndex);
-			return time;
-		} else if (jq(target).hasClass('z-calendars-week-day-cnt')) {
-			target = target.parentNode;
-			time.setDate(time.getDate() + target.cellIndex - this._zones.length);
-
-			var contentNode = this.$n('cnt'),
-				offs = zk(contentNode).revisedOffset(),
-				rows = Math.floor((evt.pageY + contentNode.scrollTop - offs[1]) / this.perHeight)
-					+ this.beginIndex;
-			time.setMinutes(time.getMinutes() + rows * 60 / this._timeslots);
-			return time;
+	constructCalendarItemDropData(draggable, evt, itemId, time) {
+		let calendarItemData = zk.copy({dragged: draggable.control}, evt.data);
+		calendarItemData.ce = itemId;
+		calendarItemData.time = time;
+		return calendarItemData;
+	},
+	locateCalendarItemId(event) {
+		let targetWidget = zk.Widget.$(event.domTarget);
+		if (this.$class.isCalendarItem(targetWidget)) {
+			return targetWidget.item.id;
 		}
 		return null;
+	},
+	locateDroppedDateTime: function(event){
+		let targetWidget = zk.Widget.$(event.domTarget);
+		let target = this.$class.isCalendarItem(targetWidget) ? targetWidget.$n().parentNode : event.domTarget;
+
+		if (jq.nodeName(target, 'td') &&
+			jq(target.offsetParent).hasClass('z-calendars-daylong-cnt')) {
+			return this.locateDayLongDroppedDateTime(target)
+		} else if (jq(target).hasClass('z-calendars-week-day-cnt')) {
+			return this.locateWeekDayDroppedDateTime(target, event)
+		}
+		return null;
+	},
+	locateDayLongDroppedDateTime(target) {
+		let time = new Date(this.zoneBd);
+		time.setDate(time.getDate() + target.cellIndex);
+		time = this.fixTimeZoneFromClient(time);
+		return time;
+	},
+	locateWeekDayDroppedDateTime(target, event) {
+		let time = new Date(this.zoneBd);
+		target = target.parentNode;
+		time.setDate(time.getDate() + target.cellIndex - this._zones.length);
+
+		var contentNode = this.$n('cnt'),
+			offs = zk(contentNode).revisedOffset(),
+			rows = Math.floor((event.pageY + contentNode.scrollTop - offs[1]) / this.perHeight)
+				+ this.beginIndex;
+		time.setMinutes(time.getMinutes() + rows * 60 / this._timeslots);
+		time = this.fixTimeZoneFromClient(time);
+		return time;
 	},
 	unMoreClick: function (evt) {
 		if (!zUtl.isAncestor(this._pp, evt.currentTarget))
