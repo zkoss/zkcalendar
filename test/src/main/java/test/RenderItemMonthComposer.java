@@ -25,7 +25,7 @@ public class RenderItemMonthComposer extends SelectorComposer {
         calendars.setCurrentDate(Date.from(day1.atZone(calendars.getDefaultTimeZone().toZoneId()).toInstant()));
         model = new SimpleCalendarModel();
         calendars.setModel(model);
-        addSameBeginEndTime();
+        addSameBeginEndTime(); //ZKCAL-92
         addDaySpanItems();
         addOverWeekendItems();
         addEndtimeAfter1200();

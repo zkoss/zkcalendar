@@ -2,7 +2,7 @@ package test;
 
 public class CalendarAttributeViewModel {
 
-    private boolean readOnly = true;
+    private boolean readOnly = false;
 
     public boolean isReadOnly() {
         return readOnly;

@@ -1,8 +1,8 @@
 <zk>
     test calendar attributes
-    <div viewModel="@id('vm')@init('test.CalendarAttributeViewModel')">
+    <div viewModel="@id('vm')@init('test.CalendarAttributeViewModel')" height="100%">
         <toolbar>
-            <toolbarbutton label="read only" mode="toggle" checked="@bind(vm.readOnly)"/><!--ZKCAL-126-->
+            <toolbarbutton id="readOnlyButton" label="read only" mode="toggle" checked="@bind(vm.readOnly)" onItemCreate=""/><!--ZKCAL-126-->
         </toolbar>
         <calendars id="cal" readonly="@load(vm.readOnly)" mold="default" vflex="1"/>
     </div>

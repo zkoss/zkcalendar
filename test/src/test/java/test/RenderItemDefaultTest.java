@@ -41,7 +41,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals(yellow, content.eq(0).css("background-color"));
     }
 
-    @Test //ZKCAL-130
+    @Test //ZKCAL-130 ZKCAL-93
     public void headerContentStyle(){
         JQuery styledItem = jq(".z-calendars-week-day").eq(5).find(".styled");
 
@@ -117,7 +117,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         }
     }
 
-    @Test //ZKCAL-116
+    @Test //ZKCAL-116 ZKCAL-88
     public void renderSclass(){
         JQuery item = jq(".separate");
         assertEquals(true, item.exists());
