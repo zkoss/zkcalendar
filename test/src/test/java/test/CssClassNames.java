@@ -12,6 +12,9 @@ public enum CssClassNames {
     WEEK_BODY(CALENDAR.className + "-week-body"),
     HOUR_SEPARATOR(CALENDAR.className + "-hour-sep"),
 
+    MONTH_WEEK(CALENDAR.className+ "-month-week"),
+    MONTH_DATE_OFF(CALENDAR.className+ "-month-date-off"),
+
     ITEM("z-calitem"),
     ITEM_GHOST(CALENDAR.className + "-evt-ghost"),
     ITEM_HEADER(ITEM.className + "-header"),

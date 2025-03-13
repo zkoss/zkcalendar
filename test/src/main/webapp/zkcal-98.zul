@@ -1,0 +1,31 @@
+<zk>
+        <button id="previous" iconSclass="z-icon-arrow-left" onClick="previousPage()"/>
+        <button id="next" iconSclass="z-icon-arrow-right" onClick="nextPage()"/>
+        <button id="monthMold" label="month" onClick="toMonthMold()"/>
+        <button id="defaultMold" label="week" onClick="toWeekMold()"/>
+        <calendars id="calendars" mold="month"  height="90%"/>
+    <zscript><![CDATA[
+    import java.time.LocalDateTime;
+
+        LocalDateTime day1 = LocalDateTime.of(2025, 1, 1, 0, 0);
+        calendars.setCurrentDate(Date.from(day1.atZone(calendars.getDefaultTimeZone().toZoneId()).toInstant()));
+
+	public void previousPage(){
+		calendars.previousPage();
+	}
+
+	public void nextPage(){
+		calendars.nextPage();
+	}
+    public void toMonthMold(){
+        calendars.setMold("month");
+        calendars.setFirstDayOfWeek("Sunday");
+    }
+
+    public void toWeekMold(){
+        calendars.setMold("default");
+        calendars.setFirstDayOfWeek("Monday");
+        calendars.setDays(5);
+    }
+    ]]></zscript>
+</zk>
