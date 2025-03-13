@@ -11,7 +11,7 @@ PROJECT_RELEASE_PATH="/calendar/releases"
 
 function setVersionFromProperties() {
     if [ -f "version.properties" ]; then
-        VERSION=$(grep -oP 'version=\K.*' version.properties)
+        VERSION=$(grep "version=" version.properties | sed 's/version=//')
         if [ -z "$VERSION" ]; then
             echo "Error: Version not found in version.properties."
             exit 1
