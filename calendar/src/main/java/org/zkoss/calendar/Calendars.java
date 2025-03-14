@@ -18,19 +18,8 @@ package org.zkoss.calendar;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.TimeZone;
 
 import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.api.CalendarModel;
@@ -933,16 +922,19 @@ public class Calendars extends XulElement {
 		if (cmd.equals(CalendarsEvent.ON_ITEM_CREATE))
 			Events.postEvent(CalendarsEvent.getCreateEvent(request));
 		else if (cmd.equals(CalendarsEvent.ON_ITEM_EDIT))
-			Events.postEvent(CalendarsEvent.getEditEvent(request));
+			Optional.ofNullable(CalendarsEvent.getEditEvent(request))
+				.ifPresent(event -> Events.postEvent(event));
 		else if (cmd.equals(CalendarsEvent.ON_ITEM_UPDATE))
-			Events.postEvent(CalendarsEvent.getUpdateEvent(request));
+			Optional.ofNullable(CalendarsEvent.getUpdateEvent(request))
+				.ifPresent(event -> Events.postEvent(event));
 		else if (cmd.equals(CalendarsEvent.ON_DAY_CLICK) || 
 				cmd.equals(CalendarsEvent.ON_WEEK_CLICK))
 			Events.postEvent(CalendarsEvent.getClickEvent(request, cmd));
 		else if (cmd.equals(Events.ON_DROP)) {
 			Events.postEvent(CalendarDropEvent.getCalendarDropEvent(request));
 		} else if (cmd.equals(CalendarsEvent.ON_ITEM_TOOLTIP)) {
-			Events.postEvent(CalendarsEvent.getTooltipEvent(request));
+			Optional.ofNullable(CalendarsEvent.getTooltipEvent(request))
+				.ifPresent(event -> Events.postEvent(event));
 		} else {
 			super.service(request, everError);
 		}
