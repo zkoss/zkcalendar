@@ -73,7 +73,9 @@ public class DefaultMoldTest extends CalendarTestBase{
         JQuery dayLong = dayLongBlocks.eq(0);
         assertEquals("top", dayLong.css("vertical-align"));
         assertEquals("1px solid rgb(217, 217, 217)", dayLong.css("border-left"));
-        assertEquals("24px", dayLong.css("height"));
+        double height = Double.parseDouble(dayLong.css("height").replace("px", ""));
+        //different environment (local/jenkins), different browsers
+        assertTrue(height >= 23 && height < 25, "Height should be between 23 and 25px, but was " + height);
     }
 
     /**

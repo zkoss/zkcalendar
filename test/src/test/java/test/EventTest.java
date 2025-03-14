@@ -74,9 +74,10 @@ public class EventTest extends CalendarTestBase{
         getActions().moveToElement(toElement(itemGhost), 0, (-itemHeight/2)+20)
                 .clickAndHold()
                 .moveByOffset(0, itemHeight / 2)
-                .moveByOffset(0, itemHeight*2)
+                .moveByOffset(0, itemHeight*2 - 10) // avoid dragging to the border and become larger in a different environment
                 .release().perform();
-        assertEquals(Size.itemHeight(2), itemGhost.height());
+        int ghostItemHeight = itemGhost.height();
+        assertEquals(Size.itemHeight(2), ghostItemHeight);
     }
 
     @Test
