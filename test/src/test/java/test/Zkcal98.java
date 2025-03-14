@@ -6,9 +6,6 @@ import org.zkoss.test.webdriver.ztl.JQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static test.CssClassNames.*;
 
-/**
- * item rendering in one day view. The test cases interact with components, need to reload test page before testing.
- */
 public class Zkcal98 extends CalendarTestBase {
     static {
             TEST_ZUL = "zkcal-98.zul";
