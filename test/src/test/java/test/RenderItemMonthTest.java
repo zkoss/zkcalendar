@@ -21,7 +21,7 @@ public class RenderItemMonthTest extends CalendarTestBase {
         assertEquals("00:00",  sameBeginEndTimeItem.find(".z-calitem-header").get(0).get("textContent"));
     }
 
-    @Test //ZKCAL-114
+    @Test //ZKCAL-114 ZKCAL-119
     public void itemsOnSameDay(){
         JQuery firstWeekBody = jq(".z-calendars-day-of-month-body").eq(0);
         //first row contains month header

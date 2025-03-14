@@ -70,7 +70,7 @@ public class RenderItemMonthComposer extends SelectorComposer {
         model.add(span4Item);
     }
 
-    private void addSameBeginEndTime() {
+    private void addSameBeginEndTime() { //ZKCAL-119
         DefaultCalendarItem start0End0 = new DefaultCalendarItem.Builder()
                 .withBegin(day1)
                 .withEnd(day1)

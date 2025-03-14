@@ -62,6 +62,7 @@ public class EventTest extends CalendarTestBase{
     }
 
     /**
+     * ZKCAL-85
      * click to create and drag to enlarge ghost
      */
     @Test

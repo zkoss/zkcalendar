@@ -28,7 +28,7 @@
         <dependency>
             <groupId>org.zkoss.zk</groupId>
             <artifactId>zkbind</artifactId>
-            <version>9.6.1</version>
+            <version>${zk.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

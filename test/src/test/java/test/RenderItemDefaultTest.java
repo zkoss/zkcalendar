@@ -30,7 +30,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals("", left);
     }
 
-    @Test //ZKCAL-120
+    @Test //ZKCAL-120 ZKCAL-100
     public void headerContentColor(){
         JQuery coloredItem = jq(".z-calendars-week-day").eq(0).find(".colored");
         JQuery header = coloredItem.find(".z-calitem-header");
