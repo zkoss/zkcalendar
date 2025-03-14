@@ -45,27 +45,19 @@ public class CalendarTestBase extends WebDriverTestCase {
     protected void reloadPage() {
         driver.navigate().refresh();
     }
-    @BeforeAll
-    public void init(){
-        connect(TEST_ZUL);
-        staticDriver = this.driver;
-        driver.manage().timeouts().setScriptTimeout(3000, TimeUnit.SECONDS);
-    }
 
     @BeforeEach
     public void initDriver(){
-        this.driver = staticDriver;
+        if (this.driver == null){ //reuse the webdriver
+            connect(TEST_ZUL);
+            driver.manage().timeouts().setScriptTimeout(3000, TimeUnit.SECONDS);
+        }
     }
 
     @AfterEach
     public void stop() {
         //don't quit, reuse the webdriver
         assertNoAnyError(); //each test case doesn't need to check js error
-    }
-
-    @AfterAll
-    public void clean(){
-        driver.quit();
     }
 
 
