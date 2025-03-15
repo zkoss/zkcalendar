@@ -2,6 +2,7 @@ package test;
 
 public enum CssClassNames {
     CALENDAR("z-calendars"),
+    BODY(CALENDAR.className + "-body"),
     DAY_OF_WEEK_CONTENT(CALENDAR.className + "-day-of-week-cnt"),
     DAY_OF_WEEK(CALENDAR.className + "-day-of-week"),
     TIMEZONE(CALENDAR.className + "-timezone"),
