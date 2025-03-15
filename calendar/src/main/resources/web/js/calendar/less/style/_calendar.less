@@ -21,14 +21,13 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	border: 1px solid @bodyColor;
 }
 
-.z-calendars-inner {
-	border: 1px solid @separatorColor;
-}
 // Calchildren
 .z-calendars-week {
 	position: relative;
 	overflow: hidden;
+	//put border and height on the same element won't produce extra height
 	height: 300px;
+	border: 1px solid @separatorColor;
 
 	&-header {
 		font-size: @fontSizeL;
