@@ -95,6 +95,32 @@ public class DefaultMoldTest extends CalendarTestBase{
         assertEquals("1px solid rgb(217, 217, 217)", secondSeparator.css("border-top"));
     }
 
+    /**
+     * ZKCAL-110. verify day of week header DOM structure after days change.
+     */
+    @Test
+    public void dayOfWeekHeaderDaysChange(){
+        click(jq("$to1DayButton"));
+        waitResponse();
+        click(jq("$to5DaysButton"));
+        waitResponse();
+        JQuery dayWeekContents = jq(CssClassNames.DAY_OF_WEEK_CONTENT.selector());
+        assertEquals(5, dayWeekContents.length());
+        for (int i = 0; i < 5; i++) {
+            JQuery content = dayWeekContents.eq(i);
+            assertEquals("div", toElement(content.get(0)).getTagName());
+            assertEquals(CssClassNames.DAY_OF_WEEK_CONTENT.className(), content.attr("class"));
 
+            // Check inner structure
+            assertTrue(content.text().matches("^\\w{3}\\s\\d{1,2}/\\d{1,2}$")); // Matches pattern like "Sun 1/1"
+
+            // Verify inner div format element
+            JQuery formatDiv = content.children("div");
+            assertEquals(1, formatDiv.length());
+            assertEquals("div", toElement(content.get(0)).getTagName());
+            assertEquals(CssClassNames.DAY_OF_WEEK_FORMAT.className(), formatDiv.attr("class"));
+        }
+        reloadPage();
+    }
 
 }

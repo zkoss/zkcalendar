@@ -1,6 +1,8 @@
 <zk>
     <nodom apply="test.MoldComposer">
     <button id="monthMold" label="Month" onClick='cal.setMold("month")'/>
+    <button id="to5DaysButton" label="5 days" onClick='cal.setDays(5)'/>
+    <button id="to1DayButton" label="1 day" onClick='cal.setDays(1)'/>
     <calendars id="cal" height="90%"/>
     </nodom>
 </zk>
