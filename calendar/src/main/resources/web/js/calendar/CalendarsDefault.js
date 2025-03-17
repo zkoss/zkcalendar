@@ -36,7 +36,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 	getDragAndDropTemplate(domId, domClass){
 		return `<div id="${domId}" class="${domClass}" style="left:0px;width:100%;" ><div class="${domClass}-body" id="${domId}-body"><div class="${domClass}-inner"><dl id="${domId}-inner"><dt class="${domClass}-header"></dt><dd class="${domClass}-cnt"></dd></dl></div></div>`
 	},
-		
+	$init: function(){
+		this.$supers('$init', arguments);
+		this._mold = 'default';
+	},
 	$define: {
 		/**
 		 * set the number of days to be displayed.

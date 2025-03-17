@@ -20,5 +20,4 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 	<widget name="DayItem"/>
 	<widget name="DaylongOfMonthItem"/>
 	<widget name="DayOfMonthItem"/>
-	<script src="calendars-touch.js" browser="ios,android"/>
 </package>

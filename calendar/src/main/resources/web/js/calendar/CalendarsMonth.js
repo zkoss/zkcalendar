@@ -27,7 +27,11 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 					'</tr></tbody></table></div>'].join(''),
 					
 	woyRowTemplate: '<div class="%1-month-week"><span class="%1-week-of-year-text"></span></div>',
-	
+
+	$init: function(){
+		this.$supers('$init', arguments);
+		this._mold = 'month';
+	},
 	$define: {
 		items: function () {
 			this._items = jq.evalJSON(this._items);
