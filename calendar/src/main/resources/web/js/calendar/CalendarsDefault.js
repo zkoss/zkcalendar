@@ -60,15 +60,14 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 			} else jq(this.$n('inner')).find('[colspan]').attr('colspan',days);
 
 			if (offset > 0) {
-				var titleRowHtml = '<th class="' + zcls + '-day-of-week"><div class="' + zcls + '-day-of-week-inner"><span class="' + zcls + '-day-of-week-cnt"></span></div></th>',
-					daylongRowHtml = '<td class="' + zcls + '-daylong-evt ' + zcls + '-daylong-more">&nbsp;</td>',
+				var daylongRowHtml = '<td class="' + zcls + '-daylong-evt ' + zcls + '-daylong-more">&nbsp;</td>',
 					cntRowHtml = '<td class="' + zcls + '-week-day"><div class="' + zcls + '-week-day-cnt"/></td>',
 					html1 = [],
 					html2 = [],
 					html3 = [];
 				
 				for (var i = offset; i--;) {
-					html1.push(titleRowHtml);
+					html1.push(this.$class.TEMPLATE.weekDayHeader(zcls));
 					html2.push(daylongRowHtml);
 					html3.push(cntRowHtml);
 				}
@@ -1977,5 +1976,10 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 		return widget?.widgetName.endsWith('item') || false;
 	},
 	HALF_HOUR_HEIGHT: 30, //the same in _variable.less
+	TEMPLATE:{
+		weekDayHeader: function(zclass){
+			return`<th class="${zclass}-day-of-week"><div class="${zclass}-day-of-week-inner"><div class="${zclass}-day-of-week-cnt"></div></div></th>`
+		},
+	},
 });
 })();
