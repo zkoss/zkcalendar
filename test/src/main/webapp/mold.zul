@@ -3,6 +3,8 @@
     <button id="monthMold" label="Month" onClick='cal.setMold("month")'/>
     <button id="to5DaysButton" label="5 days" onClick='cal.setDays(5)'/>
     <button id="to1DayButton" label="1 day" onClick='cal.setDays(1)'/>
-    <calendars id="cal" height="90%"/>
+    <button id="nextButton" label="next" onClick='cal.nextPage()'/>
+    <button id="previousButton" label="previous" onClick='cal.previousPage()'/>
+    <calendars id="cal" height="90%" mold="${param.mold}"/>
     </nodom>
 </zk>
