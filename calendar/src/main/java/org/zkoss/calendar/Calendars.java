@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Map.Entry;
 
+import org.slf4j.*;
 import org.zkoss.calendar.api.CalendarItem;
 import org.zkoss.calendar.api.CalendarModel;
 import org.zkoss.calendar.api.DateFormatter;
@@ -30,7 +31,7 @@ import org.zkoss.calendar.event.CalendarDataEvent;
 import org.zkoss.calendar.event.CalendarDataListener;
 import org.zkoss.calendar.event.CalendarDropEvent;
 import org.zkoss.calendar.event.CalendarsEvent;
-import org.zkoss.calendar.impl.Util;
+import org.zkoss.calendar.impl.*;
 import org.zkoss.lang.Classes;
 import org.zkoss.lang.Objects;
 import org.zkoss.util.Locales;
@@ -92,6 +93,7 @@ public class Calendars extends XulElement {
 			return o1.getBeginDate().compareTo(o2.getBeginDate());
 		}
 	};
+	private static final Logger logger = LoggerFactory.getLogger(Calendars.class);
 	
 	static {		
 		addClientEvent(Calendars.class, CalendarsEvent.ON_ITEM_CREATE, 0);
@@ -194,10 +196,13 @@ public class Calendars extends XulElement {
 	}	
 
 	/**
-	 * Sets the days, that is, how many column should be displayed on the default mold.
+	 * Sets the days, that is, how many columns should be displayed on the default mold.
 	 * <p> Default: 7. (i.e. one week), in month view, the attribute will be ignored.
 	 */
 	public void setDays(int days) {
+		if (inMonthMold()){
+			logger.warn("Setting 'days' attribute has no effect in month mold");
+		}
 		if (days <= 0) days = 1;
 		if (days != _days) {
 			_days = days;
@@ -517,13 +522,29 @@ public class Calendars extends XulElement {
 			cal.add(Calendar.DAY_OF_MONTH, day * _days);
 		setCurrentDate(cal.getTime());
 	}
-	
+
 	/**
-	 * Returns the beginning date, which is based on {@link #getCurrentDate()} in
-	 * the current view depended on which {@link #getMold()} is using.
+	 * Returns the beginning date of the current calendar view based on {@link #getCurrentDate()}.
+	 * JS widget renders this date as the first day of a week or a month.
+	 * The behavior depends on the current mold and days settings:
+	 *
+	 * <p>For Month View (mold="month"):
+	 * - Sets calendar to first day of the month
+	 * - Adjusts to first day of week based on {@link #getFirstDayOfWeek()}
+	 *
+	 * <p>For Week View (days >= 7):
+	 * - Based on {@link #getCurrentDate()}, return the day according to {@link #getFirstDayOfWeek()}.
+	 * By default, find the closest Sun.
+	 *
+	 * <p>For Custom Days View (days < 7):
+	 * - Uses the current date as beginning date
+	 *
+	 * <p>In all cases, the time portion is set to 00:00:00.000
+	 *
+	 * @return The beginning Date of the current view, or null if current date is not set
 	 */
 	public Date getBeginDate() {
-		if (_curDate == null) return null; 
+		if (_curDate == null) return null;
 
 		Calendar cal = getCalendar();
 		cal.setTime(_curDate);
@@ -531,7 +552,7 @@ public class Calendars extends XulElement {
 		if (inMonth)
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			
-		if (_days >= 7 || inMonth) { //ZKCAL-34: should consider _firstDayOfWeek if week view is large than 7
+		if (_days >= 7 || inMonth) { //ZKCAL-34: should consider _firstDayOfWeek if week view is larger than 7
 			int index = cal.get(Calendar.DAY_OF_WEEK);
 			int offset = index - _firstDayOfWeek;
 			if (offset < 0) offset += 7;
