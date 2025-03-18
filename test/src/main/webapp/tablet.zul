@@ -1,0 +1,5 @@
+<zk>
+    <calendars mold="month" height="90%" apply="test.TabletTestComposer"/>
+    zk.ios is true
+    zk.mobile is true
+</zk>
