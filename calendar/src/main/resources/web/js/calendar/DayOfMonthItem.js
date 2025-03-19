@@ -1,4 +1,4 @@
-/* Calendars.js
+/* DayOfMonthItem.js
 
 	Purpose:
 		
@@ -15,23 +15,9 @@ it will be useful, but WITHOUT ANY WARRANTY.
 calendar.DayOfMonthItem = zk.$extends(calendar.Item, {
 		
 	redraw: function (out) {
-		var ce = this.item,
-			id = ce.id,
-			zcls = this.getZclass(),
-			inner = zcls + '-inner',
-			header = zcls + '-header',
-			content = zcls + '-cnt',
-			style = ce.style,
-			headerStyle = ce.headerStyle,
-			contentStyle = ce.contentStyle;
-
-
+		var id = this.item.id;
 		this.uuid = id;
-
-		out.push('<div', this.domAttrs_(), '>',
-				'<div id="', id, '-inner" class="', inner, '" style=" ', style ,'"','>',
-				'<span id="', id, '-hd" class="', header, '" style=" ', headerStyle ,'"','>', this.getCntText(ce), '</span>',
-				'<span id="', id, '-cnt" class="', content, '" style=" ', contentStyle ,'"','>', ce.content, '</span></div></div>');
+		out.push(this.$class.itemTemplate(id, this.domAttrs_(), this.getCntText(this.item), this.item, this.getZclass()));
 	},
 	
 	getCntText: function (ce) {
@@ -64,5 +50,15 @@ calendar.DayOfMonthItem = zk.$extends(calendar.Item, {
 		cnt.html(ce.content);
 		
 		this.calculate_(updateLastModify);
+	}
+},{
+	itemTemplate: function(id, domAttributes, cntText, item, zclass) {
+		return `<div ${domAttributes}>
+					<div id="${id}-inner" class="${zclass}-inner" style="${item.style}">
+					<span id="${id}-hd" class="${zclass}-header" style="${item.headerStyle}">${cntText}</span>
+					<span id="${id}-cnt" class="${zclass}-cnt" style="${item.contentStyle}" title="${item.content}">${item.content}</span>
+					</div>
+				</div>`;
+
 	}
 });
