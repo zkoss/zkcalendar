@@ -25,7 +25,7 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 .z-calendars-week {
 	position: relative;
 	overflow: hidden;
-	//put border and height on the same element won't produce extra height
+	//ZKCAL-101 put border and height on the same element won't produce extra height
 	height: 300px;
 	border: 1px solid @separatorColor;
 
@@ -230,6 +230,8 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 .z-calendars-month-cnt {
 	overflow: hidden;
 	height: 300px;
+	//ZKCAL-101 put border and height on the same element won't produce extra height
+	border: 1px solid @separatorColor;
 }
 .z-calendars-month-cnt,.z-calendars-daylong-cnt {
 	& .z-calitem-body {
