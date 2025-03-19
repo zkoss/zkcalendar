@@ -15,7 +15,9 @@ public enum CssClassNames {
     HOUR_SEPARATOR(CALENDAR.className + "-hour-sep"),
 
     MONTH_WEEK(CALENDAR.className+ "-month-week"),
+    MONTH_DATE(CALENDAR.className+ "-month-date"),
     MONTH_DATE_OFF(CALENDAR.className+ "-month-date-off"),
+    MONTH_HEADER(CALENDAR.className + "-month-header"),
 
     ITEM("z-calitem"),
     ITEM_GHOST(CALENDAR.className + "-evt-ghost"),
