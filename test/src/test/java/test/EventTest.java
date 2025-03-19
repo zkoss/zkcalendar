@@ -57,7 +57,6 @@ public class EventTest extends CalendarTestBase{
         assertEquals(Size.HALF_HOUR_HEIGHT.value() * 2, itemGhost.height());
 
         JQuery itemHeader = itemGhost.find(ITEM_HEADER.selector());
-        System.out.println(itemHeader.html());
         assertEquals("00:00 - 01:00", itemHeader.text());
     }
 

@@ -79,5 +79,10 @@ public class MonthMoldTest extends CalendarTestBase{
         assertEquals(22, weekend.length());
     }
 
+    @Test
+    public void outmostBorder(){
+        JQuery $week = jq(CssClassNames.MONTH_CONTENT.selector());
+        assertEquals("1px solid rgb(217, 217, 217)", $week.css("border"));
+    }
 
 }

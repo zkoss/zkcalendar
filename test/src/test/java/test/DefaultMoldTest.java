@@ -1,7 +1,7 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import org.zkoss.test.webdriver.ztl.JQuery;
+import org.zkoss.test.webdriver.ztl.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -121,6 +121,12 @@ public class DefaultMoldTest extends CalendarTestBase{
             assertEquals(CssClassNames.DAY_OF_WEEK_FORMAT.className(), formatDiv.attr("class"));
         }
         reloadPage();
+    }
+
+    @Test
+    public void outmostBorder(){
+        JQuery $week = jq(CssClassNames.WEEK.selector());
+        assertEquals("1px solid rgb(217, 217, 217)", $week.css("border"));
     }
 
 }
