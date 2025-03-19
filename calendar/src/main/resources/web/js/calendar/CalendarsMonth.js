@@ -276,7 +276,6 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}
 		this._resetDayPosition();
 	},
-		
 	updateDateRange_: function () {
 		this.updateDateOfBdAndEd_();
 		this._captionByDayOfWeek = this.captionByDayOfWeek ? jq.evalJSON(this.captionByDayOfWeek) : null;
@@ -334,9 +333,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		if (this.woy)
 			this.woyCnt = jq(this.$n('woy')).contents().find('.' + zcls + '-week-of-year-text');
 		
-		var hd = jq(cnt.parentNode.firstChild),
-			captionByPopup = this._captionByPopup,
-			captionByDayOfWeek = this._captionByDayOfWeek,
+		var captionByPopup = this._captionByPopup,
 			captionByWeekOfYear = this._captionByWeekOfYear,
 			captionByDateOfMonth = this._captionByDateOfMonth,
 			hdChildren = this.title,
@@ -389,24 +386,11 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		}
 		
 		//remove today and weekend class
-		hd.children().find('.' + week_weekend).removeClass(week_weekend);
 		$cnt.children().find('.' + month_date_off).removeClass(month_date_off);
 		$cnt.children().find('.' + week_weekend).removeClass(week_weekend);
 		$cnt.children().find('.' + week_today).removeClass(week_today);
-				
-		// reset week title
-		ed = new Date(this.zoneEd);
-		for (var i = 7; i--;) {
-			ed = calUtil.addDay(ed, -1);
-						
-			var th = jq(hdChildren[i]),
-				content = captionByDayOfWeek ? captionByDayOfWeek[i] :
-												zk.fmt.Date.formatDate(ed,'EEE');
-			th.html(content);
-			if (bd.getDay() == 0 || bd.getDay() == 6) //SUNDAY or SATURDAY
-				th.addClass(week_weekend);
-		}
-		
+		this.renderWeekTitle(week_weekend); //TODO check if this calling is required since weekend never changes when current date changes
+
 		//reset each day
 		ed = new Date(this.zoneEd);
 		for (var i = this.weekOfMonth * 7; i--;) {
@@ -453,7 +437,22 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			jq(span).html(content);
 		}
 	},
-	
+	renderWeekTitle() {
+		let week_weekend = this.getZclass() + '-week-weekend'
+		jq('.z-calendars-month-header .z-calendars-week-weekend', this.$n()).removeClass(week_weekend);
+		let day = new Date(this.zoneEd);
+		for (var dayIndex = 7; dayIndex--;) {
+			day = calUtil.addDay(day, -1);
+
+			var $dayOfWeek = jq(this.title[dayIndex]),
+				content = this._captionByDayOfWeek ? (this._captionByDayOfWeek)[dayIndex] :
+					zk.fmt.Date.formatDate(day, 'EEE');
+			$dayOfWeek.html(content);
+			if (this.$class.isWeekend(day)) {
+				$dayOfWeek.addClass(week_weekend);
+			}
+		}
+	},
 	cleanItemArray_: function () {
 		this._itemKey = {};
 		this._itemWeekSet = [];

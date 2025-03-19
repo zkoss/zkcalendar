@@ -1226,6 +1226,11 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		_isZeroTime: function(date) {
 			return (date.getHours() + date.getMinutes() +
 				date.getSeconds() + date.getMilliseconds() == 0);
+		},
+		isWeekend: function(date) {
+			console.assert(date instanceof Date, 'Parameter must be a Date object');
+			const day = date.getDay();
+			return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
 		}
 	});
 })();
