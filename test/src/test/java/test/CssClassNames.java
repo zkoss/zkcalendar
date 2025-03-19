@@ -21,6 +21,7 @@ public enum CssClassNames {
 
     ITEM("z-calitem"),
     ITEM_GHOST(CALENDAR.className + "-evt-ghost"),
+    ITEM_INNER(ITEM.className + "-inner"),
     ITEM_HEADER(ITEM.className + "-header"),
     ITEM_CONTENT(ITEM.className + "-cnt"),
     ITEM_RESIZER(ITEM.className + "-resizer"),;

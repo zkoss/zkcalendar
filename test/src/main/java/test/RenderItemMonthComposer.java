@@ -30,6 +30,7 @@ public class RenderItemMonthComposer extends SelectorComposer {
         addOverWeekendItems();
         addEndtimeAfter1200();
         addZkcal127Item();
+        addLongTextItem();
     }
 
     private void addOverWeekendItems() {
@@ -134,6 +135,19 @@ public class RenderItemMonthComposer extends SelectorComposer {
                 .withZoneId(TimeZones.getCurrent().toZoneId())
                 .withContent("ZKCAL-127")
                 .withSclass("zkcal-127")
+                .build();
+        model.add(item);
+    }
+
+    private void addLongTextItem() {
+        LocalDateTime start = LocalDateTime.of(2023, 1, 7, 0, 0);
+        LocalDateTime end = start.plusHours(1);
+        DefaultCalendarItem item = new DefaultCalendarItem.Builder()
+                .withBegin(start)
+                .withEnd(end)
+                .withZoneId(TimeZones.getCurrent().toZoneId())
+                .withContent("ZKCAL-80 Calendar item text is cut if not enough space to display")
+                .withSclass("zkcal-80")
                 .build();
         model.add(item);
     }

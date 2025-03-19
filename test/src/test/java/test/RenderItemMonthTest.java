@@ -5,6 +5,7 @@ import org.openqa.selenium.*;
 import org.zkoss.test.webdriver.ztl.JQuery;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static test.CssClassNames.*;
 
 public class RenderItemMonthTest extends CalendarTestBase {
     public static final int ITEM_HEIGHT_MONTH_MOLD = 20;
@@ -12,6 +13,7 @@ public class RenderItemMonthTest extends CalendarTestBase {
     static {
         TEST_ZUL = "renderItemMonth.zul";
     }
+
 
 
     @Test //ZKCAL-114
@@ -72,6 +74,29 @@ public class RenderItemMonthTest extends CalendarTestBase {
         JQuery item = jq(".zkcal-127");
         assertEquals(1, item.length());
         assertEquals(ITEM_HEIGHT_MONTH_MOLD, item.height());
+    }
+
+    @Test //ZKCAL-80
+    public void itemHeaderContentTooltip() {
+        JQuery item = jq(".zkcal-80");
+        assertEquals(1, item.length());
+        final String TITLE = "ZKCAL-80 Calendar item text is cut if not enough space to display";
+
+        JQuery content = item.find(ITEM_CONTENT.selector());
+        assertEquals(TITLE, content.text());
+        assertEquals("00:00", item.find(ITEM_HEADER.selector()).text());
+        assertEquals(TITLE, content.attr("title"));
+    }
+
+    /**
+     * use class selector to verify DOM structure
+     */
+    @Test
+    public void instantItemDOMStructure() {
+        JQuery instantItem = jq(".instant").eq(0);
+
+        assertEquals("00:00", instantItem.find(ITEM_INNER.selector() + " " + ITEM_HEADER.selector()).text());
+        assertTrue(instantItem.find(ITEM_INNER.selector() + " " + ITEM_CONTENT.selector()).exists());
     }
 
     public boolean isCssRuleApplied(WebElement element, String selector, String property, String value) {
