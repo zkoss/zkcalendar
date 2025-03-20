@@ -114,6 +114,13 @@ it will be useful, but WITHOUT ANY WARRANTY.
 			this.$supers('unbind_', arguments);
 		},
 
+		setHeight: function(height){
+			this.$supers('setHeight', arguments);
+			if (this.$n()){
+				this.onSize(); //adjust height if elements were already rendered
+			}
+		},
+
 		getZclass: function() {
 			var zcls = this._zclass;
 			return zcls ? zcls : 'z-calendars';
