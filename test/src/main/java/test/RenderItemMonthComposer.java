@@ -49,24 +49,27 @@ public class RenderItemMonthComposer extends SelectorComposer {
         LocalDateTime day2 = day1.plusDays(1);
         DefaultCalendarItem span2Item = new DefaultCalendarItem.Builder()
                 .withBegin(day2)
-                .withEnd(day2.plusDays(1))
+                .withEnd(day2.plusDays(1).plusHours(2))
                 .withZoneId(calendars.getDefaultTimeZone().toZoneId())
                 .withSclass("span2")
+                .withContent("span 2d")
                 .build();
         model.add(span2Item);
 
         DefaultCalendarItem span3Item = new DefaultCalendarItem.Builder()
                 .withBegin(day2)
-                .withEnd(day2.plusDays(2))
+                .withEnd(day2.plusDays(2).plusHours(2))
                 .withZoneId(calendars.getDefaultTimeZone().toZoneId())
                 .withSclass("span3")
+                .withContent("span 3d")
                 .build();
         model.add(span3Item);
         DefaultCalendarItem span4Item = new DefaultCalendarItem.Builder()
                 .withBegin(day2)
-                .withEnd(day2.plusDays(3))
+                .withEnd(day2.plusDays(3).plusHours(2))
                 .withZoneId(calendars.getDefaultTimeZone().toZoneId())
                 .withSclass("span4")
+                .withContent("span 4d")
                 .build();
         model.add(span4Item);
     }

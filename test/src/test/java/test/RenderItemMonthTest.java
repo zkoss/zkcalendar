@@ -67,12 +67,14 @@ public class RenderItemMonthTest extends CalendarTestBase {
     public void endAfter1200(){
         JQuery item = jq(".end-after-12");
         assertEquals(1, item.length());
+        assertEquals("11:00", item.find(ITEM_HEADER.selector()).text());
     }
 
     @Test //ZKCAL-127
     public void zkcal127(){
         JQuery item = jq(".zkcal-127");
         assertEquals(1, item.length());
+        assertEquals("13:30", item.find(ITEM_HEADER.selector()).text());
         assertEquals(ITEM_HEIGHT_MONTH_MOLD, item.height());
     }
 
@@ -97,6 +99,27 @@ public class RenderItemMonthTest extends CalendarTestBase {
 
         assertEquals("00:00", instantItem.find(ITEM_INNER.selector() + " " + ITEM_HEADER.selector()).text());
         assertTrue(instantItem.find(ITEM_INNER.selector() + " " + ITEM_CONTENT.selector()).exists());
+    }
+
+
+    @Test
+    public void spanDaysItem(){
+        JQuery span2d = jq(".span2");
+        assertEquals(ITEM_HEIGHT_MONTH_MOLD, span2d.height());
+        assertEquals("2", span2d.parent().attr("colspan"));
+        assertEquals("span 2d", span2d.find(ITEM_TEXT.selector()).text());
+
+        JQuery span3d = jq(".span3");
+        assertEquals(ITEM_HEIGHT_MONTH_MOLD, span3d.height());
+        assertEquals("3", span3d.parent().attr("colspan"));
+        assertEquals("span 3d", span3d.find(ITEM_TEXT.selector()).text());
+
+        JQuery span4d = jq(".span4");
+        assertEquals(ITEM_HEIGHT_MONTH_MOLD, span4d.height());
+        assertEquals("4", span4d.parent().attr("colspan"));
+        assertEquals("span 4d", span4d.find(ITEM_TEXT.selector()).text());
+    }
+
     }
 
     public boolean isCssRuleApplied(WebElement element, String selector, String property, String value) {

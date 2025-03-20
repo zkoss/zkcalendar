@@ -20,12 +20,14 @@ public enum CssClassNames {
     MONTH_DATE_OFF(CALENDAR.className+ "-month-date-off"),
     MONTH_HEADER(CALENDAR.className + "-month-header"),
     MONTH_CONTENT(CALENDAR.className + "-month-cnt"),
+    MORE_LINK(CALENDAR.className + "-evt-faker-more"),
 
     ITEM("z-calitem"),
     ITEM_GHOST(CALENDAR.className + "-evt-ghost"),
     ITEM_INNER(ITEM.className + "-inner"),
     ITEM_HEADER(ITEM.className + "-header"),
     ITEM_CONTENT(ITEM.className + "-cnt"),
+    ITEM_TEXT(ITEM.className + "-text"),
     ITEM_RESIZER(ITEM.className + "-resizer");
 
     private final String className;
