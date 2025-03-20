@@ -3,7 +3,8 @@
     <div viewModel="@id('vm')@init('test.CalendarAttributeViewModel')" height="100%">
         <toolbar>
             <toolbarbutton id="readOnlyButton" label="read only" mode="toggle" checked="@bind(vm.readOnly)" onItemCreate=""/><!--ZKCAL-126-->
+            <toolbarbutton id="height500px" label="height 500px" onClick='cal.setVflex(null);cal.setHeight("500px")'/>
         </toolbar>
-        <calendars id="cal" readonly="@load(vm.readOnly)" mold="default" vflex="1"/>
+        <calendars id="cal" readonly="@load(vm.readOnly)" mold="${param.mold}" vflex="1"/>
     </div>
 </zk>

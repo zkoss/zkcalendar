@@ -23,4 +23,11 @@ public class ComponentAttributeTest extends CalendarTestBase{
         waitResponse();
         assertFalse(jq(ITEM_GHOST.selector()).exists());
     }
+
+    @Test //ZKCAL-131
+    public void heightPixel(){
+        click(jq("$height500px"));
+        waitResponse();
+        assertEquals(500, jq(BODY.selector()).height()); //check actual inner height, not the css value
+    }
 }
