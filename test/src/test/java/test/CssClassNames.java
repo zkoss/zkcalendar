@@ -22,6 +22,11 @@ public enum CssClassNames {
     MONTH_CONTENT(CALENDAR.className + "-month-cnt"),
     MORE_LINK(CALENDAR.className + "-evt-faker-more"),
 
+    MORE_POPUP("z-calpp-month"),
+    POPUP_CLOSE_ICON(MORE_POPUP.className + "-close"),
+    ITEM_LEFT_SPAN_INDICATOR(MORE_POPUP.className + "-evt-l"),
+    ITEM_RIGHT_SPAN_INDICATOR(MORE_POPUP.className + "-evt-r"),
+
     ITEM("z-calitem"),
     ITEM_GHOST(CALENDAR.className + "-evt-ghost"),
     ITEM_INNER(ITEM.className + "-inner"),

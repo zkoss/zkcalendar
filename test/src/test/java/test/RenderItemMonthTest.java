@@ -125,8 +125,7 @@ public class RenderItemMonthTest extends CalendarTestBase {
 
     @Test
     public void renderMoreLinks350Height(){
-        click(jq("$height350px"));
-        waitResponse();
+        shrinkCalendarHeight();
         JQuery weeks = jq(MONTH_WEEK.selector());
 
         verify1stWeek(weeks);
@@ -245,13 +244,81 @@ public class RenderItemMonthTest extends CalendarTestBase {
         assertEquals(1, itemListByDay.get(6).size());
     }
 
-    protected Object getEval(String script, Object... args) {
-        return ((JavascriptExecutor) driver).executeScript(script, args);
+    /**
+     * ZKCAL-79. Tests the popup functionality when clicking "more" link in the calendar month view.
+     * The test verifies different cases of items spanning across days:
+     * <ul>
+     *   <li>Single day items have no span indicators</li>
+     *   <li>Items spanning to next day show right span indicator</li>
+     *   <li>Items spanning both previous and next days show both indicators</li>
+     *   <li>Items spanning from previous day show left span indicator</li>
+     * </ul>
+     */
+    @Test
+    public void itemSpanIndicatorInMoreItemPopup(){
+        shrinkCalendarHeight();
+        JQuery weeks = jq(MONTH_WEEK.selector());
+        JQuery week1st = weeks.eq(0);
+        JQuery moreLinks = week1st.find(MORE_LINK.selector());
+
+        oneDayItemHasNoSpanIndicator(moreLinks);
+        itemOverNextDay(moreLinks);
+        itemOverPreviousNextDay(moreLinks);
+        itemOverPreviousDay(moreLinks);
+        reloadPage();
+    }
+
+    private void itemOverPreviousDay(JQuery moreLinks) {
+        click(moreLinks.eq(4));
+        waitResponse();
+        JQuery morePopup = jq(MORE_POPUP.selector());
+        JQuery itemRow = morePopup.find("tr").eq(0);
+        assertTrue(itemRow.find(ITEM_LEFT_SPAN_INDICATOR.selector()).children().exists());
+        assertFalse(itemRow.find(ITEM_RIGHT_SPAN_INDICATOR.selector()).children().exists());
+        click(morePopup.find(POPUP_CLOSE_ICON.selector()));
+
+    }
+
+    private void itemOverPreviousNextDay(JQuery moreLinks) {
+        click(moreLinks.eq(2));
+        waitResponse();
+        JQuery morePopup = jq(MORE_POPUP.selector());
+        JQuery itemRow = morePopup.find("tr").eq(0);
+        assertTrue(itemRow.find(ITEM_LEFT_SPAN_INDICATOR.selector()).children().exists());
+        assertTrue(itemRow.find(ITEM_RIGHT_SPAN_INDICATOR.selector()).children().exists());
+        click(morePopup.find(POPUP_CLOSE_ICON.selector()));
+    }
+
+    private void itemOverNextDay(JQuery moreLinks) {
+        click(moreLinks.eq(1));
+        waitResponse();
+        JQuery morePopup = jq(MORE_POPUP.selector());
+        JQuery itemRow = morePopup.find("tr").eq(0);
+        assertFalse(itemRow.find(ITEM_LEFT_SPAN_INDICATOR.selector()).children().exists());
+        assertTrue(itemRow.find(ITEM_RIGHT_SPAN_INDICATOR.selector()).children().exists());
+        click(morePopup.find(POPUP_CLOSE_ICON.selector()));
+    }
+
+    public void oneDayItemHasNoSpanIndicator(JQuery moreLinks){
+        click(moreLinks.eq(0));
+        waitResponse();
+        JQuery morePopup = jq(MORE_POPUP.selector());
+        JQuery itemRow = morePopup.find("tr").eq(0);
+        assertFalse(itemRow.find(ITEM_LEFT_SPAN_INDICATOR.selector()).children().exists());
+        assertFalse(itemRow.find(ITEM_RIGHT_SPAN_INDICATOR.selector()).children().exists());
+
+        click(morePopup.find(POPUP_CLOSE_ICON.selector()));
+    }
+
+    private void shrinkCalendarHeight() {
+        click(jq("$height350px"));
+        waitResponse();
     }
 
     public Object getEvalObject(String script) {
         return ((JavascriptExecutor) driver).executeScript("return " + script);
     }
+
 
 
     public boolean isCssRuleApplied(WebElement element, String selector, String property, String value) {
