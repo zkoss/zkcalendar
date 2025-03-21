@@ -47,7 +47,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			this.createChildrenWidget_();
 			this._rePositionDay();
 
-			//reset items data
+			//reset items data, weeklyCalendarItems[weekIndex][dayIndex][itemIndex]
 			this._itemsData = this._createItemsData(false);
 			// recalculate
 			this.onSize();
@@ -147,13 +147,14 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			for (var i = 0, c = 7; c--; i++)
 				oneWeekCalendarItems[i] = [];
 
-			for (var i = 1; i < len; i++) {
-				for (var k = 0, z = 0, cells = rows[i].cells; z + k < cells.length; k++) {
-					if (cells[k].firstChild.id)
-						oneWeekCalendarItems[k + z].push(cells[k].firstChild);
-					var cols = cells[k].colSpan;
+			for (var rowIndex = 1; rowIndex < len; rowIndex++) {
+				for (var slotIndex = 0, z = 0, itemSlots = rows[rowIndex].cells;
+					 slotIndex < itemSlots.length; slotIndex++) {
+					if (itemSlots[slotIndex].firstChild.id)
+						oneWeekCalendarItems[slotIndex + z].push(itemSlots[slotIndex].firstChild);
+					var cols = itemSlots[slotIndex].colSpan;
 					while (--cols > 0)
-						oneWeekCalendarItems[k + ++z].push(cells[k].firstChild);
+						oneWeekCalendarItems[slotIndex + ++z].push(itemSlots[slotIndex].firstChild);
 				}
 			}
 			weeklyCalendarItems[weekIndex] = oneWeekCalendarItems;
