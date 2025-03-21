@@ -4,6 +4,8 @@ import org.junit.jupiter.api.*;
 import org.openqa.selenium.*;
 import org.zkoss.test.webdriver.ztl.JQuery;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static test.CssClassNames.*;
 
@@ -120,7 +122,137 @@ public class RenderItemMonthTest extends CalendarTestBase {
         assertEquals("span 4d", span4d.find(ITEM_TEXT.selector()).text());
     }
 
+
+    @Test
+    public void renderMoreLinks350Height(){
+        click(jq("$height350px"));
+        waitResponse();
+        JQuery weeks = jq(MONTH_WEEK.selector());
+
+        verify1stWeek(weeks);
+        verify2ndWeek(weeks);
+        verify3rdWeek(weeks);
+        verify4thWeek(weeks);
+        verify5thWeek(weeks);
+
+        reloadPage();
     }
+    private void verify5thWeek(JQuery weeks) {
+        JQuery week5th = weeks.eq(4);
+        JQuery moreLinks = week5th.find(MORE_LINK.selector());
+        assertEquals(0, moreLinks.length());
+    }
+    private void verify4thWeek(JQuery weeks) {
+        JQuery week4th = weeks.eq(3);
+        JQuery moreLinks = week4th.find(MORE_LINK.selector());
+        assertEquals(7, moreLinks.length());
+        assertEquals("2 more", moreLinks.eq(0).text());
+        for (int i = 1 ; i < 7 ; i ++){
+            assertTrue(moreLinks.eq(i).text().isEmpty());
+        }
+    }
+    private void verify3rdWeek(JQuery weeks) {
+        JQuery week3rd = weeks.eq(2);
+        JQuery moreLinks = week3rd.find(MORE_LINK.selector());
+        assertEquals(0, moreLinks.length());
+        assertEquals(ITEM_HEIGHT_MONTH_MOLD, jq(".over-weekend").height());
+    }
+    private void verify2ndWeek(JQuery weeks) {
+        JQuery week2nd = weeks.eq(1);
+        JQuery moreLinks = week2nd.find(MORE_LINK.selector());
+        assertEquals(0, moreLinks.length());
+        assertEquals(ITEM_HEIGHT_MONTH_MOLD, jq(".over-weekend").height());
+    }
+    private void verify1stWeek(JQuery weeks) {
+        JQuery week1st = weeks.eq(0);
+        JQuery moreLinks = week1st.find(MORE_LINK.selector());
+        assertEquals(7, moreLinks.length());
+
+        assertEquals("3 more", moreLinks.eq(0).text());
+        assertEquals("3 more", moreLinks.eq(1).text());
+        assertEquals("3 more", moreLinks.eq(2).text());
+        assertEquals("2 more", moreLinks.eq(3).text());
+        assertEquals("2 more", moreLinks.eq(4).text());
+        assertEquals("1 more", moreLinks.eq(5).text());
+        assertEquals("1 more", moreLinks.eq(6).text());
+    }
+
+    @Test
+    public void testItemsData(){
+        Object itemsDataObj = getEvalObject("zk.Widget.$('$cal')._itemsData");
+        assertNotNull(itemsDataObj);
+        List itemListByWeek = (List) itemsDataObj;
+        test1stWeekItems(itemListByWeek);
+        test2ndWeekItems(itemListByWeek);
+        test3rdWeekItems(itemListByWeek);
+        test4thWeekItems(itemListByWeek);
+        test5thWeekItems(itemListByWeek);
+    }
+
+    private void test5thWeekItems(List itemListByWeek) {
+        List<List> itemListByDay = (List)itemListByWeek.get(4);
+        assertEquals(0, itemListByDay.get(0).size());
+        assertEquals(0, itemListByDay.get(1).size());
+        assertEquals(0, itemListByDay.get(2).size());
+        assertEquals(0, itemListByDay.get(3).size());
+        assertEquals(0, itemListByDay.get(4).size());
+        assertEquals(0, itemListByDay.get(5).size());
+        assertEquals(0, itemListByDay.get(6).size());
+    }
+
+    private void test4thWeekItems(List itemListByWeek) {
+        List<List> itemListByDay = (List)itemListByWeek.get(3);
+        assertEquals(2, itemListByDay.get(0).size());
+        assertEquals(0, itemListByDay.get(1).size());
+        assertEquals(0, itemListByDay.get(2).size());
+        assertEquals(0, itemListByDay.get(3).size());
+        assertEquals(0, itemListByDay.get(4).size());
+        assertEquals(0, itemListByDay.get(5).size());
+        assertEquals(0, itemListByDay.get(6).size());
+    }
+
+    private void test3rdWeekItems(List itemListByWeek) {
+        List<List> itemListByDay = (List)itemListByWeek.get(2);
+        assertEquals(1, itemListByDay.get(0).size());
+        assertEquals(0, itemListByDay.get(1).size());
+        assertEquals(0, itemListByDay.get(2).size());
+        assertEquals(0, itemListByDay.get(3).size());
+        assertEquals(0, itemListByDay.get(4).size());
+        assertEquals(0, itemListByDay.get(5).size());
+        assertEquals(0, itemListByDay.get(6).size());
+    }
+
+    private void test2ndWeekItems(List itemListByWeek) {
+        List<List> itemListByDay = (List)itemListByWeek.get(1);
+        assertEquals(0, itemListByDay.get(0).size());
+        assertEquals(0, itemListByDay.get(1).size());
+        assertEquals(0, itemListByDay.get(2).size());
+        assertEquals(0, itemListByDay.get(3).size());
+        assertEquals(0, itemListByDay.get(4).size());
+        assertEquals(1, itemListByDay.get(5).size());
+        assertEquals(1, itemListByDay.get(6).size());
+    }
+
+    private static void test1stWeekItems(List<List> itemListByWeek) {
+        List<List> itemListByDay = (List)itemListByWeek.get(0);
+
+        assertEquals(3, itemListByDay.get(0).size());
+        assertEquals(3, itemListByDay.get(1).size());
+        assertEquals(3, itemListByDay.get(2).size());
+        assertEquals(2, itemListByDay.get(3).size());
+        assertEquals(2, itemListByDay.get(4).size());
+        assertEquals(1, itemListByDay.get(5).size());
+        assertEquals(1, itemListByDay.get(6).size());
+    }
+
+    protected Object getEval(String script, Object... args) {
+        return ((JavascriptExecutor) driver).executeScript(script, args);
+    }
+
+    public Object getEvalObject(String script) {
+        return ((JavascriptExecutor) driver).executeScript("return " + script);
+    }
+
 
     public boolean isCssRuleApplied(WebElement element, String selector, String property, String value) {
         return (Boolean)((JavascriptExecutor) this.driver).executeScript("return isCssRuleApplied(arguments[0], arguments[1], arguments[2], arguments[3]);",
