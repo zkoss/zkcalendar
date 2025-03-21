@@ -48,7 +48,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			this._rePositionDay();
 
 			//reset items data, weeklyCalendarItems[weekIndex][dayIndex][itemIndex]
-			this._itemsData = this._createItemsData(false);
+			this._itemsData = this.createItemsByWeekAndDay(false);
 			// recalculate
 			this.onSize();
 		},
@@ -122,7 +122,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			});
 		}
 		
-		this._itemsData = this._createItemsData(true);
+		this._itemsData = this.createItemsByWeekAndDay(true);
 		
 		if (!this._readonly)
 			this.editMode(true);
@@ -132,36 +132,39 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		this.title = this.woyCnt = this.allDayTitle = this.weekRows = null;
 		this.$supers('unbind_', arguments);
 	},
-	/** return a 3D array that stores calendar items elements for each week.
+
+	/**
+	 * return a 3D array that stores calendar items elements for each week.
 	 * weeklyCalendarItems[weekIndex][dayIndex][itemIndex]
 	 */
-	_createItemsData: function (isAddClkEvt) {
-		var monthBodyEl = this.$n('cnt');
-		var weeklyCalendarItems = [];
+	createItemsByWeekAndDay: function (isAddClkEvt) {
+		const monthBodyEl = this.$n('cnt');
+		const itemsByWeekAndDay = [];
 		for (var weekIndex = 0, monthWeekEl = monthBodyEl.firstChild; monthWeekEl; monthWeekEl = monthWeekEl.nextSibling, weekIndex++) {
-			var calendarItemsTable = monthWeekEl.lastChild,
-				rows = calendarItemsTable.rows,
-				len = rows.length,
-				oneWeekCalendarItems = [];
-
-			for (var i = 0, c = 7; c--; i++)
-				oneWeekCalendarItems[i] = [];
-
-			for (var rowIndex = 1; rowIndex < len; rowIndex++) {
-				for (var slotIndex = 0, z = 0, itemSlots = rows[rowIndex].cells;
-					 slotIndex < itemSlots.length; slotIndex++) {
-					if (itemSlots[slotIndex].firstChild.id)
-						oneWeekCalendarItems[slotIndex + z].push(itemSlots[slotIndex].firstChild);
-					var cols = itemSlots[slotIndex].colSpan;
-					while (--cols > 0)
-						oneWeekCalendarItems[slotIndex + ++z].push(itemSlots[slotIndex].firstChild);
-				}
+			const itemsByDay = this.extractItemsFromWeek(monthWeekEl);
+			itemsByWeekAndDay[weekIndex] = itemsByDay;
+			if (isAddClkEvt){
+				const rows = monthWeekEl.lastChild.rows;
+				this.addDayClickEvent_(jq(rows[0]).children().find('span'));
 			}
-			weeklyCalendarItems[weekIndex] = oneWeekCalendarItems;
-			if (!isAddClkEvt) continue;
-			this.addDayClickEvent_(jq(rows[0]).children().find('span'));
 		}
-		return weeklyCalendarItems;
+		return itemsByWeekAndDay;
+	},
+	extractItemsFromWeek: function (monthWeekEl){
+		var calendarItemsTable = monthWeekEl.lastChild,
+			rows = calendarItemsTable.rows;
+		const itemsByDay = Array.from({ length: 7 }, () => []); // Initialize 7 empty arrays
+		for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {
+			for (var slotIndex = 0, z = 0, itemSlots = rows[rowIndex].cells;
+				 slotIndex < itemSlots.length; slotIndex++) {
+				if (itemSlots[slotIndex].firstChild.id)
+					itemsByDay[slotIndex + z].push(itemSlots[slotIndex].firstChild);
+				var cols = itemSlots[slotIndex].colSpan;
+				while (--cols > 0)
+					itemsByDay[slotIndex + ++z].push(itemSlots[slotIndex].firstChild);
+			}
+		}
+		return itemsByDay;
 	},
 		
 	_createWeekSet: function (ed) {
@@ -527,7 +530,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 	
 	reAlignItems_: function (hasAdd) {
 		this._rePositionDay();
-		this._itemsData = this._createItemsData(false);
+		this._itemsData = this.createItemsByWeekAndDay(false);
 		// recalculate
 		this.onSize();
 	},
