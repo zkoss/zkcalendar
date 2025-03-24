@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
  * Reuse web driver to avoid connecting a test page for each test case, reduce test case running time.
  */
 public class CalendarTestBase extends WebDriverTestCase {
+    public static final int ITEM_HEIGHT_MONTH_MOLD = 20;
     static String TEST_ZUL;
     static {
         System.setProperty("zkWebdriverContextPath", "/test/");

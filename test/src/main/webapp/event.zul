@@ -1,9 +1,7 @@
 <zk>
     <nodom apply="test.EventComposer">
-        <vlayout>
-            <label draggable="true" value="Drag me to drop on calendars or an item" sclass="dragElement"/>
-            <label id="firedEvent" sclass="firedEvent"/>
-        </vlayout>
-        <calendars id="cal" height="90%" droppable="true"/>
+        <label draggable="true" value="Drag me to drop on calendars or an item" sclass="dragElement"/>
+        <calendars id="cal" height="90%" droppable="true" mold="${param.mold}"/>
+        <label id="firedEvent" sclass="firedEvent"/>
     </nodom>
 </zk>

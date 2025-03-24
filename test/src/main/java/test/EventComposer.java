@@ -25,7 +25,7 @@ public class EventComposer extends SelectorComposer {
     private Label firedEvent;
     private SimpleCalendarModel model;
     private ZoneId defaultZoneId;
-    private LocalDateTime day1 = LocalDateTime.of(2023,1,1,0,0);
+    private LocalDateTime day1 = LocalDateTime.of(2023, 1, 1, 0, 0);
 
     private void initModel() {
         defaultZoneId = calendars.getDefaultTimeZone().toZoneId();
@@ -66,6 +66,7 @@ public class EventComposer extends SelectorComposer {
     }
 
     private DefaultCalendarItem selectedItem;
+
     @Listen(CalendarsEvent.ON_ITEM_UPDATE + " = calendars")
     public void move(CalendarsEvent event) {
         selectedItem = (DefaultCalendarItem) event.getCalendarItem();
@@ -79,17 +80,17 @@ public class EventComposer extends SelectorComposer {
     }
 
     @Listen(Events.ON_CLICK + " = #previous")
-    public void previous(){
+    public void previous() {
         calendars.previousPage();
     }
 
     @Listen(Events.ON_CLICK + " = #next")
-    public void next(){
+    public void next() {
         calendars.nextPage();
     }
 
     @Listen(CalendarsEvent.ON_DAY_CLICK + "=calendars")
-    public void toOneDayView(Event event){
+    public void toOneDayView(Event event) {
         Date clickedDate = (Date) event.getData();
         calendars.setDays(1);
         calendars.setCurrentDate(clickedDate);
@@ -98,16 +99,17 @@ public class EventComposer extends SelectorComposer {
     @Listen(CalendarsEvent.ON_ITEM_CREATE + "=calendars;" +
             CalendarsEvent.ON_ITEM_EDIT + "=calendars;" +
             CalendarsEvent.ON_ITEM_UPDATE + "=calendars")
-    public void itemEventListener(CalendarsEvent event){
+    public void itemEventListener(CalendarsEvent event) {
         String eventContent = String.format("%s %s %s %s",
                 event.getName(),
                 Optional.ofNullable(event.getCalendarItem()).map(CalendarItem::getTitle).orElse(""),
                 event.getBeginDate(), event.getEndDate());
         firedEvent.setValue(eventContent);
+        event.stopClearGhost(); // for testing drag ghost
     }
 
     @Listen("onDrop = calendars")
-    public void handleDrop(CalendarDropEvent event){
+    public void handleDrop(CalendarDropEvent event) {
         String eventContent = String.format("%s %s",
                 Optional.ofNullable(event.getCalendarEvent()).map(CalendarItem::getTitle).orElse("non-item"),
                 event.getDate());

@@ -17,9 +17,12 @@ public enum CssClassNames {
 
     MONTH_WEEK(CALENDAR.className+ "-month-week"),
     MONTH_DATE(CALENDAR.className+ "-month-date"),
+    MONTH_DATE_CONTENT(CALENDAR.className+ "-month-date-cnt"),
     MONTH_DATE_OFF(CALENDAR.className+ "-month-date-off"),
     MONTH_HEADER(CALENDAR.className + "-month-header"),
     MONTH_CONTENT(CALENDAR.className + "-month-cnt"),
+    MONTH_DRAG_DROP(CALENDAR.className + "-month-dd"),
+    MONTH_DRAG_DROP_ROPE(CALENDAR.className + "-dd-rope"),
     MORE_LINK(CALENDAR.className + "-evt-faker-more"),
 
     MORE_POPUP("z-calpp-month"),
@@ -36,9 +39,11 @@ public enum CssClassNames {
     ITEM_RESIZER(ITEM.className + "-resizer");
 
     private final String className;
+    private String chainedSelector;
 
     CssClassNames(String className) {
         this.className = className;
+        this.chainedSelector = "." + className;
     }
 
     public String className() {
@@ -49,7 +54,14 @@ public enum CssClassNames {
      * @return CSS selector for this class name
      */
     public String selector() {
-        return "." + className;
+        String result = chainedSelector;
+        chainedSelector = "." + className; // Reset for next use
+        return result;
+    }
+
+    public CssClassNames child(CssClassNames child) {
+        this.chainedSelector = this.chainedSelector + " " + child.selector();
+        return this;
     }
 
 }

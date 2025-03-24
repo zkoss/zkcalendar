@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static test.CssClassNames.*;
 
 public class RenderItemMonthTest extends CalendarTestBase {
-    public static final int ITEM_HEIGHT_MONTH_MOLD = 20;
 
     static {
         TEST_ZUL = "renderItemMonth.zul";
