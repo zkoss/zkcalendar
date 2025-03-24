@@ -50,7 +50,7 @@ function upVer {
 	" {} \; -exec grep -n --color=auto $newVersion {} \;
 }
 
-upVer $mainDir
+upVer $maindir
 upVer "calendar"
 upVer "essentials"
 upVer "test"
