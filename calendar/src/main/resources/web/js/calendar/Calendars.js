@@ -692,7 +692,7 @@ it will be useful, but WITHOUT ANY WARRANTY.
 		 * @param {int} colsIndex clicked column index
 		 * @param {int} rowsIndex clicked row index
 		 * @param {Array} offsets offset values of UI elements  ['l': content offset left, 't': content offset top, 'w': content width, 'h': content height, 's': number of zInfo (columns)]
-		 * @param {Array} dimensions target cell dimensions ['width': width, 'height': height, 'heighsPerRow': Array of offsetHeight per row]
+		 * @param {{width: (*|number|number), height: *, heighsPerRow: *[]}} dimensions target cell dimensions ['width': width, 'height': height, 'heighsPerRow': Array of offsetHeight per row]
 		 * @param {int} duration duration to display
 		 * @returns 
 		 */

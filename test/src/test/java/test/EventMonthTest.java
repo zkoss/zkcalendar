@@ -57,13 +57,23 @@ public class EventMonthTest extends CalendarTestBase{
      * clicking at the empty space of a date, the component should fire onItemCreate event
      */
     @Test
-    public void onItemCreateEvent(){
+    public void itemCreateEvent(){
         JQuery jan2 = getJan2();
         assertEquals("2", jan2.find(MONTH_DATE_CONTENT.selector()).text());
         clickAt(jan2, 0 , ITEM_HEIGHT_MONTH_MOLD);
         waitResponse();
         JQuery firedEventLabel = jq(".firedEvent");
         assertEquals("onItemCreate  Mon Jan 02 00:00:00 CST 2023 Tue Jan 03 00:00:00 CST 2023", firedEventLabel.text());
+        reloadPage();
+    }
+
+    @Test
+    public void itemEditEvent(){
+        JQuery item = jq(".separate");
+        click(item);
+        waitResponse();
+        JQuery firedEventLabel = jq(".firedEvent");
+        assertEquals("onItemEdit non overlapped null null", firedEventLabel.text());
     }
 
     private JQuery getJan2() {

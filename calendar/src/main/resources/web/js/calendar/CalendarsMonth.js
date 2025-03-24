@@ -554,87 +554,92 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 			if (n == ele) return i;
 		return -1;
 	},
-	
 	onClick: function (cnt, evt) {
 		var widget = zk.Widget.$(cnt),
-			zcls = widget.getZclass(),
+			zcls = this.getZclass(),
 			node = evt.target,
-			ce = zk.Widget.$(node).item,
-			p = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
+			item = zk.Widget.$(node).item,
+			mousePosition = [Math.round(evt.pageX), Math.round(evt.pageY)]; //ZKCAL-42: sometimes it returns float number in IE 10
 		if (jq(node).hasClass(zcls + '-evt-faker-more') && node.parentNode.id.indexOf('-frow') > 0) return;
 
-		if (ce) {
-			widget.fire('onItemEdit', {
-				data: [ce.id, p[0], p[1], jq.innerWidth(), jq.innerHeight()]});
+		if (item) {
+			this.handleItemClick(item, mousePosition);
 		} else {
-			var cmp = widget.$n(),
-				html = '<div id="' + widget.uuid + '-rope" class="' + zcls + '-month-dd">'
-					 + '<div class="' + zcls + '-dd-rope"></div></div>';
-
-			jq(document.body).prepend(html);
-
-			var td = cnt.firstChild.firstChild.rows[0].firstChild,
-				width = td.offsetWidth,
-				height = cnt.firstChild.offsetHeight,
-				offs = zk(cnt).revisedOffset(),
-				x = p[0] - offs[0],
-				y = p[1] - offs[1],
-				cols = Math.floor(x / width),
-				rows = Math.floor(y / height),
-				bd = new Date(widget.zoneBd),
-				zinfo = [];
-
-			bd.setDate(bd.getDate() + (7 * rows + cols));
-
-			for (var left = 0, n = td; n;
-					left += n.offsetWidth, n = n.nextSibling)
-				zinfo.push({left: left, width: n.offsetWidth});
-
-			var zoffs = {
-				left: offs[0],
-				top: offs[1],
-				width: cnt.offsetWidth,
-				height: cnt.offsetHeight,
-				size: zinfo.length
-			};
-
-			var hs = [];
-			hs[rows] = cnt.childNodes[rows].offsetHeight;
-
-			widget.fixRope_(zinfo, jq('#' + widget.uuid + '-rope')[0].firstChild,
-				cols, rows, zoffs, {width: width, height: hs[rows], heighsPerRow: hs}, 1);
-
-			var ed = new Date(bd);
-			ed = calUtil.addDay(ed, 1);
-			//ZKCAL-50: add event on DST start day
-			var bdhour = bd.getHours(), edhour = ed.getHours();
-			if (bdhour == 23) {
-				bd.setHours(bd.getHours() + 2);
-				ed.setHours(ed.getHours() + 1);
-			} else if (edhour == 23) {
-				ed.setHours(ed.getHours() + 2);
-			}
-			
-			widget.fire('onItemCreate', {
-				data: [
-					widget.fixTimeZoneFromClient(bd),
-					widget.fixTimeZoneFromClient(ed),
-					p[0],
-					p[1],
-					jq.innerWidth(),
-					jq.innerHeight()
-				]
-			});
-
-			widget._ghost[widget.uuid] = function () {
-				jq('#' + widget.uuid + '-rope').remove();
-				delete widget._ghost[widget.uuid];
-			};
+			this.handleEmptySpaceClick(cnt, mousePosition);
 		}
 		widget.closeFloats();
 		evt.stop();
 	},
-	
+	handleItemClick: function(item, mousePosition) {
+		this.fire('onItemEdit', {
+			data: [item.id, mousePosition[0], mousePosition[1], jq.innerWidth(), jq.innerHeight()]
+		});
+	},
+	handleEmptySpaceClick(cnt, mousePosition) {
+		let zcls = this.getZclass();
+		var html = '<div id="' + this.uuid + '-rope" class="' + zcls + '-month-dd">'
+			+ '<div class="' + zcls + '-dd-rope"></div></div>';
+
+		jq(document.body).prepend(html);
+
+		var td = cnt.firstChild.firstChild.rows[0].firstChild,
+			width = td.offsetWidth,
+			height = cnt.firstChild.offsetHeight,
+			offs = zk(cnt).revisedOffset(),
+			x = mousePosition[0] - offs[0],
+			y = mousePosition[1] - offs[1],
+			cols = Math.floor(x / width),
+			rows = Math.floor(y / height),
+			bd = new Date(this.zoneBd),
+			zinfo = [];
+
+		bd.setDate(bd.getDate() + (7 * rows + cols));
+
+		for (var left = 0, n = td; n;
+			 left += n.offsetWidth, n = n.nextSibling)
+			zinfo.push({left: left, width: n.offsetWidth});
+
+		var zoffs = {
+			left: offs[0],
+			top: offs[1],
+			width: cnt.offsetWidth,
+			height: cnt.offsetHeight,
+			size: zinfo.length
+		};
+
+		var hs = [];
+		hs[rows] = cnt.childNodes[rows].offsetHeight;
+
+		this.fixRope_(zinfo, jq('#' + this.uuid + '-rope')[0].firstChild,
+			cols, rows, zoffs, {width: width, height: hs[rows], heighsPerRow: hs}, 1);
+
+		var ed = new Date(bd);
+		ed = calUtil.addDay(ed, 1);
+		//ZKCAL-50: add event on DST start day
+		var bdhour = bd.getHours(), edhour = ed.getHours();
+		if (bdhour == 23) {
+			bd.setHours(bd.getHours() + 2);
+			ed.setHours(ed.getHours() + 1);
+		} else if (edhour == 23) {
+			ed.setHours(ed.getHours() + 2);
+		}
+
+		this.fire('onItemCreate', {
+			data: [
+				this.fixTimeZoneFromClient(bd),
+				this.fixTimeZoneFromClient(ed),
+				mousePosition[0],
+				mousePosition[1],
+				jq.innerWidth(),
+				jq.innerHeight()
+			]
+		});
+
+		this._ghost[this.uuid] = function () {
+			jq('#' + this.uuid + '-rope').remove();
+			delete this._ghost[this.uuid];
+		};
+	},
 	onMoreClick: function (evt) {
 		var cell = evt.target,
 			widget = zk.Widget.$(cell),
