@@ -588,21 +588,21 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 
 			for (var left = 0, n = td; n;
 					left += n.offsetWidth, n = n.nextSibling)
-				zinfo.push({l: left, w: n.offsetWidth});
+				zinfo.push({left: left, width: n.offsetWidth});
 
 			var zoffs = {
-				l: offs[0],
-				t: offs[1],
-				w: cnt.offsetWidth,
-				h: cnt.offsetHeight,
-				s: zinfo.length
+				left: offs[0],
+				top: offs[1],
+				width: cnt.offsetWidth,
+				height: cnt.offsetHeight,
+				size: zinfo.length
 			};
 
 			var hs = [];
 			hs[rows] = cnt.childNodes[rows].offsetHeight;
 
 			widget.fixRope_(zinfo, jq('#' + widget.uuid + '-rope')[0].firstChild,
-				cols, rows, zoffs, {w: width, h: hs[rows], hs: hs}, 1);
+				cols, rows, zoffs, {width: width, height: hs[rows], heighsPerRow: hs}, 1);
 
 			var ed = new Date(bd);
 			ed = calUtil.addDay(ed, 1);
