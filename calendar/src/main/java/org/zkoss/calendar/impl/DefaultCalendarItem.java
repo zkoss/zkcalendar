@@ -26,7 +26,7 @@ import java.time.ZoneId;
  */
 public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> implements Serializable {
 	private static final long serialVersionUID = 20210112095645L;
-	private ZoneId _zoneId;
+	protected ZoneId zoneId;
 
 	/**
 	 * @deprecated since 3.1.0, please use {@link Builder} instead
@@ -48,13 +48,19 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 		super(title, content, sclass, "",  contentColor, headerColor, locked, begin, end);
 		if (zoneId == null)
 			throw new IllegalArgumentException("Must specify ZoneId");
-		this._zoneId = zoneId;
+		this.zoneId = zoneId;
 	}
 
 	@Override
 	protected Instant convertToInstant(LocalDateTime dateTime) {
-		return dateTime == null ? null : dateTime.atZone(_zoneId).toInstant();
+		return dateTime == null ? null : dateTime.atZone(zoneId).toInstant();
 	}
+
+	public ZoneId getZoneId() {
+		return zoneId;
+	}
+
+	// implement equals() and hashCode() breaks the logic in Calendars.getCalendarItemId()
 
 	/**
 	 * The {@link Builder} for creating {@link DefaultCalendarItem}.
@@ -78,13 +84,13 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 		 * Initialize builder with values from an existing DefaultCalendarItem
 		 * @param item the existing DefaultCalendarItem to copy values from
 		 * @return a Builder initialized with the existing item's values
-		 * @since 3.1.3
+		 * @since 3.2.0
 		 */
 		public static Builder from(DefaultCalendarItem item) {
 			Builder builder = new Builder();
-			builder.begin = LocalDateTime.ofInstant(item.getBegin(), item._zoneId);
-			builder.end = LocalDateTime.ofInstant(item.getEnd(), item._zoneId);
-			builder.zoneId = item._zoneId;
+			builder.begin = LocalDateTime.ofInstant(item.getBegin(), item.zoneId);
+			builder.end = LocalDateTime.ofInstant(item.getEnd(), item.zoneId);
+			builder.zoneId = item.zoneId;
 			builder.title = item.getTitle();
 			builder.content = item.getContent();
 			builder.headerColor = item.getHeaderColor();
@@ -164,7 +170,7 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 		 * Set the CSS style for the header. This method is useful for applying dynamic styles to specific calendar items without affecting other items or creating a CSS class. The component renders the specified style into an item's inline style (the highest priority).
 		 * This method overrides the value set by {@link #withHeaderColor(String)}, if you set both.
 		 * @param headerStyle CSS style string
-		 * @since 3.1.3
+		 * @since 3.2.0
 		 */
 		public Builder withHeaderStyle(String headerStyle) {
 		    this.headerStyle = headerStyle;
@@ -175,7 +181,7 @@ public class DefaultCalendarItem extends AbstractCalendarItem<LocalDateTime> imp
 		 * Set the CSS style for the content. This method overrides the value set by {@link #withContentColor(String)} (String)}
 		 * @param contentStyle CSS style string
 		 * @see #withHeaderStyle(String)       
-		 * @since 3.1.3
+		 * @since 3.2.0
 		 */
 		public Builder withContentStyle(String contentStyle) {
 		    this.contentStyle = contentStyle;
