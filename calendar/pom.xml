@@ -44,7 +44,7 @@
 				<version>2.24.0</version>
 				<executions>
 					<execution>
-						<phase>generate-resources</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>minify</goal>
 						</goals>
