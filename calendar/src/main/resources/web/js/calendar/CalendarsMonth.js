@@ -157,7 +157,7 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 		for (var rowIndex = 1; rowIndex < rows.length; rowIndex++) {
 			for (var slotIndex = 0, z = 0, itemSlots = rows[rowIndex].cells;
 				 slotIndex < itemSlots.length; slotIndex++) {
-				if (itemSlots[slotIndex].firstChild.id)
+				if (itemSlots[slotIndex].firstChild?.id)
 					itemsByDay[slotIndex + z].push(itemSlots[slotIndex].firstChild);
 				var cols = itemSlots[slotIndex].colSpan;
 				while (--cols > 0)

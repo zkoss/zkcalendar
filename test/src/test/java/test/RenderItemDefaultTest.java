@@ -213,7 +213,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
 
     /** when change to month mold, calendars should render the month date upon the current date */
     @Test //ZKCAL-105
-    public void toMonthMold() {
+    public void changeDateToMonthMold() {
         JQuery nextButton = jq("$next");
         for (int i = 1 ; i<=5 ; i++) {
             click(nextButton);
@@ -230,6 +230,13 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals(0, jq(calendarSclass("day-of-month-bg")).eq(3).find(calendarSclass("month-date-off")).length());
         //3/1 ~ 3/4 are date-off
         assertEquals(4, jq(calendarSclass("day-of-month-bg")).eq(4).find(calendarSclass("month-date-off")).length());
+        reloadPage();
+    }
+
+    @Test
+    public void toMonthMold(){
+        click(jq("$monthMold"));
+        waitResponse();
         reloadPage();
     }
 }
