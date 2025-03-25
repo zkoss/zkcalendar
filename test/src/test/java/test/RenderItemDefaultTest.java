@@ -3,7 +3,7 @@ package test;
 import org.junit.jupiter.api.Test;
 import org.zkoss.test.webdriver.ztl.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static test.CssClassNames.*;
 import static test.RenderItemsComposer.*;
 
@@ -238,5 +238,11 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         click(jq("$monthMold"));
         waitResponse();
         reloadPage();
+    }
+
+    @Test //ZKCAL-77
+    public void shortTimeItemHasMinimalHeight(){
+        JQuery shortTimeItem = jq(".five-min");
+        assertTrue(shortTimeItem.height() >= HALF_HOUR_HEIGHT);
     }
 }

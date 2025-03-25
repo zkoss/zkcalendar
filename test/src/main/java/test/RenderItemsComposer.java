@@ -35,6 +35,7 @@ public class RenderItemsComposer extends SelectorComposer {
         addDaySpanItem();
         addModelUpdateSimpleItem();
         addHeaderContentStyle();
+        addShortTimeItem();
     }
 
     private void addHeaderContentStyle() { //ZKCAL-130
@@ -240,6 +241,20 @@ public class RenderItemsComposer extends SelectorComposer {
         model.add(overlappedItem3);
     }
 
+    /** ZKCAL-77
+     * 5 minutes item can have a minimal height as half hour item */
+    private void addShortTimeItem() {
+        LocalDateTime day2 = day1.plusDays(1).withHour(5);
+        DefaultCalendarItem fiveMinuteItem = new DefaultCalendarItem.Builder()
+                .withBegin(day2)
+                .withEnd(day2.plusMinutes(5))
+                .withSclass("five-min")
+                .withContent("5 min")
+                .withZoneId(defaultZoneId)
+                .build();
+        model.add(fiveMinuteItem);
+    }
+
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
@@ -305,9 +320,10 @@ public class RenderItemsComposer extends SelectorComposer {
         model.add(modelUpdateSimpleItem);
     }
 
+
     /** update an item's all properties ZKCAL-128 */
     @Listen("onClick = #modelUpdateSimple")
-    public void updateItemInModel(){
+    public void updateItemInModel() {
         modelUpdateSimpleItem.setBegin(Date.from(day1.plusHours(6).atZone(defaultZoneId).toInstant()));
         modelUpdateSimpleItem.setEnd(Date.from(day1.plusHours(7).atZone(defaultZoneId).toInstant()));
         modelUpdateSimpleItem.setTitle("title updated");
