@@ -66,29 +66,29 @@ import org.zkoss.zul.impl.XulElement;
  */
 public class Calendars extends XulElement {
 	private static final long serialVersionUID = 20090331171730L;
-	private static final String ATTR_ON_INIT_POSTED = "org.zkoss.calendar.Calendars.onInitLaterPosted";	
-	private int _firstDayOfWeek;
-	private Date _curDate;
-	private int _days = 7;
-	private DateFormatter _dfmter;
-	private Map<String, List<CalendarItem>> _items;
-	private Map<TimeZone, String> _tzones;
-	private Map<Object, Object> _ids;
-	private CalendarModel _model;
-	private transient CalendarDataListener _dataListener;
-	private SimpleDateFormat _sdfKey = new SimpleDateFormat("yyyy/MM/dd");
-	private boolean _readonly;
-	private boolean _weekOfYear;
-	private boolean _hasEmptyZone= false;
-	private boolean _escapeXML = true;
-	private List<CalendarItem> _addItemList, _mdyItemList, _rmItemList;
-	private int _beginTime = 0, _endTime = 24, _timeslots = 2;
-	
- 	private static final String ATTR_ON_ADD_ITEM_RESPONSE = "org.zkoss.calendar.Calendars.onAddItemResponse";
-	private static final String ATTR_ON_REMOVE_ITEM_RESPONSE = "org.zkoss.calendar.Calendars.onRemoveItemResponse";
-	private static final String ATTR_ON_MODIFY_ITEM_RESPONSE = "org.zkoss.calendar.Calendars.onModifyItemResponse";
-	
-	private static final Comparator<CalendarItem> _defCompare = new Comparator<CalendarItem>() {
+	protected static final String ATTR_ON_INIT_POSTED = "org.zkoss.calendar.Calendars.onInitLaterPosted";
+	protected int _firstDayOfWeek;
+	protected Date _curDate;
+	protected int _days = 7;
+	protected DateFormatter _dfmter;
+	protected Map<String, List<CalendarItem>> _items;
+	protected Map<TimeZone, String> _tzones;
+	protected Map<Object, Object> _ids;
+	protected CalendarModel _model;
+	protected transient CalendarDataListener _dataListener;
+	protected SimpleDateFormat _sdfKey = new SimpleDateFormat("yyyy/MM/dd");
+	protected boolean _readonly;
+	protected boolean _weekOfYear;
+	protected boolean _hasEmptyZone= false;
+	protected boolean _escapeXML = true;
+	protected List<CalendarItem> _addItemList, _mdyItemList, _rmItemList;
+	protected int _beginTime = 0, _endTime = 24, _timeslots = 2;
+
+	protected static final String ATTR_ON_ADD_ITEM_RESPONSE = "org.zkoss.calendar.Calendars.onAddItemResponse";
+	protected static final String ATTR_ON_REMOVE_ITEM_RESPONSE = "org.zkoss.calendar.Calendars.onRemoveItemResponse";
+	protected static final String ATTR_ON_MODIFY_ITEM_RESPONSE = "org.zkoss.calendar.Calendars.onModifyItemResponse";
+
+	protected static final Comparator<CalendarItem> _defCompare = new Comparator<CalendarItem>() {
 		public int compare(CalendarItem o1, CalendarItem o2) {
 			return o1.getBeginDate().compareTo(o2.getBeginDate());
 		}
@@ -109,8 +109,8 @@ public class Calendars extends XulElement {
 		init();
 		_curDate = getCalendar().getTime();
 	}
-	
-	private void init() {
+
+	protected void init() {
 		_items = new HashMap<String, List<CalendarItem>>(32);
 		_tzones = new LinkedHashMap<TimeZone, String>();
 		_ids = new HashMap<Object, Object>(32);
@@ -328,19 +328,19 @@ public class Calendars extends XulElement {
 			Events.postEvent(-20000, "onRemoveDayItemResponse", this, null);
 		}
 	}
-	
-	private void cleanEmptyZone() {
+
+	protected void cleanEmptyZone() {
 		Map<TimeZone, String> tzones = new HashMap<TimeZone, String>(_tzones);
 		
 		for (Iterator<Entry<TimeZone, String>> it = tzones.entrySet().iterator(); it.hasNext();) {
 			Entry<TimeZone, String> es = it.next();
-			if(es.getValue().equals(""))
+			if (es.getValue().equals(""))
 				_tzones.remove(es.getKey());
 		}
 		_hasEmptyZone = false;
 	}
 
-	private Calendar getCalendar() {
+	protected Calendar getCalendar() {
 		return Calendar.getInstance(getDefaultTimeZone(), Locales.getCurrent());
 	}	
 	
@@ -357,18 +357,18 @@ public class Calendars extends XulElement {
 	public void addTimeZone(String label, TimeZone timezone) {
 		if (label == null) label = "";
 		_tzones.put(timezone, label);
-		if(_hasEmptyZone)
+		if (_hasEmptyZone)
 			cleanEmptyZone();
-		if (!inMonthMold() && _dfmter != null){
+		if (!inMonthMold() && _dfmter != null) {
 			Calendar cal = getCalendar();			
 			cal.set(Calendar.MINUTE, 0);
 			smartUpdate("captionByTimeOfDay", Util.encloseList(Util.packCaptionByTimeOfDay(cal, _tzones, Locales.getCurrent(), _dfmter)));
 		}
 		
 		TimeZone tz = getDefaultTimeZone();
-		smartUpdate("tz", (tz.getRawOffset())/60000);
-		smartUpdate("bd", Util.getDSTTime(tz,getBeginDate()));
-		smartUpdate("ed", Util.getDSTTime(tz,getEndDate()));
+		smartUpdate("tz", (tz.getRawOffset()) / 60000);
+		smartUpdate("bd", Util.getDSTTime(tz, getBeginDate()));
+		smartUpdate("ed", Util.getDSTTime(tz, getEndDate()));
 		reSendItemGroup();
 	}
 
@@ -448,7 +448,7 @@ public class Calendars extends XulElement {
 	public String getCalendarItemId(CalendarItem ce) {
 		Object o = _ids.get(ce);
 		if (o == null) {
-			o = ((DesktopCtrl)getDesktop()).getNextUuid(this);
+			o = ((DesktopCtrl) getDesktop()).getNextUuid(this);
 			_ids.put(o, ce);
 			_ids.put(ce, o);
 		}
@@ -456,7 +456,7 @@ public class Calendars extends XulElement {
 	}	
 	
 	public CalendarItem getCalendarItemById(String id) {
-		return (CalendarItem)_ids.get(id);
+		return (CalendarItem) _ids.get(id);
 	}
 	
 	protected String getItemKey(CalendarItem evt) {
@@ -467,9 +467,9 @@ public class Calendars extends XulElement {
 		if (end == null)
 			throw new UiException("End date cannot be null: " + evt);
 		return getItemKey(begin);
-	}	
-	
-	private String getItemKey(Date date) {
+	}
+
+	protected String getItemKey(Date date) {
 		return _sdfKey.format(date);
 	}
 
@@ -488,8 +488,8 @@ public class Calendars extends XulElement {
 		else list = Collections.emptyList();
 		return Collections.unmodifiableList(list);
 	}
-	
-	private static final Comparator<CalendarItem> getDefaultBeginDateComparator() {
+
+	protected static final Comparator<CalendarItem> getDefaultBeginDateComparator() {
 		return _defCompare;
 	}
 	
@@ -511,7 +511,7 @@ public class Calendars extends XulElement {
 		movePage(1);		
 	}
 
-	private void movePage(int day) {
+	protected void movePage(int day) {
 		if (_curDate == null) return;
 		
 		Calendar cal = getCalendar();
@@ -691,8 +691,8 @@ public class Calendars extends XulElement {
 	public int getTimeslots() {
 		return _timeslots;
 	}
-	
-	private void reSendDateRange(){
+
+	protected void reSendDateRange() {
 		Date beginDate = getBeginDate();
 		Date endDate = getEndDate();
 		TimeZone timezone = getDefaultTimeZone();
@@ -840,7 +840,7 @@ public class Calendars extends XulElement {
 	
 	/** Initializes _dataListener and register the listener to the model
 	 */
-	private void initDataListener() {
+	protected void initDataListener() {
 		if (_dataListener == null)
 			_dataListener = new CalendarDataListener() {
 				public void onChange(CalendarDataEvent event) {
@@ -930,7 +930,7 @@ public class Calendars extends XulElement {
 	}
 
 	//-- Serializable --//
-	private synchronized void readObject(java.io.ObjectInputStream s)
+	protected synchronized void readObject(java.io.ObjectInputStream s)
 	throws java.io.IOException, ClassNotFoundException {
 		s.defaultReadObject();
 		init();
@@ -1008,9 +1008,9 @@ public class Calendars extends XulElement {
 				DateFormat.SHORT, Locales.getCurrent())).toPattern().replaceAll(
 				"[^\\p{Alpha}]*y+[^\\p{Alpha}]*", "");
 		renderer.render("weekFmt", pattern);
-	}		
+	}
 
-	private void rendererDayData(DateFormatter dfhandler, ContentRenderer renderer) throws IOException {
+	protected void rendererDayData(DateFormatter dfhandler, ContentRenderer renderer) throws IOException {
 		final Locale locale = Locales.getCurrent();
 		Calendar cal = getCalendar();
 		cal.setTime(getBeginDate());
@@ -1021,7 +1021,7 @@ public class Calendars extends XulElement {
 		renderer.render("captionByTimeOfDay", Util.encloseList(Util.packCaptionByTimeOfDay(cal, _tzones, locale, dfhandler)));
 	}
 
-	private void rendererMonthData(DateFormatter dfhandler, ContentRenderer renderer) throws IOException {
+	protected void rendererMonthData(DateFormatter dfhandler, ContentRenderer renderer) throws IOException {
 		Calendar cal = getCalendar();
 		cal.setTime(getBeginDate());
 
