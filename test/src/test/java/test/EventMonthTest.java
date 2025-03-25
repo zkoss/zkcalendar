@@ -28,8 +28,9 @@ public class EventMonthTest extends CalendarTestBase{
         waitResponse();
         JQuery dragGhost = jq(MONTH_DRAG_DROP.child(MONTH_DRAG_DROP_ROPE).selector());
         assertTrue(dragGhost.exists());
-        assertEquals("50px",dragGhost.css("top"));
-        assertEquals("279px",dragGhost.css("left"));
+
+        assertEquals(50, parseInt(dragGhost.css("top")), 1);
+        assertEquals(279, parseInt(dragGhost.css("left")) ,1);
         assertEquals(DRAG_GHOST_WIDTH,dragGhost.width(), 1);
         assertEquals(DRAG_GHOST_HEIGHT,dragGhost.height(), 1);
         reloadPage();
@@ -46,8 +47,8 @@ public class EventMonthTest extends CalendarTestBase{
         waitResponse();
         JQuery dragGhost = jq(MONTH_DRAG_DROP.child(MONTH_DRAG_DROP_ROPE).selector());
         assertTrue(dragGhost.exists());
-        assertEquals("50px",dragGhost.css("top"));
-        assertEquals("279px",dragGhost.css("left"));
+        assertEquals(50, parseInt(dragGhost.css("top")), 1);
+        assertEquals(279, parseInt(dragGhost.css("left")) ,1);
         assertEquals(DRAG_GHOST_WIDTH * 2,dragGhost.width(), 1); //
         assertEquals(DRAG_GHOST_HEIGHT,dragGhost.height(), 1);
         reloadPage();
