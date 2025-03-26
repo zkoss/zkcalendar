@@ -18,6 +18,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 package org.zkoss.calendar.impl;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -177,6 +178,8 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 	 * @param beginDate the begin date
 	 * @param endDate the end date
 	 * @param rc a RenderContext encapsulates the information needed for Calendars.
+	 * @deprecated 3.2.0
+	 * @see #get(LocalDateTime, LocalDateTime, RenderContext)
 	 */
 	public List<CalendarItem> get(Date beginDate, Date endDate, RenderContext rc) {
 		List<CalendarItem> matchingItems = new LinkedList<CalendarItem>();
@@ -189,6 +192,18 @@ public class SimpleCalendarModel extends AbstractCalendarModel implements
 
 		}
 		return matchingItems;
+	}
+
+	/**
+	 * @see #get(Date, Date, RenderContext)
+	 * @since 3.2.0
+	 */
+	@Override //ZKCAL-84
+	public List<CalendarItem> get(LocalDateTime beginDate, LocalDateTime endDate, RenderContext context) {
+		TimeZone zone = context.getTimeZone();
+		Date begin = Date.from(beginDate.atZone(zone.toZoneId()).toInstant());
+		Date end = Date.from(endDate.atZone(zone.toZoneId()).toInstant());
+		return get(begin, end, context);
 	}
 
 	public static boolean isTimeOverlapping(Date begin1, Date end1, Date begin2, Date end2) {

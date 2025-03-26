@@ -16,6 +16,7 @@ Copyright (C) 2009 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.calendar.api;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +37,7 @@ public interface CalendarModel {
 	 * @param rc a RenderContext encapsulates the information needed for Calendars.
 	 */
 	public List<CalendarItem> get(Date beginDate, Date endDate, RenderContext rc);
+	public List<CalendarItem> get(LocalDateTime beginDate, LocalDateTime endDate, RenderContext context);
 	/** Adds a listener to the calendar model that's notified each time a change
 	 * to the data model occurs. 
 	 */

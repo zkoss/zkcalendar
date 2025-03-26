@@ -18,6 +18,7 @@ package org.zkoss.calendar;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.*;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -33,7 +34,6 @@ import org.zkoss.calendar.event.CalendarDropEvent;
 import org.zkoss.calendar.event.CalendarsEvent;
 import org.zkoss.calendar.impl.*;
 import org.zkoss.lang.Classes;
-import org.zkoss.lang.Objects;
 import org.zkoss.util.Locales;
 import org.zkoss.util.TimeZones;
 import org.zkoss.zk.au.out.AuSetAttribute;
@@ -542,6 +542,8 @@ public class Calendars extends XulElement {
 	 * <p>In all cases, the time portion is set to 00:00:00.000
 	 *
 	 * @return The beginning Date of the current view, or null if current date is not set
+	 * @deprecated 3.2.0
+	 * @see #getBeginDateTime()
 	 */
 	public Date getBeginDate() {
 		if (_curDate == null) return null;
@@ -567,8 +569,23 @@ public class Calendars extends XulElement {
 	}
 
 	/**
+	 * Returns the beginning date of the current calendar view using Java 8's date-time API.
+	 * The behavior matches {@link #getBeginDate()} but returns a LocalDateTime instead.
+	 *
+	 * @return The beginning LocalDateTime of the current view, or null if current date is not set
+	 * @since 3.2.0
+	 */
+	public LocalDateTime getBeginDateTime() {
+		Date beginDate = getBeginDate();
+		if (beginDate == null) return null;
+		return LocalDateTime.ofInstant(beginDate.toInstant(), getDefaultTimeZone().toZoneId());
+	}
+
+	/**
 	 * Returns the end date, which is based on {@link #getCurrentDate()} in the
-	 * current view depended on which {@link #getMold()} is using. 
+	 * current view depended on which {@link #getMold()} is using.
+	 * @deprecated 3.2.0
+	 * @see #getEndDateTime()
 	 */
 	public Date getEndDate() {
 		Date beginDate = getBeginDate();
@@ -599,30 +616,97 @@ public class Calendars extends XulElement {
 	}
 
 	/**
-	 * Sets the current date.
-	 * <p> Default: today (depend on which timezone the system is using).
+	 * Returns the end date of the current calendar view using Java 8's date-time API.
+	 * The behavior matches {@link #getEndDate()} but returns a LocalDateTime instead.
+	 *
+	 * @return The end LocalDateTime of the current view, or null if current date is not set
+	 * @since 3.2.0
+	 */
+	public LocalDateTime getEndDateTime() {
+		Date endDate = getEndDate();
+		if (endDate == null) return null;
+		return LocalDateTime.ofInstant(endDate.toInstant(), getDefaultTimeZone().toZoneId());
+	}
+
+	/**
+	 * Sets the date that determines which period (month/week) the calendar displays.
+	 * <p>
+	 * For Month View (mold="month"):
+	 * - Calendar displays the month containing this date
+	 * <p>
+	 * For Week/Day View (mold="default"):
+	 * - Calendar displays the week/days containing this date
+	 * - Number of days shown depends on {@link #getDays()}
+	 * <p>
+	 * To change which month/week is displayed, set a date within the desired period.
+	 * <p>
+	 * Default: today (in calendar's timezone)
+	 * ZKCAL-84
+	 * @param curDate The date determining which period to display, cannot be null
+	 * @throws NullPointerException if curDate is null
+	 * @deprecated 3.2.0
+	 * @see #setCurrentDateTime(LocalDateTime)
 	 */
 	public void setCurrentDate(Date curDate) {
 		if (curDate == null) throw new NullPointerException("Current Date cannot be null!");
 		if (!Objects.equals(curDate, _curDate)) {
 			_curDate = curDate;
 			reSendDateRange();
-			smartUpdate("cd", Util.getDSTTime(this.getDefaultTimeZone(),getCurrentDate()));
+			smartUpdate("cd", Util.getDSTTime(this.getDefaultTimeZone(), getCurrentDate()));
 			reSendItemGroup();
 		}
 	}
 
 	/**
+	 * Sets the date that determines which period (month/week) the calendar displays, using Java 8 date-time API.
+	 * <p>
+	 * For Month View (mold="month"):
+	 * - Calendar displays the month containing this date
+	 * <p>
+	 * For Week/Day View (mold="default"):
+	 * - Calendar displays the week/days containing this date
+	 * - Number of days shown depends on {@link #getDays()}
+	 * <p>
+	 * To change which month/week is displayed, set a date within the desired period.
+	 * <p>
+	 * Default: today (in calendar's timezone)
+	 * ZKCAL-84
+	 * @param localDateTime The date determining which period to display, cannot be null
+	 * @throws NullPointerException if localDateTime is null
+	 * @since 3.2.0
+	 */
+	public void setCurrentDateTime(LocalDateTime localDateTime) {
+		Objects.requireNonNull(localDateTime, "Current DateTime cannot be null!");
+		Date curDate = Date.from(localDateTime.atZone(getDefaultTimeZone().toZoneId()).toInstant());
+		//when removing setCurrentDate(Date curDate), migrate its logic here
+		setCurrentDate(curDate);
+	}
+
+	/**
 	 * Returns the current date.
 	 * <p> Default: today (depend on which timezone the calendar is using).
+	 * @deprecated 3.2.0
+	 * @see #getCurrentDateTime()
 	 */
 	public Date getCurrentDate() {
 		return _curDate;
 	}
+
 	/**
-	 * @since 2.1.0
-	 * Sets the begin time.
+	 * Returns the current date using Java 8's date-time API.
+	 * <p> Default: today (depend on which timezone the calendar is using).
+	 * @since 3.2.0
+	 */
+	public LocalDateTime getCurrentDateTime() {
+	    if (_curDate == null) return null;
+	    return LocalDateTime.ofInstant(_curDate.toInstant(), getDefaultTimeZone().toZoneId());
+	}
+
+
+	/**
+	 * Sets the beginning time.
 	 * <p> Default: 0.
+	 * @since 2.1.0
 	 */
 	public void setBeginTime(int beginTime) {
 		if (0 > beginTime || beginTime > 24)
@@ -637,9 +721,9 @@ public class Calendars extends XulElement {
 		}
 	}
 	/**
-	 * @since 2.1.0
-	 * Returns the begin time.
+	 * Returns the beginning time.
 	 * <p> Default: 0.
+	 * @since 2.1.0
 	 */
 	public int getBeginTime() {
 		return _beginTime;
