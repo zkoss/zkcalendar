@@ -1,10 +1,12 @@
 <zk>
-    test calendar attributes
+<!--    test calendar attributes-->
     <div viewModel="@id('vm')@init('test.CalendarAttributeViewModel')" height="100%">
-        <toolbar>
+        <toolbar height="50px">
             <toolbarbutton id="readOnlyButton" label="read only" mode="toggle" checked="@bind(vm.readOnly)" onItemCreate=""/><!--ZKCAL-126-->
             <toolbarbutton id="height500px" label="height 500px" onClick='cal.setVflex(null);cal.setHeight("500px")'/>
+            <toolbarbutton id="change" label="change Current Date" onClick="@command('change')"/>
         </toolbar>
-        <calendars id="cal" readonly="@load(vm.readOnly)" mold="${param.mold}" vflex="1"/>
+        <calendars id="cal" readonly="@load(vm.readOnly)" mold="${param.mold}" vflex="1"
+        currentDateTime="@load(vm.currentDateTime)"/>
     </div>
 </zk>
