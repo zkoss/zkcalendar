@@ -120,8 +120,8 @@ public class EventTest extends CalendarTestBase{
         getActions().dragAndDropBy(toElement(dragElement), 0, Size.HALF_HOUR_HEIGHT.value()*20).release().perform();
         waitResponse();
         JQuery firedEventLabel = jq(".firedEvent").eq(0);
-        assertTrue(firedEventLabel.text().startsWith("non-item"));
-        assertTrue(firedEventLabel.text().contains("Sun Jan 01"));
+        assertTrue(firedEventLabel.text().startsWith("non-item"), firedEventLabel.text());
+        assertTrue(firedEventLabel.text().contains("Sun Jan 01"), firedEventLabel.text());
     }
 
     /** it doesn't fire onDrop event */

@@ -26,8 +26,8 @@ public class ComponentAttributeMonthTest extends CalendarTestBase{
         reloadPage();
 
         click(jq("$readOnlyButton"));
-        click(day1);
         waitResponse();
+        click(day1);
         assertFalse(jq(MONTH_DRAG_DROP.child(MONTH_DRAG_DROP_ROPE).selector()).exists());
         reloadPage();
     }

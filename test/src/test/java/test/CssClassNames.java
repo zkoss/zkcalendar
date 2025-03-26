@@ -36,7 +36,9 @@ public enum CssClassNames {
     ITEM_HEADER(ITEM.className + "-header"),
     ITEM_CONTENT(ITEM.className + "-cnt"),
     ITEM_TEXT(ITEM.className + "-text"),
-    ITEM_RESIZER(ITEM.className + "-resizer");
+    ITEM_RESIZER(ITEM.className + "-resizer"),
+    ITEM_RIGHT_ARROW(ITEM.className + "-right-arrow"),
+    ITEM_LEFT_ARROW(ITEM.className + "-left-arrow");
 
     private final String className;
     private String chainedSelector;

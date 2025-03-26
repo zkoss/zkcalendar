@@ -59,7 +59,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
      */
     @Test
     public void test3Overlapping() {
-        JQuery items = jq(".z-calendars-week-day").eq(1).find(".z-calitem");
+        JQuery items = jq(".z-calendars-week-day").eq(1).find(".3overlapping");
         assertEquals(3, items.length());
 
         assertEquals("56.6", items.get(0).get("style.width").substring(0, 4));

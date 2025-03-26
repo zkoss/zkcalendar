@@ -4,7 +4,6 @@ Those who tends to develop this component should read and maintain this doc.
 # Build and publish to CE repository
 ## Jenkins build job
 [ZKCalendarRelease](https://jenkins3.pxinternal.com/job/ZKCalendarRelease/)
-FIXME - test cases don't run at jeknins3
 
 ## Local build
 run `mavenBuild.sh`
