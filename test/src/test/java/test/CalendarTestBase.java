@@ -45,6 +45,7 @@ public class CalendarTestBase extends WebDriverTestCase {
 
     protected void reloadPage() {
         driver.navigate().refresh();
+        waitResponse(); //avoid next test starts before reloading completes and cause tests to fail
     }
 
     @BeforeEach
