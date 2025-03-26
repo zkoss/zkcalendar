@@ -523,6 +523,47 @@ public class Calendars extends XulElement {
 		setCurrentDate(cal.getTime());
 	}
 
+
+	/**
+	 * Moves to next period (week in default mold, month in month mold)
+	 * ZKCAL-106
+	 * @since 3.2.0
+	 */
+	public void nextPeriod() {
+		movePeriod(1);
+	}
+
+	/**
+	 * Moves to previous period (week in default mold, month in month mold)
+	 * ZKCAL-106
+	 * @since 3.2.0
+	 */
+	public void previousPeriod() {
+		movePeriod(-1);
+	}
+
+	/**
+	 * Moves calendar by week or month based on current mold
+	 * ZKCAL-106
+	 * @param increment Number of periods to move (positive=forward, negative=backward)
+	 * @since 3.2.0
+	 */
+	protected void movePeriod(int increment) {
+		if (getCurrentDateTime() == null)
+			return;
+
+		LocalDateTime current = getCurrentDateTime();
+		LocalDateTime newDate;
+
+		if (inMonthMold()) {
+			newDate = current.plusMonths(increment);
+		} else {
+			newDate = current.plusWeeks(increment);
+		}
+
+		setCurrentDateTime(newDate);
+	}
+
 	/**
 	 * Returns the beginning date of the current calendar view based on {@link #getCurrentDate()}.
 	 * JS widget renders this date as the first day of a week or a month.
