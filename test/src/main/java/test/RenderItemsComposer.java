@@ -12,19 +12,21 @@ import org.zkoss.zk.ui.select.annotation.Wire;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
+import java.util.*;
 
 public class RenderItemsComposer extends SelectorComposer {
 
     public static final String CONSECUTIVE = "consecutive";
     @Wire("calendars")
-    private Calendars calendars;
-    private SimpleCalendarModel model;
-    private ZoneId defaultZoneId;
-    private LocalDateTime day1;
-    private SimpleCalendarItem modelUpdateSimpleItem;
+    Calendars calendars;
+    SimpleCalendarModel model;
+    ZoneId defaultZoneId;
+    LocalDateTime day1;
+    SimpleCalendarItem modelUpdateSimpleItem;
 
-    private void initModel() {
+    void initModel() {
+        day1 = LocalDateTime.of(2023, 1, 1, 0, 0);
+        defaultZoneId = calendars.getDefaultTimeZone().toZoneId();
         model = new SimpleCalendarModel();
         addNonOverlappingItems();
         add3consecutiveItems();
@@ -258,10 +260,8 @@ public class RenderItemsComposer extends SelectorComposer {
     @Override
     public void doAfterCompose(Component comp) throws Exception {
         super.doAfterCompose(comp);
-        defaultZoneId = calendars.getDefaultTimeZone().toZoneId();
-        day1 = LocalDateTime.of(2023, 1, 1, 0, 0);
-        calendars.setCurrentDate(Date.from(day1.atZone(defaultZoneId).toInstant()));
         initModel();
+        calendars.setCurrentDate(Date.from(day1.atZone(defaultZoneId).toInstant()));
         calendars.setModel(model);
     }
 
@@ -334,4 +334,5 @@ public class RenderItemsComposer extends SelectorComposer {
         modelUpdateSimpleItem.setSclass(SIMPLE_CLASS_UPDATE);
         model.update(modelUpdateSimpleItem);
     }
+
 }
