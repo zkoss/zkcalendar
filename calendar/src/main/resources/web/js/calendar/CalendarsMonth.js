@@ -634,10 +634,10 @@ calendar.CalendarsMonth = zk.$extends(calendar.Calendars, {
 				jq.innerHeight()
 			]
 		});
-
+		let widget = this;
 		this._ghost[this.uuid] = function () {
-			jq('#' + this.uuid + '-rope').remove();
-			delete this._ghost[this.uuid];
+			jq('#' + widget.uuid + '-rope').remove();
+			delete widget._ghost[widget.uuid];
 		};
 	},
 	onMoreClick: function (evt) {
