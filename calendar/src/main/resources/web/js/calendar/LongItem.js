@@ -1,7 +1,7 @@
-/* Calendars.js
+/* LongItem.js
 
 	Purpose:
-		
+		an item longer than 1 day in the default mold
 	Description:
 		
 	History:
@@ -16,29 +16,19 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 
 	redraw: function (out) {
 		this.defineClassName_();
-		
-		var ce = this.item,
-			id = ce.id,
-			p = this.params,
-			style = p.style,
-			contentStyle = p.contentStyle,
-			parent = this.parent,
-			isBefore = ce.zoneBd < parent.zoneBd,
-			isAfter = ce.zoneEd > parent.zoneEd;
-		
-		out.push('<div', this.domAttrs_(), '>',
-				'<div id="', id, '-body" class="', p.body);
 
-		if (isBefore)
-			out.push(' ' + p.left_arrow);
-		if (isAfter)
-			out.push(' ' + p.right_arrow);
+		var item = this.item,
+			isBefore = item.zoneBd < parent.zoneBd,
+			isAfter = item.zoneEd > parent.zoneEd;
 
-		out.push('"','>',
-				'<div id="', id, '-inner"  class="', p.inner, '"', ' style="', style , '"', '>',
-				'<div id="', id, '-cnt" class="', p.content, '"', ' style="', contentStyle, '"', '>',
-				'<div class="', p.text, '">', ce.content, '</div></div></div></div>',
-				'</div>');
+		out.push(this.$class.TEMPLATE.main(
+			item.id,
+			this.domAttrs_(),
+			this.params,
+			isBefore,
+			isAfter,
+			item.content
+		));
 	},
 	
 	update: function (updateLastModify) {
@@ -103,13 +93,27 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 		p.left_arrow = zcls + '-left-arrow';
 		p.right_arrow = zcls + '-right-arrow';
 	},
-	
-	/*defineCss_: function () {
-		this.$super('defineCss_', arguments);
-	},*/
-	
 	updateArrow_: function (needAdd, arrowCls) {
 		jq(this.$n('body')).toggleClass(arrowCls, needAdd);
 	}
 
+},{
+	TEMPLATE: {
+		main: function(id, domAttrs, css, isBefore, isAfter, content) {
+			const arrowClasses = [
+				isBefore ? css.left_arrow : '',
+				isAfter ? css.right_arrow : ''
+			].filter(Boolean).join(' ');
+			//avoid the indentation producing text nodes in DOM
+			return `<div ${domAttrs}>` +
+						`<div id="${id}-body" class="${css.body} ${arrowClasses}">` +
+							`<div id="${id}-inner" class="${css.inner}" style="${css.style}">` +
+								`<div id="${id}-cnt" class="${css.content}" style="${css.contentStyle}">` +
+									`<div class="${css.text}">${content}</div>` +
+								`</div>` +
+							`</div>` +
+						`</div>` +
+					`</div>`;
+		}
+	},
 });

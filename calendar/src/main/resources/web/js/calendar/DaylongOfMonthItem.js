@@ -1,7 +1,7 @@
-/* Calendars.js
+/* DaylongOfMonthItem.js
 
 	Purpose:
-		
+		an item over one day in month mold
 	Description:
 		
 	History:

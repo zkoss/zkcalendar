@@ -1,7 +1,7 @@
 /* Calendars.js
 
 	Purpose:
-		
+		an item shorter than one day in default mold
 	Description:
 		
 	History:
@@ -19,29 +19,14 @@ it will be useful, but WITHOUT ANY WARRANTY.
 calendar.DayItem = zk.$extends(calendar.Item, {
 	redraw: function (out) {
 		this.defineClassName_();
-		
-		var ce = this.item,
-			id = ce.id,
-			p = this.params,
-			headerStyle = p.headerStyle,
-			contentStyle = p.contentStyle,
-			style = p.style,
-			resizer = p.resizer;
-		this.resizerHTML = this.$class.resizerTemplate(id, resizer);
-		
-		out.push('<div', this.domAttrs_(), '>',
-				'<div id="', id, '-body" class="', p.body, '"','>',
-				'<div class="', p.inner, '"', '>',
-				'<dl id="', id, '-inner"', 'style="', style, '"','>',
-				'<dt id="', id, '-hd" class="', p.header, '"', 'style="', headerStyle,'"', '>', this.getItemTitle(ce), '</dt>',
-				'<dd id="', id, '-cnt" class="', p.content, '"', 'style="', contentStyle,'"', '>',
-				'<div class="', p.text, '">', ce.content, '</div></dd>');
-		// resizer
-		if (!ce.isLocked)
-			out.push(this.resizerHTML);
-			
-		out.push('</dl>',
-			'</div></div></div>');
+
+		out.push(this.$class.TEMPLATE.main(
+			this.item.id,
+			this.domAttrs_(),
+			this.params,
+			this.item.content,
+			this.getItemTitle(this.item),
+			this.item.isLocked));
 	},
 	bind_: function (e) {
 		this.$supers('bind_', arguments);
@@ -129,9 +114,26 @@ calendar.DayItem = zk.$extends(calendar.Item, {
 		jq(this.$n('hd')).attr('style', headerStyle);
 	}
 },{
-	resizerTemplate: function(id, resizer) {
-	return`<div class="${resizer}" id="${id}-resizer">
-			  <div class="${resizer}-icon"></div>
-			</div>`;
+	TEMPLATE: {
+		main: function(id, domAttrs, p, content, title, isLocked) {
+			return 	`<div ${domAttrs}>` +
+						`<div id="${id}-body" class="${p.body}">` +
+							`<div class="${p.inner}">` +
+								`<dl id="${id}-inner" style="${p.style}">` +
+									`<dt id="${id}-hd" class="${p.header}" style="${p.headerStyle}">${title}</dt>` +
+									`<dd id="${id}-cnt" class="${p.content}" style="${p.contentStyle}">` +
+										`<div class="${p.text}">${content}</div>` +
+									`</dd>` +
+									`${!isLocked ? this.resizer(id, p.resizer) : ''}` +
+								`</dl>` +
+							`</div>` +
+						`</div>` +
+					`</div>`;
+		},
+		resizer: function(id, resizer) {
+			return`<div class="${resizer}" id="${id}-resizer">` +
+					  `<div class="${resizer}-icon"></div>` +
+					`</div>`;
+	}
 }
 });
