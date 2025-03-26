@@ -40,9 +40,9 @@ public class ComponentAttributeTest extends CalendarTestBase{
      */
     @Test //ZKCAL-84
     public void currentDateTimeTest() {
-        JQuery day1st = jq(DAY_OF_WEEK_FORMAT.selector()).eq(0);
+        JQuery day1st = firstDay();
         assertEquals("12/29", day1st.text()); //beginning date
-        JQuery day7th = jq(DAY_OF_WEEK_FORMAT.selector()).eq(6);
+        JQuery day7th = day7th();
         assertEquals("1/4", day7th.text()); //end date
 
         click(jq("$change"));
@@ -52,5 +52,46 @@ public class ComponentAttributeTest extends CalendarTestBase{
         reloadPage();
     }
 
+    private JQuery day7th() {
+        return jq(DAY_OF_WEEK_FORMAT.selector()).eq(6);
+    }
+
+    private JQuery firstDay() {
+        return jq(DAY_OF_WEEK_FORMAT.selector()).eq(0);
+    }
+
+    @Test //ZKCAL-106
+    public void changePeriod(){
+        click(jq("$next"));
+        waitResponse();
+        JQuery day1st = firstDay();
+        assertEquals("1/5", day1st.text()); //beginning date
+        JQuery dayLast = day7th();
+        assertEquals("1/11", dayLast.text()); //end date
+
+        click(jq("$previous"));
+        waitResponse();
+        assertEquals("12/29", day1st.text()); //beginning date
+        assertEquals("1/4", dayLast.text()); //end date
+    }
+
+    @Test //ZKCAL-106
+    public void changePeriod5DaysWeek() {
+        click(jq("$5days"));
+        waitResponse();
+        click(jq("$next"));
+        waitResponse();
+        JQuery day1st = firstDay();
+        assertEquals("1/8", day1st.text()); //beginning date
+        JQuery day5th = jq(DAY_OF_WEEK_FORMAT.selector()).eq(4);
+        assertEquals("1/12", day5th.text()); //end date
+
+        click(jq("$previous"));
+        waitResponse();
+        assertEquals("1/1", day1st.text()); //beginning date
+        assertEquals("1/5", day5th.text()); //end date
+
+        reloadPage();
+    }
 
 }

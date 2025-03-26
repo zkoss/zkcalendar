@@ -45,9 +45,9 @@ public class ComponentAttributeMonthTest extends CalendarTestBase{
      */
     @Test
     public void currentDateTimeTest() {
-        JQuery day1st = jq(MONTH_WEEK.child(MONTH_DATE_CONTENT).selector()).eq(0);
+        JQuery day1st = firstDay();
         assertEquals("29", day1st.text()); //beginning date
-        JQuery dayLast = jq(MONTH_WEEK.child(MONTH_DATE_CONTENT).selector()).last();
+        JQuery dayLast = lastDay();
         assertEquals("Feb 1", dayLast.text()); //end date
 
         click(jq("$change"));
@@ -55,5 +55,28 @@ public class ComponentAttributeMonthTest extends CalendarTestBase{
         assertEquals("Jun 1", day1st.text()); //beginning date
         assertEquals("5", dayLast.text()); //end date
         reloadPage();
+    }
+
+    private JQuery lastDay() {
+        return jq(MONTH_WEEK.child(MONTH_DATE_CONTENT).selector()).last();
+    }
+
+    private JQuery firstDay() {
+        return jq(MONTH_WEEK.child(MONTH_DATE_CONTENT).selector()).eq(0);
+    }
+
+    @Test //ZKCAL-106
+    public void changePeriod(){
+        click(jq("$next"));
+        waitResponse();
+        JQuery day1st = firstDay();
+        assertEquals("26", day1st.text()); //beginning date
+        JQuery dayLast = lastDay();
+        assertEquals("Mar 1", dayLast.text()); //end date
+
+        click(jq("$previous"));
+        waitResponse();
+        assertEquals("29", day1st.text()); //beginning date
+        assertEquals("Feb 1", dayLast.text()); //end date
     }
 }

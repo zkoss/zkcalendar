@@ -43,6 +43,9 @@ public class CalendarTestBase extends WebDriverTestCase {
         }
     }
 
+    /**
+     * since the tests avoid connect(), time-consuming, if the test steps change a page from initial state, call this method at the end of test to reset the page state for the next test case. This is much faster than connect(zul)
+     */
     protected void reloadPage() {
         driver.navigate().refresh();
         waitResponse(); //avoid next test starts before reloading completes and cause tests to fail

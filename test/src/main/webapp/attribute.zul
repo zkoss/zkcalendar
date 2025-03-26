@@ -5,6 +5,9 @@
             <toolbarbutton id="readOnlyButton" label="read only" mode="toggle" checked="@bind(vm.readOnly)" onItemCreate=""/><!--ZKCAL-126-->
             <toolbarbutton id="height500px" label="height 500px" onClick='cal.setVflex(null);cal.setHeight("500px")'/>
             <toolbarbutton id="change" label="change Current Date" onClick="@command('change')"/>
+            <toolbarbutton id="next" label="next period" onClick="cal.nextPeriod()"/>
+            <toolbarbutton id="previous" label="previous period" onClick="cal.previousPeriod()"/>
+            <toolbarbutton id="5days" label="set 5 days" onClick="cal.setDays(5)"/>
         </toolbar>
         <calendars id="cal" readonly="@load(vm.readOnly)" mold="${param.mold}" vflex="1"
         currentDateTime="@load(vm.currentDateTime)"/>
