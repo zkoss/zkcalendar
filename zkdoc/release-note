@@ -1,3 +1,28 @@
+3.2.0
+** Bug
+    * [ZKCAL-80] - Calendar item text is cut if not enough space to display
+    * [ZKCAL-86] - Tooltip event causes NPE (when hovered item no longer in view)
+    * [ZKCAL-101] - 100% height produces an unexpected vertical scrollbar
+    * [ZKCAL-110] - setDays() renders date header elements differently from the default mold
+    * [ZKCAL-115] - inconsistent license information
+    * [ZKCAL-122] - ZK Calendar fail to load when mold="month" on iPad/iPhone
+    * [ZKCAL-124] - an item with end date after 12:00 causes a javascript error
+    * [ZKCAL-126] - set readOnly false causes a javascript error
+    * [ZKCAL-128] - failed to update SimpleCalendarItem sclass
+    * [ZKCAL-130] - DefaultCalendarItem.Builder doesn't provide methods to set header style and content style
+    * [ZKCAL-131] - change calendar's heigh doesn't take effect immediately
+    * [ZKCAL-133] - no more link generated on the day having only 1 item
+    * [ZKCAL-134] - click empty place on a day of a month produce a js error
+
+
+** New Feature
+    * [ZKCAL-84] - Extend java 8 date time API support
+    * [ZKCAL-94] - Normalize item headers display
+    * [ZKCAL-97] - Calendars java class should be extendable
+    * [ZKCAL-106] - Provide a next/previous/move weekOrMonth API
+    * [ZKCAL-129] - DefaultCalendarItem.Builder provides a way to build a new item with an existing item
+
+
 3.1.2
 
 * Bug:
