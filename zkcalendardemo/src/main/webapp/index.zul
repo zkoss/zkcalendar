@@ -2,7 +2,6 @@
 <?page title="ZK Calendars Demo"?>
 <?link rel="stylesheet" type="text/css" href="/calendar.css.dsp?v=${desktop.webApp.build}"?>
 <?component name="divtab" macro-uri="divtab.zul" inline="true"?>
-<?component name="divarrow" macro-uri="divarrow.zul" inline="true"?>
 <?component name="create" macro-uri="createEvent.zul" inline="true"?>
 <?component name="edit" macro-uri="editEvent.zul" inline="true"?>
 <zk xmlns:w="client">
@@ -20,9 +19,9 @@
 						mold="default" tooltip="test, position=after_pointer">
 						<toolbar sclass="calendar-toolbar">
 							<div class="float-left">
-								<hbox>
-									<divarrow type="arrow-left" />
-									<divarrow type="arrow-right" />
+								<hlayout>
+									<button id="leftBtn" iconSclass="z-icon-chevron-left" sclass="arrowbutton" forward="onMoveDate(${'arrow-left'})"/>
+									<button id="rightBtn" iconSclass="z-icon-chevron-right" sclass="arrowbutton" forward="onMoveDate(${'arrow-right'})"/>
 									<div>
 										<button mold="os" label="today" forward="onToday"/>
 										<button mold="os" label="Switch TimeZone" forward="onSwitchTimeZone" />
@@ -38,12 +37,12 @@
 										<toolbarbutton label="Refresh"
 											class="refresh" onClick='calendars.invalidate();' />
 									</div>
-								</hbox>
+								</hlayout>
 							</div>
 							<div class="float-right">
-								<hbox>
+								<hlayout>
 									<divtab forEach="Day,Week,5 Days, Month" text="${each}" />
-								</hbox>
+								</hlayout>
 							</div>
 						</toolbar>
 					</calendars>
