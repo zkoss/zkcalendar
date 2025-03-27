@@ -27,10 +27,13 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 			this.params,
 			isBefore,
 			isAfter,
-			item.content
+			this.getContent()
 		));
 	},
-	
+	/* follow google calendar's format */
+	getContent: function(){
+		return `${this.item.title}, ${this.format(this.item.zoneBd)}`;
+	},
 	update: function (updateLastModify) {
 		this.defineCss_();
 		

@@ -162,5 +162,11 @@ calendar.Item = zk.$extends(zk.Widget, {
 		if (this.$n()){
 			this.$n().className = this.domClass_();
 		}
+	},
+	/**
+	 * @param date
+	 */
+	format: function (date){
+		return zk.fmt.Date.formatDate(date,'HH:mm');
 	}
 });

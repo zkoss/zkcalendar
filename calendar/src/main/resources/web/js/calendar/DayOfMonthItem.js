@@ -17,12 +17,12 @@ calendar.DayOfMonthItem = zk.$extends(calendar.Item, {
 	redraw: function (out) {
 		var id = this.item.id;
 		this.uuid = id;
-		out.push(this.$class.TEMPLATE.main(id, this.domAttrs_(), this.getCntText(this.item), this.item, this.getZclass()));
+		out.push(this.$class.TEMPLATE.main(id, this.domAttrs_(), this.getHeader(), this.item, this.getZclass()));
 	},
 	
-	getCntText: function (ce) {
-		return ce.title ? ce.title.substr(0,ce.title.indexOf(' - ')) :
-							zk.fmt.Date.formatDate(ce.zoneBd,'HH:mm');
+	getHeader: function () {
+		return this.item.title ? this.item.title.substring(0, this.item.title.indexOf(' - ')) :
+							zk.fmt.Date.formatDate(this.item.zoneBd,'HH:mm');
 	},
 	
 	domClass_: function (no) {
@@ -46,17 +46,18 @@ calendar.DayOfMonthItem = zk.$extends(calendar.Item, {
 		inner.attr('style', innerStyle);
 		hd.attr('style', headerStyle);
 		cnt.attr('style', contentStyle);
-		hd.html(this.getCntText(ce));
+		hd.html(this.getHeader(ce));
 		cnt.html(ce.content);
 		
 		this.calculate_(updateLastModify);
 	}
 },{
 	TEMPLATE: {
-		main: function(id, domAttributes, cntText, item, zclass) {
+		/* Compared to an over-day-long item, this template includes one additional header */
+		main: function(id, domAttributes, header, item, zclass) {
 			return `<div ${domAttributes}>
 					<div id="${id}-inner" class="${zclass}-inner" style="${item.style}">
-					<span id="${id}-hd" class="${zclass}-header" style="${item.headerStyle}">${cntText}</span>
+					<span id="${id}-hd" class="${zclass}-header" style="${item.headerStyle}">${header}</span>
 					<span id="${id}-cnt" class="${zclass}-cnt" style="${item.contentStyle}" title="${item.content}">${item.content}</span>
 					</div>
 				</div>`.split('\n').map(s => s.trim()).join(''); //remove white space between lines

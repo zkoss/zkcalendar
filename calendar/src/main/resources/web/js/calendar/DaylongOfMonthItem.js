@@ -138,5 +138,9 @@ calendar.DaylongOfMonthItem = zk.$extends(calendar.LongItem, {
 	
 	updateContentStyle_: function (contentStyle) {
 		// do nothing after ZKCAL-76, t2/b2 was removed
-	}
+	},
+	/* follow google calendar's format. in month mold, no time slot display, so displaying time first */
+	getContent: function(){
+		return `${this.format(this.item.zoneBd)} ${this.item.title}`;
+	},
 });

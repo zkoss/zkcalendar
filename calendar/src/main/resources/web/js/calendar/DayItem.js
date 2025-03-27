@@ -25,7 +25,7 @@ calendar.DayItem = zk.$extends(calendar.Item, {
 			this.domAttrs_(),
 			this.params,
 			this.item.content,
-			this.getItemTitle(this.item),
+			this.getHeader(),
 			this.item.isLocked));
 	},
 	bind_: function (e) {
@@ -54,12 +54,17 @@ calendar.DayItem = zk.$extends(calendar.Item, {
 		}
 		this.$supers('unbind_', arguments);
 	},
-	getItemTitle: function (ce) {
-		var bd = ce.zoneBd,
-			ed = ce.zoneEd;
-		return ce.title ? ce.title : (ed - bd < (7200000 / this.parent._timeslots)) ?
-				(zk.fmt.Date.formatDate(bd,'HH:mm') + ' - ' + ce.content) :
-				(zk.fmt.Date.formatDate(bd,'HH:mm') + ' - ' + zk.fmt.Date.formatDate(ed,'HH:mm'));
+	/**
+	 * @param {Object} item - The calendar item object
+	 * @returns {*|string} The formatted title string showing either the custom title or time range with content
+	 */
+	getHeader: function () {
+		var beginDate = this.item.zoneBd,
+			endDate = this.item.zoneEd;
+		let timeText = (endDate - beginDate < (7200000 / this.parent._timeslots)) ?
+			this.format(beginDate) + ' - ' + this.item.content :
+			this.format(beginDate) + ' - ' + this.format(endDate);
+		return `${this.item.title}, ${timeText}`;
 	},
 	
 	update: function (updateLastModify) {
@@ -78,7 +83,7 @@ calendar.DayItem = zk.$extends(calendar.Item, {
 		cnt.attr('style', contentStyle);
 		cnt.children('.' + p.text).html(ce.content);
 		
-		jq(this.$n('hd')).html(this.getItemTitle(ce));
+		jq(this.$n('hd')).html(this.getHeader());
 		
 		this._createResizer();
 		
