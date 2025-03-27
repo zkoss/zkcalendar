@@ -303,7 +303,7 @@ public class Calendars extends XulElement {
 		_addItemList.add(ce);
 		if (getAttribute(ATTR_ON_ADD_ITEM_RESPONSE) == null) {
 			setAttribute(ATTR_ON_ADD_ITEM_RESPONSE, Boolean.TRUE);
-			Events.postEvent(-20000, "onAddDayItemResponse", this, null);
+			Events.postEvent(-20000, "onAddDayItemResponse", this, null); // invoke the method as the event name
 		}
 	}
 	

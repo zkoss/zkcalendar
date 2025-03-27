@@ -16,7 +16,6 @@ public class RenderItemMonthTest extends CalendarTestBase {
     }
 
 
-
     @Test //ZKCAL-114
     public void instantItemCauseNoError() {
         JQuery sameBeginEndTimeItem = jq(".z-calendars-day-of-month-body").eq(3).find("tr").eq(1).find(".z-calitem");
@@ -51,13 +50,14 @@ public class RenderItemMonthTest extends CalendarTestBase {
 
         JQuery segment1 = overWeekItem.eq(0);
         assertTrue(segment1.find(ITEM_RIGHT_ARROW.selector()).exists());
-        assertTrue(isCssRuleApplied(toElement(segment1.find(".z-calitem-inner").get(0)), ".z-calitem-body" +ITEM_RIGHT_ARROW.selector()+" .z-calitem-inner", "border-top-right-radius", "0px"));
-        assertTrue(isCssRuleApplied(toElement(segment1.find(".z-calitem-inner").get(0)), ".z-calitem-body" +ITEM_RIGHT_ARROW.selector()+" .z-calitem-inner", "border-bottom-right-radius", "0px"));
+        assertEquals("0px", segment1.find(".z-calitem-inner").css("border-top-right-radius"));
+        assertEquals("0px", segment1.find(".z-calitem-inner").css("border-bottom-right-radius"));
+
 
         JQuery segment2 = overWeekItem.eq(1);
         assertTrue(segment2.find(ITEM_LEFT_ARROW.selector()).exists());
-        assertTrue(isCssRuleApplied(toElement(segment2.find(".z-calitem-inner").get(0)), ".z-calitem-body" + ITEM_LEFT_ARROW.selector() +" .z-calitem-inner", "border-top-left-radius", "0px"));
-        assertTrue(isCssRuleApplied(toElement(segment2.find(".z-calitem-inner").get(0)), ".z-calitem-body" + ITEM_LEFT_ARROW.selector() + " .z-calitem-inner", "border-bottom-left-radius", "0px"));
+        assertEquals("0px", segment2.find(".z-calitem-inner").css("border-top-left-radius"));
+        assertEquals("0px", segment2.find(".z-calitem-inner").css("border-bottom-left-radius"));
     }
 
     @Test //ZKCAL-124 ZKCAL-123 ZKCAL-125
@@ -98,7 +98,9 @@ public class RenderItemMonthTest extends CalendarTestBase {
         assertTrue(instantItem.find(ITEM_INNER.selector() + " " + ITEM_CONTENT.selector()).exists());
     }
 
-
+    /**
+     * verify colspan of spanning day items
+     */
     @Test //ZKCAL-94
     public void spanDaysItem(){
         JQuery span2d = jq(".span2");
@@ -335,13 +337,4 @@ public class RenderItemMonthTest extends CalendarTestBase {
     public Object getEvalObject(String script) {
         return ((JavascriptExecutor) driver).executeScript("return " + script);
     }
-
-
-
-
-    public boolean isCssRuleApplied(WebElement element, String selector, String property, String value) {
-        return (Boolean)((JavascriptExecutor) this.driver).executeScript("return isCssRuleApplied(arguments[0], arguments[1], arguments[2], arguments[3]);",
-                element, selector, property, value);
-    }
-
 }

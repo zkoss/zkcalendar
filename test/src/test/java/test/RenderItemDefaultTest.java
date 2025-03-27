@@ -19,7 +19,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
 
 
     /**
-     * non-overlapping item has 100% width, no shifting
+     * Verifies that non-overlapping calendar items have a width of 100% and no left shift.
      */
     @Test
     public void nonOverlapping() {
@@ -30,6 +30,9 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals("", left);
     }
 
+    /**
+     * Verifies that the header and content colors are applied correctly to calendar items.
+     */
     @Test //ZKCAL-120 ZKCAL-100
     public void headerContentColor(){
         JQuery coloredItem = jq(".z-calendars-week-day").eq(0).find(".colored");
@@ -55,7 +58,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
     }
 
     /**
-     * 3 items overlap each other
+     * Verifies that three overlapped items have correct reduced width
      */
     @Test
     public void test3Overlapping() {
@@ -177,6 +180,9 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals("span over weekend, 00:00", overWeekendItem.text()); //ZKCAL-94
     }
 
+    /**
+     * Verifies that a simple item is updated correctly
+     */
     @Test //ZKCAL-128
     public void simpleItemUpdate(){
         //check initial state
@@ -240,6 +246,9 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         reloadPage();
     }
 
+    /**
+     * Verifies that short time items have a minimal height, at least equal to half-hour items.
+     */
     @Test //ZKCAL-77
     public void shortTimeItemHasMinimalHeight(){
         JQuery shortTimeItem = jq(".five-min");
