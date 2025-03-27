@@ -52,7 +52,7 @@ public class RenderItemMonthComposer extends SelectorComposer {
                 .withEnd(day2.plusDays(1).plusHours(2))
                 .withZoneId(calendars.getDefaultTimeZone().toZoneId())
                 .withSclass("span2")
-                .withContent("span 2d")
+                .withTitle("span 2d")
                 .build();
         model.add(span2Item);
 
@@ -61,7 +61,7 @@ public class RenderItemMonthComposer extends SelectorComposer {
                 .withEnd(day2.plusDays(2).plusHours(2))
                 .withZoneId(calendars.getDefaultTimeZone().toZoneId())
                 .withSclass("span3")
-                .withContent("span 3d")
+                .withTitle("span 3d")
                 .build();
         model.add(span3Item);
         DefaultCalendarItem span4Item = new DefaultCalendarItem.Builder()
@@ -69,7 +69,7 @@ public class RenderItemMonthComposer extends SelectorComposer {
                 .withEnd(day2.plusDays(3).plusHours(2))
                 .withZoneId(calendars.getDefaultTimeZone().toZoneId())
                 .withSclass("span4")
-                .withContent("span 4d")
+                .withTitle("span 4d")
                 .build();
         model.add(span4Item);
     }

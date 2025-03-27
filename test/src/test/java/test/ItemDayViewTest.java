@@ -27,7 +27,7 @@ public class ItemDayViewTest extends CalendarTestBase {
         assertEquals(2, dayLongItems.length());
         JQuery firstDayLongItem = jq(".z-calendars-daylong-cnt tr:first-child .z-calendars-daylong-evt");
         assertEquals(1, firstDayLongItem.length());
-        assertEquals("span 2 days", firstDayLongItem.find(".z-calitem-text").text());
+        assertEquals("span 2 days, 00:00", firstDayLongItem.find(".z-calitem-text").text());
 
         click(jq("$next")); //jan 7, next day
         waitResponse();
@@ -47,7 +47,7 @@ public class ItemDayViewTest extends CalendarTestBase {
         assertEquals(2, dayLongItems.length());
         JQuery firstDayLongItem = jq(".z-calendars-daylong-cnt tr:first-child .z-calendars-daylong-evt");
         assertEquals(1, firstDayLongItem.length());
-        assertEquals("span 3 days", firstDayLongItem.find(".z-calitem-text").text());
+        assertEquals("span 3 days, 00:00", firstDayLongItem.find(".z-calitem-text").text());
 
         click(jq("$next")); //jan 2, next day
         waitResponse();

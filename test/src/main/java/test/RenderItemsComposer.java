@@ -79,7 +79,7 @@ public class RenderItemsComposer extends SelectorComposer {
 
         LocalDateTime day7 = day1.plusDays(6);
         DefaultCalendarItem spanOverWeekendItem = new DefaultCalendarItem.Builder()
-                .withContent("span over weekend")
+                .withTitle("span over weekend")
                 .withBegin(day7)
                 .withEnd(day7.plusDays(3).plusHours(8))
                 .withContentColor("orange")

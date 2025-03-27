@@ -174,7 +174,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals("1", seventhCell.attr("colspan"));
         JQuery overWeekendItem = seventhCell.find(".z-calitem");
         assertEquals(1, overWeekendItem.length());
-        assertEquals("span over weekend", overWeekendItem.text());
+        assertEquals("span over weekend, 00:00", overWeekendItem.text()); //ZKCAL-94
     }
 
     @Test //ZKCAL-128
@@ -189,7 +189,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals("18px", simpleItem.find("dl").css("font-size"));
         JQuery header = simpleItem.find(ITEM_HEADER.selector());
         assertEquals("rgb(0, 128, 0)", header.css("color"));
-        assertEquals("simple title", header.text());
+        assertEquals("simple title, 05:00 - 06:00", header.text());
         JQuery content = simpleItem.find(CssClassNames.ITEM_CONTENT.selector());
         assertEquals("rgb(0, 0, 255)", content.css("color"));
         assertEquals("simple content", content.text());
@@ -205,7 +205,7 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         assertEquals("italic", simpleItem.find("dl").css("font-style"));
         header = simpleItem.find(ITEM_HEADER.selector());
         assertEquals("rgb(255, 192, 203)", header.css("color"));
-        assertEquals("title updated", header.text());
+        assertEquals("title updated, 06:00 - 07:00", header.text());
         content = simpleItem.find(CssClassNames.ITEM_CONTENT.selector());
         assertEquals("rgb(255, 0, 0)", content.css("color"));
         assertEquals("content updated", content.text());
@@ -245,4 +245,39 @@ public class RenderItemDefaultTest extends CalendarTestBase {
         JQuery shortTimeItem = jq(".five-min");
         assertTrue(shortTimeItem.height() >= HALF_HOUR_HEIGHT);
     }
+
+    /**
+     * ZKCAL-94
+     * format:
+     *  title time
+     */
+    @Test
+    public void shortItemHeaderText() {
+        JQuery shortItem = jq(".five-min");
+        JQuery header = shortItem.find(ITEM_HEADER.selector());
+        JQuery content = shortItem.find(CssClassNames.ITEM_CONTENT.selector());
+
+        assertEquals(", 05:00 - 5 min", header.text());
+        assertEquals("5 min", content.text());
+    }
+
+    @Test
+    public void longItemHeaderText() {
+        JQuery longItem = jq(".colored");
+        JQuery header = longItem.find(ITEM_HEADER.selector());
+        JQuery content = longItem.find(CssClassNames.ITEM_CONTENT.selector());
+
+        assertEquals("blue, 02:00 - 04:00", header.text());
+        assertEquals("yellow", content.text());
+    }
+
+    @Test
+    public void dayLongItemHeaderText() {
+        JQuery dayLongItem = jq(".span3");
+        JQuery header = dayLongItem.find(ITEM_HEADER.selector());
+        JQuery content = dayLongItem.find(CssClassNames.ITEM_CONTENT.selector());
+
+        assertEquals("span 3 days, 00:00", content.text());
+    }
+
 }

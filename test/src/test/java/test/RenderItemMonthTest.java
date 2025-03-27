@@ -99,22 +99,22 @@ public class RenderItemMonthTest extends CalendarTestBase {
     }
 
 
-    @Test
+    @Test //ZKCAL-94
     public void spanDaysItem(){
         JQuery span2d = jq(".span2");
         assertEquals(ITEM_HEIGHT_MONTH_MOLD, span2d.height());
         assertEquals("2", span2d.parent().attr("colspan"));
-        assertEquals("span 2d", span2d.find(ITEM_TEXT.selector()).text());
+        assertEquals("00:00 span 2d", span2d.find(ITEM_TEXT.selector()).text());
 
         JQuery span3d = jq(".span3");
         assertEquals(ITEM_HEIGHT_MONTH_MOLD, span3d.height());
         assertEquals("3", span3d.parent().attr("colspan"));
-        assertEquals("span 3d", span3d.find(ITEM_TEXT.selector()).text());
+        assertEquals("00:00 span 3d", span3d.find(ITEM_TEXT.selector()).text());
 
         JQuery span4d = jq(".span4");
         assertEquals(ITEM_HEIGHT_MONTH_MOLD, span4d.height());
         assertEquals("4", span4d.parent().attr("colspan"));
-        assertEquals("span 4d", span4d.find(ITEM_TEXT.selector()).text());
+        assertEquals("00:00 span 4d", span4d.find(ITEM_TEXT.selector()).text());
     }
 
 
@@ -294,7 +294,7 @@ public class RenderItemMonthTest extends CalendarTestBase {
         click(morePopup.find(POPUP_CLOSE_ICON.selector()));
     }
 
-    public void oneDayItemHasNoSpanIndicator(JQuery moreLinks){
+    private void oneDayItemHasNoSpanIndicator(JQuery moreLinks){
         click(moreLinks.eq(0));
         waitResponse();
         JQuery morePopup = jq(MORE_POPUP.selector());
@@ -310,9 +310,32 @@ public class RenderItemMonthTest extends CalendarTestBase {
         waitResponse();
     }
 
+    /**
+     * format:
+     * time, title
+     */
+   @Test //ZKCAL-94
+   public void shortItemContentText() {
+       JQuery shortItem = jq(".end-after-12");
+       JQuery content = shortItem.find(CssClassNames.ITEM_CONTENT.selector());
+       JQuery header = shortItem.find(CssClassNames.ITEM_HEADER.selector());
+
+       assertEquals("11:00", header.text());
+       assertEquals("end after 12:00", content.text());
+   }
+
+   @Test //ZKCAL-94
+   public void dayLongItemContentText() {
+       JQuery dayLongItem = jq(".span3");
+       JQuery content = dayLongItem.find(CssClassNames.ITEM_CONTENT.selector());
+
+       assertEquals("00:00 span 3d", content.text());
+   }
+
     public Object getEvalObject(String script) {
         return ((JavascriptExecutor) driver).executeScript("return " + script);
     }
+
 
 
 
