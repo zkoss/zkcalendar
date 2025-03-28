@@ -1,5 +1,5 @@
 zk.afterLoad('calendar', function() {
     msgcal = {};
-    msgcal.dayMORE = "{0} 事件";
-    msgcal.monthMORE = "{0} 事件";
+    msgcal.dayMORE = "還有 {0} 個";
+    msgcal.monthMORE = "還有 {0} 個";
 });//zk.afterLoad

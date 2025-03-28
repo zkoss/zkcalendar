@@ -25,15 +25,9 @@
 	<!--<language-config>-->
 		<!--<addon-uri>/WEB-INF/lang-addon.xml</addon-uri>-->
 	<!--</language-config>-->
-
-	<library-property>
-		<name>org.zkoss.zk.WPD.cache</name>
-		<value>false</value>
-	</library-property>
-	
 	<library-property>
 	    <name>org.zkoss.theme.preferred</name>
-	    <value>iceblue_c</value> or silvertail, atlantic, deepsea, gardensalad etc.
+	    <value>iceblue_c</value>
 	</library-property>
 	
 </zk>

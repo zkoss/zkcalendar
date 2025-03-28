@@ -1,0 +1,59 @@
+<div viewModel="@id('vm') @init('org.zkoss.calendar.demo.CalendarEditorViewModel')" validationMessages="@id('vmsgs')">
+	<window title="Create Calendar Event" border="normal" width="400px" 
+		form="@id('fx') @load(vm.calendarEvent) @save(vm.calendarEvent, before='ok') @validator(vm.dateValidator)"
+		allDay="@ref(vm.isAllDay(fx.beginDate,fx.endDate))"
+		mode="popup" visible="@load(vm.visible)" position="center,center" >
+		<vlayout hflex="1">
+			<hlayout valign="middle">
+				Lock this event : <checkbox checked="@bind(fx.locked)" />
+				All Day: <checkbox checked="@load(allDay)" disabled="true" />
+			</hlayout>
+			<grid hflex='1'>
+				<columns>
+					<column width="100px" align="right" />
+					<column />
+				</columns>
+				<rows>
+					<row>
+						BeginDate:
+						<div>
+							<datebox hflex="1" locale="en" timeZone="GMT+0"
+								format="@load(allDay ? 'long' : 'long+medium')" 
+								value="@bind(fx.beginDate)" errorMessage="@load(vmsgs.beginDate)" />
+						</div>
+					</row>
+					<row>
+						EndDate:
+						<div>
+							<datebox hflex="1" locale="en" timeZone="GMT+0"
+								format="@load(allDay ? 'long' : 'long+medium')"
+								value="@bind(fx.endDate)" errorMessage="@load(vmsgs.endDate)"/>
+						</div>
+					</row>
+					<row>
+						Color:
+						<hlayout valign="middle">
+							Border <colorbox value="@bind(fx.headerColor)" />
+							Content <colorbox value="@bind(fx.contentColor)" />
+						</hlayout>
+		
+					</row>
+					<row>
+						Title:
+						<textbox multiline="true" rows="3" width="97%"
+							value="@bind(fx.content)" />
+					</row>
+					<row>
+						<cell colspan="2" style="text-align:center;">
+							<hlayout>
+								<button label="OK" onClick="@command('ok')" width="80px" />
+								<button label="Cancel" onClick="@command('cancel')" width="80px" />
+								<button label="Delete" onClick="@command('delete')" width="80px" />
+							</hlayout>
+						</cell>
+					</row>
+				</rows>
+			</grid>
+		</vlayout>
+	</window>
+</div>

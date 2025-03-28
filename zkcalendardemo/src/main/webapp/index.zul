@@ -1,80 +1,23 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?page title="ZK Calendars Demo"?>
-<?link rel="stylesheet" type="text/css" href="/calendar.css.dsp?v=${desktop.webApp.build}"?>
-<?component name="divtab" macro-uri="divtab.zul" inline="true"?>
-<?component name="create" macro-uri="createEvent.zul" inline="true"?>
-<?component name="edit" macro-uri="editEvent.zul" inline="true"?>
-<zk xmlns:w="client">
-	<window apply="org.zkoss.zcaldemo.CalendarDemoComposer"
-		height="100%">
-		<borderlayout id="main" vflex="1">
-			<center border="none">
-				<div vflex="1">
-					<popup id="test">
-						<label />
-					</popup>
-					<calendars id="calendars" firstDayOfWeek="Sunday"
-						timeZone="Tokyo=GMT+9,Stockholm=GMT+1" model="${cm}"
-						dateFormatter="org.zkoss.zcaldemo.CustomDateFormatter"
-						mold="default" tooltip="test, position=after_pointer">
-						<toolbar sclass="calendar-toolbar">
-							<div class="float-left">
-								<hlayout>
-									<button id="leftBtn" iconSclass="z-icon-chevron-left" sclass="arrowbutton" forward="onMoveDate(${'arrow-left'})"/>
-									<button id="rightBtn" iconSclass="z-icon-chevron-right" sclass="arrowbutton" forward="onMoveDate(${'arrow-right'})"/>
-									<div>
-										<button mold="os" label="today" forward="onToday"/>
-										<button mold="os" label="Switch TimeZone" forward="onSwitchTimeZone" />
-										<span id="FDOW">
-											First Day of Week:
-											<listbox mold="select" forward="onSelect=onUpdateFirstDayOfWeek">
-												<listitem label="${each}" 
-													forEach="Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday"/>
-											</listbox>
-										</span>
-										<separator orient="vertical" />
-										<label id="label" />
-										<toolbarbutton label="Refresh"
-											class="refresh" onClick='calendars.invalidate();' />
-									</div>
-								</hlayout>
-							</div>
-							<div class="float-right">
-								<hlayout>
-									<divtab forEach="Day,Week,5 Days, Month" text="${each}" />
-								</hlayout>
-							</div>
-						</toolbar>
-					</calendars>
-				</div>
-			</center>
-			<south if="${hasPE}" open="false" size="300px"
-				title="Events Analysis" collapsible="true">
-				<hbox>
-					<chart id="mychart" title="Current Events Chart"
-						width="600" height="250" type="pie" fgAlpha="128" />
-					<n:div xmlns:n="http://www.zkoss.org/2005/zk/native"
-						style="padding: 5px;font-family:verdana,arial,helvetica,sans-serif;color:#0F3B82;font-size:18px">
-						ZK Calendars enables Ajax applications to deliver the rich functionality of time management in pure Java. 
-						It can be integreated into enterprise applcaition with ease. 
-						With ZK Calendars functionality,
-						developers can create collaborative and dynamic enterprise applications like never before.
-						<n:br />
-						ZK Calendars supports day, weekly, and monthly views, moreoever,
-						it supports multiple time zones for worldwide users. 
-						Also, developers can leverage Data Model to create the applicaiton in seconds!
-					</n:div>
-				</hbox>
-			</south>
-		</borderlayout>
-		<create/>
-		<edit/>
-		<popup id="updateMsg" width="320px"
-			w:onShow="jq(this.$n()).hide().fadeIn()">
-			<image src="~./zk/img/progress2.gif"/>
-			<label id="popupLabel"/>
-			<timer id="timer" delay="1000" running="false"
-				onTimer="updateMsg.close()" />
-		</popup>
-	</window>
+<zk>
+	<div apply="org.zkoss.calendar.demo.CalendarController" height="100%">
+		<hlayout valign="middle">
+			<button id="today" label="Today" />
+			<button id="prev" iconSclass="z-icon-arrow-left"/>
+			<button id="next" iconSclass="z-icon-arrow-right"/>
+			<separator width="50px" />
+			<button id="pageDay" label="Day" width="60px" />
+			<button id="pageWeek" label="Week" width="60px"/>
+			<button id="pageMonth" label="Month" width="60px"/>
+			<separator width="50px"/>
+			Filter :
+			<textbox id="filter"/>
+			<button id="applyFilter" label="Apply"/>
+			<button id="resetFilter" label="Reset"/>
+		</hlayout>
+		<separator bar="true" height="20px"/>
+		<calendars id="calendars" firstDayOfWeek="Sunday" height="100%" timeZone="Main=GMT+0" mold="month"/>
+	</div>
+
+	<!-- Create/Update Event Popup -->
+	<include src="calendar_editor.zul" />
 </zk>
