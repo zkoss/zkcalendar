@@ -1,21 +1,21 @@
 <zk>
-	<div apply="org.zkoss.calendar.demo.CalendarController" height="100%">
+	<div apply="org.zkoss.calendar.demo.CalendarController" height="100%" style="padding: 10px">
 		<hlayout valign="middle">
 			<button id="today" label="Today" />
 			<button id="prev" iconSclass="z-icon-arrow-left"/>
 			<button id="next" iconSclass="z-icon-arrow-right"/>
-			<separator width="50px" />
+			<separator width="50px" stubonly="true"/>
 			<button id="pageDay" label="Day" width="60px" />
 			<button id="pageWeek" label="Week" width="60px"/>
 			<button id="pageMonth" label="Month" width="60px"/>
-			<separator width="50px"/>
+			<separator width="50px" stubonly="true"/>
 			Filter :
 			<textbox id="filter"/>
 			<button id="applyFilter" label="Apply"/>
 			<button id="resetFilter" label="Reset"/>
 		</hlayout>
-		<separator bar="true" height="20px"/>
-		<calendars id="calendars" firstDayOfWeek="Sunday" height="100%" timeZone="Main=GMT+0" mold="month"/>
+		<separator bar="true" height="20px" stubonly="true"/>
+		<calendars id="calendars" firstDayOfWeek="Sunday" vflex="1" timeZone="Main=GMT+0" mold="month"/>
 	</div>
 
 	<!-- Create/Update Event Popup -->

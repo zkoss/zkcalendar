@@ -1,14 +1,14 @@
 package org.zkoss.calendar.demo;
 
 import org.zkoss.bind.annotation.Immutable;
-import org.zkoss.calendar.impl.SimpleCalendarEvent;
+import org.zkoss.calendar.impl.*;
 
 import java.util.Date;
 
-public class DemoCalendarEvent extends SimpleCalendarEvent {
+public class DemoCalendarItem extends SimpleCalendarItem {
 	private static final long serialVersionUID = 1L;
 
-	public DemoCalendarEvent(Date beginDate, Date endDate, String headerColor, String contentColor, String content) {
+	public DemoCalendarItem(Date beginDate, Date endDate, String headerColor, String contentColor, String content) {
 		setHeaderColor(headerColor);
 		setContentColor(contentColor);
 		setContent(content);
@@ -16,8 +16,8 @@ public class DemoCalendarEvent extends SimpleCalendarEvent {
 		setEndDate(endDate);
 	}
 
-	public DemoCalendarEvent(Date beginDate, Date endDate, String headerColor, String contentColor, String content,
-			String title) {
+	public DemoCalendarItem(Date beginDate, Date endDate, String headerColor, String contentColor, String content,
+							String title) {
 		setHeaderColor(headerColor);
 		setContentColor(contentColor);
 		setContent(content);
@@ -26,8 +26,8 @@ public class DemoCalendarEvent extends SimpleCalendarEvent {
 		setEndDate(endDate);
 	}
 
-	public DemoCalendarEvent(Date beginDate, Date endDate, String headerColor, String contentColor, String content,
-			String title, boolean locked) {
+	public DemoCalendarItem(Date beginDate, Date endDate, String headerColor, String contentColor, String content,
+							String title, boolean locked) {
 		setHeaderColor(headerColor);
 		setContentColor(contentColor);
 		setContent(content);
@@ -37,7 +37,7 @@ public class DemoCalendarEvent extends SimpleCalendarEvent {
 		setLocked(locked);
 	}
 	
-	public DemoCalendarEvent() {
+	public DemoCalendarItem() {
 		setHeaderColor("#FFFFFF");
 		setContentColor("#000000");
 	}

@@ -5,7 +5,7 @@ import org.zkoss.zk.ui.event.Event;
 public class QueueMessage extends Event {
 	private static final long serialVersionUID = 1L;
 
-	static public enum Type {
+	public enum Type {
 		EDIT, OK, DELETE, CANCEL;
 	}
 	

@@ -9,11 +9,11 @@ import java.util.*;
 
 public class CalendarEditorViewModel {
 	
-	private DemoCalendarEvent calendarEventData = new DemoCalendarEvent();
+	private DemoCalendarItem calendarEventData = new DemoCalendarItem();
 	
 	private boolean visible = false;
 
-	public DemoCalendarEvent getCalendarEvent() {
+	public DemoCalendarItem getCalendarEvent() {
 		return calendarEventData;
 	}
 
@@ -31,7 +31,7 @@ public class CalendarEditorViewModel {
 		QueueUtil.lookupQueue().subscribe(new QueueListener());
 	}
 
-	private void startEditing(DemoCalendarEvent calendarEventData) {
+	private void startEditing(DemoCalendarItem calendarEventData) {
 		this.calendarEventData = calendarEventData;
 		visible = true;
 		
@@ -100,7 +100,7 @@ public class CalendarEditorViewModel {
 		public void onEvent(QueueMessage message)
 				throws Exception {
 			if (QueueMessage.Type.EDIT.equals(message.getType())){
-				CalendarEditorViewModel.this.startEditing((DemoCalendarEvent)message.getData());
+				CalendarEditorViewModel.this.startEditing((DemoCalendarItem)message.getData());
 			}
 		}
 	}
