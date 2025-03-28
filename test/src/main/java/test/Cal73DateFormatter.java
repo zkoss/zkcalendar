@@ -9,7 +9,7 @@
 
 Copyright (C) 2021 Potix Corporation. All Rights Reserved.
 */
-package org.zkoss.zcaldemo;
+package test;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;

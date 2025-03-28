@@ -20,11 +20,11 @@ Copyright (C) 2021 Potix Corporation. All Rights Reserved.
 		4. Click "setSimpleDateFormatter" button, you should see hour:minute, and month/date.
 	</label>
 	<div apply="test.Cal73Controller">
-		<button label="setLegacyDateFormatter" onClick='calendars.setDateFormatter("org.zkoss.zcaldemo.CustomDateFormatter");calendars.invalidate()'/>
-		<button label="setZonedDateTimeFormatter" onClick='calendars.setDateFormatter("org.zkoss.zcaldemo.Cal73DateFormatter");calendars.invalidate()'/>
+		<button label="setLegacyDateFormatter" onClick='calendars.setDateFormatter("test.CustomDateFormatter");calendars.invalidate()'/>
+		<button label="setZonedDateTimeFormatter" onClick='calendars.setDateFormatter("test.Cal73DateFormatter");calendars.invalidate()'/>
 		<button label="setSimpleDateFormatter" onClick='calendars.setDateFormatter("org.zkoss.calendar.impl.SimpleDateFormatter");calendars.invalidate()'/>
 		<button label="default" onClick='calendars.setMold("default")'/>
 		<button label="month" onClick='calendars.setMold("month")'/>
-		<calendars id="calendars" height="800px" timeZone="Taipei=GMT+8,Paris=GMT+1" dateFormatter="org.zkoss.zcaldemo.Cal73DateFormatter"/>
+		<calendars id="calendars" height="800px" timeZone="Taipei=GMT+8,Paris=GMT+1" dateFormatter="test.Cal73DateFormatter"/>
 	</div>
 </zk>

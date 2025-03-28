@@ -11,15 +11,13 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 */
 package test;
 
-import java.util.Calendar;
-
 import org.zkoss.calendar.Calendars;
-import org.zkoss.calendar.impl.SimpleCalendarItem;
-import org.zkoss.calendar.impl.SimpleCalendarModel;
+import org.zkoss.calendar.impl.*;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
-import org.zkoss.zk.ui.select.annotation.Listen;
-import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.*;
+
+import java.util.Calendar;
 
 public class Cal70Composer extends SelectorComposer {
 
@@ -37,7 +35,7 @@ public class Cal70Composer extends SelectorComposer {
 	@Listen("onClick = #add")
 	public void add(){
 		SimpleCalendarItem event1 = new SimpleCalendarItem();
-		java.util.Calendar calendar  = java.util.Calendar.getInstance();
+		Calendar calendar  = Calendar.getInstance();
 		calendar.set(Calendar.HOUR_OF_DAY, 23);
 		calendar.set(Calendar.MINUTE, 40);
 		event1.setBeginDate(calendar.getTime());

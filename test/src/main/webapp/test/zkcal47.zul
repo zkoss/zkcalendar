@@ -1,0 +1,44 @@
+<zk>
+	<window vflex="1">
+		<zscript><![CDATA[
+			import org.zkoss.calendar.impl.*;
+		    SimpleCalendarModel model = new SimpleCalendarModel();
+			SimpleCalendarEvent ce = new SimpleCalendarEvent();
+
+			java.util.Calendar start = java.util.Calendar.getInstance();
+			start.set(java.util.Calendar.MINUTE, 0);
+			start.set(java.util.Calendar.SECOND, 0);
+			start.set(java.util.Calendar.MILLISECOND, 0);
+			ce.setBeginDate(start.getTime());
+			start.add(java.util.Calendar.HOUR, 1);
+			ce.setEndDate(start.getTime());
+			ce.setContent("test event");
+			model.add(ce);
+		]]>
+		</zscript>
+		<calendars id="calendars" model="${model}" mold="month">
+			<toolbar>
+				<button label="week" onClick='calendars.setMold("default")'/>
+				<button label="month" onClick='calendars.setMold("month")'/>
+				<button label="inc date" onClick="
+					java.util.Calendar start = java.util.Calendar.getInstance();
+					start.setTime(ce.getBeginDate());
+					start.add(java.util.Calendar.DATE, 1);
+					ce.setBeginDate(start.getTime());
+					start.add(java.util.Calendar.HOUR, 1);
+					ce.setEndDate(start.getTime());
+					model.update(ce);
+					"/>
+				<button label="dec date" onClick="
+					java.util.Calendar start = java.util.Calendar.getInstance();
+					start.setTime(ce.getBeginDate());
+					start.add(java.util.Calendar.DATE, -1);
+					ce.setBeginDate(start.getTime());
+					start.add(java.util.Calendar.HOUR, 1);
+					ce.setEndDate(start.getTime());
+					model.update(ce);
+					"/>
+			</toolbar>
+		</calendars>
+	</window>
+</zk>

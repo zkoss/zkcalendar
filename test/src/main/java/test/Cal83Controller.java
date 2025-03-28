@@ -11,25 +11,18 @@ Copyright (C) 2021 Potix Corporation. All Rights Reserved.
 */
 package test;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-
 import org.zkoss.calendar.Calendars;
-import org.zkoss.calendar.impl.SimpleCalendarItem;
-import org.zkoss.calendar.impl.SimpleCalendarModel;
+import org.zkoss.calendar.impl.*;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.util.Composer;
-import org.zkoss.zul.Button;
-import org.zkoss.zul.Hlayout;
+import org.zkoss.zul.*;
 
+import java.time.*;
 import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
-import static java.time.temporal.ChronoUnit.DAYS;
-import static java.time.temporal.ChronoUnit.HOURS;
+import static java.time.temporal.ChronoUnit.*;
 import static org.zkoss.zk.ui.event.Events.ON_CLICK;
 
 public class Cal83Controller  implements Composer {

@@ -11,22 +11,16 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 */
 package test;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
-
 import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.event.CalendarsEvent;
-import org.zkoss.calendar.impl.SimpleCalendarItem;
-import org.zkoss.calendar.impl.SimpleCalendarModel;
-import org.zkoss.zk.ui.Component;
-import org.zkoss.zk.ui.Page;
+import org.zkoss.calendar.impl.*;
+import org.zkoss.zk.ui.*;
 import org.zkoss.zk.ui.metainfo.ComponentInfo;
 import org.zkoss.zk.ui.select.SelectorComposer;
-import org.zkoss.zk.ui.select.annotation.Listen;
-import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.*;
+
+import java.text.*;
+import java.util.*;
 
 public class Cal76Controller extends SelectorComposer {
 
@@ -51,7 +45,7 @@ public class Cal76Controller extends SelectorComposer {
 
 	private void add(){
 		SimpleCalendarItem event1 = new SimpleCalendarItem();
-		java.util.Calendar calendar  = java.util.Calendar.getInstance();
+		Calendar calendar  = Calendar.getInstance();
 		calendar.set(Calendar.HOUR_OF_DAY, 8);
 		calendar.set(Calendar.MINUTE, 40);
 		event1.setBeginDate(calendar.getTime());

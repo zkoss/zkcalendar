@@ -11,18 +11,15 @@ Copyright (C) 2021 Potix Corporation. All Rights Reserved.
 */
 package test;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
-
 import org.zkoss.calendar.Calendars;
-import org.zkoss.calendar.impl.DefaultCalendarItem;
-import org.zkoss.calendar.impl.SimpleCalendarItem;
-import org.zkoss.calendar.impl.SimpleCalendarModel;
+import org.zkoss.calendar.impl.*;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Wire;
+
+import java.time.*;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 
 public class Cal88Controller extends SelectorComposer {
 	@Wire
@@ -37,7 +34,7 @@ public class Cal88Controller extends SelectorComposer {
 
 		// SimpleCalendarItem test
 		SimpleCalendarItem item = new SimpleCalendarItem();
-		java.util.Calendar calendar  = java.util.Calendar.getInstance();
+		Calendar calendar  = Calendar.getInstance();
 		calendar.set(Calendar.HOUR_OF_DAY, 9);
 		calendar.set(Calendar.MINUTE, 30);
 		item.setBeginDate(calendar.getTime());
