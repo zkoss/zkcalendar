@@ -27,23 +27,22 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 			this.params,
 			isBefore,
 			isAfter,
-			this.getContent()
+			this.getHeader()
 		));
 	},
 	/* follow google calendar's format */
-	getContent: function(){
-		return `${this.item.title}, ${this.format(this.item.zoneBd)}`;
+	getHeader: function(){
+		return `${this.item.title} ${this.format(this.item.zoneBd)}`;
 	},
 	update: function (updateLastModify) {
 		this.defineCss_();
 		
 		var inner = jq(this.$n('inner')),
-			cnt = jq(this.$n('cnt')),
 			parent = this.parent,
-			ce = this.item,
+			item = this.item,
 			p = this.params,
-			isBefore = ce.zoneBd < parent.zoneBd,
-			isAfter = ce.zoneEd > parent.zoneEd;
+			isBefore = item.zoneBd < parent.zoneBd,
+			isAfter = item.zoneEd > parent.zoneEd;
 					
 		this.updateHeaderStyle_(p.headerStyle);
 		
@@ -51,10 +50,7 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 			this.updateContentStyle_(p.contentStyle);
 		
 		inner.attr('style', p.style);
-		
-		cnt.attr('class', p.content);
-		cnt.attr('style', p.contentStyle);
-		cnt.children('.' + p.text).html(ce.content);
+		inner.html(this.$class.TEMPLATE.header(this.item.id, p, this.getHeader()));
 		
 		this.updateArrow_(isAfter, p.right_arrow);
 		this.updateArrow_(isBefore, p.left_arrow);
@@ -91,10 +87,10 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 	defineClassName_: function () {
 		this.$super('defineClassName_', arguments);
 		// CSS ClassName
-		var zcls = this.getZclass(),
-			p = this.params;
-		p.left_arrow = zcls + '-left-arrow';
-		p.right_arrow = zcls + '-right-arrow';
+		var zcls = this.getZclass();
+		this.params.left_arrow = zcls + '-left-arrow';
+		this.params.right_arrow = zcls + '-right-arrow';
+		this.params.header = zcls + '-header';
 	},
 	updateArrow_: function (needAdd, arrowCls) {
 		jq(this.$n('body')).toggleClass(arrowCls, needAdd);
@@ -102,7 +98,7 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 
 },{
 	TEMPLATE: {
-		main: function(id, domAttrs, css, isBefore, isAfter, content) {
+		main: function(id, domAttrs, css, isBefore, isAfter, header) {
 			const arrowClasses = [
 				isBefore ? css.left_arrow : '',
 				isAfter ? css.right_arrow : ''
@@ -111,12 +107,13 @@ calendar.LongItem = zk.$extends(calendar.Item, {
 			return `<div ${domAttrs}>` +
 						`<div id="${id}-body" class="${css.body} ${arrowClasses}">` +
 							`<div id="${id}-inner" class="${css.inner}" style="${css.style}">` +
-								`<div id="${id}-cnt" class="${css.content}" style="${css.contentStyle}">` +
-									`<div class="${css.text}">${content}</div>` +
-								`</div>` +
+								this.header(id, css, header) +
 							`</div>` +
 						`</div>` +
 					`</div>`;
+		},
+		header: function(id, css, header) {
+			return `<div id="${id}-hd" class="${css.header}" style="${css.headerStyle}">${header}</div>`;
 		}
 	},
 });

@@ -21,8 +21,7 @@ calendar.DayOfMonthItem = zk.$extends(calendar.Item, {
 	},
 	
 	getHeader: function () {
-		return this.item.title ? this.item.title.substring(0, this.item.title.indexOf(' - ')) :
-							zk.fmt.Date.formatDate(this.item.zoneBd,'HH:mm');
+		return `${this.format(this.item.zoneBd)} ${this.item.title}`;
 	},
 	
 	domClass_: function (no) {
@@ -56,11 +55,10 @@ calendar.DayOfMonthItem = zk.$extends(calendar.Item, {
 		/* Compared to an over-day-long item, this template includes one additional header */
 		main: function(id, domAttributes, header, item, zclass) {
 			return `<div ${domAttributes}>
-					<div id="${id}-inner" class="${zclass}-inner" style="${item.style}">
-					<span id="${id}-hd" class="${zclass}-header" style="${item.headerStyle}">${header}</span>
-					<span id="${id}-cnt" class="${zclass}-cnt" style="${item.contentStyle}" title="${item.content}">${item.content}</span>
-					</div>
-				</div>`.split('\n').map(s => s.trim()).join(''); //remove white space between lines
+						<div id="${id}-inner" class="${zclass}-inner" style="${item.style}">
+							<div id="${id}-hd" class="${zclass}-header" style="${item.headerStyle}" title="${header}">${header}</div>
+						</div>
+					</div>`.split('\n').map(s => s.trim()).join(''); //remove white space between lines
 
 		}
 	}

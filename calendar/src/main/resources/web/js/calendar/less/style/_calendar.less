@@ -469,8 +469,9 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	margin-right: 0;
 	zoom: 1;
 }
-.z-calendars-daylong-evt .z-calitem-text,
-.z-calitem-daylong-month .z-calitem-text,
+.z-calendars-daylong-evt .z-calitem-header,
+.z-calitem-daylong-month .z-calitem-header,
+.z-calendars-month-date-evt .z-calitem-header,
 .z-calpp .z-calitem-text,
 .z-calpp-month .z-calitem-text,
 .z-calendars-evt-faker-dd .z-calitem-text {
@@ -479,22 +480,26 @@ e('<%@ taglib uri="http://www.zkoss.org/dsp/web/theme" prefix="t" %>');
 	white-space: nowrap;
 	overflow: hidden;
 }
-.z-calitem-daylong-month .z-calitem-text {
-	height: 20px;
+.z-calitem-daylong-month .z-calitem-header{
 	line-height: 20px;
 }
 .z-calendars-week-day-cnt .z-calitem {
 	width: 100%;
 	position: absolute;
 }
-.z-calendars-daylong-evt .z-calitem-cnt,
-.z-calitem-daylong-month .z-calitem-cnt {
+
+.z-calendars-daylong-evt .z-calitem-inner,
+.z-calitem-daylong-month .z-calitem-inner {
+	background: @eventColor;
+}
+.z-calendars-daylong-evt .z-calitem-header,
+.z-calitem-daylong-month .z-calitem-header {
 	padding: 0 @basePadding;
 	white-space: nowrap;
 	cursor: pointer;
 	overflow: hidden;
 }
-.z-calitem-daylong-month .z-calitem-cnt {
+.z-calitem-daylong-month .z-calitem-header {
 	padding: 0 @basePadding;
 }
 

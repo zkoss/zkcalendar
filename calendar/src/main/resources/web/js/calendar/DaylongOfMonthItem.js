@@ -53,14 +53,14 @@ calendar.DaylongOfMonthItem = zk.$extends(calendar.LongItem, {
 			item = this.item,
 			cloneNode = this.$n().cloneNode(true),
 			body = jq(cloneNode).children('#' + this.uuid + '-body')[0],
-			cnt = body.firstChild.firstChild;
+			header = body.firstChild.firstChild;
 			
 		//change id
 		cloneNode.id = uuid + '-sub' + index;
 		body.id = uuid + '-sub' + index + '-body';
-		cnt.id = uuid + '-sub' + index + '-cnt';
+		header.id = uuid + '-sub' + index + '-hd';
 		
-		cloneNode.cnt = cnt;
+		cloneNode.header = header;
 		cloneNode.body = body;
 		cloneNode._preOffset = 0;
 		cloneNode._afterOffset = 0;
@@ -140,7 +140,7 @@ calendar.DaylongOfMonthItem = zk.$extends(calendar.LongItem, {
 		// do nothing after ZKCAL-76, t2/b2 was removed
 	},
 	/* follow google calendar's format. in month mold, no time slot display, so displaying time first */
-	getContent: function(){
+	getHeader: function(){
 		return `${this.format(this.item.zoneBd)} ${this.item.title}`;
 	},
 });

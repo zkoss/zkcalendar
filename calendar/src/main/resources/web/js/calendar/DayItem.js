@@ -62,9 +62,9 @@ calendar.DayItem = zk.$extends(calendar.Item, {
 		var beginDate = this.item.zoneBd,
 			endDate = this.item.zoneEd;
 		let timeText = (endDate - beginDate < (7200000 / this.parent._timeslots)) ?
-			this.format(beginDate) + ' - ' + this.item.content :
+			this.format(beginDate) :
 			this.format(beginDate) + ' - ' + this.format(endDate);
-		return `${this.item.title}, ${timeText}`;
+		return `${this.item.title} ${timeText}`;
 	},
 	
 	update: function (updateLastModify) {
