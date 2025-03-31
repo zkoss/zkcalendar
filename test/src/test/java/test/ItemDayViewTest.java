@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.zkoss.test.webdriver.ztl.JQuery;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static test.CssClassNames.ITEM_HEADER;
 
 /**
  * item rendering in one day view. The test cases interact with components, need to reload test page before testing.
@@ -27,7 +28,7 @@ public class ItemDayViewTest extends CalendarTestBase {
         assertEquals(2, dayLongItems.length());
         JQuery firstDayLongItem = jq(".z-calendars-daylong-cnt tr:first-child .z-calendars-daylong-evt");
         assertEquals(1, firstDayLongItem.length());
-        assertEquals("span 2 days, 00:00", firstDayLongItem.find(".z-calitem-text").text());
+        assertEquals("span 2 days 00:00", firstDayLongItem.find(ITEM_HEADER.selector()).text());
 
         click(jq("$next")); //jan 7, next day
         waitResponse();
@@ -47,7 +48,7 @@ public class ItemDayViewTest extends CalendarTestBase {
         assertEquals(2, dayLongItems.length());
         JQuery firstDayLongItem = jq(".z-calendars-daylong-cnt tr:first-child .z-calendars-daylong-evt");
         assertEquals(1, firstDayLongItem.length());
-        assertEquals("span 3 days, 00:00", firstDayLongItem.find(".z-calitem-text").text());
+        assertEquals("span 3 days 00:00", firstDayLongItem.find(ITEM_HEADER.selector()).text());
 
         click(jq("$next")); //jan 2, next day
         waitResponse();

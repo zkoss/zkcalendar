@@ -1,12 +1,11 @@
 package test;
 
 import org.zkoss.calendar.Calendars;
-import org.zkoss.calendar.impl.DefaultCalendarItem;
-import org.zkoss.calendar.impl.SimpleCalendarModel;
+import org.zkoss.calendar.impl.*;
 import org.zkoss.util.TimeZones;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.select.SelectorComposer;
-import org.zkoss.zk.ui.select.annotation.Wire;
+import org.zkoss.zk.ui.select.annotation.*;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -31,6 +30,8 @@ public class RenderItemMonthComposer extends SelectorComposer {
         addEndtimeAfter1200();
         addZkcal127Item();
         addLongTextItem();
+        addColoredItems();
+        addItemForChanged();
     }
 
     private void addOverWeekendItems() {
@@ -39,7 +40,7 @@ public class RenderItemMonthComposer extends SelectorComposer {
                 .withBegin(day13)
                 .withEnd(day13.plusDays(2))
                 .withZoneId(calendars.getDefaultTimeZone().toZoneId())
-                .withContent("over a weekend")
+                .withTitle("over a weekend")
                 .withSclass("over-weekend")
                 .build();
         model.add(overWeekend);
@@ -123,7 +124,7 @@ public class RenderItemMonthComposer extends SelectorComposer {
                 .withBegin(day)
                 .withEnd(endTime)
                 .withZoneId(calendars.getDefaultTimeZone().toZoneId())
-                .withContent("end after 12:00")
+                .withTitle("end after 12:00")
                 .withSclass("end-after-12")
                 .build();
         model.add(problemItem);
@@ -136,7 +137,7 @@ public class RenderItemMonthComposer extends SelectorComposer {
                 .withBegin(start)
                 .withEnd(end)
                 .withZoneId(TimeZones.getCurrent().toZoneId())
-                .withContent("ZKCAL-127")
+                .withTitle("ZKCAL-127")
                 .withSclass("zkcal-127")
                 .build();
         model.add(item);
@@ -149,9 +150,50 @@ public class RenderItemMonthComposer extends SelectorComposer {
                 .withBegin(start)
                 .withEnd(end)
                 .withZoneId(TimeZones.getCurrent().toZoneId())
-                .withContent("ZKCAL-80 Calendar item text is cut if not enough space to display")
+                .withTitle("ZKCAL-80 Calendar item text is cut if not enough space to display")
                 .withSclass("zkcal-80")
                 .build();
         model.add(item);
+    }
+
+    private void addColoredItems() {
+        LocalDateTime start = LocalDateTime.of(2023, 1, 25, 0, 0);
+        DefaultCalendarItem shortItem = new DefaultCalendarItem.Builder()
+                .withBegin(start)
+                .withEnd(start.plusHours(1))
+                .withZoneId(TimeZones.getCurrent().toZoneId())
+                .withTitle("ZKCAL-94 header content color")
+                .withHeaderStyle("background: DarkGreen")
+                .withSclass("color-short")
+                .build();
+        model.add(shortItem);
+
+        DefaultCalendarItem colorSpan2dItem = new DefaultCalendarItem.Builder()
+                .withBegin(start)
+                .withEnd(start.plusDays(1).plusHours(2))
+                .withZoneId(TimeZones.getCurrent().toZoneId())
+                .withTitle("ZKCAL-94 header content color")
+                .withHeaderStyle("background: DarkBlue")
+                .withSclass("color-long")
+                .build();
+        model.add(colorSpan2dItem);
+    }
+
+    SimpleCalendarItem itemForChange = new SimpleCalendarItem();
+
+    public void addItemForChanged() {
+        //add a simple item at 2023-01-23 00:00
+        LocalDateTime startDay = LocalDateTime.of(2023, 1, 23, 0, 0);
+        itemForChange.setBeginDate(Date.from(startDay.atZone(calendars.getDefaultTimeZone().toZoneId()).toInstant()));
+        itemForChange.setEndDate(Date.from(startDay.plusDays(1).plusHours(2).atZone(calendars.getDefaultTimeZone().toZoneId()).toInstant()));
+        itemForChange.setSclass("for-change");
+        itemForChange.setTitle("for change");
+        model.add(itemForChange);
+    }
+
+    @Listen("onClick = #changeItem")
+    public void changeItem() {
+        itemForChange.setTitle("changed");
+        model.update(itemForChange);
     }
 }

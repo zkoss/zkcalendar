@@ -18,9 +18,9 @@ public class RenderItemMonthTest extends CalendarTestBase {
 
     @Test //ZKCAL-114
     public void instantItemCauseNoError() {
-        JQuery sameBeginEndTimeItem = jq(".z-calendars-day-of-month-body").eq(3).find("tr").eq(1).find(".z-calitem");
+        JQuery sameBeginEndTimeItem = jq(".z-calendars-day-of-month-body").eq(3).find("tr").eq(1).find(".z-calitem.instant");
         assertEquals(1, sameBeginEndTimeItem.length());
-        assertEquals("00:00",  sameBeginEndTimeItem.find(".z-calitem-header").get(0).get("textContent"));
+        assertEquals("00:00 ",  sameBeginEndTimeItem.find(".z-calitem-header").get(0).get("textContent"));
     }
 
     @Test //ZKCAL-114 ZKCAL-119
@@ -31,11 +31,11 @@ public class RenderItemMonthTest extends CalendarTestBase {
         assertEquals("Jan 1", firstRowContent.get(0).get("textContent"));
 
         JQuery secondRow = firstWeekBody.find("tr").eq(1);
-        assertEquals("00:00", secondRow.find(".z-calitem-header").get(0).get("textContent"));
+        assertEquals("00:00 ", secondRow.find(".z-calitem-header").get(0).get("textContent"));
         JQuery thirdRow = firstWeekBody.find("tr").eq(2);
-        assertEquals("01:00", thirdRow.find(".z-calitem-header").get(0).get("textContent"));
+        assertEquals("01:00 ", thirdRow.find(".z-calitem-header").get(0).get("textContent"));
         JQuery fourthRow = firstWeekBody.find("tr").eq(3);
-        assertEquals("03:00", fourthRow.find(".z-calitem-header").get(0).get("textContent"));
+        assertEquals("03:00 ", fourthRow.find(".z-calitem-header").get(0).get("textContent"));
     }
 
     /**
@@ -64,14 +64,14 @@ public class RenderItemMonthTest extends CalendarTestBase {
     public void endAfter1200(){
         JQuery item = jq(".end-after-12");
         assertEquals(1, item.length());
-        assertEquals("11:00", item.find(ITEM_HEADER.selector()).text());
+        assertEquals("11:00 end after 12:00", item.find(ITEM_HEADER.selector()).text());
     }
 
     @Test //ZKCAL-127
     public void zkcal127(){
         JQuery item = jq(".zkcal-127");
         assertEquals(1, item.length());
-        assertEquals("13:30", item.find(ITEM_HEADER.selector()).text());
+        assertEquals("13:30 ZKCAL-127", item.find(ITEM_HEADER.selector()).text());
         assertEquals(ITEM_HEIGHT_MONTH_MOLD, item.height());
     }
 
@@ -79,12 +79,13 @@ public class RenderItemMonthTest extends CalendarTestBase {
     public void itemHeaderContentTooltip() {
         JQuery item = jq(".zkcal-80");
         assertEquals(1, item.length());
-        final String TITLE = "ZKCAL-80 Calendar item text is cut if not enough space to display";
+        final String TITLE = "00:00 ZKCAL-80 Calendar item text is cut if not enough space to display";
 
         JQuery content = item.find(ITEM_CONTENT.selector());
-        assertEquals(TITLE, content.text());
-        assertEquals("00:00", item.find(ITEM_HEADER.selector()).text());
-        assertEquals(TITLE, content.attr("title"));
+        assertEquals("", content.text());
+        JQuery header = item.find(ITEM_HEADER.selector());
+        assertEquals(TITLE, header.text());
+        assertEquals(TITLE, header.attr("title"));
     }
 
     /**
@@ -94,8 +95,8 @@ public class RenderItemMonthTest extends CalendarTestBase {
     public void instantItemDOMStructure() {
         JQuery instantItem = jq(".instant").eq(0);
 
-        assertEquals("00:00", instantItem.find(ITEM_INNER.selector() + " " + ITEM_HEADER.selector()).text());
-        assertTrue(instantItem.find(ITEM_INNER.selector() + " " + ITEM_CONTENT.selector()).exists());
+        assertEquals("00:00 ", instantItem.find(ITEM_INNER.selector() + " " + ITEM_HEADER.selector()).text());
+        assertFalse(instantItem.find(ITEM_INNER.selector() + " " + ITEM_CONTENT.selector()).exists());
     }
 
     /**
@@ -106,17 +107,17 @@ public class RenderItemMonthTest extends CalendarTestBase {
         JQuery span2d = jq(".span2");
         assertEquals(ITEM_HEIGHT_MONTH_MOLD, span2d.height());
         assertEquals("2", span2d.parent().attr("colspan"));
-        assertEquals("00:00 span 2d", span2d.find(ITEM_TEXT.selector()).text());
+        assertEquals("00:00 span 2d", span2d.find(ITEM_HEADER.selector()).text());
 
         JQuery span3d = jq(".span3");
         assertEquals(ITEM_HEIGHT_MONTH_MOLD, span3d.height());
         assertEquals("3", span3d.parent().attr("colspan"));
-        assertEquals("00:00 span 3d", span3d.find(ITEM_TEXT.selector()).text());
+        assertEquals("00:00 span 3d", span3d.find(ITEM_HEADER.selector()).text());
 
         JQuery span4d = jq(".span4");
         assertEquals(ITEM_HEIGHT_MONTH_MOLD, span4d.height());
         assertEquals("4", span4d.parent().attr("colspan"));
-        assertEquals("00:00 span 4d", span4d.find(ITEM_TEXT.selector()).text());
+        assertEquals("00:00 span 4d", span4d.find(ITEM_HEADER.selector()).text());
     }
 
 
@@ -143,9 +144,12 @@ public class RenderItemMonthTest extends CalendarTestBase {
         JQuery moreLinks = week4th.find(MORE_LINK.selector());
         assertEquals(7, moreLinks.length());
         assertEquals("2 more", moreLinks.eq(0).text());
-        for (int i = 1 ; i < 7 ; i ++){
-            assertTrue(moreLinks.eq(i).text().isEmpty());
-        }
+        assertEquals("1 more", moreLinks.eq(1).text());
+        assertEquals("1 more", moreLinks.eq(2).text());
+        assertEquals("2 more", moreLinks.eq(3).text());
+        assertEquals("1 more", moreLinks.eq(4).text());
+        assertTrue(moreLinks.eq(5).text().isEmpty());
+        assertTrue(moreLinks.eq(6).text().isEmpty());
     }
     private void verify3rdWeek(JQuery weeks) {
         JQuery week3rd = weeks.eq(2);
@@ -199,10 +203,10 @@ public class RenderItemMonthTest extends CalendarTestBase {
     private void test4thWeekItems(List itemListByWeek) {
         List<List> itemListByDay = (List)itemListByWeek.get(3);
         assertEquals(2, itemListByDay.get(0).size());
-        assertEquals(0, itemListByDay.get(1).size());
-        assertEquals(0, itemListByDay.get(2).size());
-        assertEquals(0, itemListByDay.get(3).size());
-        assertEquals(0, itemListByDay.get(4).size());
+        assertEquals(1, itemListByDay.get(1).size());
+        assertEquals(1, itemListByDay.get(2).size());
+        assertEquals(2, itemListByDay.get(3).size());
+        assertEquals(1, itemListByDay.get(4).size());
         assertEquals(0, itemListByDay.get(5).size());
         assertEquals(0, itemListByDay.get(6).size());
     }
@@ -322,14 +326,13 @@ public class RenderItemMonthTest extends CalendarTestBase {
        JQuery content = shortItem.find(CssClassNames.ITEM_CONTENT.selector());
        JQuery header = shortItem.find(CssClassNames.ITEM_HEADER.selector());
 
-       assertEquals("11:00", header.text());
-       assertEquals("end after 12:00", content.text());
+       assertEquals("11:00 end after 12:00", header.text());
    }
 
    @Test //ZKCAL-94
    public void dayLongItemContentText() {
        JQuery dayLongItem = jq(".span3");
-       JQuery content = dayLongItem.find(CssClassNames.ITEM_CONTENT.selector());
+       JQuery content = dayLongItem.find(ITEM_HEADER.selector());
 
        assertEquals("00:00 span 3d", content.text());
    }
@@ -337,4 +340,24 @@ public class RenderItemMonthTest extends CalendarTestBase {
     public Object getEvalObject(String script) {
         return ((JavascriptExecutor) driver).executeScript("return " + script);
     }
+
+    @Test //ZKCAL-94
+    public void colorItems() {
+        JQuery shortItem = jq(".color-short");
+        assertEquals(ITEM_HEIGHT_MONTH_MOLD, shortItem.height());
+        assertEquals("rgb(0, 100, 0)", shortItem.find(ITEM_HEADER.selector()).css("background-color")); // DarkGreen
+
+        JQuery spanItem = jq(".color-long");
+        assertEquals(ITEM_HEIGHT_MONTH_MOLD, spanItem.height());
+        assertEquals("rgb(0, 0, 139)", spanItem.find(ITEM_HEADER.selector()).css("background-color")); // DarkBlue
+    }
+
+    @Test //ZKCAL-94
+    public void changeItem(){
+        click(jq("$changeItem"));
+        waitResponse();
+        JQuery shortItem = jq(".for-change");
+        assertEquals("00:00 changed", shortItem.find(ITEM_HEADER.selector()).text());
+    }
+
 }

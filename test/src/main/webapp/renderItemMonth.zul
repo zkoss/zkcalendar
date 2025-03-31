@@ -1,4 +1,5 @@
 <zk>
-    <toolbarbutton id="height350px" label="height 350px" onClick='cal.setHeight("350px")'/>
+    <button id="height350px" label="height 350px" onClick='cal.setHeight("350px")'/>
+    <button id="changeItem" label="change item" />
     <calendars id="cal" mold="month" apply="test.RenderItemMonthComposer" height="90%"/>
 </zk>
