@@ -1,11 +1,11 @@
 <div viewModel="@id('vm') @init('org.zkoss.calendar.demo.CalendarEditorViewModel')" validationMessages="@id('vmsgs')">
-	<window title="Create Calendar Event" border="normal" width="400px" 
-		form="@id('fx') @load(vm.calendarEvent) @save(vm.calendarEvent, before='ok') @validator(vm.dateValidator)"
+	<window title="Create Calendar Item" border="normal" width="400px"
+		form="@id('fx') @load(vm.calendarItem) @save(vm.calendarItem, before='ok') @validator(vm.dateValidator)"
 		allDay="@ref(vm.isAllDay(fx.beginDate,fx.endDate))"
 		mode="popup" visible="@load(vm.visible)" position="center,center" >
 		<vlayout hflex="1">
 			<hlayout valign="middle">
-				Lock this event : <checkbox checked="@bind(fx.locked)" />
+				Lock this item : <checkbox checked="@bind(fx.locked)" />
 				All Day: <checkbox checked="@load(allDay)" disabled="true" />
 			</hlayout>
 			<grid hflex='1'>
@@ -32,16 +32,15 @@
 					</row>
 					<row>
 						Color:
-						<hlayout valign="middle">
-							Border <colorbox value="@bind(fx.headerColor)" />
-							Content <colorbox value="@bind(fx.contentColor)" />
-						</hlayout>
-		
+						<cell>
+							Header Color <colorbox value="@bind(fx.headerColor)" />
+							Content Color <colorbox value="@bind(fx.contentColor)" />
+						</cell>
 					</row>
 					<row>
 						Title:
-						<textbox multiline="true" rows="3" width="97%"
-							value="@bind(fx.content)" />
+						<textbox  width="100%"
+							value="@bind(fx.title)" />
 					</row>
 					<row>
 						<cell colspan="2" style="text-align:center;">

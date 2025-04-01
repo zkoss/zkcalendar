@@ -2,6 +2,9 @@ package org.zkoss.calendar.demo;
 
 import org.zkoss.zk.ui.event.Event;
 
+/**
+ * a message between editor window and calendar
+ */
 public class QueueMessage extends Event {
 	private static final long serialVersionUID = 1L;
 

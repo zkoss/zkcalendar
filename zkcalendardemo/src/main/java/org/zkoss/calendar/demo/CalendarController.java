@@ -2,6 +2,7 @@ package org.zkoss.calendar.demo;
 
 import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.event.CalendarsEvent;
+import org.zkoss.calendar.impl.SimpleCalendarItem;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.select.SelectorComposer;
@@ -21,7 +22,7 @@ public class CalendarController extends SelectorComposer<Component> {
 	@Wire
 	private Textbox filter;
 	
-	private DemoCalendarModel calendarModel;
+	private FilteringCalendarModel calendarModel;
 	
 	//the in editing calendar ui event
 	private CalendarsEvent calendarsEvent = null;
@@ -29,7 +30,7 @@ public class CalendarController extends SelectorComposer<Component> {
 	@Override
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
-		calendarModel = new DemoCalendarModel(new DemoCalendarData().getCalendarEvents());
+		calendarModel = new FilteringCalendarModel(new DemoCalendarData().getCalendarEvents());
 		calendars.setModel(this.calendarModel);
 	}
 
@@ -89,16 +90,16 @@ public class CalendarController extends SelectorComposer<Component> {
 		//to display a shadow when editing
 		calendarsEvent.stopClearGhost();
 		
-		DemoCalendarItem data = (DemoCalendarItem) event.getCalendarItem();
+		SimpleCalendarItem data = (SimpleCalendarItem) event.getCalendarItem();
 
 		if (data == null) {
-			data = new DemoCalendarItem();
+			data = new SimpleCalendarItem();
 			data.setHeaderColor("#3366ff");
 			data.setContentColor("#6699ff");
 			data.setBeginDate(event.getBeginDate());
 			data.setEndDate(event.getEndDate());
 		} else {
-			data = (DemoCalendarItem) event.getCalendarItem();
+			data = (SimpleCalendarItem) event.getCalendarItem();
 		}
 		//notify the editor
 		QueueUtil.lookupQueue().publish(
@@ -108,7 +109,7 @@ public class CalendarController extends SelectorComposer<Component> {
 	//listen to the calendar-update of event data, usually send when user drag the event data 
 	@Listen(CalendarsEvent.ON_ITEM_UPDATE + " = #calendars")
 	public void updateEvent(CalendarsEvent event) {
-		DemoCalendarItem data = (DemoCalendarItem) event.getCalendarItem();
+		SimpleCalendarItem data = (SimpleCalendarItem) event.getCalendarItem();
 		data.setBeginDate(event.getBeginDate());
 		data.setEndDate(event.getEndDate());
 		calendarModel.update(data);
@@ -123,16 +124,16 @@ public class CalendarController extends SelectorComposer<Component> {
 		QueueMessage message = (QueueMessage) event;
 		switch (message.getType()) {
 		case DELETE:
-			calendarModel.remove((DemoCalendarItem) message.getData());
+			calendarModel.remove((SimpleCalendarItem) message.getData());
 			//clear the shadow of the event after editing
 			calendarsEvent.clearGhost(); 
 			calendarsEvent = null;
 			break;
 		case OK:
-			if (calendarModel.indexOf((DemoCalendarItem) message.getData()) >= 0) {
-				calendarModel.update((DemoCalendarItem) message.getData());
+			if (calendarModel.indexOf((SimpleCalendarItem) message.getData()) >= 0) {
+				calendarModel.update((SimpleCalendarItem) message.getData());
 			} else {
-				calendarModel.add((DemoCalendarItem) message.getData());
+				calendarModel.add((SimpleCalendarItem) message.getData());
 			}
 		case CANCEL:
 			//clear the shadow of the event after editing

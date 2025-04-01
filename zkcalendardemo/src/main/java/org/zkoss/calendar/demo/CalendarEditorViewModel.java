@@ -3,18 +3,21 @@ package org.zkoss.calendar.demo;
 import org.zkoss.bind.*;
 import org.zkoss.bind.annotation.*;
 import org.zkoss.bind.validator.AbstractValidator;
+import org.zkoss.calendar.api.CalendarItem;
+import org.zkoss.calendar.impl.*;
+import org.zkoss.util.TimeZones;
 import org.zkoss.zk.ui.event.EventListener;
 
 import java.util.*;
 
 public class CalendarEditorViewModel {
 	
-	private DemoCalendarItem calendarEventData = new DemoCalendarItem();
+	private SimpleCalendarItem calendarItem;
 	
 	private boolean visible = false;
 
-	public DemoCalendarItem getCalendarEvent() {
-		return calendarEventData;
+	public SimpleCalendarItem getCalendarItem() {
+		return calendarItem;
 	}
 
 	public boolean isVisible() {
@@ -31,41 +34,41 @@ public class CalendarEditorViewModel {
 		QueueUtil.lookupQueue().subscribe(new QueueListener());
 	}
 
-	private void startEditing(DemoCalendarItem calendarEventData) {
-		this.calendarEventData = calendarEventData;
+	private void startEditing(SimpleCalendarItem calendarEventData) {
+		this.calendarItem = calendarEventData;
 		visible = true;
 		
 		//reload entire view-model data when going to edit
 		BindUtils.postNotifyChange(null, null, this, "*");
 	}
-	
 
-	public boolean isAllDay(Date beginDate,Date endDate) {
-		int M_IN_DAY = 1000 * 60 * 60 * 24; 
+
+	public boolean isAllDay(Date beginDate, Date endDate) {
+		final int MINUTE_IN_DAY = 1000 * 60 * 60 * 24;
 		boolean allDay = false;
-		
-		if(beginDate != null && endDate != null) {
+
+		if (beginDate != null && endDate != null) {
 			long between = endDate.getTime() - beginDate.getTime();
-			allDay = between > M_IN_DAY;
+			allDay = between > MINUTE_IN_DAY;
 		}
 		return allDay;
 	}
 	
-	public Validator getDateValidator(){
-		return new AbstractValidator(){
+	public Validator getDateValidator() {
+		return new AbstractValidator() {
 			@Override
 			public void validate(ValidationContext ctx) {
-				Map<String,Property> formData = ctx.getProperties(ctx.getProperty().getValue());
-				Date beginDate = (Date)formData.get("beginDate").getValue();
-				Date endDate = (Date)formData.get("endDate").getValue();
-				if(beginDate==null){
-					addInvalidMessage(ctx, "beginDate","Begin date is empty");
+				Map<String, Property> formData = ctx.getProperties(ctx.getProperty().getValue());
+				Date beginDate = (Date) formData.get("beginDate").getValue();
+				Date endDate = (Date) formData.get("endDate").getValue();
+				if (beginDate == null) {
+					addInvalidMessage(ctx, "beginDate", "Begin date is empty");
 				}
-				if(endDate==null){
-					addInvalidMessage(ctx, "endDate","End date is empty");
+				if (endDate == null) {
+					addInvalidMessage(ctx, "endDate", "End date is empty");
 				}
-				if(beginDate!=null && endDate!=null && beginDate.compareTo(endDate) >= 0){
-					addInvalidMessage(ctx, "endDate","End date is before begin date");
+				if (beginDate != null && endDate != null && beginDate.compareTo(endDate) >= 0) {
+					addInvalidMessage(ctx, "endDate", "End date is before begin date");
 				}
 			}
 		};
@@ -82,7 +85,7 @@ public class CalendarEditorViewModel {
 	@Command
 	@NotifyChange("visible")
 	public void delete() {
-		QueueMessage message = new QueueMessage(QueueMessage.Type.DELETE, calendarEventData);
+		QueueMessage message = new QueueMessage(QueueMessage.Type.DELETE, calendarItem);
 		QueueUtil.lookupQueue().publish(message);
 		this.visible = false;
 	}
@@ -90,7 +93,7 @@ public class CalendarEditorViewModel {
 	@Command
 	@NotifyChange("visible")
 	public void ok() {
-		QueueMessage message = new QueueMessage(QueueMessage.Type.OK, calendarEventData);
+		QueueMessage message = new QueueMessage(QueueMessage.Type.OK, calendarItem);
 		QueueUtil.lookupQueue().publish(message);
 		this.visible = false;
 	}
@@ -99,8 +102,8 @@ public class CalendarEditorViewModel {
 		@Override
 		public void onEvent(QueueMessage message)
 				throws Exception {
-			if (QueueMessage.Type.EDIT.equals(message.getType())){
-				CalendarEditorViewModel.this.startEditing((DemoCalendarItem)message.getData());
+			if (QueueMessage.Type.EDIT.equals(message.getType())) {
+				CalendarEditorViewModel.this.startEditing((SimpleCalendarItem) message.getData());
 			}
 		}
 	}

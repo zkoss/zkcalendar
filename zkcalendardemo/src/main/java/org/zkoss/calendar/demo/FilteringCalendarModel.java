@@ -5,12 +5,12 @@ import org.zkoss.calendar.impl.SimpleCalendarModel;
 
 import java.util.*;
 
-public class DemoCalendarModel extends SimpleCalendarModel {
+public class FilteringCalendarModel extends SimpleCalendarModel {
     private static final long serialVersionUID = 1L;
 
     private String filterText = "";
 
-    public DemoCalendarModel(List<CalendarItem> calendarEvents) {
+    public FilteringCalendarModel(List<CalendarItem> calendarEvents) {
         super(calendarEvents);
     }
 
@@ -32,7 +32,9 @@ public class DemoCalendarModel extends SimpleCalendarModel {
 
             long b = item.getBeginDate().getTime();
             long e = item.getEndDate().getTime();
-            if (e >= begin && b < end && item.getContent().toLowerCase().contains(filterText.toLowerCase()))
+            if (e >= begin
+                && b < end
+                && item.getTitle().toLowerCase().contains(filterText.toLowerCase()))
                 list.add(item);
         }
         return list;
