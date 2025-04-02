@@ -76,9 +76,9 @@ public class CalendarCrudComposer extends SelectorComposer {
         selectedItem = (DefaultCalendarItem) event.getCalendarItem();
         model.remove(selectedItem);
 
-        DefaultCalendarItem movedItem = new CalendarItemHelper(selectedItem)
-                .setBegin(event.getBeginDate().toInstant())
-                .setEnd(event.getEndDate().toInstant())
+        DefaultCalendarItem movedItem = DefaultCalendarItem.Builder.from(selectedItem)
+                .withBegin(event.getBeginDate().toInstant().atZone(calendars.getDefaultTimeZone().toZoneId()).toLocalDateTime())
+                .withEnd(event.getEndDate().toInstant().atZone(calendars.getDefaultTimeZone().toZoneId()).toLocalDateTime())
                 .build();
         model.add(movedItem);
     }
@@ -104,11 +104,12 @@ public class CalendarCrudComposer extends SelectorComposer {
 
     @Listen(Events.ON_CLICK + " = button[label='Create']")
     public void create() {
-        DefaultCalendarItem item = new CalendarItemHelper()
-                .setBegin(beginBox.getValue().toInstant())
-                .setEnd(endBox.getValue().toInstant())
-                .setTitle(titleBox.getValue())
-                .setContent(contentBox.getValue())
+        DefaultCalendarItem item = new DefaultCalendarItem.Builder()
+                .withZoneId(calendars.getDefaultTimeZone().toZoneId())
+                .withBegin(beginBox.getValueInLocalDateTime())
+                .withEnd(endBox.getValueInLocalDateTime())
+                .withTitle(titleBox.getValue())
+                .withContent(contentBox.getValue())
                 .build();
 
         model.add(item);
@@ -119,11 +120,11 @@ public class CalendarCrudComposer extends SelectorComposer {
     public void update() {
         model.remove(selectedItem);
 
-        DefaultCalendarItem newItem = new CalendarItemHelper(selectedItem)
-                .setBegin(beginBox.getValue().toInstant())
-                .setEnd(endBox.getValue().toInstant())
-                .setTitle(titleBox.getValue())
-                .setContent(contentBox.getValue()).build();
+        DefaultCalendarItem newItem = DefaultCalendarItem.Builder.from(selectedItem)
+                .withBegin(beginBox.getValueInLocalDateTime())
+                .withEnd(endBox.getValueInLocalDateTime())
+                .withTitle(titleBox.getValue())
+                .withContent(contentBox.getValue()).build();
         model.add(newItem);
         closeCreationBox();
     }
