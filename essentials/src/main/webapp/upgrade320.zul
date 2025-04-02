@@ -1,0 +1,9 @@
+<zk>
+    since 3.2.0, the component changes the way to render items
+    <div>
+        <button label="To Month mold" onClick='cal.setMold("month")'/>
+    </div>
+    <calendars id="cal" vflex="1" width="100%" apply="org.zkoss.calendar.essentials.Upgrade320Composer"
+               readonly="true" mold="${param.mold}"/>
+    <script src="revertItemDisplay312.js"/>
+</zk>
