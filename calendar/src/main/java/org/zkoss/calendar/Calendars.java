@@ -573,11 +573,11 @@ public class Calendars extends XulElement {
 	 * - Sets calendar to first day of the month
 	 * - Adjusts to first day of week based on {@link #getFirstDayOfWeek()}
 	 *
-	 * <p>For Week View (days >= 7):
+	 * <p>For Week View (days longer or equal to 7):
 	 * - Based on {@link #getCurrentDate()}, return the day according to {@link #getFirstDayOfWeek()}.
 	 * By default, find the closest Sun.
 	 *
-	 * <p>For Custom Days View (days < 7):
+	 * <p>For Custom Days View (days less than 7):
 	 * - Uses the current date as beginning date
 	 *
 	 * <p>In all cases, the time portion is set to 00:00:00.000

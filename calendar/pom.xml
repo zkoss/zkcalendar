@@ -57,6 +57,7 @@
 						<include>**/*.js</include>
 					</includes>
 					<skipMerge>true</skipMerge>
+					<force>true</force>
 					<closureCompilationLevel>WHITESPACE_ONLY</closureCompilationLevel>
 					<closureEmitUseStrict>false</closureEmitUseStrict>
 					<outputFilename>#{path}/#{basename}.#{extension}</outputFilename>
@@ -132,6 +133,7 @@
 				<version>3.2.0</version>
 				<configuration>
 					<skip>false</skip>
+					<source>8</source>
 				</configuration>
 				<executions>
 					<execution>
