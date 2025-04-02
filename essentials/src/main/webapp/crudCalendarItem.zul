@@ -2,11 +2,11 @@
 <zk>
     <div height="100%" apply="org.zkoss.calendar.essentials.CalendarCrudComposer">
         <calendars id="calendars" firstDayOfWeek="Sunday"
-                   mold="default" vflex="1" width="80%"/>
-        <popup id="creationBox">
+                   mold="default" vflex="1" width="100%"/>
+        <popup id="creationBox" width="10%" style="min-width:300px">
             <vlayout>
-                <datebox id="beginBox" placeholder="beginning date" format="yyyy-MM-dd HH:mm" hflex="min"/>
-                <datebox id="endBox" placeholder="end date" format="yyyy-MM-dd HH:mm" hflex="min"/>
+                <datebox id="beginBox" placeholder="beginning date" format="yyyy-MM-dd HH:mm" hflex="1"/>
+                <datebox id="endBox" placeholder="end date" format="yyyy-MM-dd HH:mm" hflex="1"/>
                 <textbox id="titleBox" placeholder="title"/>
                 <textbox id="contentBox" placeholder="content"/>
                 <hlayout>

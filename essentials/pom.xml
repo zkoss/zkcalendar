@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.zkoss.calendar</groupId>
     <artifactId>essentials</artifactId>
-    <version>3.1.1</version>
+    <version>3.2.0.FL.20250402</version>
     <packaging>war</packaging>
     <name>ZK Calendar Essentials</name>
     <properties>
-        <zk.version>9.6.2</zk.version>
+        <zk.version>9.6.5</zk.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
@@ -52,12 +52,6 @@
             <groupId>org.zkoss.zk</groupId>
             <artifactId>zul</artifactId>
             <version>${zk.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.lowagie</groupId>
-                    <artifactId>itext</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
     <build>
@@ -71,7 +65,6 @@
                     <webApp>
                         <contextPath>/${project.artifactId}</contextPath>
                     </webApp>
-<!--                    <scanIntervalSeconds>5</scanIntervalSeconds>-->
                     <stopKey>foo</stopKey>
                     <stopPort>9999</stopPort>
                 </configuration>
