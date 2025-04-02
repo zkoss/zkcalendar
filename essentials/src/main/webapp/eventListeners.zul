@@ -1,0 +1,4 @@
+<zk>
+    <calendars height="100%" width="100%" beginTime="8" weekOfYear="true" mold="month"
+              apply="org.zkoss.calendar.essentials.EventListenerComposer" />
+</zk>
