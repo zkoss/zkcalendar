@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>org.zkoss.calendar</groupId>
 			<artifactId>calendar</artifactId>
-			<version>3.2.0.FL.20250331</version>
+			<version>3.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.zkoss.zk</groupId>

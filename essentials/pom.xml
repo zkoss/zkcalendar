@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.zkoss.calendar</groupId>
     <artifactId>essentials</artifactId>
-    <version>3.2.0.FL.20250402</version>
+    <version>3.2.0</version>
     <packaging>war</packaging>
     <name>ZK Calendar Essentials</name>
     <properties>
