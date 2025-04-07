@@ -1,13 +1,17 @@
 3.2.0
 ** Bug
+    * [ZKCAL-45] - mold default not found calendars.month
     * [ZKCAL-80] - Calendar item text is cut if not enough space to display
     * [ZKCAL-86] - Tooltip event causes NPE (when hovered item no longer in view)
     * [ZKCAL-101] - 100% height produces an unexpected vertical scrollbar
     * [ZKCAL-110] - setDays() renders date header elements differently from the default mold
     * [ZKCAL-115] - inconsistent license information
     * [ZKCAL-122] - ZK Calendar fail to load when mold="month" on iPad/iPhone
+    * [ZKCAL-123] - _createBoundDate sets lowerBoundEd one day later for single-day calendar, should only be for instant
     * [ZKCAL-124] - an item with end date after 12:00 causes a javascript error
+    * [ZKCAL-125] - Failed to mount: cells[k] is undefined
     * [ZKCAL-126] - set readOnly false causes a javascript error
+    * [ZKCAL-127] - rendering calendar items in month mold cause a javascript error
     * [ZKCAL-128] - failed to update SimpleCalendarItem sclass
     * [ZKCAL-130] - DefaultCalendarItem.Builder doesn't provide methods to set header style and content style
     * [ZKCAL-131] - change calendar's heigh doesn't take effect immediately
