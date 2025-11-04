@@ -4,6 +4,7 @@ import org.zkoss.calendar.Calendars;
 import org.zkoss.calendar.impl.*;
 import org.zkoss.util.TimeZones;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.*;
 
@@ -35,12 +36,12 @@ public class RenderItemMonthComposer extends SelectorComposer {
         addCrossDateItem();
     }
 
-    /** an item ends at midnight */
+    /** an item ends at midnight. add to the next month to avoid affecting the existing tests */
     private void addCrossDateItem() {
-        LocalDateTime begainDate = day1.plusHours(13);
+        LocalDateTime beginDate = day1.plusWeeks(5).plusHours(13);
         DefaultCalendarItem crossDayItem = new DefaultCalendarItem.Builder()
-                .withBegin(begainDate)
-                .withEnd(begainDate.plusHours(11))
+                .withBegin(beginDate)
+                .withEnd(beginDate.plusHours(11))
                 .withZoneId(calendars.getDefaultTimeZone().toZoneId())
                 .withTitle("cross a day")
                 .withSclass("cross-day")
@@ -209,5 +210,15 @@ public class RenderItemMonthComposer extends SelectorComposer {
     public void changeItem() {
         itemForChange.setTitle("changed");
         model.update(itemForChange);
+    }
+
+    @Listen("onClick = #defaultMold")
+    public void toDefaultMold() {
+        calendars.setMold("default");
+    }
+
+    @Listen(Events.ON_CLICK + " = #next")
+    public void next() {
+        calendars.nextPage();
     }
 }

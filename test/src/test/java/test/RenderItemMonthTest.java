@@ -364,6 +364,9 @@ public class RenderItemMonthTest extends CalendarTestBase {
     public void toDefaultMold(){
         click(jq("$defaultMold"));
         waitResponse();
+        click(jq("$next"));
+        waitResponse();
         assertTrue(jq(WEEK_BODY.selector()).exists());
+        reloadPage();
     }
 }

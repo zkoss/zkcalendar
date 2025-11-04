@@ -1,6 +1,7 @@
 <zk>
     <button id="height350px" label="height 350px" onClick='cal.setHeight("350px")'/>
     <button id="changeItem" label="change item" />
-    <button id="defaultMold" label="to default mold" onClick='cal.setMold("default")'/>
+    <button id="defaultMold" label="to default mold"/>
+    <button id="next" label="Next"/>
     <calendars id="cal" mold="month" apply="test.RenderItemMonthComposer" height="90%"/>
 </zk>
