@@ -1100,7 +1100,7 @@ calendar.CalendarsDefault = zk.$extends(calendar.Calendars, {
 				calendarItemNode._ed = endDate;
 				// cross day
 				if (isCrossDay)
-					endDate = new Date(ed.getTime() - 1000);
+					endDate = new Date(endDate.getTime() - 1000);
 
 				// fix hgh
 				var beginTimeIndex = this.getTimeIndex(beginDate),
