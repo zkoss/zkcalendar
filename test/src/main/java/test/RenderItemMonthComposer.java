@@ -32,6 +32,20 @@ public class RenderItemMonthComposer extends SelectorComposer {
         addLongTextItem();
         addColoredItems();
         addItemForChanged();
+        addCrossDateItem();
+    }
+
+    /** an item ends at midnight */
+    private void addCrossDateItem() {
+        LocalDateTime begainDate = day1.plusHours(13);
+        DefaultCalendarItem crossDayItem = new DefaultCalendarItem.Builder()
+                .withBegin(begainDate)
+                .withEnd(begainDate.plusHours(11))
+                .withZoneId(calendars.getDefaultTimeZone().toZoneId())
+                .withTitle("cross a day")
+                .withSclass("cross-day")
+                .build();
+        model.add(crossDayItem);
     }
 
     private void addOverWeekendItems() {

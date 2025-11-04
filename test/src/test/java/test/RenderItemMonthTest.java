@@ -360,4 +360,10 @@ public class RenderItemMonthTest extends CalendarTestBase {
         assertEquals("00:00 changed", shortItem.find(ITEM_HEADER.selector()).text());
     }
 
+    @Test //ZKCAL-140
+    public void toDefaultMold(){
+        click(jq("$defaultMold"));
+        waitResponse();
+        assertTrue(jq(WEEK_BODY.selector()).exists());
+    }
 }
