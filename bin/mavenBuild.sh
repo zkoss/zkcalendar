@@ -9,12 +9,20 @@ goals='clean compile package'
 
 # build a maven bundle file
 function buildBundle(){
-    mvn -B -P $edition ${goals}
+    mvn -B -P $edition ${goals} "${@:2}"
 }
 
 
 function printUsage() {
-    echo "Usage: $0 [official|freshly]"
+    echo "Usage: $0 [official|freshly] [maven-options...]"
+    echo "  official  - Build official release version"
+    echo "  freshly   - Build FL (freshly) version with date stamp (default)"
+    echo ""
+    echo "Examples:"
+    echo "  $0                      - Build FL version with tests"
+    echo "  $0 -DskipTests          - Build FL version without tests"
+    echo "  $0 freshly -DskipTests  - Build FL version without tests"
+    echo "  $0 official -DskipTests - Build official version without tests"
 }
 
 
@@ -31,6 +39,11 @@ function setEdition() {
             ;;
         "")
             edition="freshly" # Default value
+            ;;
+        -*)
+            # If first argument starts with -, treat it as a maven option
+            # and use default edition
+            edition="freshly"
             ;;
         *)
             printUsage
@@ -84,5 +97,5 @@ set -e # exit immediately if any command within the script exits with a non-zero
 setEdition $1
 printEdition
 setReleaseVersion
-buildBundle
+buildBundle "$@"
 writeVersionProperties
