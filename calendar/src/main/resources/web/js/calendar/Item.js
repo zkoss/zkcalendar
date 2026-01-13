@@ -103,7 +103,7 @@ calendar.Item = zk.$extends(zk.Widget, {
 		 * e.g. an item spans 3 days, day1 ~ day3, so its _afterOffset is 4, 7 days a week.
 		 */
 		itemNode._afterOffset = this.cloneCount ? 0 :
-								this._getOffset({start: itemNode.lowerBoundEd, end: time.zoneEd});
+								(itemNode.lowerBoundEd >= time.zoneEd ? 0 : this._getOffset({start: itemNode.lowerBoundEd, end: time.zoneEd}));
 
 		itemNode._days = item._days = this.getDays();
 		if (updateLastModify)
