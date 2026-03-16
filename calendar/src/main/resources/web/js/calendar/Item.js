@@ -128,14 +128,19 @@ calendar.Item = zk.$extends(zk.Widget, {
 		calendarItemNode.upperBoundBd = this._setBoundDate(beginDate); // earliest
 		if (this._isDayItem()) return;
 		if (calUtil.isLessThan30Min(beginDate, endDate)){
-			calendarItemNode.lowerBoundEd = calUtil.addDay(new Date(endDate), 1);
+			// ZKCAL-142: strip the time, then always advance to next midnight.
+			// Cannot use _setBoundDate here — it skips addDay when time is already midnight,
+			// so instant items (begin==end==00:00) would get lowerBoundEd == upperBoundBd,
+			// wrongly letting subsequent same-day events share the same calendar row.
+			var d = new Date(endDate);
+			d.setHours(0, 0, 0, 0);
+			calendarItemNode.lowerBoundEd = calUtil.addDay(d, 1);
 		}else{
 			calendarItemNode.lowerBoundEd = this._setBoundDate(endDate, true); // latest
 		}
 	},
 
 	_isDayItem: function () {
-//		zk.log(this.$instanceof(calendarDayEvent));
 		if (!this._isDayEvt)
 			this._isDayEvt = this.className == 'calendar.DayItem';
 		return this._isDayEvt;
