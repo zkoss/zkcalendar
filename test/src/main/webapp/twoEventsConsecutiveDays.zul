@@ -1,0 +1,4 @@
+<zk>
+    <calendars id="cal" mold="month" apply="test.TwoEventsConsecutiveDaysComposer" height="90%"/>
+</zk>
+
