@@ -51,6 +51,7 @@
 					</execution>
 				</executions>
 				<configuration>
+					<skip>${maven.js-minify.skip}</skip>
 					<baseSourceDir>src/main/resources/web</baseSourceDir>
 					<baseTargetDir>${project.build.outputDirectory}/web</baseTargetDir>
 					<includes>
