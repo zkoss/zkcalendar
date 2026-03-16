@@ -1,3 +1,10 @@
+3.2.1
+** Bug
+    * [ZKCAL-140] - switch to default mold causes a JS error
+    * [ZKCAL-141] - a Saturday item causes the incorrect week cell structure
+    * [ZKCAL-142] - a short event (< 30 min) on day N pushes events on day N+1 into a lower row in month mold
+
+
 3.2.0
 ** Bug
     * [ZKCAL-45] - mold default not found calendars.month
