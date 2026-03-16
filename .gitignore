@@ -10,3 +10,4 @@ node/
 bin/
 .flattened-pom.xml
 .vscode
+.env
