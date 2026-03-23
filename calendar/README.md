@@ -21,10 +21,10 @@ after modifying any .less file, run maven `compile` to compile it to .dsp
 
 
 # The process of release an official version
-1. update [release-note](..%2Fzkdoc%2Frelease-note). <br>
+1. update [release-note](../zkdoc/release-note). <br>
 https://tracker.zkoss.org/projects/ZKCAL?selectedItem=com.atlassian.jira.jira-projects-plugin%3Arelease-page&status=released-unreleased -> click specific version -> Release Notes
-2. Run `./bin/publish.sh official`.<br>
-[build script](..%2Fbin%2FmavenBuild.sh) will remove `-SNAPSHOT` in the version string.
+2. Change to official version with `./bin/upVersion.sh`
+3. Run Jenkins job with edition=official
 3. Put binary zip in Github release page.<br>
 * at https://github.com/zkoss/zkcalendar/releases create release from tag.
 * upload `zk-calendar-bin-x.y.z.zip` and `zk-calendar-src-x.y.z.zip`
